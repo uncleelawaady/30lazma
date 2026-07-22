@@ -3,79 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أحمد العوضي - EXD | Elawaady XDigital</title>
+    <title>EXD | Elawaady XDigital - منصة الخدمات الرقمية</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Tajawal:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
             <div class="logo">
-                <h1>EXD</h1>
+                <div class="logo-gradient">EXD</div>
                 <p>Elawaady XDigital</p>
             </div>
             <ul class="nav-links">
                 <li><a href="#home">الرئيسية</a></li>
-                <li><a href="#about">عني</a></li>
                 <li><a href="#services">الخدمات</a></li>
-                <li><a href="#projects">المشاريع</a></li>
-                <li><a href="#domains">الدومينات</a></li>
+                <li><a href="#stats">الإحصائيات</a></li>
+                <li><a href="#about">عني</a></li>
                 <li><a href="#contact">التواصل</a></li>
             </ul>
-            <div class="language-toggle">
-                <button id="langBtn" onclick="toggleLanguage()">English</button>
-            </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
     <section id="home" class="hero">
         <div class="hero-content">
-            <h1 class="hero-title">أحمد العوضي</h1>
-            <p class="hero-subtitle">مؤسس EXD | Elawaady XDigital</p>
-            <p class="hero-description">متخصص في الخدمات الرقمية والتسويق والذكاء الاصطناعي</p>
+            <h1 class="hero-title">
+                <span class="gradient-text">EXD | Elawaady XDigital</span>
+            </h1>
+            <p class="hero-subtitle">منصة متكاملة للخدمات الرقمية والتسويق الاحترافي</p>
+
             <div class="hero-buttons">
-                <a href="#contact" class="btn btn-primary">تواصل معي</a>
-                <a href="#services" class="btn btn-secondary">خدماتي</a>
+                <a href="#services" class="btn btn-gradient">
+                    <i class="fas fa-arrow-down"></i> تصفح الخدمات
+                </a>
+                <a href="#contact" class="btn btn-dark">
+                    <i class="fas fa-phone"></i> تواصل معنا
+                </a>
+                <a href="https://wa.me/201055578777" target="_blank" class="btn btn-whatsapp">
+                    <i class="fab fa-whatsapp"></i> اطلب عبر واتساب
+                </a>
             </div>
-        </div>
-        <div class="hero-background">
-            <div class="floating-box box-1"></div>
-            <div class="floating-box box-2"></div>
-            <div class="floating-box box-3"></div>
         </div>
     </section>
 
-    <!-- About Section -->
-    <section id="about" class="about">
+    <!-- Stats Section -->
+    <section id="stats" class="stats">
         <div class="container">
-            <h2 class="section-title">عني</h2>
-            <div class="about-content">
-                <div class="about-text">
-                    <p>
-                        أنا أحمد العوضي، مؤسس وصاحب <strong>EXD | Elawaady XDigital</strong>، منصة ومتجر متخصص في الخدمات الرقمية والتسويق الرقمي والذكاء الاصطناعي.
-                    </p>
-                    <p>
-                        أعمل في مجال الخدمات الرقمية منذ سنوات وأركز على بناء علامة تجارية عربية قوية مع التوسع عالميًا من خلال مشروع <strong>NewlyNow.com</strong>.
-                    </p>
-                    <p>
-                        أهدفي بناء أكبر منصة عربية للخدمات الرقمية تعتمد على الاحترافية والوساطة الآمنة والهوية البصرية القوية، مع التوسع إلى الأسواق العالمية.
-                    </p>
+            <h2 class="section-title">إحصائياتنا</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>دعم 24/7</h3>
+                    <p class="stat-value">متاح طول الوقت</p>
                 </div>
-                <div class="about-stats">
-                    <div class="stat">
-                        <h3>10+</h3>
-                        <p>سنوات الخبرة</p>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
                     </div>
-                    <div class="stat">
-                        <h3>30+</h3>
-                        <p>مشروع ناجح</p>
+                    <h3>متوسط التقييم</h3>
+                    <p class="stat-value">4.9 / 5</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
                     </div>
-                    <div class="stat">
-                        <h3>50+</h3>
-                        <p>دومين استثماري</p>
+                    <h3>عملاء سعداء</h3>
+                    <p class="stat-value">1000+</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-briefcase"></i>
                     </div>
+                    <h3>خدمات متاحة</h3>
+                    <p class="stat-value">20+</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3>متوسط التسليم</h3>
+                    <p class="stat-value">24 ساعة</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>ضمان الوساطة</h3>
+                    <p class="stat-value">100% آمن</p>
                 </div>
             </div>
         </div>
@@ -87,180 +107,249 @@
             <h2 class="section-title">الخدمات الرئيسية</h2>
             <div class="services-grid">
                 <div class="service-card">
-                    <i class="fas fa-mobile-alt"></i>
-                    <h3>إدارة وسائل التواصل</h3>
-                    <p>بيع وشراء حسابات وصفحات وقنوات على TikTok و Facebook و Instagram و Snapchat و X و YouTube</p>
+                    <div class="service-category">
+                        <span class="category-badge">وسائل التواصل</span>
+                        <span class="available-badge">
+                            <i class="fas fa-circle"></i> متاح 24/7
+                        </span>
+                    </div>
+                    <h3 class="service-title">بيع وشراء الحسابات</h3>
+                    <p class="service-description">حسابات TikTok و Facebook و Instagram و Snapchat و X و YouTube موثوقة وآمنة</p>
+                    <div class="service-footer">
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>5.0</span>
+                        </div>
+                    </div>
+                    <div class="service-buttons">
+                        <button class="btn btn-gradient">شراء الآن</button>
+                        <button class="btn btn-outline">التفاصيل</button>
+                    </div>
                 </div>
+
                 <div class="service-card">
-                    <i class="fas fa-bullhorn"></i>
-                    <h3>إدارة الحملات الإعلانية</h3>
-                    <p>Meta Ads و Google Ads و TikTok Ads و Snapchat Ads مع استراتيجيات متقدمة</p>
+                    <div class="service-category">
+                        <span class="category-badge">الإعلانات</span>
+                        <span class="available-badge">
+                            <i class="fas fa-circle"></i> متاح 24/7
+                        </span>
+                    </div>
+                    <h3 class="service-title">إدارة الحملات الإعلانية</h3>
+                    <p class="service-description">Meta Ads و Google Ads و TikTok Ads بكفاءة احترافية عالية</p>
+                    <div class="service-footer">
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>4.9</span>
+                        </div>
+                    </div>
+                    <div class="service-buttons">
+                        <button class="btn btn-gradient">شراء الآن</button>
+                        <button class="btn btn-outline">التفاصيل</button>
+                    </div>
                 </div>
+
                 <div class="service-card">
-                    <i class="fas fa-paint-brush"></i>
-                    <h3>التصميم والعلامات التجارية</h3>
-                    <p>تصميم الهوية البصرية وبناء العلامات التجارية القوية والاحترافية</p>
+                    <div class="service-category">
+                        <span class="category-badge">التصميم</span>
+                        <span class="available-badge">
+                            <i class="fas fa-circle"></i> حسب الطلب
+                        </span>
+                    </div>
+                    <h3 class="service-title">تصميم الهوية البصرية</h3>
+                    <p class="service-description">بناء علامات تجارية قوية مع هوية بصرية احترافية وفريدة</p>
+                    <div class="service-footer">
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>4.8</span>
+                        </div>
+                    </div>
+                    <div class="service-buttons">
+                        <button class="btn btn-gradient">شراء الآن</button>
+                        <button class="btn btn-outline">التفاصيل</button>
+                    </div>
                 </div>
+
                 <div class="service-card">
-                    <i class="fas fa-robot"></i>
-                    <h3>الذكاء الاصطناعي والأتمتة</h3>
-                    <p>AI Tools و AI Agents و Automation و Workflow الذكية للعمل</p>
+                    <div class="service-category">
+                        <span class="category-badge">الذكاء الاصطناعي</span>
+                        <span class="available-badge">
+                            <i class="fas fa-circle"></i> متاح 24/7
+                        </span>
+                    </div>
+                    <h3 class="service-title">AI Tools والأتمتة</h3>
+                    <p class="service-description">حلول ذكية للأتمتة وAI Agents وWorkflow مخصصة لعملك</p>
+                    <div class="service-footer">
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>5.0</span>
+                        </div>
+                    </div>
+                    <div class="service-buttons">
+                        <button class="btn btn-gradient">شراء الآن</button>
+                        <button class="btn btn-outline">التفاصيل</button>
+                    </div>
                 </div>
+
                 <div class="service-card">
-                    <i class="fas fa-globe"></i>
-                    <h3>المواقع والمتاجر الإلكترونية</h3>
-                    <p>إنشاء مواقع ومتاجر إلكترونية احترافية وقابلة للتطوير</p>
+                    <div class="service-category">
+                        <span class="category-badge">المواقع</span>
+                        <span class="available-badge">
+                            <i class="fas fa-circle"></i> حسب الطلب
+                        </span>
+                    </div>
+                    <h3 class="service-title">المواقع والمتاجر الإلكترونية</h3>
+                    <p class="service-description">مواقع ومتاجر احترافية وسريعة وقابلة للتطوير والتوسع</p>
+                    <div class="service-footer">
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>4.9</span>
+                        </div>
+                    </div>
+                    <div class="service-buttons">
+                        <button class="btn btn-gradient">شراء الآن</button>
+                        <button class="btn btn-outline">التفاصيل</button>
+                    </div>
                 </div>
+
                 <div class="service-card">
-                    <i class="fas fa-handshake"></i>
-                    <h3>الوساطة الرقمية الآمنة</h3>
-                    <p>توفير تعاملات موثقة وآمنة بين البائع والمشتري في الخدمات الرقمية</p>
+                    <div class="service-category">
+                        <span class="category-badge">الوساطة</span>
+                        <span class="available-badge">
+                            <i class="fas fa-circle"></i> متاح 24/7
+                        </span>
+                    </div>
+                    <h3 class="service-title">الوساطة الرقمية الآمنة</h3>
+                    <p class="service-description">تعاملات موثقة وآمنة 100% بين البائع والمشتري مع ضمان</p>
+                    <div class="service-footer">
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>5.0</span>
+                        </div>
+                    </div>
+                    <div class="service-buttons">
+                        <button class="btn btn-gradient">شراء الآن</button>
+                        <button class="btn btn-outline">التفاصيل</button>
+                    </div>
                 </div>
+
                 <div class="service-card">
-                    <i class="fas fa-chart-line"></i>
-                    <h3>التسويق الرقمي المتقدم</h3>
-                    <p>استراتيجيات تسويقية متكاملة وإدارة الصفحات والمجتمعات</p>
+                    <div class="service-category">
+                        <span class="category-badge">التسويق</span>
+                        <span class="available-badge">
+                            <i class="fas fa-circle"></i> متاح 24/7
+                        </span>
+                    </div>
+                    <h3 class="service-title">التسويق الرقمي المتقدم</h3>
+                    <p class="service-description">استراتيجيات تسويقية متكاملة وإدارة مجتمعات احترافية</p>
+                    <div class="service-footer">
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>4.8</span>
+                        </div>
+                    </div>
+                    <div class="service-buttons">
+                        <button class="btn btn-gradient">شراء الآن</button>
+                        <button class="btn btn-outline">التفاصيل</button>
+                    </div>
                 </div>
+
                 <div class="service-card">
-                    <i class="fas fa-dollar-sign"></i>
-                    <h3>تحقيق شروط الربح</h3>
-                    <p>دعم متكامل لتحقيق شروط الربح على Facebook و TikTok والمنصات الأخرى</p>
+                    <div class="service-category">
+                        <span class="category-badge">الربح</span>
+                        <span class="available-badge">
+                            <i class="fas fa-circle"></i> حسب الطلب
+                        </span>
+                    </div>
+                    <h3 class="service-title">تحقيق شروط الربح</h3>
+                    <p class="service-description">دعم متكامل لتحقيق شروط الربح على Facebook و TikTok والمنصات</p>
+                    <div class="service-footer">
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>4.9</span>
+                        </div>
+                    </div>
+                    <div class="service-buttons">
+                        <button class="btn btn-gradient">شراء الآن</button>
+                        <button class="btn btn-outline">التفاصيل</button>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Projects Section -->
-    <section id="projects" class="projects">
+    <!-- About Section -->
+    <section id="about" class="about">
         <div class="container">
-            <h2 class="section-title">المشاريع الرئيسية</h2>
-            <div class="projects-grid">
-                <div class="project-card">
-                    <h3>EXD | Elawaady XDigital</h3>
-                    <p>المنصة الرئيسية والمتجر المتخصص في الخدمات الرقمية والتسويق والذكاء الاصطناعي</p>
-                    <a href="https://elawaady.com" target="_blank" class="project-link">زيارة الموقع</a>
+            <h2 class="section-title">عن EXD | Elawaady XDigital</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>
+                        منصة متكاملة للخدمات الرقمية والتسويق الاحترافي، مؤسسة من قبل <strong>أحمد العوضي</strong> بهدف توفير أفضل الحلول الرقمية لرواد الأعمال والشركات.
+                    </p>
+                    <p>
+                        نقدم خدمات متنوعة في مجال الخدمات الرقمية والتسويق والذكاء الاصطناعي، مع التركيز على الاحترافية والوساطة الآمنة والهوية البصرية القوية.
+                    </p>
+                    <p>
+                        هدفنا بناء أكبر منصة عربية للخدمات الرقمية بمعايير عالمية، مع ضمان حقوق جميع الأطراف والتوسع إلى الأسواق العالمية تحت علامة NewlyNow.com.
+                    </p>
                 </div>
-                <div class="project-card">
-                    <h3>NewlyNow.com</h3>
-                    <p>منصة عالمية للخدمات الرقمية مع توسع دولي قوي</p>
-                    <a href="https://newlynow.com" target="_blank" class="project-link">زيارة الموقع</a>
-                </div>
-                <div class="project-card">
-                    <h3>المجتمعات الرقمية</h3>
-                    <p>شبكة كبيرة تضم عشرات الجروبات على Facebook و WhatsApp و Telegram</p>
-                    <a href="#contact" class="project-link">تواصل معي</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Premium Domains Section -->
-    <section id="domains" class="domains">
-        <div class="container">
-            <h2 class="section-title">الدومينات الاستثمارية المميزة</h2>
-
-            <div class="domains-category">
-                <h3>🤖 AI & Automation</h3>
-                <div class="domains-list">
-                    <div class="domain-item">Automations.run</div>
-                    <div class="domain-item">WorkflowAI.run</div>
-                    <div class="domain-item">Multistep.run</div>
-                    <div class="domain-item">Skillspector.run</div>
-                </div>
-            </div>
-
-            <div class="domains-category">
-                <h3>💼 AI / SaaS / Tech</h3>
-                <div class="domains-list">
-                    <div class="domain-item">GoYouAI.com</div>
-                    <div class="domain-item">GemsPrompt.com</div>
-                </div>
-            </div>
-
-            <div class="domains-category">
-                <h3>✨ Brandable</h3>
-                <div class="domains-list">
-                    <div class="domain-item">NewlyNow.com</div>
-                    <div class="domain-item">SphinxNow.com</div>
-                    <div class="domain-item">Mediaxify.com</div>
-                    <div class="domain-item">ProxyPronto.com</div>
-                    <div class="domain-item">SeoRanklyAI.com</div>
-                    <div class="domain-item">Pointso.com</div>
-                    <div class="domain-item">NTN5.com</div>
-                    <div class="domain-item">NYCVideoStudio.com</div>
-                    <div class="domain-item">VeoQuest.com</div>
-                </div>
-            </div>
-
-            <div class="domains-category">
-                <h3>🏥 Health</h3>
-                <div class="domains-list">
-                    <div class="domain-item">2RunHealth.com</div>
-                    <div class="domain-item">VIPDoctorPro.com</div>
-                    <div class="domain-item">VIPDoctor.online</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Skills Section -->
-    <section id="skills" class="skills">
-        <div class="container">
-            <h2 class="section-title">المهارات والتخصصات</h2>
-            <div class="skills-grid">
-                <div class="skill-group">
-                    <h3>التسويق الرقمي</h3>
-                    <ul>
-                        <li>Meta Ads (Facebook & Instagram)</li>
-                        <li>Google Ads</li>
-                        <li>TikTok Ads</li>
-                        <li>Snapchat Ads</li>
-                    </ul>
-                </div>
-                <div class="skill-group">
-                    <h3>وسائل التواصل</h3>
-                    <ul>
-                        <li>إدارة المحتوى</li>
-                        <li>بيع وشراء الحسابات</li>
-                        <li>تحقيق شروط الربح</li>
-                        <li>Media Buying</li>
-                    </ul>
-                </div>
-                <div class="skill-group">
-                    <h3>الذكاء الاصطناعي</h3>
-                    <ul>
-                        <li>AI Tools</li>
-                        <li>AI Agents</li>
-                        <li>Automation</li>
-                        <li>Workflow Development</li>
-                    </ul>
-                </div>
-                <div class="skill-group">
-                    <h3>التطوير والتصميم</h3>
-                    <ul>
-                        <li>تطوير المواقع</li>
-                        <li>تصميم الهوية البصرية</li>
-                        <li>Branding</li>
-                        <li>متاجر إلكترونية</li>
-                    </ul>
-                </div>
-                <div class="skill-group">
-                    <h3>إدارة المجتمعات</h3>
-                    <ul>
-                        <li>إدارة الفرق</li>
-                        <li>بناء المجتمعات</li>
-                        <li>Community Management</li>
-                        <li>Content Recycling</li>
-                    </ul>
-                </div>
-                <div class="skill-group">
-                    <h3>الاستثمار الرقمي</h3>
-                    <ul>
-                        <li>بيع الدومينات</li>
-                        <li>Domain Investing</li>
-                        <li>Asset Flipping</li>
-                        <li>Market Analysis</li>
-                    </ul>
+                <div class="about-features">
+                    <div class="feature-item">
+                        <i class="fas fa-check"></i>
+                        <span>وساطة موثوقة وآمنة 100%</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check"></i>
+                        <span>دعم متخصص 24/7</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check"></i>
+                        <span>عقود وتوثيق كامل</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check"></i>
+                        <span>خدمات احترافية ومتنوعة</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check"></i>
+                        <span>فريق متخصص وخبرة عالية</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check"></i>
+                        <span>تجربة مستخدم سلسة وسهلة</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -269,66 +358,63 @@
     <!-- Contact Section -->
     <section id="contact" class="contact">
         <div class="container">
-            <h2 class="section-title">التواصل معي</h2>
+            <h2 class="section-title">تواصل معنا الآن</h2>
 
-            <div class="contact-grid">
-                <div class="contact-card">
-                    <i class="fas fa-globe"></i>
-                    <h3>الموقع الرسمي</h3>
-                    <a href="https://elawaady.com" target="_blank">elawaady.com</a>
-                </div>
-                <div class="contact-card">
-                    <i class="fab fa-telegram"></i>
-                    <h3>Telegram</h3>
-                    <a href="https://t.me/elawaadyofficial" target="_blank">@elawaadyofficial</a>
-                </div>
-                <div class="contact-card">
-                    <i class="fab fa-whatsapp"></i>
-                    <h3>WhatsApp</h3>
-                    <a href="https://wa.me/201055578777" target="_blank">+20 105 557 8777</a>
-                </div>
-                <div class="contact-card">
-                    <i class="fab fa-facebook"></i>
-                    <h3>Messenger</h3>
-                    <a href="https://m.me/eIawaady.official" target="_blank">Elawaady Official</a>
-                </div>
-                <div class="contact-card">
-                    <i class="fab fa-linkedin"></i>
-                    <h3>LinkedIn</h3>
-                    <a href="https://www.linkedin.com/in/elawaadyofficial" target="_blank">elawaadyofficial</a>
-                </div>
-                <div class="contact-card">
-                    <i class="fab fa-x-twitter"></i>
-                    <h3>X (Twitter)</h3>
-                    <a href="https://x.com/eIawaadyoffici" target="_blank">@eIawaadyoffici</a>
+            <div class="contact-cta">
+                <p class="contact-subtitle">هل تريد خدمة معينة؟ تواصل معنا عبر أحد القنوات أدناه</p>
+
+                <div class="contact-methods">
+                    <a href="https://wa.me/201055578777" target="_blank" class="contact-method whatsapp">
+                        <i class="fab fa-whatsapp"></i>
+                        <span>WhatsApp</span>
+                        <p>+20 105 557 8777</p>
+                    </a>
+                    <a href="https://t.me/elawaadyofficial" target="_blank" class="contact-method telegram">
+                        <i class="fab fa-telegram"></i>
+                        <span>Telegram</span>
+                        <p>@elawaadyofficial</p>
+                    </a>
+                    <a href="https://m.me/eIawaady.official" target="_blank" class="contact-method messenger">
+                        <i class="fab fa-facebook"></i>
+                        <span>Messenger</span>
+                        <p>Elawaady Official</p>
+                    </a>
+                    <a href="https://elawaady.com" target="_blank" class="contact-method website">
+                        <i class="fas fa-globe"></i>
+                        <span>الموقع الرسمي</span>
+                        <p>elawaady.com</p>
+                    </a>
                 </div>
             </div>
 
-            <div class="communities">
+            <div class="communities-section">
                 <h3>المجتمعات الرقمية</h3>
-                <div class="community-tabs">
-                    <div class="tab-content">
-                        <h4>جروبات Facebook</h4>
+                <div class="communities-grid">
+                    <div class="community-card">
+                        <h4><i class="fab fa-facebook"></i> Facebook</h4>
                         <ul>
                             <li><a href="https://www.facebook.com/share/g/19AfKTyFiV/" target="_blank">جروب EXD الرسمي</a></li>
                             <li><a href="https://www.facebook.com/groups/556386908691748/" target="_blank">مجتمع المحتوى</a></li>
-                            <li><a href="https://www.facebook.com/groups/190630403951581/" target="_blank">جروب السوشيال ميديا</a></li>
+                            <li><a href="https://www.facebook.com/groups/190630403951581/" target="_blank">السوشيال ميديا</a></li>
                             <li><a href="https://www.facebook.com/groups/youtube.chaannels/" target="_blank">قنوات YouTube</a></li>
                         </ul>
                     </div>
-                    <div class="tab-content">
-                        <h4>جروبات WhatsApp</h4>
+                    <div class="community-card">
+                        <h4><i class="fab fa-whatsapp"></i> WhatsApp</h4>
                         <ul>
                             <li><a href="https://chat.whatsapp.com/Kbca2x0tfUPGgJgEQK2GDd" target="_blank">الجروب الأول</a></li>
                             <li><a href="https://chat.whatsapp.com/FnHIDnpiPUd30b0JPU3oWn" target="_blank">الجروب الثاني</a></li>
                             <li><a href="https://chat.whatsapp.com/BHS6Hz9hCXKIcbIgPYKXea" target="_blank">الجروب الثالث</a></li>
+                            <li><a href="https://whatsapp.com/channel/0029Van76joI1rckR74sH23U" target="_blank">القناة الرسمية</a></li>
                         </ul>
                     </div>
-                    <div class="tab-content">
-                        <h4>قنوات التواصل</h4>
+                    <div class="community-card">
+                        <h4><i class="fab fa-telegram"></i> Telegram</h4>
                         <ul>
-                            <li><a href="https://whatsapp.com/channel/0029Van76joI1rckR74sH23U" target="_blank">قناة WhatsApp</a></li>
-                            <li><a href="https://t.me/+LfFf0qwV9Oc5MjQ0" target="_blank">قناة Telegram</a></li>
+                            <li><a href="https://t.me/elawaadyofficial" target="_blank">@elawaadyofficial</a></li>
+                            <li><a href="https://t.me/+LfFf0qwV9Oc5MjQ0" target="_blank">القناة الرسمية</a></li>
+                            <li><a href="https://t.me/+LfFf0qwV9Oc5MjQ0" target="_blank">مجتمع EXD</a></li>
+                            <li><a href="https://t.me/elawaadyofficial" target="_blank">البث المباشر</a></li>
                         </ul>
                     </div>
                 </div>
@@ -339,12 +425,32 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 أحمد العوضي - EXD | Elawaady XDigital. جميع الحقوق محفوظة.</p>
-            <div class="social-links">
-                <a href="https://facebook.com/elawaady.official" target="_blank"><i class="fab fa-facebook"></i></a>
-                <a href="https://x.com/eIawaadyoffici" target="_blank"><i class="fab fa-x-twitter"></i></a>
-                <a href="https://linkedin.com/in/elawaadyofficial" target="_blank"><i class="fab fa-linkedin"></i></a>
-                <a href="https://t.me/elawaadyofficial" target="_blank"><i class="fab fa-telegram"></i></a>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>EXD | Elawaady XDigital</h4>
+                    <p>منصة متكاملة للخدمات الرقمية والتسويق الاحترافي</p>
+                </div>
+                <div class="footer-section">
+                    <h4>الروابط السريعة</h4>
+                    <ul>
+                        <li><a href="#home">الرئيسية</a></li>
+                        <li><a href="#services">الخدمات</a></li>
+                        <li><a href="#about">عن المنصة</a></li>
+                        <li><a href="#contact">التواصل</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>وسائل التواصل</h4>
+                    <div class="social-icons">
+                        <a href="https://wa.me/201055578777" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://t.me/elawaadyofficial" target="_blank" title="Telegram"><i class="fab fa-telegram"></i></a>
+                        <a href="https://facebook.com/elawaady.official" target="_blank" title="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="https://linkedin.com/in/elawaadyofficial" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 EXD | Elawaady XDigital. جميع الحقوق محفوظة.</p>
             </div>
         </div>
     </footer>

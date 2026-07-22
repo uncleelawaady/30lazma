@@ -1,4 +1,6 @@
-// Smooth scroll behavior for navigation links
+// EXD | Elawaady XDigital - JavaScript
+
+// Smooth scroll behavior
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
@@ -14,94 +16,15 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 // Navbar scroll effect
 const navbar = document.querySelector('.navbar');
-let lastScrollTop = 0;
-
 window.addEventListener('scroll', () => {
-    let scrollTop = window.scrollY || document.documentElement.scrollTop;
-
-    if (scrollTop > 100) {
-        navbar.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.15)';
+    if (window.scrollY > 100) {
+        navbar.style.boxShadow = '0 8px 30px rgba(0, 0, 0, 0.3)';
     } else {
-        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
-    }
-
-    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-});
-
-// Language Toggle
-let currentLanguage = 'ar';
-
-function toggleLanguage() {
-    const langBtn = document.getElementById('langBtn');
-    const html = document.documentElement;
-
-    if (currentLanguage === 'ar') {
-        currentLanguage = 'en';
-        html.lang = 'en';
-        html.dir = 'ltr';
-        langBtn.textContent = 'العربية';
-
-        // Translate content
-        document.querySelector('.logo h1').textContent = 'EXD';
-        document.querySelector('.logo p').textContent = 'Elawaady XDigital';
-
-        // Navigation
-        const navLinks = document.querySelectorAll('.nav-links a');
-        const navLabels = ['Home', 'About', 'Services', 'Projects', 'Domains', 'Contact'];
-        navLinks.forEach((link, index) => {
-            link.textContent = navLabels[index];
-        });
-
-        // Hero Section
-        document.querySelector('.hero-title').textContent = 'Ahmed Elawaady';
-        document.querySelector('.hero-subtitle').textContent = 'Founder of EXD | Elawaady XDigital';
-        document.querySelector('.hero-description').textContent = 'Specialized in Digital Services, Marketing & Artificial Intelligence';
-
-        const heroButtons = document.querySelectorAll('.hero-buttons .btn');
-        heroButtons[0].textContent = 'Contact Me';
-        heroButtons[1].textContent = 'My Services';
-
-        // Section Titles
-        const sectionTitles = document.querySelectorAll('.section-title');
-        const titleLabels = ['About Me', 'Main Services', 'Main Projects', 'Premium Domains', 'Skills & Expertise', 'Contact Me'];
-        sectionTitles.forEach((title, index) => {
-            title.textContent = titleLabels[index];
-        });
-
-        // About Section
-        const aboutTexts = document.querySelectorAll('.about-text p');
-        aboutTexts[0].innerHTML = 'I\'m Ahmed Elawaady, founder and owner of <strong>EXD | Elawaady XDigital</strong>, a specialized platform and store for digital services, digital marketing and artificial intelligence.';
-        aboutTexts[1].innerHTML = 'I have been working in the field of digital services for years and focus on building a strong Arabic brand with global expansion through the <strong>NewlyNow.com</strong> project.';
-        aboutTexts[2].innerHTML = 'My goal is to build the largest Arabic platform for digital services based on professionalism, safe brokerage and strong brand identity, with expansion to global markets.';
-
-        const stats = document.querySelectorAll('.stat p');
-        stats[0].textContent = 'Years of Experience';
-        stats[1].textContent = 'Successful Projects';
-        stats[2].textContent = 'Investment Domains';
-
-    } else {
-        currentLanguage = 'ar';
-        html.lang = 'ar';
-        html.dir = 'rtl';
-        langBtn.textContent = 'English';
-
-        // Reset to Arabic
-        location.reload();
-    }
-
-    // Save preference
-    localStorage.setItem('language', currentLanguage);
-}
-
-// Load saved language preference
-window.addEventListener('load', () => {
-    const savedLanguage = localStorage.getItem('language');
-    if (savedLanguage && savedLanguage !== currentLanguage) {
-        toggleLanguage();
+        navbar.style.boxShadow = 'none';
     }
 });
 
-// Intersection Observer for fade-in animations
+// Intersection Observer for animations
 const observerOptions = {
     threshold: 0.1,
     rootMargin: '0px 0px -100px 0px'
@@ -117,48 +40,51 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
-// Observe service cards
-document.querySelectorAll('.service-card, .project-card, .skill-group').forEach(el => {
+// Observe cards
+document.querySelectorAll('.service-card, .stat-card, .community-card, .contact-method').forEach(el => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(20px)';
     el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
     observer.observe(el);
 });
 
-// Smooth counter animation for stats
-function animateCounter(element, finalValue, duration = 2000) {
-    let startValue = 0;
-    const increment = finalValue / (duration / 50);
-    const counter = setInterval(() => {
-        startValue += increment;
-        if (startValue >= finalValue) {
-            element.textContent = finalValue + '+';
-            clearInterval(counter);
-        } else {
-            element.textContent = Math.floor(startValue) + '+';
+// Smooth number animation for stats
+function animateValue(element, start, end, duration = 2000) {
+    let startTimestamp = null;
+    const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        const value = Math.floor(progress * (end - start) + start);
+        element.textContent = value + '+';
+        if (progress < 1) {
+            window.requestAnimationFrame(step);
         }
-    }, 50);
+    };
+    window.requestAnimationFrame(step);
 }
 
-// Trigger counter animation when stats section is visible
+// Trigger animations when stats are visible
 const statsObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
-            document.querySelectorAll('.stat h3').forEach((stat, index) => {
-                const value = parseInt(stat.textContent);
-                animateCounter(stat, value);
+            document.querySelectorAll('.stat-value').forEach((stat) => {
+                const text = stat.textContent;
+                const number = parseInt(text);
+                if (!isNaN(number)) {
+                    animateValue(stat, 0, number);
+                }
             });
             statsObserver.unobserve(entry.target);
         }
     });
 }, { threshold: 0.5 });
 
-const aboutSection = document.querySelector('.about');
-if (aboutSection) {
-    statsObserver.observe(aboutSection);
+const statsSection = document.querySelector('.stats');
+if (statsSection) {
+    statsObserver.observe(statsSection);
 }
 
-// Active navigation link
+// Active navigation highlight
 window.addEventListener('scroll', () => {
     let current = '';
     const sections = document.querySelectorAll('section');
@@ -172,17 +98,17 @@ window.addEventListener('scroll', () => {
     });
 
     document.querySelectorAll('.nav-links a').forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href').slice(1) === current) {
-            link.style.color = '#fbbf24';
+        const linkHref = link.getAttribute('href').slice(1);
+        if (linkHref === current) {
+            link.style.color = 'var(--orange)';
         } else {
-            link.style.color = 'white';
+            link.style.color = 'var(--text-secondary)';
         }
     });
 });
 
-// Add ripple effect to buttons
-document.querySelectorAll('.btn, .project-link').forEach(button => {
+// Ripple effect on buttons
+document.querySelectorAll('.btn').forEach(button => {
     button.addEventListener('click', function (e) {
         const ripple = document.createElement('span');
         const rect = this.getBoundingClientRect();
@@ -201,10 +127,10 @@ document.querySelectorAll('.btn, .project-link').forEach(button => {
     });
 });
 
-// Add ripple animation
+// Add ripple animation styles
 const style = document.createElement('style');
 style.textContent = `
-    .btn, .project-link {
+    .btn {
         position: relative;
         overflow: hidden;
     }
@@ -227,32 +153,34 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// Mobile menu toggle
-function setupMobileMenu() {
-    const navbar = document.querySelector('.navbar');
-    const navLinks = document.querySelector('.nav-links');
-
-    if (window.innerWidth <= 768) {
-        navLinks.style.display = 'none';
-    }
-}
-
-window.addEventListener('resize', setupMobileMenu);
-setupMobileMenu();
-
-// Parallax effect for hero section
+// Parallax effect on scroll
 window.addEventListener('scroll', () => {
-    const hero = document.querySelector('.hero');
-    if (hero) {
-        const scrollPosition = window.scrollY;
-        hero.style.backgroundPosition = `center ${scrollPosition * 0.5}px`;
+    const scrolled = window.scrollY;
+    const parallaxElements = document.querySelectorAll('[data-parallax]');
+    parallaxElements.forEach(element => {
+        const speed = element.getAttribute('data-parallax');
+        element.style.transform = `translateY(${scrolled * speed}px)`;
+    });
+});
+
+// Prevent layout shift
+document.addEventListener('DOMContentLoaded', () => {
+    // Add fade-in animation to page
+    document.body.style.animation = 'fadeIn 0.5s ease-in';
+});
+
+const fadeInStyle = document.createElement('style');
+fadeInStyle.textContent = `
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
     }
-});
+`;
+document.head.appendChild(fadeInStyle);
 
-// Add animation to floating boxes
-const boxes = document.querySelectorAll('.floating-box');
-boxes.forEach((box, index) => {
-    box.style.animationDelay = `${index * 2}s`;
-});
-
-console.log('Ahmed Elawaady Portfolio loaded successfully! 🚀');
+// Log
+console.log('🚀 EXD | Elawaady XDigital Portfolio Loaded Successfully!');
