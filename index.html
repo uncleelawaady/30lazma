@@ -24,7 +24,7 @@
                 <li><a href="#about">من أنا</a></li>
                 <li><a href="#services">الخدمات</a></li>
                 <li><a href="#mediation">الوساطة</a></li>
-                <li><a href="#brands">المشاريع</a></li>
+                <li><a href="#providers">مقدمو الخدمات</a></li>
                 <li><a href="#communities">المجتمعات</a></li>
                 <li><a href="#contact">التواصل</a></li>
             </ul>
@@ -46,7 +46,7 @@
             </p>
             <div class="hero-actions">
                 <a href="https://elawaady.com" target="_blank" rel="noopener" class="btn btn-gold"><i class="fas fa-store"></i> المتجر الرسمي</a>
-                <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="btn btn-outline"><i class="fab fa-whatsapp"></i> واتساب</a>
+                <a href="https://wa.me/201055578777?text=%D8%A3%D9%87%D9%84%D8%A7%D9%8B%D8%8C%20%D8%B9%D8%A7%D9%88%D8%B2%20%D8%A3%D8%B3%D8%AA%D9%81%D8%B3%D8%B1%20%D8%B9%D9%86%20%D8%AE%D8%AF%D9%85%D8%A9" target="_blank" rel="noopener" class="btn btn-outline"><i class="fab fa-whatsapp"></i> واتساب</a>
                 <a href="https://t.me/elawaadyofficial" target="_blank" rel="noopener" class="btn btn-outline"><i class="fab fa-telegram"></i> تيليجرام</a>
             </div>
             <div class="hero-badges">
@@ -129,59 +129,74 @@
             <div class="section-head">
                 <p class="section-eyebrow">الخدمات</p>
                 <h2>ماذا تقدم <span class="gold-text">المنظومة</span>؟</h2>
+                <p class="section-sub">اضغط على أي خدمة لعرض التفاصيل الكاملة وطلبها مباشرة.</p>
             </div>
             <div class="services-grid">
-                <div class="card service-card">
+                <button class="card service-card" data-service="social">
                     <div class="service-icon"><i class="fas fa-hashtag"></i></div>
                     <h3>خدمات السوشيال ميديا</h3>
-                    <p>متابعين، لايكات، مشاهدات، تعليقات، شير، أعضاء جروبات، وخدمات الصفحات لجميع المنصات.</p>
-                </div>
-                <div class="card service-card">
-                    <div class="service-icon"><i class="fas fa-robot"></i></div>
-                    <h3>الذكاء الاصطناعي والأتمتة</h3>
-                    <p>AI Agents وWorkflow وAutomation وحلول برمجية ذكية لتشغيل الأعمال وتوفير الوقت.</p>
-                </div>
-                <div class="card service-card">
-                    <div class="service-icon"><i class="fas fa-key"></i></div>
-                    <h3>اشتراكات AI</h3>
-                    <p>ChatGPT Plus، Claude API وClaude Code، Gemini، Adobe AI، ElevenLabs، Canva AI، Perplexity وغيرها.</p>
-                </div>
-                <div class="card service-card">
+                    <p>خدمات متكاملة لإدارة وتنمية حسابات السوشيال ميديا على مختلف المنصات.</p>
+                    <span class="service-more">التفاصيل الكاملة <i class="fas fa-arrow-left"></i></span>
+                </button>
+                <button class="card service-card" data-service="accounts">
                     <div class="service-icon"><i class="fas fa-right-left"></i></div>
                     <h3>بيع وشراء الحسابات</h3>
-                    <p>حسابات TikTok وFacebook وInstagram وSnapchat وX وYouTube، مع نقل ملكية كامل وموثق.</p>
-                </div>
-                <div class="card service-card">
-                    <div class="service-icon"><i class="fas fa-bullhorn"></i></div>
-                    <h3>إدارة الحملات الإعلانية</h3>
-                    <p>Meta Ads • Google Ads • TikTok Ads • Snapchat Ads — إدارة احترافية بنتائج قابلة للقياس.</p>
-                </div>
-                <div class="card service-card">
-                    <div class="service-icon"><i class="fas fa-circle-check"></i></div>
-                    <h3>توثيق الحسابات</h3>
-                    <p>توثيق حسابات Facebook وInstagram وTikTok وX، مع استرجاع وتأمين الحسابات.</p>
-                </div>
-                <div class="card service-card">
-                    <div class="service-icon"><i class="fas fa-sack-dollar"></i></div>
-                    <h3>تحقيق شروط الربح</h3>
-                    <p>تحقيق شروط الربح لمنصات Facebook وTikTok ودعم صناع المحتوى وحل مشاكل المخالفات.</p>
-                </div>
-                <div class="card service-card">
+                    <p>بيع وشراء حسابات وصفحات وقنوات موثقة أو مفعلة ربح مع نقل ملكية آمن.</p>
+                    <span class="service-more">التفاصيل الكاملة <i class="fas fa-arrow-left"></i></span>
+                </button>
+                <button class="card service-card" data-service="ai-subs">
+                    <div class="service-icon"><i class="fas fa-key"></i></div>
+                    <h3>اشتراكات AI</h3>
+                    <p>اشتراكات وأدوات ذكاء اصطناعي للأفراد وصناع المحتوى والشركات.</p>
+                    <span class="service-more">التفاصيل الكاملة <i class="fas fa-arrow-left"></i></span>
+                </button>
+                <button class="card service-card" data-service="automation">
+                    <div class="service-icon"><i class="fas fa-robot"></i></div>
+                    <h3>الذكاء الاصطناعي والأتمتة</h3>
+                    <p>حلول AI وAutomation وWorkflow لتشغيل الأعمال وتوفير الوقت.</p>
+                    <span class="service-more">التفاصيل الكاملة <i class="fas fa-arrow-left"></i></span>
+                </button>
+                <button class="card service-card" data-service="web">
                     <div class="service-icon"><i class="fas fa-code"></i></div>
                     <h3>المواقع والأنظمة</h3>
-                    <p>إنشاء المواقع والمتاجر الإلكترونية، بوتات Telegram، أنظمة WhatsApp، وخدمات API.</p>
-                </div>
-                <div class="card service-card">
+                    <p>إنشاء مواقع ومتاجر إلكترونية وبوتات وأنظمة رقمية مخصصة.</p>
+                    <span class="service-more">التفاصيل الكاملة <i class="fas fa-arrow-left"></i></span>
+                </button>
+                <button class="card service-card" data-service="monetization">
+                    <div class="service-icon"><i class="fas fa-sack-dollar"></i></div>
+                    <h3>تحقيق شروط الربح</h3>
+                    <p>دعم صناع المحتوى لتحقيق شروط الربح وحل مشاكل الحسابات والمخالفات.</p>
+                    <span class="service-more">التفاصيل الكاملة <i class="fas fa-arrow-left"></i></span>
+                </button>
+                <button class="card service-card" data-service="verification">
+                    <div class="service-icon"><i class="fas fa-circle-check"></i></div>
+                    <h3>توثيق الحسابات</h3>
+                    <p>خدمات توثيق الحسابات الشخصية والتجارية ودعم الظهور الرسمي.</p>
+                    <span class="service-more">التفاصيل الكاملة <i class="fas fa-arrow-left"></i></span>
+                </button>
+                <button class="card service-card" data-service="ads">
+                    <div class="service-icon"><i class="fas fa-bullhorn"></i></div>
+                    <h3>إدارة الحملات الإعلانية</h3>
+                    <p>إدارة احترافية لحملات Meta Ads وGoogle Ads وTikTok Ads وSnapchat Ads.</p>
+                    <span class="service-more">التفاصيل الكاملة <i class="fas fa-arrow-left"></i></span>
+                </button>
+                <button class="card service-card" data-service="mediation-card">
                     <div class="service-icon"><i class="fas fa-handshake"></i></div>
                     <h3>الوساطة الرقمية</h3>
-                    <p>وساطة آمنة بين البائع والمشتري بوسيط معتمد، وتوثيق كامل لكل مراحل الصفقة.</p>
-                </div>
-                <div class="card service-card">
+                    <p>وساطة آمنة بين البائع والمشتري لحفظ حقوق جميع الأطراف.</p>
+                    <span class="service-more">التفاصيل الكاملة <i class="fas fa-arrow-left"></i></span>
+                </button>
+                <button class="card service-card" data-service="domains">
                     <div class="service-icon"><i class="fas fa-globe"></i></div>
                     <h3>الدومينات الاستثمارية</h3>
-                    <p>استثمار وبيع أسماء النطاقات المميزة، وبناء العلامات التجارية والهوية البصرية.</p>
-                </div>
+                    <p>استثمار وبيع أسماء نطاقات مميزة لبناء علامات تجارية قوية.</p>
+                    <span class="service-more">التفاصيل الكاملة <i class="fas fa-arrow-left"></i></span>
+                </button>
             </div>
+            <p class="services-note">
+                كل خدمة داخل EXD | Elawaady XDigital يتم التعامل معها بنظام واضح، ومراجعة دقيقة،
+                ووساطة آمنة عند الحاجة، لضمان تجربة منظمة تحفظ حقوق جميع الأطراف.
+            </p>
         </div>
     </section>
 
@@ -192,33 +207,93 @@
                 <p class="section-eyebrow">نظام الوساطة الرسمي</p>
                 <h2>صفقات آمنة… <span class="gold-text">حقوق محفوظة</span></h2>
                 <p class="section-sub">
-                    المنصة ليست البائع ولا المشتري — بل وسيط منظم ومحايد بوسيط معتمد لكل صفقة،
-                    مع أرشفة تلقائية لجميع الرسائل والملفات والإثباتات على خوادم المنصة.
+                    جميع عمليات بيع وشراء الحسابات والصفحات والقنوات داخل EXD | Elawaady XDigital
+                    تتم من خلال نظام وساطة رسمي بإشراف <strong>أحمد العوضي</strong> بصفته وسيطًا رسميًا
+                    وصاحب المنصة، لحماية حقوق البائع والمشتري وتنظيم الصفقة من البداية للنهاية.
                 </p>
             </div>
-            <div class="flow">
-                <div class="flow-step"><span>1</span>فتح طلب وساطة</div>
-                <div class="flow-step"><span>2</span>موافقة الطرفين</div>
-                <div class="flow-step"><span>3</span>تعيين وسيط معتمد</div>
-                <div class="flow-step"><span>4</span>تأكيد الدفع</div>
-                <div class="flow-step"><span>5</span>التنفيذ ونقل الملكية</div>
-                <div class="flow-step"><span>6</span>تأكيد الاستلام</div>
-                <div class="flow-step"><span>7</span>تحويل المستحقات</div>
-                <div class="flow-step"><span>8</span>التقييم والأرشفة</div>
+
+            <div class="mediation-desc card">
+                <p>
+                    عند رغبة العميل في شراء حساب أو صفحة أو قناة، يتم إنشاء طلب داخل المنصة ثم تحويله
+                    إلى واتساب أحمد العوضي بتفاصيل الأوردر. بعد ذلك يتم فتح <strong>جروب وساطة</strong>
+                    يضم العوضي والمشتري والبائع لمراجعة كل التفاصيل قبل الدفع.
+                </p>
+                <p>
+                    داخل الجروب يتم تأكيد بيانات الأصل الرقمي، السعر النهائي، عمولة الوسيط، صور الإثبات،
+                    وقت التسليم، وطريقة نقل الملكية. <strong>لا يتم تحويل أي مبلغ للبائع إلا بعد إتمام
+                    التسليم وتأكيد الاستلام</strong> حسب شروط الاتفاق. أي تعامل خارج جروب الوساطة الرسمي
+                    يكون على مسؤولية أصحابه فقط.
+                </p>
             </div>
-            <div class="mediation-features">
-                <div class="mf"><i class="fas fa-user-shield"></i> وسيط معتمد لكل صفقة</div>
-                <div class="mf"><i class="fas fa-vault"></i> حماية الأموال حتى اكتمال التنفيذ</div>
-                <div class="mf"><i class="fas fa-box-archive"></i> أرشفة تلقائية للرسائل والملفات</div>
-                <div class="mf"><i class="fas fa-scale-balanced"></i> إدارة احترافية للنزاعات</div>
-                <div class="mf"><i class="fas fa-file-shield"></i> توثيق جميع الإجراءات والإثباتات</div>
-                <div class="mf"><i class="fas fa-star"></i> تقييم الأطراف والوسيط بعد كل صفقة</div>
+
+            <h3 class="sub-title">خطوات الصفقة</h3>
+            <div class="flow">
+                <div class="flow-step"><span>1</span>إنشاء طلب داخل المنصة</div>
+                <div class="flow-step"><span>2</span>تحويل الطلب لواتساب العوضي</div>
+                <div class="flow-step"><span>3</span>فتح جروب وساطة (العوضي + المشتري + البائع)</div>
+                <div class="flow-step"><span>4</span>تأكيد البيانات والسعر والإثباتات</div>
+                <div class="flow-step"><span>5</span>إرسال المبلغ والعمولة للوسيط</div>
+                <div class="flow-step"><span>6</span>التسليم ونقل الملكية بإشراف الوسيط</div>
+                <div class="flow-step"><span>7</span>تأكيد الاستلام من المشتري</div>
+                <div class="flow-step"><span>8</span>تحويل مستحقات البائع وإغلاق الصفقة</div>
+            </div>
+
+            <h3 class="sub-title">قوانين الوساطة</h3>
+            <ol class="rules-list">
+                <li>الاتفاق على السعر يتم بين البائع والمشتري.</li>
+                <li>المبلغ والعمولة يتم إرسالهم إلى الوسيط.</li>
+                <li>لا يتم الدفع للبائع مباشرة إلا بمسؤولية المشتري.</li>
+                <li>التسليم يتم داخل جروب الوساطة فقط.</li>
+                <li>نقل الملكية يتم تحت إشراف أحمد العوضي.</li>
+                <li>لا يتم تحويل مستحقات البائع إلا بعد تأكيد الاستلام.</li>
+                <li>في حالة النزاع يتم تجميد المبلغ لحين حل المشكلة.</li>
+                <li>أي اتفاق خارج الجروب لا تتحمل المنصة مسؤوليته.</li>
+                <li>قنوات YouTube لها مدة أمان 7 أيام بسبب قواعد نقل الملكية.</li>
+                <li>قرار الوسيط يكون بناءً على الإثباتات والاتفاق المكتوب داخل الجروب.</li>
+            </ol>
+
+            <div class="mediation-cta">
+                <p>المحطة الأخيرة في كل صفقة… التواصل المباشر مع العوضي:</p>
+                <a href="https://wa.me/201055578777?text=%D8%A3%D9%87%D9%84%D8%A7%D9%8B%D8%8C%20%D8%B9%D8%A7%D9%88%D8%B2%20%D8%A3%D8%A8%D8%AF%D8%A3%20%D9%88%D8%B3%D8%A7%D8%B7%D8%A9%20%D8%A2%D9%85%D9%86%D8%A9" target="_blank" rel="noopener" class="btn btn-gold btn-lg">
+                    <i class="fab fa-whatsapp"></i> ابدأ وساطة آمنة الآن
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Providers ===== -->
+    <section class="section section-alt" id="providers">
+        <div class="container">
+            <div class="section-head">
+                <p class="section-eyebrow">مقدمو الخدمات</p>
+                <h2>مقدمو الخدمات <span class="gold-text">داخل المنصة</span></h2>
+                <p class="section-sub">
+                    نعمل على تنظيم شبكة من مقدمي الخدمات داخل EXD | Elawaady XDigital، بحيث يتم عرض
+                    الخدمات بعد المراجعة والتأكد من جدية مقدم الخدمة وجودة العرض.
+                    كل مقدم خدمة يتم تقييمه ومراجعته، ولا يتم نشر أي خدمة إلا بعد موافقة الإدارة.
+                </p>
+            </div>
+            <div class="community-tags">
+                <span>حسابات فيسبوك</span><span>صفحات فيسبوك</span><span>حسابات تيك توك</span>
+                <span>قنوات يوتيوب</span><span>حسابات إنستجرام</span><span>حسابات سناب شات</span>
+                <span>حسابات X</span><span>قنوات تيليجرام</span><span>حسابات إعلانية</span>
+                <span>Business Manager</span><span>اشتراكات AI</span><span>توثيق منصات</span>
+                <span>استرجاع حسابات</span><span>خدمات سوشيال ميديا</span><span>إعلانات ممولة</span>
+                <span>تصميم ومونتاج</span><span>كتابة محتوى</span><span>إدارة صفحات</span>
+                <span>بوتات</span><span>أنظمة Automation</span>
+            </div>
+            <div class="mediation-cta">
+                <p>مقدم خدمة؟ ابعت بياناتك للمراجعة والإضافة داخل القسم المناسب:</p>
+                <a href="https://wa.me/201055578777?text=%D8%A3%D9%87%D9%84%D8%A7%D9%8B%D8%8C%20%D8%A3%D9%86%D8%A7%20%D9%85%D9%82%D8%AF%D9%85%20%D8%AE%D8%AF%D9%85%D8%A9%20%D9%88%D8%B9%D8%A7%D9%88%D8%B2%20%D8%A3%D9%86%D8%B6%D9%85%20%D9%84%D9%84%D9%85%D9%86%D8%B5%D8%A9" target="_blank" rel="noopener" class="btn btn-outline btn-lg">
+                    <i class="fab fa-whatsapp"></i> تواصل مع المسؤول
+                </a>
             </div>
         </div>
     </section>
 
     <!-- ===== Brands ===== -->
-    <section class="section section-alt" id="brands">
+    <section class="section" id="brands">
         <div class="container">
             <div class="section-head">
                 <p class="section-eyebrow">المشاريع والعلامات</p>
@@ -245,34 +320,58 @@
     </section>
 
     <!-- ===== Communities ===== -->
-    <section class="section" id="communities">
+    <section class="section section-alt" id="communities">
         <div class="container">
             <div class="section-head">
                 <p class="section-eyebrow">المجتمعات الرقمية</p>
                 <h2>شبكة مجتمعات <span class="gold-text">بملايين الأعضاء</span></h2>
-                <p class="section-sub">من أشهر الجروبات والمجتمعات التي أؤسسها وأديرها:</p>
+                <p class="section-sub">انضم لأي جروب من هنا مباشرة — كل جروب متخصص في مجاله.</p>
             </div>
-            <div class="community-tags">
-                <span>مليون إعلان</span>
-                <span>سعر الدولار اليوم</span>
-                <span>عملاء البنك الأهلي المصري</span>
-                <span>InstaPay Egypt</span>
-                <span>أسرار الإعلانات الممولة</span>
-                <span>إعلانات ممولة</span>
-                <span>أفكار مشاريع مربحة</span>
-                <span>بيع وشراء حسابات تيك توك</span>
-                <span>Google Gemini</span>
-                <span>Snapchat</span>
-                <span>دعم الصفحات</span>
-                <span>قنوات يوتيوب</span>
+
+            <h3 class="sub-title"><i class="fab fa-facebook"></i> جروبات الفيسبوك</h3>
+            <div class="groups-grid">
+                <a href="https://www.facebook.com/share/g/19AfKTyFiV/" target="_blank" rel="noopener" class="group-btn"><i class="fab fa-facebook-f"></i> عرض وطلب</a>
+                <a href="https://www.facebook.com/groups/556386908691748/" target="_blank" rel="noopener" class="group-btn"><i class="fab fa-facebook-f"></i> مليون إعلان</a>
+                <a href="https://www.facebook.com/groups/190630403951581/" target="_blank" rel="noopener" class="group-btn"><i class="fab fa-facebook-f"></i> n8n Automation</a>
+                <a href="https://www.facebook.com/groups/sonata0ff/" target="_blank" rel="noopener" class="group-btn"><i class="fab fa-facebook-f"></i> إعلانات جوجل Google Ads</a>
+                <a href="https://www.facebook.com/groups/vodafoon.cash/" target="_blank" rel="noopener" class="group-btn"><i class="fab fa-facebook-f"></i> تحقيق أرباح فيسبوك وتيك توك</a>
+                <a href="https://www.facebook.com/groups/ealanaat.momawala/" target="_blank" rel="noopener" class="group-btn"><i class="fab fa-facebook-f"></i> Elawaady Ads</a>
+                <a href="https://www.facebook.com/groups/1441686789880312/" target="_blank" rel="noopener" class="group-btn"><i class="fab fa-facebook-f"></i> Elawaady Snapchat</a>
+                <a href="https://www.facebook.com/groups/954788482995188/" target="_blank" rel="noopener" class="group-btn"><i class="fab fa-facebook-f"></i> Elawaady Instagram</a>
+                <a href="https://www.facebook.com/groups/daamsafahaat" target="_blank" rel="noopener" class="group-btn"><i class="fab fa-facebook-f"></i> إعلانات ميتا</a>
+                <a href="https://www.facebook.com/groups/moltaka.alhytan/" target="_blank" rel="noopener" class="group-btn"><i class="fab fa-facebook-f"></i> ملتقى الحيتان</a>
+                <a href="https://www.facebook.com/groups/916433822744503" target="_blank" rel="noopener" class="group-btn"><i class="fab fa-facebook-f"></i> Claude AI Community</a>
+                <a href="https://www.facebook.com/groups/sa7n.alaab" target="_blank" rel="noopener" class="group-btn"><i class="fab fa-facebook-f"></i> شحن ألعاب</a>
+                <a href="https://www.facebook.com/groups/26364546349860366/" target="_blank" rel="noopener" class="group-btn"><i class="fab fa-facebook-f"></i> أفكار مشاريع مربحة</a>
+                <a href="https://www.facebook.com/share/g/193wXQ21ET/" target="_blank" rel="noopener" class="group-btn"><i class="fab fa-facebook-f"></i> Elawaady XDigital</a>
+                <a href="https://www.facebook.com/groups/youtube.chaannels/" target="_blank" rel="noopener" class="group-btn"><i class="fab fa-facebook-f"></i> قنوات اليوتيوب</a>
+                <a href="https://www.facebook.com/groups/1803596119816899/" target="_blank" rel="noopener" class="group-btn"><i class="fab fa-facebook-f"></i> Elawaady TikTok 2</a>
+                <a href="https://www.facebook.com/share/g/1KZmvGXjjJ/" target="_blank" rel="noopener" class="group-btn"><i class="fab fa-facebook-f"></i> Elawaady إعلانات</a>
+                <a href="https://www.facebook.com/share/g/1JH6Hfk5oQ/" target="_blank" rel="noopener" class="group-btn"><i class="fab fa-facebook-f"></i> بيع وشراء حسابات تيك توك</a>
+                <a href="https://www.facebook.com/share/g/1LuGnzRdJg/" target="_blank" rel="noopener" class="group-btn"><i class="fab fa-facebook-f"></i> المصحة</a>
+                <a href="https://www.facebook.com/share/g/1BXFvevyGd/" target="_blank" rel="noopener" class="group-btn"><i class="fab fa-facebook-f"></i> One Piece</a>
+                <a href="https://www.facebook.com/share/g/18pinEkvrN/" target="_blank" rel="noopener" class="group-btn"><i class="fab fa-facebook-f"></i> كامبين</a>
+                <a href="https://www.facebook.com/share/g/18pbbxxK3s/" target="_blank" rel="noopener" class="group-btn"><i class="fab fa-facebook-f"></i> نصابين السوشيال ميديا</a>
+                <a href="https://www.facebook.com/share/g/1Gf42bBtgG/" target="_blank" rel="noopener" class="group-btn"><i class="fab fa-facebook-f"></i> ملوك المجال</a>
+                <a href="https://www.facebook.com/groups/543681334455914/" target="_blank" rel="noopener" class="group-btn"><i class="fab fa-facebook-f"></i> أسرار الإعلانات</a>
+                <a href="https://www.facebook.com/groups/1359960194756167/" target="_blank" rel="noopener" class="group-btn"><i class="fab fa-facebook-f"></i> أسرار الإعلانات الممولة 46K</a>
             </div>
+
+            <h3 class="sub-title"><i class="fab fa-whatsapp"></i> جروبات الواتساب</h3>
+            <div class="groups-grid">
+                <a href="https://chat.whatsapp.com/Kbca2x0tfUPGgJgEQK2GDd" target="_blank" rel="noopener" class="group-btn group-wa"><i class="fab fa-whatsapp"></i> مجتمع العوضي 1</a>
+                <a href="https://chat.whatsapp.com/FnHIDnpiPUd30b0JPU3oWn" target="_blank" rel="noopener" class="group-btn group-wa"><i class="fab fa-whatsapp"></i> مجتمع العوضي 2</a>
+                <a href="https://chat.whatsapp.com/BHS6Hz9hCXKIcbIgPYKXea" target="_blank" rel="noopener" class="group-btn group-wa"><i class="fab fa-whatsapp"></i> مجتمع العوضي 3</a>
+            </div>
+
+            <h3 class="sub-title"><i class="fas fa-bullhorn"></i> القنوات الرسمية</h3>
             <div class="community-cards">
                 <a href="https://whatsapp.com/channel/0029Van76joI1rckR74sH23U" target="_blank" rel="noopener" class="card ch-card ch-whatsapp">
                     <i class="fab fa-whatsapp"></i>
                     <h3>قناة الواتساب</h3>
                     <p>تابع آخر الخدمات والعروض أولًا بأول</p>
                 </a>
-                <a href="https://t.me/elawaadyofficial" target="_blank" rel="noopener" class="card ch-card ch-telegram">
+                <a href="https://t.me/+LfFf0qwV9Oc5MjQ0" target="_blank" rel="noopener" class="card ch-card ch-telegram">
                     <i class="fab fa-telegram"></i>
                     <h3>قناة التليجرام</h3>
                     <p>Elawaady Official — القناة الرسمية</p>
@@ -287,11 +386,12 @@
     </section>
 
     <!-- ===== Contact ===== -->
-    <section class="section section-alt" id="contact">
+    <section class="section" id="contact">
         <div class="container">
             <div class="section-head">
                 <p class="section-eyebrow">التواصل الرسمي</p>
                 <h2>جاهز <span class="gold-text">نشتغل</span>؟</h2>
+                <p class="section-sub">تواصل معنا لتحديد الخدمة المناسبة أو بدء صفقة آمنة تحت إشراف المنصة.</p>
             </div>
             <div class="contact-grid">
                 <a href="https://elawaady.com" target="_blank" rel="noopener" class="card contact-card">
@@ -333,6 +433,25 @@
             <p>© 2026 Ahmed Elawaady — EXD | Elawaady XDigital. جميع الحقوق محفوظة.</p>
         </div>
     </footer>
+
+    <!-- ===== Service Details Modal ===== -->
+    <div class="modal-overlay" id="serviceModal" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true">
+            <button class="modal-close" id="modalClose" aria-label="إغلاق"><i class="fas fa-xmark"></i></button>
+            <div class="modal-icon" id="modalIcon"><i class="fas fa-hashtag"></i></div>
+            <h3 class="modal-title" id="modalTitle"></h3>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-note">
+                كل خدمة داخل EXD | Elawaady XDigital يتم التعامل معها بنظام واضح، ومراجعة دقيقة،
+                ووساطة آمنة عند الحاجة.
+            </div>
+            <div class="modal-actions">
+                <a href="#" target="_blank" rel="noopener" class="btn btn-gold" id="modalOrder"><i class="fab fa-whatsapp"></i> اطلب الخدمة الآن</a>
+                <a href="#" target="_blank" rel="noopener" class="btn btn-outline" id="modalEscrow"><i class="fas fa-handshake"></i> ابدأ وساطة آمنة</a>
+            </div>
+            <p class="modal-cta-note">المحطة الأخيرة: تواصل مباشر مع العوضي على واتساب لإتمام طلبك.</p>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
