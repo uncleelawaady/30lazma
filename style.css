@@ -317,16 +317,17 @@ h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; line-height: 1.35; font-weight: 
     border: 1px solid var(--glass-brd);
     box-shadow: 0 24px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(255,45,170,.12);
 }
-/* transparent cutout: no frame, glow behind */
+/* transparent cutout: no frame, faded edges, glow behind */
 .founder-photo.cutout img {
     border: none; box-shadow: none; border-radius: 0;
-    position: relative; z-index: 2;
-    filter: drop-shadow(0 20px 40px rgba(0,0,0,.6));
+    position: relative; z-index: 2; filter: none;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 9%, #000 88%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 9%, #000 88%, transparent 100%);
 }
 .founder-glow {
-    position: absolute; z-index: 1; inset: 8% 12% 0 12%;
-    background: radial-gradient(60% 55% at 50% 45%, rgba(255,45,170,.35), rgba(123,44,255,.22) 55%, transparent 75%);
-    filter: blur(50px); border-radius: 50%;
+    position: absolute; z-index: 1; inset: 6% 8% 0 8%;
+    background: radial-gradient(58% 55% at 50% 42%, rgba(255,45,170,.3), rgba(123,44,255,.2) 55%, transparent 72%);
+    filter: blur(55px); border-radius: 50%;
 }
 .founder-photo.cutout { display: flex; justify-content: center; }
 
