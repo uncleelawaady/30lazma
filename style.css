@@ -277,8 +277,11 @@ h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; line-height: 1.35; font-weight: 
 @keyframes scrollRtl { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @keyframes scrollLtr { from { transform: translateX(-50%); } to { transform: translateX(0); } }
 .tcard {
-    flex: 0 0 auto; width: 320px; padding: 1.5rem; border-radius: 20px;
+    padding: 1.5rem; border-radius: 20px;
+    background: #111119; border: 1px solid var(--glass-brd);
+    transition: var(--tr);
 }
+.tcard:hover { transform: translateY(-4px); border-color: rgba(255,45,170,.4); }
 .tcard .stars { font-size: .82rem; }
 .tcard p { color: var(--text); font-size: .97rem; margin: .8rem 0 1.1rem; line-height: 1.7; min-height: 3.4em; }
 .tby { display: flex; align-items: center; gap: .7rem; }
@@ -308,6 +311,27 @@ h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; line-height: 1.35; font-weight: 
     border: 1px solid var(--glass-brd);
     box-shadow: 0 24px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(255,45,170,.12);
 }
+/* transparent cutout: no frame, glow behind */
+.founder-photo.cutout img {
+    border: none; box-shadow: none; border-radius: 0;
+    position: relative; z-index: 2;
+    filter: drop-shadow(0 20px 40px rgba(0,0,0,.6));
+}
+.founder-glow {
+    position: absolute; z-index: 1; inset: 8% 12% 0 12%;
+    background: radial-gradient(60% 55% at 50% 45%, rgba(255,45,170,.35), rgba(123,44,255,.22) 55%, transparent 75%);
+    filter: blur(50px); border-radius: 50%;
+}
+.founder-photo.cutout { display: flex; justify-content: center; }
+
+/* satisfaction meter */
+.sat-meter { margin: .4rem 0 1.6rem; max-width: 420px; }
+.sat-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: .35rem; }
+.sat-label { font-weight: 700; font-size: .92rem; color: var(--text); }
+.sat-label i { margin-inline-end: .4rem; }
+.sat-val { font-family: 'Cairo'; font-weight: 900; font-size: .95rem; color: var(--muted); }
+.sat-bar { height: 8px; border-radius: 999px; background: rgba(255,255,255,.06); overflow: hidden; margin-bottom: .9rem; }
+.sat-bar i { display: block; height: 100%; border-radius: 999px; }
 .founder-badge {
     position: absolute; bottom: 18px; inset-inline-start: 18px;
     display: inline-flex; align-items: center; gap: .5rem;

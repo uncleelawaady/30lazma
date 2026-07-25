@@ -41,7 +41,7 @@ function animate(el, end, dur) {
     }
     requestAnimationFrame(tick);
 }
-const counters = document.querySelectorAll('.stat-num[data-count]');
+const counters = document.querySelectorAll('[data-count]');
 const cio = new IntersectionObserver(entries => {
     entries.forEach(en => {
         if (en.isIntersecting) { animate(en.target, parseInt(en.target.dataset.count, 10), 1500); cio.unobserve(en.target); }
