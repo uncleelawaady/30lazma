@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أضف تقييمك | Elwaset.net</title>
-    <meta name="description" content="سجّل دخول بجوجل وشاركنا رأيك وتقييمك بعد إتمام الوساطة مع أحمد العوضي.">
+    <title>سجّل وقيّم | Elwaset.net</title>
+    <meta name="description" content="سجّل بجوجل أو برقم موبايلك وشاركنا تقييمك بعد إتمام الوساطة مع أحمد العوضي.">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -39,30 +39,45 @@
                 <div class="cat-hero-ico" style="background:linear-gradient(135deg,#FFD400,#FF2DAA);box-shadow:0 10px 30px -6px #FF2DAA"><i class="fas fa-star"></i></div>
                 <div>
                     <span class="eyebrow">رأيك يهمنا</span>
-                    <h1 class="grad-text">أضف تقييمك</h1>
+                    <h1 class="grad-text">سجّل وقيّم</h1>
                 </div>
             </div>
-            <p class="cat-hero-intro">تمت وساطتك على خير؟ سجّل دخول بحساب جوجل وشاركنا رأيك وتقييمك — بيظهر على الموقع بعد المراجعة.</p>
+            <p class="cat-hero-intro">سجّل بجوجل أو برقم موبايلك وشاركنا تقييمك — بيظهر على الموقع بعد المراجعة، وتفضل عميل عندنا نبعتلك عروضنا وخدماتنا.</p>
         </div>
     </header>
 
     <section class="section" style="padding-top:1rem">
         <div class="container" style="max-width:640px">
 
-            <!-- Sign-in gate -->
-            <div class="rev-form glass" id="signinBox" style="text-align:center">
-                <div class="rev-avatar-lg"><i class="fas fa-user-lock"></i></div>
-                <h3 style="margin:1rem 0 .4rem">سجّل دخول عشان تقيّم</h3>
-                <p style="color:var(--muted); margin-bottom:1.4rem">نستخدم تسجيل دخول جوجل لتأكيد إن التقييم من شخص حقيقي.</p>
+            <!-- Sign-in / register gate -->
+            <div class="rev-form" id="signinBox" style="text-align:center">
+                <div class="rev-avatar-lg"><i class="fas fa-user-plus"></i></div>
+                <h3 style="margin:1rem 0 .4rem">سجّل عشان تقيّم</h3>
+                <p style="margin-bottom:1.4rem">اختر طريقة التسجيل — بياناتك محفوظة وآمنة.</p>
+
                 <button class="btn-google" id="googleBtn">
                     <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIj48cGF0aCBmaWxsPSIjRUE0MzM1IiBkPSJNMjQgOS41YzMuNTQgMCA2LjcxIDEuMjIgOS4yMSAzLjZsNi44NS02Ljg1QzM1LjkgMi4zOCAzMC40NyAwIDI0IDAgMTQuNjIgMCA2LjUxIDUuMzggMi41NiAxMy4yMmw3Ljk4IDYuMTlDMTIuNDMgMTMuNzIgMTcuNzQgOS41IDI0IDkuNXoiLz48cGF0aCBmaWxsPSIjNDI4NUY0IiBkPSJNNDYuOTggMjQuNTVjMC0xLjU3LS4xNS0zLjA5LS4zOC00LjU1SDI0djkuMDJoMTIuOTRjLS41OCAyLjk2LTIuMjYgNS40OC00Ljc4IDcuMThsNy43MyA2Yy40NS0uNCA4LjA5LTcuMjIgOC4wOS0xNy42NXoiLz48cGF0aCBmaWxsPSIjRkJCQzA1IiBkPSJNMTAuNTMgMjguNTljLS40OC0xLjQ1LS43Ni0yLjk5LS43Ni00LjU5czAuMjctMy4xNC43Ni00LjU5bC03Ljk4LTYuMTlDMC45MiAxNi40NiAwIDIwLjEyIDAgMjRjMCAzLjg4LjkyIDcuNTQgMi41NiAxMC43OGw3Ljk3LTYuMTl6Ii8+PHBhdGggZmlsbD0iIzM0QTg1MyIgZD0iTTI0IDQ4YzYuNDggMCAxMS45My0yLjEzIDE1Ljg5LTUuODFsLTcuNzMtNmMtMi4xNSAxLjQ1LTQuOTIgMi4zLTguMTYgMi4zLTYuMjYgMC0xMS41Ny00LjIyLTEzLjQ3LTkuOTFsLTcuOTggNi4xOUM2LjUxIDQyLjYyIDE0LjYyIDQ4IDI0IDQ4eiIvPjwvc3ZnPg==" alt="Google">
                     تسجيل الدخول بجوجل
                 </button>
-                <p class="rev-fallback">أو <a href="#" id="waFallback">أرسل تقييمك عبر واتساب</a></p>
+
+                <div class="rev-or"><span>أو</span></div>
+
+                <!-- Phone registration -->
+                <form id="phoneForm" class="rev-phone">
+                    <div class="rf-group">
+                        <label>اسمك</label>
+                        <input type="text" id="phName" placeholder="مثال: أحمد محمد" required>
+                    </div>
+                    <div class="rf-group">
+                        <label>رقم موبايلك</label>
+                        <input type="tel" id="phNumber" placeholder="مثال: 01012345678" inputmode="tel" required>
+                    </div>
+                    <button type="submit" class="btn btn-grad btn-lg" style="width:100%"><i class="fas fa-mobile-screen"></i> تسجيل برقم الموبايل</button>
+                </form>
             </div>
 
-            <!-- Review form (hidden until signed in) -->
-            <form class="rev-form glass" id="revForm" style="display:none">
+            <!-- Review form (hidden until registered) -->
+            <form class="rev-form" id="revForm" style="display:none">
                 <div class="rev-user" id="revUser"></div>
                 <div class="rf-group">
                     <label>تقييمك</label>
@@ -76,14 +91,14 @@
                     <textarea id="rfText" rows="4" placeholder="اكتب رأيك وتجربتك مع الوساطة..." required></textarea>
                 </div>
                 <button type="submit" class="btn btn-grad btn-lg" style="width:100%"><i class="fas fa-paper-plane"></i> إرسال التقييم</button>
-                <button type="button" class="btn btn-ghost btn-sm" id="signoutBtn" style="width:100%;margin-top:.6rem">تسجيل خروج</button>
+                <button type="button" class="btn-plain" id="signoutBtn">تسجيل خروج</button>
             </form>
 
             <!-- Success -->
-            <div class="rev-form glass" id="successBox" style="display:none; text-align:center">
-                <div class="rev-avatar-lg" style="background:linear-gradient(135deg,#25D366,#128C7E);color:#fff"><i class="fas fa-check"></i></div>
+            <div class="rev-form" id="successBox" style="display:none; text-align:center">
+                <div class="rev-avatar-lg" style="background:#dff7e8;border-color:#9be2b8;color:#128C7E"><i class="fas fa-check"></i></div>
                 <h3 style="margin:1rem 0 .4rem">شكراً على تقييمك! ✅</h3>
-                <p style="color:var(--muted)">وصلنا رأيك وهيظهر على الموقع بعد المراجعة.</p>
+                <p>وصلنا رأيك وهيظهر على الموقع بعد المراجعة.</p>
                 <a href="index.html" class="btn btn-grad btn-lg" style="margin-top:1rem"><i class="fas fa-house"></i> الرئيسية</a>
             </div>
 
@@ -96,15 +111,13 @@
 
     <script src="firebase-config.js"></script>
     <script>
-    // nav
+    // nav + stars (no-module basics)
     (function () {
         const nav = document.getElementById('nav');
         window.addEventListener('scroll', () => { nav.style.boxShadow = window.scrollY > 20 ? '0 10px 40px rgba(0,0,0,.5)' : 'none'; });
         const nt = document.getElementById('navToggle'), nl = document.getElementById('navLinks');
         nt && nt.addEventListener('click', () => nl.classList.toggle('open'));
     })();
-
-    // star rating
     const stars = [...document.querySelectorAll('#rfStars span')];
     const ratingInput = document.getElementById('rfRating');
     function paint(v){ stars.forEach(s => s.classList.toggle('on', +s.dataset.v <= v)); }
@@ -114,19 +127,6 @@
         s.addEventListener('click', () => { ratingInput.value = s.dataset.v; paint(+s.dataset.v); });
     });
     document.getElementById('rfStars').addEventListener('mouseleave', () => paint(+ratingInput.value));
-
-    // WhatsApp fallback composer
-    function waSend() {
-        const rating = +ratingInput.value;
-        const text = document.getElementById('rfText').value.trim();
-        let msg = 'تقييم جديد لموقع Elwaset 👇\n' + '\n' + '⭐'.repeat(rating) + ' (' + rating + '/5)';
-        if (text) msg += '\n📝 الرأي: ' + text;
-        window.open('https://wa.me/201055578777?text=' + encodeURIComponent(msg), '_blank');
-    }
-    document.getElementById('waFallback').addEventListener('click', e => { e.preventDefault(); waSend(); });
-
-    const cfg = window.FIREBASE_CONFIG || {};
-    const configured = cfg.apiKey && cfg.apiKey !== 'REPLACE_ME';
     </script>
 
     <script type="module">
@@ -137,71 +137,87 @@
     const revForm = document.getElementById('revForm');
     const successBox = document.getElementById('successBox');
     const revUser = document.getElementById('revUser');
+    const phoneForm = document.getElementById('phoneForm');
+    let profile = null; // {name, email?, phone?, uid?}
+
+    function showReview() {
+        signinBox.style.display = 'none';
+        revForm.style.display = 'grid';
+        const p = profile || {};
+        const initial = (p.name || 'U').trim()[0] || 'U';
+        const pic = p.photo ? '<img src="' + p.photo + '" alt="">' : '<span class="av">' + initial + '</span>';
+        const sub = p.email || p.phone || '';
+        revUser.innerHTML = '<div class="rev-user-card">' + pic + '<div><strong>' + (p.name || 'مستخدم') + '</strong><small>' + sub + '</small></div></div>';
+    }
 
     if (!configured) {
-        // Firebase not set up yet -> Google button falls back to WhatsApp flow (show form directly)
-        document.getElementById('googleBtn').addEventListener('click', () => {
-            signinBox.style.display = 'none';
-            revForm.style.display = 'block';
-            revUser.innerHTML = '<div class="rev-user-note"><i class="fas fa-circle-info"></i> وضع مؤقت: تقييمك هيتبعت عبر واتساب لحد تفعيل تسجيل جوجل.</div>';
-        });
-        revForm.addEventListener('submit', e => {
-            e.preventDefault();
-            const rating = +document.getElementById('rfRating').value;
-            const text = document.getElementById('rfText').value.trim();
-            let msg = 'تقييم جديد لموقع Elwaset 👇\n\n' + '⭐'.repeat(rating) + ' (' + rating + '/5)';
-            if (text) msg += '\n📝 الرأي: ' + text;
-            window.open('https://wa.me/201055578777?text=' + encodeURIComponent(msg), '_blank');
-        });
+        const notice = () => alert('التسجيل هيتفعل خلال لحظات — قاعدة البيانات بتتجهّز. جرّب تاني قريبًا.');
+        document.getElementById('googleBtn').addEventListener('click', notice);
+        phoneForm.addEventListener('submit', e => { e.preventDefault(); notice(); });
     } else {
         const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
         const { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
-        const { getFirestore, collection, addDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+        const { getFirestore, collection, addDoc, doc, setDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
 
         const app = initializeApp(cfg);
         const auth = getAuth(app);
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
-        let currentUser = null;
 
+        // save/merge a customer lead for future marketing
+        async function saveCustomer(data) {
+            try {
+                if (data.uid) {
+                    await setDoc(doc(db, 'customers', data.uid), { ...data, updatedAt: serverTimestamp() }, { merge: true });
+                } else {
+                    await addDoc(collection(db, 'customers'), { ...data, createdAt: serverTimestamp() });
+                }
+            } catch (e) { /* non-blocking */ }
+        }
+
+        // Google
         document.getElementById('googleBtn').addEventListener('click', async () => {
             try { await signInWithPopup(auth, provider); }
             catch (err) { alert('تعذّر تسجيل الدخول: ' + (err && err.message ? err.message : err)); }
         });
-        document.getElementById('signoutBtn').addEventListener('click', () => signOut(auth));
-
+        document.getElementById('signoutBtn').addEventListener('click', async () => {
+            try { await signOut(auth); } catch(e){}
+            profile = null; revForm.style.display = 'none'; successBox.style.display = 'none'; signinBox.style.display = 'block';
+        });
         onAuthStateChanged(auth, user => {
-            currentUser = user;
             if (user) {
-                signinBox.style.display = 'none';
-                revForm.style.display = 'block';
-                const photo = user.photoURL ? '<img src="' + user.photoURL + '" alt="">' : '<span class="av">' + (user.displayName || 'U')[0] + '</span>';
-                revUser.innerHTML = '<div class="rev-user-card">' + photo + '<div><strong>' + (user.displayName || 'مستخدم') + '</strong><small>' + (user.email || '') + '</small></div></div>';
-            } else {
-                signinBox.style.display = 'block';
-                revForm.style.display = 'none';
-                successBox.style.display = 'none';
+                profile = { name: user.displayName || 'مستخدم', email: user.email || '', uid: user.uid, photo: user.photoURL || '', source: 'google' };
+                saveCustomer({ uid: user.uid, name: profile.name, email: profile.email, photo: profile.photo, source: 'google' });
+                showReview();
             }
         });
 
+        // Phone registration (lead capture — no SMS)
+        phoneForm.addEventListener('submit', async e => {
+            e.preventDefault();
+            const name = document.getElementById('phName').value.trim();
+            const phone = document.getElementById('phNumber').value.trim();
+            if (!name || !phone) return;
+            profile = { name, phone, source: 'phone' };
+            await saveCustomer({ name, phone, source: 'phone' });
+            showReview();
+        });
+
+        // Submit review
         revForm.addEventListener('submit', async e => {
             e.preventDefault();
-            if (!currentUser) return;
+            if (!profile) return;
             const btn = revForm.querySelector('button[type="submit"]');
             btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
             try {
                 await addDoc(collection(db, 'reviews'), {
-                    name: currentUser.displayName || 'مستخدم',
-                    email: currentUser.email || '',
-                    uid: currentUser.uid,
-                    photo: currentUser.photoURL || '',
+                    name: profile.name, email: profile.email || '', phone: profile.phone || '',
+                    uid: profile.uid || '', photo: profile.photo || '', source: profile.source,
                     rating: +document.getElementById('rfRating').value,
                     text: document.getElementById('rfText').value.trim(),
-                    approved: false,
-                    createdAt: serverTimestamp()
+                    approved: false, createdAt: serverTimestamp()
                 });
-                revForm.style.display = 'none';
-                successBox.style.display = 'block';
+                revForm.style.display = 'none'; successBox.style.display = 'block';
             } catch (err) {
                 alert('حصل خطأ أثناء الإرسال: ' + (err && err.message ? err.message : err));
                 btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال التقييم';
