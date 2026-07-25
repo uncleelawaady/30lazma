@@ -72,10 +72,6 @@
                     <input type="hidden" id="rfRating" value="5">
                 </div>
                 <div class="rf-group">
-                    <label>نوع الصفقة (اختياري)</label>
-                    <input type="text" id="rfDeal" placeholder="مثال: شراء حساب تيك توك / وساطة دومين">
-                </div>
-                <div class="rf-group">
                     <label>رأيك في التعامل</label>
                     <textarea id="rfText" rows="4" placeholder="اكتب رأيك وتجربتك مع الوساطة..." required></textarea>
                 </div>
@@ -87,7 +83,7 @@
             <div class="rev-form glass" id="successBox" style="display:none; text-align:center">
                 <div class="rev-avatar-lg" style="background:linear-gradient(135deg,#25D366,#128C7E);color:#fff"><i class="fas fa-check"></i></div>
                 <h3 style="margin:1rem 0 .4rem">شكراً على تقييمك! ✅</h3>
-                <p style="color:var(--muted)">وصلنا رأيك وهيظهر على الموقع بعد المراجعة. متنساش تبعت سكرين إتمام الوساطة على واتساب.</p>
+                <p style="color:var(--muted)">وصلنا رأيك وهيظهر على الموقع بعد المراجعة.</p>
                 <a href="index.html" class="btn btn-grad btn-lg" style="margin-top:1rem"><i class="fas fa-house"></i> الرئيسية</a>
             </div>
 
@@ -122,12 +118,9 @@
     // WhatsApp fallback composer
     function waSend() {
         const rating = +ratingInput.value;
-        const deal = document.getElementById('rfDeal').value.trim();
         const text = document.getElementById('rfText').value.trim();
         let msg = 'تقييم جديد لموقع Elwaset 👇\n' + '\n' + '⭐'.repeat(rating) + ' (' + rating + '/5)';
-        if (deal) msg += '\n📌 الصفقة: ' + deal;
         if (text) msg += '\n📝 الرأي: ' + text;
-        msg += '\n\n(مرفق سكرين إثبات إتمام الوساطة)';
         window.open('https://wa.me/201055578777?text=' + encodeURIComponent(msg), '_blank');
     }
     document.getElementById('waFallback').addEventListener('click', e => { e.preventDefault(); waSend(); });
@@ -155,12 +148,9 @@
         revForm.addEventListener('submit', e => {
             e.preventDefault();
             const rating = +document.getElementById('rfRating').value;
-            const deal = document.getElementById('rfDeal').value.trim();
             const text = document.getElementById('rfText').value.trim();
             let msg = 'تقييم جديد لموقع Elwaset 👇\n\n' + '⭐'.repeat(rating) + ' (' + rating + '/5)';
-            if (deal) msg += '\n📌 الصفقة: ' + deal;
             if (text) msg += '\n📝 الرأي: ' + text;
-            msg += '\n\n(مرفق سكرين إثبات إتمام الوساطة)';
             window.open('https://wa.me/201055578777?text=' + encodeURIComponent(msg), '_blank');
         });
     } else {
@@ -206,7 +196,6 @@
                     uid: currentUser.uid,
                     photo: currentUser.photoURL || '',
                     rating: +document.getElementById('rfRating').value,
-                    deal: document.getElementById('rfDeal').value.trim(),
                     text: document.getElementById('rfText').value.trim(),
                     approved: false,
                     createdAt: serverTimestamp()
