@@ -95,6 +95,11 @@ h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; line-height: 1.35; font-weight: 
     background: var(--grad-btn); padding: .35rem .6rem; border-radius: 10px;
     box-shadow: 0 0 20px rgba(255,138,0,.4);
 }
+.brand-logo-img {
+    height: 40px; width: auto; display: block;
+    filter: drop-shadow(0 0 12px rgba(255,138,0,.45));
+}
+.footer .brand-logo-img { height: 46px; }
 .brand-name { font-family: 'Cairo'; font-weight: 800; font-size: 1.1rem; direction: ltr; }
 .brand-name em { font-style: normal; color: var(--pink); }
 .nav-links { display: flex; list-style: none; gap: 1.5rem; }
