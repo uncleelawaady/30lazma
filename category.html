@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تفاصيل القسم | Elwaset.net</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="assets/favicon.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="nav" id="nav">
+        <div class="container nav-inner">
+            <a href="index.html" class="brand">
+                <span class="brand-logo">EW</span>
+                <span class="brand-name">Elwaset<em>.net</em></span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html#categories">الأقسام</a></li>
+                <li><a href="index.html#featured">المميزة</a></li>
+                <li><a href="index.html#testimonials">آراء العملاء</a></li>
+                <li><a href="index.html#payments">الدفع</a></li>
+            </ul>
+            <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="btn btn-grad btn-sm"><i class="fas fa-bolt"></i> ابدأ الآن</a>
+            <button class="nav-toggle" id="navToggle" aria-label="القائمة"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <!-- Category Hero -->
+    <header class="cat-hero" id="catHero">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="container">
+            <a href="index.html#categories" class="back-link"><i class="fas fa-arrow-right"></i> رجوع لكل الأقسام</a>
+            <div class="cat-hero-head">
+                <div class="cat-hero-ico" id="catIco"><i class="fas fa-layer-group"></i></div>
+                <div>
+                    <span class="eyebrow">قسم متخصص</span>
+                    <h1 id="catTitle" class="grad-text">تفاصيل القسم</h1>
+                </div>
+            </div>
+            <p id="catIntro" class="cat-hero-intro"></p>
+            <div class="hero-cta">
+                <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="btn btn-grad btn-lg" id="catWa"><i class="fab fa-whatsapp"></i> اطلب الخدمة الآن</a>
+                <a href="https://t.me/elawaadyofficial" target="_blank" rel="noopener" class="btn btn-ghost btn-lg"><i class="fab fa-telegram"></i> تيليجرام</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Groups / services -->
+    <section class="section" id="catGroups"></section>
+
+    <!-- How it works -->
+    <section class="section section-alt">
+        <div class="container">
+            <div class="head">
+                <span class="eyebrow">إزاي نشتغل</span>
+                <h2>خطوات <span class="grad-text">بسيطة وآمنة</span></h2>
+            </div>
+            <div class="steps-grid">
+                <div class="step glass"><span class="step-n">1</span><h4>تواصل معنا</h4><p>ابعتلنا الخدمة اللي محتاجها على واتساب أو تيليجرام.</p></div>
+                <div class="step glass"><span class="step-n">2</span><h4>نتفق على التفاصيل</h4><p>نأكد المواصفات والسعر ووقت التنفيذ بوضوح كامل.</p></div>
+                <div class="step glass"><span class="step-n">3</span><h4>الدفع الآمن</h4><p>تدفع بأي وسيلة متاحة، ومع الصفقات الكبيرة عبر الوساطة.</p></div>
+                <div class="step glass"><span class="step-n">4</span><h4>التنفيذ والتسليم</h4><p>ننفذ الخدمة ونسلمها ونتابع معاك حتى تمام الرضا.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section">
+        <div class="container">
+            <div class="cta-box glass">
+                <div class="orb orb-cta"></div>
+                <h2>محتاج <span class="grad-text">الخدمة دي</span>؟</h2>
+                <p>تواصل معنا دلوقتي واحصل عليها بأعلى جودة وأأمن طريقة.</p>
+                <div class="hero-cta">
+                    <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="btn btn-grad btn-lg" id="catWa2"><i class="fab fa-whatsapp"></i> واتساب</a>
+                    <a href="index.html#categories" class="btn btn-ghost btn-lg"><i class="fas fa-grip"></i> باقي الأقسام</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="foot-bottom">© 2026 Elwaset.net — جميع الحقوق محفوظة | EXD | Elawaady XDigital</div>
+    </footer>
+
+    <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="fab-wa" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+
+    <script src="data.js"></script>
+    <script>
+    (function () {
+        const id = new URLSearchParams(location.search).get('id');
+        const c = (window.CATEGORIES || {})[id];
+        const nav = document.getElementById('nav');
+        window.addEventListener('scroll', () => { nav.style.boxShadow = window.scrollY > 20 ? '0 10px 40px rgba(0,0,0,.5)' : 'none'; });
+        const nt = document.getElementById('navToggle'), nl = document.getElementById('navLinks');
+        nt && nt.addEventListener('click', () => nl.classList.toggle('open'));
+
+        if (!c) {
+            document.getElementById('catTitle').textContent = 'القسم غير موجود';
+            document.getElementById('catIntro').textContent = 'الرجاء العودة لاختيار قسم من الصفحة الرئيسية.';
+            return;
+        }
+        document.title = c.title + ' | Elwaset.net';
+        document.getElementById('catTitle').textContent = c.title;
+        document.getElementById('catIntro').textContent = c.intro;
+        const ico = document.getElementById('catIco');
+        ico.innerHTML = '<i class="fas ' + c.icon + '"></i>';
+        ico.style.background = 'linear-gradient(135deg,' + c.g1 + ',' + c.g2 + ')';
+        ico.style.boxShadow = '0 10px 30px -6px ' + c.g1;
+        document.documentElement.style.setProperty('--cg1', c.g1);
+        document.documentElement.style.setProperty('--cg2', c.g2);
+
+        const wa = 'https://wa.me/201055578777?text=' + encodeURIComponent('أهلًا، عايز أستفسر عن قسم: ' + c.title);
+        document.getElementById('catWa').href = wa;
+        document.getElementById('catWa2').href = wa;
+
+        const wrap = document.getElementById('catGroups');
+        let html = '<div class="container">';
+        c.groups.forEach(g => {
+            html += '<h3 class="sub-title grad-text">' + g.h + '</h3><div class="chip-grid">';
+            g.items.forEach(it => { html += '<a href="' + wa + '" class="chip glass">' + it + '</a>'; });
+            html += '</div>';
+        });
+        html += '</div>';
+        wrap.innerHTML = html;
+    })();
+    </script>
+</body>
+</html>

@@ -268,6 +268,55 @@ h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; line-height: 1.35; font-weight: 
 .fab-wa:hover { transform: scale(1.1); }
 @keyframes pulse { 0%,100%{box-shadow:0 8px 30px rgba(37,211,102,.45)} 50%{box-shadow:0 8px 40px rgba(37,211,102,.75)} }
 
+/* ===== Testimonials marquee ===== */
+.marquee { overflow: hidden; padding: .8rem 0; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.marquee-track { display: flex; gap: 1.1rem; width: max-content; }
+.track-rtl { animation: scrollRtl 70s linear infinite; }
+.track-ltr { animation: scrollLtr 70s linear infinite; }
+.marquee:hover .marquee-track { animation-play-state: paused; }
+@keyframes scrollRtl { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes scrollLtr { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+.tcard {
+    flex: 0 0 auto; width: 320px; padding: 1.5rem; border-radius: 20px;
+}
+.tcard .stars { font-size: .82rem; }
+.tcard p { color: var(--text); font-size: .97rem; margin: .8rem 0 1.1rem; line-height: 1.7; min-height: 3.4em; }
+.tby { display: flex; align-items: center; gap: .7rem; }
+.tby .av { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; background: var(--grad-btn); color: #1A0E00; font-family: 'Cairo'; font-weight: 900; flex-shrink: 0; }
+.tby strong { display: block; font-size: .95rem; }
+.tby small { color: var(--dim); font-size: .8rem; }
+.tby small i { color: #25D366; margin-inline-end: 3px; }
+
+/* ===== Payments ===== */
+.pay-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap: 1rem; }
+.pay { display: flex; align-items: center; gap: .8rem; padding: 1.1rem 1.3rem; border-radius: 16px; transition: var(--tr); }
+.pay i { font-size: 1.5rem; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.pay span { font-family: 'Cairo'; font-weight: 700; font-size: .95rem; }
+.pay:hover { transform: translateY(-4px); border-color: rgba(255,45,170,.4); box-shadow: 0 12px 30px rgba(0,0,0,.4); }
+
+/* ===== Category detail page ===== */
+.cat-hero { position: relative; padding: 8rem 0 3rem; overflow: hidden; }
+.back-link { display: inline-flex; align-items: center; gap: .5rem; color: var(--muted); text-decoration: none; font-weight: 600; margin-bottom: 1.6rem; transition: var(--tr); }
+.back-link:hover { color: var(--pink); }
+.cat-hero-head { display: flex; align-items: center; gap: 1.2rem; margin-bottom: 1.2rem; }
+.cat-hero-ico { width: 72px; height: 72px; display: grid; place-items: center; border-radius: 20px; font-size: 1.9rem; color: #fff; flex-shrink: 0; }
+.cat-hero-head h1 { font-size: clamp(1.9rem, 5vw, 3rem); }
+.cat-hero-intro { color: var(--muted); font-size: 1.12rem; max-width: 720px; margin-bottom: 2rem; }
+.sub-title { font-size: 1.35rem; font-weight: 900; margin: 2.4rem 0 1.3rem; }
+.chip-grid { display: flex; flex-wrap: wrap; gap: .7rem; }
+.chip {
+    padding: .7rem 1.3rem; border-radius: 14px; text-decoration: none; color: var(--text);
+    font-weight: 600; font-size: .96rem; transition: var(--tr);
+}
+.chip:hover { transform: translateY(-4px); border-color: var(--cg1, var(--pink)); color: #fff; box-shadow: 0 10px 26px rgba(0,0,0,.4); }
+
+/* ===== Steps ===== */
+.steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap: 1.3rem; }
+.step { position: relative; padding: 2rem 1.6rem; border-radius: var(--radius); }
+.step-n { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--grad-btn); color: #1A0E00; font-family: 'Cairo'; font-weight: 900; font-size: 1.1rem; margin-bottom: 1rem; }
+.step h4 { font-size: 1.08rem; margin-bottom: .4rem; }
+.step p { color: var(--muted); font-size: .92rem; }
+
 /* ===== Reveal ===== */
 .reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s ease, transform .7s ease; }
 .reveal.show { opacity: 1; transform: none; }
