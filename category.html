@@ -92,6 +92,17 @@
 
     <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="fab-wa" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
 
+    <!-- Item detail modal -->
+    <div class="item-modal" id="itemModal" aria-hidden="true">
+        <div class="im-card">
+            <button class="im-close" id="imClose" aria-label="إغلاق"><i class="fas fa-xmark"></i></button>
+            <h3 class="im-title grad-text" id="imTitle"></h3>
+            <div id="imBody"></div>
+            <a href="#" target="_blank" rel="noopener" class="btn btn-grad btn-lg im-order" id="imWa"><i class="fab fa-whatsapp"></i> اطلب عبر واتساب</a>
+            <p class="im-note">آخر محطة: تواصل مباشر مع العوضي لإتمام طلبك بأمان.</p>
+        </div>
+    </div>
+
     <script src="data.js"></script>
     <script>
     (function () {
@@ -125,11 +136,35 @@
         let html = '<div class="container">';
         c.groups.forEach(g => {
             html += '<h3 class="sub-title grad-text">' + g.h + '</h3><div class="chip-grid">';
-            g.items.forEach(it => { html += '<a href="' + wa + '" class="chip glass">' + it + '</a>'; });
+            g.items.forEach(it => { html += '<button class="chip glass" data-item="' + it.replace(/"/g,'&quot;') + '">' + it + ' <i class="fas fa-circle-info"></i></button>'; });
             html += '</div>';
         });
         html += '</div>';
         wrap.innerHTML = html;
+
+        // ===== item detail modal =====
+        const D = window.DETAILS || {};
+        const im = document.getElementById('itemModal');
+        const waFor = name => 'https://wa.me/201055578777?text=' + encodeURIComponent('أهلًا، مهتم بـ: ' + name + ' (' + c.title + ') — ممكن التفاصيل والسعر؟');
+        function openItem(name) {
+            const d = D[name];
+            const desc = d && d.d ? d.d : ('خدمة ' + name + ' ضمن قسم ' + c.title + '. نوفرها بجودة عالية وتنفيذ آمن — تواصل معنا لمعرفة كل التفاصيل والسعر المناسب لطلبك.');
+            let body = '<p class="im-desc">' + desc + '</p>';
+            if (d && d.f && d.f.length) {
+                body += '<div class="im-feats"><h4><i class="fas fa-star"></i> المميزات</h4><ul>' + d.f.map(x => '<li><i class="fas fa-check"></i> ' + x + '</li>').join('') + '</ul></div>';
+            }
+            const price = d && d.p ? d.p : 'السعر يُحدد حسب الطلب — تواصل عبر واتساب';
+            body += '<div class="im-price"><i class="fas fa-tag"></i> ' + price + '</div>';
+            document.getElementById('imTitle').textContent = name;
+            document.getElementById('imBody').innerHTML = body;
+            document.getElementById('imWa').href = waFor(name);
+            im.classList.add('open'); im.setAttribute('aria-hidden','false'); document.body.classList.add('lb-open');
+        }
+        function closeItem(){ im.classList.remove('open'); im.setAttribute('aria-hidden','true'); document.body.classList.remove('lb-open'); }
+        wrap.querySelectorAll('.chip[data-item]').forEach(b => b.addEventListener('click', () => openItem(b.dataset.item)));
+        document.getElementById('imClose').addEventListener('click', closeItem);
+        im.addEventListener('click', e => { if (e.target === im) closeItem(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeItem(); });
     })();
     </script>
 </body>
