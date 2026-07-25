@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أضف تقييمك | Elwaset.net</title>
+    <meta name="description" content="شاركنا رأيك وتقييمك بعد إتمام الوساطة مع أحمد العوضي.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="assets/favicon.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="nav" id="nav">
+        <div class="container nav-inner">
+            <a href="index.html" class="brand">
+                <img src="assets/logo.png" alt="Elwaset" class="brand-logo-img">
+                <span class="brand-name">Elwaset<em>.net</em></span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html#testimonials">آراء العملاء</a></li>
+                <li><a href="proofs.html">إثبات التعاملات</a></li>
+                <li><a href="index.html#categories">الأقسام</a></li>
+            </ul>
+            <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="btn btn-grad btn-sm"><i class="fas fa-bolt"></i> تواصل</a>
+            <button class="nav-toggle" id="navToggle" aria-label="القائمة"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <header class="cat-hero">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="container">
+            <a href="index.html" class="back-link"><i class="fas fa-arrow-right"></i> رجوع للرئيسية</a>
+            <div class="cat-hero-head">
+                <div class="cat-hero-ico" style="background:linear-gradient(135deg,#FFD400,#FF2DAA);box-shadow:0 10px 30px -6px #FF2DAA"><i class="fas fa-star"></i></div>
+                <div>
+                    <span class="eyebrow">رأيك يهمنا</span>
+                    <h1 class="grad-text">أضف تقييمك</h1>
+                </div>
+            </div>
+            <p class="cat-hero-intro">تمت وساطتك على خير؟ شاركنا رأيك وتقييمك — يوصل مباشرة لأحمد العوضي، ومعاه ابعت سكرين إن الوساطة تمت بنجاح.</p>
+        </div>
+    </header>
+
+    <section class="section" style="padding-top:1rem">
+        <div class="container" style="max-width:640px">
+            <form class="rev-form glass" id="revForm">
+                <div class="rf-group">
+                    <label>اسمك</label>
+                    <input type="text" id="rfName" placeholder="مثال: أحمد محمد" required>
+                </div>
+
+                <div class="rf-group">
+                    <label>تقييمك</label>
+                    <div class="rf-stars" id="rfStars">
+                        <span data-v="1">★</span>
+                        <span data-v="2">★</span>
+                        <span data-v="3">★</span>
+                        <span data-v="4">★</span>
+                        <span data-v="5">★</span>
+                    </div>
+                    <input type="hidden" id="rfRating" value="5">
+                </div>
+
+                <div class="rf-group">
+                    <label>نوع الصفقة (اختياري)</label>
+                    <input type="text" id="rfDeal" placeholder="مثال: شراء حساب تيك توك / وساطة دومين">
+                </div>
+
+                <div class="rf-group">
+                    <label>رأيك في التعامل</label>
+                    <textarea id="rfText" rows="4" placeholder="اكتب رأيك وتجربتك مع الوساطة..." required></textarea>
+                </div>
+
+                <div class="rf-hint glass">
+                    <i class="fas fa-circle-info"></i>
+                    بعد الإرسال هيفتح واتساب برأيك جاهز — <strong>ابعت معاه سكرين إن الوساطة تمت</strong> بنجاح.
+                </div>
+
+                <button type="submit" class="btn btn-grad btn-lg" style="width:100%"><i class="fab fa-whatsapp"></i> إرسال التقييم</button>
+            </form>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="foot-bottom">© 2026 Elwaset.net — جميع الحقوق محفوظة | EXD | Elawaady XDigital</div>
+    </footer>
+
+    <script>
+    (function () {
+        const nav = document.getElementById('nav');
+        window.addEventListener('scroll', () => { nav.style.boxShadow = window.scrollY > 20 ? '0 10px 40px rgba(0,0,0,.5)' : 'none'; });
+        const nt = document.getElementById('navToggle'), nl = document.getElementById('navLinks');
+        nt && nt.addEventListener('click', () => nl.classList.toggle('open'));
+
+        // star rating
+        const stars = [...document.querySelectorAll('#rfStars span')];
+        const ratingInput = document.getElementById('rfRating');
+        function paint(v) {
+            stars.forEach(s => s.classList.toggle('on', +s.dataset.v <= v));
+        }
+        paint(5);
+        stars.forEach(s => {
+            s.addEventListener('mouseenter', () => paint(+s.dataset.v));
+            s.addEventListener('click', () => { ratingInput.value = s.dataset.v; paint(+s.dataset.v); });
+        });
+        document.getElementById('rfStars').addEventListener('mouseleave', () => paint(+ratingInput.value));
+
+        document.getElementById('revForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const name = document.getElementById('rfName').value.trim();
+            const rating = +ratingInput.value;
+            const deal = document.getElementById('rfDeal').value.trim();
+            const text = document.getElementById('rfText').value.trim();
+            const starTxt = '⭐'.repeat(rating);
+            let msg = 'تقييم جديد لموقع Elwaset 👇\n';
+            msg += '\n👤 الاسم: ' + name;
+            msg += '\n' + starTxt + ' (' + rating + '/5)';
+            if (deal) msg += '\n📌 الصفقة: ' + deal;
+            msg += '\n📝 الرأي: ' + text;
+            msg += '\n\n(مرفق سكرين إثبات إتمام الوساطة)';
+            window.open('https://wa.me/201055578777?text=' + encodeURIComponent(msg), '_blank');
+        });
+    })();
+    </script>
+</body>
+</html>

@@ -359,6 +359,28 @@ h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; line-height: 1.35; font-weight: 
 .lb-next { inset-inline-start: 16px; }
 body.lb-open { overflow: hidden; }
 
+/* ===== Review form ===== */
+.rev-form { padding: 2rem; border-radius: 22px; display: grid; gap: 1.3rem; }
+.rf-group { display: grid; gap: .5rem; }
+.rf-group label { font-family: 'Cairo'; font-weight: 700; font-size: .95rem; }
+.rf-group input, .rf-group textarea {
+    background: rgba(255,255,255,.05); border: 1px solid var(--glass-brd); border-radius: 12px;
+    padding: .85rem 1rem; color: var(--text); font-family: inherit; font-size: 1rem; outline: none;
+    transition: var(--tr); resize: vertical;
+}
+.rf-group input:focus, .rf-group textarea:focus { border-color: var(--pink); box-shadow: 0 0 0 3px rgba(255,45,170,.15); }
+.rf-group input::placeholder, .rf-group textarea::placeholder { color: var(--dim); }
+.rf-stars { display: flex; gap: .4rem; font-size: 2.1rem; cursor: pointer; line-height: 1; }
+.rf-stars span { color: #33333e; transition: transform .15s, color .15s; user-select: none; }
+.rf-stars span.on { color: var(--yellow); text-shadow: 0 0 12px rgba(255,212,0,.4); }
+.rf-stars span:hover { transform: scale(1.15); }
+.rf-hint { padding: .85rem 1.1rem; border-radius: 12px; color: var(--muted); font-size: .9rem; font-weight: 600; }
+.rf-hint i { color: var(--yellow); margin-inline-end: .4rem; }
+.rf-hint strong { color: var(--text); }
+
+/* review CTA button in testimonials */
+.rev-add { text-align: center; margin-top: 2.4rem; }
+
 /* ===== Payment strip ===== */
 .pay-strip { padding: 1.6rem 2rem; border-radius: 22px; }
 .pay-strip img { width: 100%; height: auto; display: block; }
