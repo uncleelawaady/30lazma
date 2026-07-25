@@ -268,14 +268,19 @@ h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; line-height: 1.35; font-weight: 
 .fab-wa:hover { transform: scale(1.1); }
 @keyframes pulse { 0%,100%{box-shadow:0 8px 30px rgba(37,211,102,.45)} 50%{box-shadow:0 8px 40px rgba(37,211,102,.75)} }
 
-/* ===== Testimonials marquee ===== */
-.marquee { overflow: hidden; padding: .8rem 0; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
-.marquee-track { display: flex; gap: 1.1rem; width: max-content; }
-.track-rtl { animation: scrollRtl 70s linear infinite; }
-.track-ltr { animation: scrollLtr 70s linear infinite; }
-.marquee:hover .marquee-track { animation-play-state: paused; }
-@keyframes scrollRtl { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-@keyframes scrollLtr { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+/* ===== Testimonials 3-row marquee ===== */
+.mq {
+    overflow: hidden; padding: .55rem 0; direction: ltr;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+.mq-row { display: flex; gap: 1rem; width: max-content; direction: ltr; will-change: transform; }
+.mq-right { animation: mqRight 55s linear infinite; }
+.mq-left  { animation: mqLeft 55s linear infinite; }
+.mq:hover .mq-row { animation-play-state: paused; }
+@keyframes mqLeft  { from { transform: translateX(0); }      to { transform: translateX(-50%); } }
+@keyframes mqRight { from { transform: translateX(-50%); }   to { transform: translateX(0); } }
+.mq-row .tcard { flex: 0 0 auto; width: 300px; direction: rtl; }
 .tcard {
     padding: 1.5rem; border-radius: 20px;
     background: #111119; border: 1px solid var(--glass-brd);
@@ -304,6 +309,7 @@ h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; line-height: 1.35; font-weight: 
 .pay-note i { color: #25D366; margin-inline-end: .4rem; }
 
 /* ===== Founder ===== */
+.founder-top { padding-top: 7rem; }
 .founder-grid { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 3rem; align-items: center; }
 .founder-photo { position: relative; }
 .founder-photo img {
