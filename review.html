@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>أضف تقييمك | Elwaset.net</title>
-    <meta name="description" content="شاركنا رأيك وتقييمك بعد إتمام الوساطة مع أحمد العوضي.">
+    <meta name="description" content="سجّل دخول بجوجل وشاركنا رأيك وتقييمك بعد إتمام الوساطة مع أحمد العوضي.">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -42,47 +42,55 @@
                     <h1 class="grad-text">أضف تقييمك</h1>
                 </div>
             </div>
-            <p class="cat-hero-intro">تمت وساطتك على خير؟ شاركنا رأيك وتقييمك — يوصل مباشرة لأحمد العوضي، ومعاه ابعت سكرين إن الوساطة تمت بنجاح.</p>
+            <p class="cat-hero-intro">تمت وساطتك على خير؟ سجّل دخول بحساب جوجل وشاركنا رأيك وتقييمك — بيظهر على الموقع بعد المراجعة.</p>
         </div>
     </header>
 
     <section class="section" style="padding-top:1rem">
         <div class="container" style="max-width:640px">
-            <form class="rev-form glass" id="revForm">
-                <div class="rf-group">
-                    <label>اسمك</label>
-                    <input type="text" id="rfName" placeholder="مثال: أحمد محمد" required>
-                </div>
 
+            <!-- Sign-in gate -->
+            <div class="rev-form glass" id="signinBox" style="text-align:center">
+                <div class="rev-avatar-lg"><i class="fas fa-user-lock"></i></div>
+                <h3 style="margin:1rem 0 .4rem">سجّل دخول عشان تقيّم</h3>
+                <p style="color:var(--muted); margin-bottom:1.4rem">نستخدم تسجيل دخول جوجل لتأكيد إن التقييم من شخص حقيقي.</p>
+                <button class="btn-google" id="googleBtn">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIj48cGF0aCBmaWxsPSIjRUE0MzM1IiBkPSJNMjQgOS41YzMuNTQgMCA2LjcxIDEuMjIgOS4yMSAzLjZsNi44NS02Ljg1QzM1LjkgMi4zOCAzMC40NyAwIDI0IDAgMTQuNjIgMCA2LjUxIDUuMzggMi41NiAxMy4yMmw3Ljk4IDYuMTlDMTIuNDMgMTMuNzIgMTcuNzQgOS41IDI0IDkuNXoiLz48cGF0aCBmaWxsPSIjNDI4NUY0IiBkPSJNNDYuOTggMjQuNTVjMC0xLjU3LS4xNS0zLjA5LS4zOC00LjU1SDI0djkuMDJoMTIuOTRjLS41OCAyLjk2LTIuMjYgNS40OC00Ljc4IDcuMThsNy43MyA2Yy40NS0uNCA4LjA5LTcuMjIgOC4wOS0xNy42NXoiLz48cGF0aCBmaWxsPSIjRkJCQzA1IiBkPSJNMTAuNTMgMjguNTljLS40OC0xLjQ1LS43Ni0yLjk5LS43Ni00LjU5czAuMjctMy4xNC43Ni00LjU5bC03Ljk4LTYuMTlDMC45MiAxNi40NiAwIDIwLjEyIDAgMjRjMCAzLjg4LjkyIDcuNTQgMi41NiAxMC43OGw3Ljk3LTYuMTl6Ii8+PHBhdGggZmlsbD0iIzM0QTg1MyIgZD0iTTI0IDQ4YzYuNDggMCAxMS45My0yLjEzIDE1Ljg5LTUuODFsLTcuNzMtNmMtMi4xNSAxLjQ1LTQuOTIgMi4zLTguMTYgMi4zLTYuMjYgMC0xMS41Ny00LjIyLTEzLjQ3LTkuOTFsLTcuOTggNi4xOUM2LjUxIDQyLjYyIDE0LjYyIDQ4IDI0IDQ4eiIvPjwvc3ZnPg==" alt="Google">
+                    تسجيل الدخول بجوجل
+                </button>
+                <p class="rev-fallback">أو <a href="#" id="waFallback">أرسل تقييمك عبر واتساب</a></p>
+            </div>
+
+            <!-- Review form (hidden until signed in) -->
+            <form class="rev-form glass" id="revForm" style="display:none">
+                <div class="rev-user" id="revUser"></div>
                 <div class="rf-group">
                     <label>تقييمك</label>
                     <div class="rf-stars" id="rfStars">
-                        <span data-v="1">★</span>
-                        <span data-v="2">★</span>
-                        <span data-v="3">★</span>
-                        <span data-v="4">★</span>
-                        <span data-v="5">★</span>
+                        <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
                     </div>
                     <input type="hidden" id="rfRating" value="5">
                 </div>
-
                 <div class="rf-group">
                     <label>نوع الصفقة (اختياري)</label>
                     <input type="text" id="rfDeal" placeholder="مثال: شراء حساب تيك توك / وساطة دومين">
                 </div>
-
                 <div class="rf-group">
                     <label>رأيك في التعامل</label>
                     <textarea id="rfText" rows="4" placeholder="اكتب رأيك وتجربتك مع الوساطة..." required></textarea>
                 </div>
-
-                <div class="rf-hint glass">
-                    <i class="fas fa-circle-info"></i>
-                    بعد الإرسال هيفتح واتساب برأيك جاهز — <strong>ابعت معاه سكرين إن الوساطة تمت</strong> بنجاح.
-                </div>
-
-                <button type="submit" class="btn btn-grad btn-lg" style="width:100%"><i class="fab fa-whatsapp"></i> إرسال التقييم</button>
+                <button type="submit" class="btn btn-grad btn-lg" style="width:100%"><i class="fas fa-paper-plane"></i> إرسال التقييم</button>
+                <button type="button" class="btn btn-ghost btn-sm" id="signoutBtn" style="width:100%;margin-top:.6rem">تسجيل خروج</button>
             </form>
+
+            <!-- Success -->
+            <div class="rev-form glass" id="successBox" style="display:none; text-align:center">
+                <div class="rev-avatar-lg" style="background:linear-gradient(135deg,#25D366,#128C7E);color:#fff"><i class="fas fa-check"></i></div>
+                <h3 style="margin:1rem 0 .4rem">شكراً على تقييمك! ✅</h3>
+                <p style="color:var(--muted)">وصلنا رأيك وهيظهر على الموقع بعد المراجعة. متنساش تبعت سكرين إتمام الوساطة على واتساب.</p>
+                <a href="index.html" class="btn btn-grad btn-lg" style="margin-top:1rem"><i class="fas fa-house"></i> الرئيسية</a>
+            </div>
+
         </div>
     </section>
 
@@ -90,42 +98,127 @@
         <div class="foot-bottom">© 2026 Elwaset.net — جميع الحقوق محفوظة | EXD | Elawaady XDigital</div>
     </footer>
 
+    <script src="firebase-config.js"></script>
     <script>
+    // nav
     (function () {
         const nav = document.getElementById('nav');
         window.addEventListener('scroll', () => { nav.style.boxShadow = window.scrollY > 20 ? '0 10px 40px rgba(0,0,0,.5)' : 'none'; });
         const nt = document.getElementById('navToggle'), nl = document.getElementById('navLinks');
         nt && nt.addEventListener('click', () => nl.classList.toggle('open'));
+    })();
 
-        // star rating
-        const stars = [...document.querySelectorAll('#rfStars span')];
-        const ratingInput = document.getElementById('rfRating');
-        function paint(v) {
-            stars.forEach(s => s.classList.toggle('on', +s.dataset.v <= v));
-        }
-        paint(5);
-        stars.forEach(s => {
-            s.addEventListener('mouseenter', () => paint(+s.dataset.v));
-            s.addEventListener('click', () => { ratingInput.value = s.dataset.v; paint(+s.dataset.v); });
+    // star rating
+    const stars = [...document.querySelectorAll('#rfStars span')];
+    const ratingInput = document.getElementById('rfRating');
+    function paint(v){ stars.forEach(s => s.classList.toggle('on', +s.dataset.v <= v)); }
+    paint(5);
+    stars.forEach(s => {
+        s.addEventListener('mouseenter', () => paint(+s.dataset.v));
+        s.addEventListener('click', () => { ratingInput.value = s.dataset.v; paint(+s.dataset.v); });
+    });
+    document.getElementById('rfStars').addEventListener('mouseleave', () => paint(+ratingInput.value));
+
+    // WhatsApp fallback composer
+    function waSend() {
+        const rating = +ratingInput.value;
+        const deal = document.getElementById('rfDeal').value.trim();
+        const text = document.getElementById('rfText').value.trim();
+        let msg = 'تقييم جديد لموقع Elwaset 👇\n' + '\n' + '⭐'.repeat(rating) + ' (' + rating + '/5)';
+        if (deal) msg += '\n📌 الصفقة: ' + deal;
+        if (text) msg += '\n📝 الرأي: ' + text;
+        msg += '\n\n(مرفق سكرين إثبات إتمام الوساطة)';
+        window.open('https://wa.me/201055578777?text=' + encodeURIComponent(msg), '_blank');
+    }
+    document.getElementById('waFallback').addEventListener('click', e => { e.preventDefault(); waSend(); });
+
+    const cfg = window.FIREBASE_CONFIG || {};
+    const configured = cfg.apiKey && cfg.apiKey !== 'REPLACE_ME';
+    </script>
+
+    <script type="module">
+    const cfg = window.FIREBASE_CONFIG || {};
+    const configured = cfg.apiKey && cfg.apiKey !== 'REPLACE_ME';
+
+    const signinBox = document.getElementById('signinBox');
+    const revForm = document.getElementById('revForm');
+    const successBox = document.getElementById('successBox');
+    const revUser = document.getElementById('revUser');
+
+    if (!configured) {
+        // Firebase not set up yet -> Google button falls back to WhatsApp flow (show form directly)
+        document.getElementById('googleBtn').addEventListener('click', () => {
+            signinBox.style.display = 'none';
+            revForm.style.display = 'block';
+            revUser.innerHTML = '<div class="rev-user-note"><i class="fas fa-circle-info"></i> وضع مؤقت: تقييمك هيتبعت عبر واتساب لحد تفعيل تسجيل جوجل.</div>';
         });
-        document.getElementById('rfStars').addEventListener('mouseleave', () => paint(+ratingInput.value));
-
-        document.getElementById('revForm').addEventListener('submit', e => {
+        revForm.addEventListener('submit', e => {
             e.preventDefault();
-            const name = document.getElementById('rfName').value.trim();
-            const rating = +ratingInput.value;
+            const rating = +document.getElementById('rfRating').value;
             const deal = document.getElementById('rfDeal').value.trim();
             const text = document.getElementById('rfText').value.trim();
-            const starTxt = '⭐'.repeat(rating);
-            let msg = 'تقييم جديد لموقع Elwaset 👇\n';
-            msg += '\n👤 الاسم: ' + name;
-            msg += '\n' + starTxt + ' (' + rating + '/5)';
+            let msg = 'تقييم جديد لموقع Elwaset 👇\n\n' + '⭐'.repeat(rating) + ' (' + rating + '/5)';
             if (deal) msg += '\n📌 الصفقة: ' + deal;
-            msg += '\n📝 الرأي: ' + text;
+            if (text) msg += '\n📝 الرأي: ' + text;
             msg += '\n\n(مرفق سكرين إثبات إتمام الوساطة)';
             window.open('https://wa.me/201055578777?text=' + encodeURIComponent(msg), '_blank');
         });
-    })();
+    } else {
+        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+        const { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+        const { getFirestore, collection, addDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+
+        const app = initializeApp(cfg);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+        let currentUser = null;
+
+        document.getElementById('googleBtn').addEventListener('click', async () => {
+            try { await signInWithPopup(auth, provider); }
+            catch (err) { alert('تعذّر تسجيل الدخول: ' + (err && err.message ? err.message : err)); }
+        });
+        document.getElementById('signoutBtn').addEventListener('click', () => signOut(auth));
+
+        onAuthStateChanged(auth, user => {
+            currentUser = user;
+            if (user) {
+                signinBox.style.display = 'none';
+                revForm.style.display = 'block';
+                const photo = user.photoURL ? '<img src="' + user.photoURL + '" alt="">' : '<span class="av">' + (user.displayName || 'U')[0] + '</span>';
+                revUser.innerHTML = '<div class="rev-user-card">' + photo + '<div><strong>' + (user.displayName || 'مستخدم') + '</strong><small>' + (user.email || '') + '</small></div></div>';
+            } else {
+                signinBox.style.display = 'block';
+                revForm.style.display = 'none';
+                successBox.style.display = 'none';
+            }
+        });
+
+        revForm.addEventListener('submit', async e => {
+            e.preventDefault();
+            if (!currentUser) return;
+            const btn = revForm.querySelector('button[type="submit"]');
+            btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
+            try {
+                await addDoc(collection(db, 'reviews'), {
+                    name: currentUser.displayName || 'مستخدم',
+                    email: currentUser.email || '',
+                    uid: currentUser.uid,
+                    photo: currentUser.photoURL || '',
+                    rating: +document.getElementById('rfRating').value,
+                    deal: document.getElementById('rfDeal').value.trim(),
+                    text: document.getElementById('rfText').value.trim(),
+                    approved: false,
+                    createdAt: serverTimestamp()
+                });
+                revForm.style.display = 'none';
+                successBox.style.display = 'block';
+            } catch (err) {
+                alert('حصل خطأ أثناء الإرسال: ' + (err && err.message ? err.message : err));
+                btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال التقييم';
+            }
+        });
+    }
     </script>
 </body>
 </html>

@@ -381,6 +381,30 @@ body.lb-open { overflow: hidden; }
 /* review CTA button in testimonials */
 .rev-add { text-align: center; margin-top: 2.4rem; }
 
+/* Google sign-in + review user */
+.rev-avatar-lg {
+    width: 72px; height: 72px; margin: 0 auto; display: grid; place-items: center; border-radius: 20px;
+    background: var(--gold-soft, rgba(255,212,0,.12)); border: 1px solid rgba(255,212,0,.3);
+    color: var(--yellow); font-size: 1.8rem;
+}
+.btn-google {
+    display: inline-flex; align-items: center; gap: .7rem; justify-content: center;
+    background: #fff; color: #1a1a1a; font-family: 'Cairo', sans-serif; font-weight: 800; font-size: 1rem;
+    border: none; border-radius: 12px; padding: .85rem 1.8rem; cursor: pointer; transition: var(--tr);
+    box-shadow: 0 8px 24px rgba(0,0,0,.35);
+}
+.btn-google:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(0,0,0,.45); }
+.btn-google img { width: 20px; height: 20px; }
+.rev-fallback { margin-top: 1.2rem; color: var(--dim); font-size: .9rem; }
+.rev-fallback a { color: var(--pink); text-decoration: none; font-weight: 700; }
+.rev-user-card, .rev-user-note { display: flex; align-items: center; gap: .8rem; padding: .9rem 1.1rem; border-radius: 14px; background: rgba(255,255,255,.05); border: 1px solid var(--glass-brd); margin-bottom: .4rem; }
+.rev-user-card img { width: 44px; height: 44px; border-radius: 50%; }
+.rev-user-card .av { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; background: var(--grad-btn); color: #1A0E00; font-family: 'Cairo'; font-weight: 900; }
+.rev-user-card strong { display: block; font-size: .98rem; }
+.rev-user-card small { color: var(--dim); font-size: .82rem; }
+.rev-user-note { color: var(--muted); font-size: .88rem; font-weight: 600; }
+.rev-user-note i { color: var(--yellow); }
+
 /* ===== Payment strip ===== */
 .pay-strip { padding: 1.6rem 2rem; border-radius: 22px; }
 .pay-strip img { width: 100%; height: auto; display: block; }
