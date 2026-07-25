@@ -307,6 +307,45 @@ h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; line-height: 1.35; font-weight: 
 .pay span { font-family: 'Cairo'; font-weight: 700; font-size: .95rem; }
 .pay:hover { transform: translateY(-4px); border-color: rgba(255,45,170,.4); box-shadow: 0 12px 30px rgba(0,0,0,.4); }
 
+/* ===== Proofs gallery ===== */
+.proof-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;
+}
+.proof-item {
+    padding: 0; border: 1px solid var(--glass-brd); border-radius: 16px;
+    overflow: hidden; cursor: pointer; background: #0d0d14;
+    transition: var(--tr); aspect-ratio: 9 / 16; position: relative;
+}
+.proof-item img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+.proof-item::after {
+    content: '\f00e'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+    position: absolute; inset: 0; display: grid; place-items: center;
+    color: #fff; font-size: 1.6rem; background: rgba(5,5,5,.45);
+    opacity: 0; transition: var(--tr);
+}
+.proof-item:hover { transform: translateY(-5px); border-color: rgba(255,45,170,.5); box-shadow: 0 16px 36px rgba(0,0,0,.5); }
+.proof-item:hover::after { opacity: 1; }
+
+/* Lightbox */
+.lightbox {
+    position: fixed; inset: 0; z-index: 3000; background: rgba(3,3,6,.92);
+    backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center;
+    padding: 2rem 1rem;
+}
+.lightbox.open { display: flex; }
+.lightbox img { max-width: min(92vw, 460px); max-height: 88vh; border-radius: 14px; border: 1px solid var(--glass-brd); box-shadow: 0 20px 60px rgba(0,0,0,.6); }
+.lb-close, .lb-nav {
+    position: absolute; background: rgba(255,255,255,.08); border: 1px solid var(--glass-brd);
+    color: #fff; width: 48px; height: 48px; border-radius: 50%; cursor: pointer;
+    display: grid; place-items: center; font-size: 1.1rem; transition: var(--tr);
+}
+.lb-close { top: 20px; inset-inline-start: 20px; }
+.lb-close:hover, .lb-nav:hover { background: var(--grad-btn); color: #1A0E00; border-color: transparent; }
+.lb-nav { top: 50%; transform: translateY(-50%); }
+.lb-prev { inset-inline-end: 16px; }
+.lb-next { inset-inline-start: 16px; }
+body.lb-open { overflow: hidden; }
+
 /* ===== Payment strip ===== */
 .pay-strip { padding: 1.6rem 2rem; border-radius: 22px; }
 .pay-strip img { width: 100%; height: auto; display: block; }

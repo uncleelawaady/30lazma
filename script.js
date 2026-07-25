@@ -1,5 +1,29 @@
 // Elwaset.net — interactions
 
+// Proofs lightbox
+(function () {
+    const items = [...document.querySelectorAll('.proof-item')];
+    const lb = document.getElementById('lightbox');
+    if (!items.length || !lb) return;
+    const lbImg = document.getElementById('lbImg');
+    const srcs = items.map(b => b.dataset.src);
+    let idx = 0;
+    const show = i => { idx = (i + srcs.length) % srcs.length; lbImg.src = srcs[idx]; };
+    const open = i => { show(i); lb.classList.add('open'); lb.setAttribute('aria-hidden', 'false'); document.body.classList.add('lb-open'); };
+    const close = () => { lb.classList.remove('open'); lb.setAttribute('aria-hidden', 'true'); document.body.classList.remove('lb-open'); };
+    items.forEach((b, i) => b.addEventListener('click', () => open(i)));
+    document.getElementById('lbClose').addEventListener('click', close);
+    document.getElementById('lbNext').addEventListener('click', () => show(idx + 1));
+    document.getElementById('lbPrev').addEventListener('click', () => show(idx - 1));
+    lb.addEventListener('click', e => { if (e.target === lb) close(); });
+    document.addEventListener('keydown', e => {
+        if (!lb.classList.contains('open')) return;
+        if (e.key === 'Escape') close();
+        if (e.key === 'ArrowLeft') show(idx + 1);
+        if (e.key === 'ArrowRight') show(idx - 1);
+    });
+})();
+
 // Mobile nav
 const navToggle = document.getElementById('navToggle');
 const navLinks = document.getElementById('navLinks');
