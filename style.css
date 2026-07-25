@@ -294,6 +294,36 @@ h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; line-height: 1.35; font-weight: 
 .pay span { font-family: 'Cairo'; font-weight: 700; font-size: .95rem; }
 .pay:hover { transform: translateY(-4px); border-color: rgba(255,45,170,.4); box-shadow: 0 12px 30px rgba(0,0,0,.4); }
 
+/* ===== Payment strip ===== */
+.pay-strip { padding: 1.6rem 2rem; border-radius: 22px; }
+.pay-strip img { width: 100%; height: auto; display: block; }
+.pay-note { text-align: center; color: var(--muted); margin-top: 1.4rem; font-weight: 600; font-size: .95rem; }
+.pay-note i { color: #25D366; margin-inline-end: .4rem; }
+
+/* ===== Founder ===== */
+.founder-grid { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 3rem; align-items: center; }
+.founder-photo { position: relative; }
+.founder-photo img {
+    width: 100%; border-radius: 26px; display: block;
+    border: 1px solid var(--glass-brd);
+    box-shadow: 0 24px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(255,45,170,.12);
+}
+.founder-badge {
+    position: absolute; bottom: 18px; inset-inline-start: 18px;
+    display: inline-flex; align-items: center; gap: .5rem;
+    background: rgba(5,5,5,.7); backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-brd); border-radius: 999px;
+    padding: .5rem 1.1rem; font-family: 'Cairo'; font-weight: 800; font-size: .9rem;
+}
+.founder-badge i { color: #25D366; }
+.founder-text h2 { font-size: clamp(2rem, 5vw, 3rem); margin: .5rem 0; }
+.founder-role { color: var(--pink); font-weight: 700; margin-bottom: 1.2rem; direction: ltr; text-align: right; }
+.founder-text > p { color: var(--muted); font-size: 1.05rem; margin-bottom: 1.6rem; }
+.founder-text strong { color: var(--text); }
+.founder-stats { display: flex; gap: 2.2rem; margin-bottom: 1.8rem; }
+.founder-stats strong { display: block; font-family: 'Cairo'; font-size: 1.8rem; font-weight: 900; }
+.founder-stats span { color: var(--dim); font-size: .9rem; }
+
 /* ===== Category detail page ===== */
 .cat-hero { position: relative; padding: 8rem 0 3rem; overflow: hidden; }
 .back-link { display: inline-flex; align-items: center; gap: .5rem; color: var(--muted); text-decoration: none; font-weight: 600; margin-bottom: 1.6rem; transition: var(--tr); }
@@ -337,4 +367,8 @@ h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; line-height: 1.35; font-weight: 
     .search-bar { flex-wrap: nowrap; }
     .footer-grid { grid-template-columns: 1fr; }
     .section { padding: 4rem 0; }
+    .founder-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .founder-photo { max-width: 360px; margin-inline: auto; }
+    .founder-stats { justify-content: space-between; gap: 1rem; }
+    .pay-strip { padding: 1rem; }
 }
