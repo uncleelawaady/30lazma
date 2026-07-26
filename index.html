@@ -464,23 +464,6 @@
     <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="fab-wa" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
 
     <script src="script.js"></script>
-    <script src="cart.js"></script>
-    <script>
-      // Add "أضف للسلة" to featured service cards
-      document.querySelectorAll('#featured .svc').forEach(card => {
-        const name = (card.querySelector('h3') || {}).textContent;
-        const foot = card.querySelector('.svc-foot');
-        if (!name || !foot) return;
-        const b = document.createElement('button');
-        b.className = 'btn btn-grad btn-sm svc-cart';
-        b.innerHTML = '<i class="fas fa-cart-plus"></i> أضف للسلة';
-        b.addEventListener('click', () => window.Cart && window.Cart.add({ name: name.trim(), category: 'خدمة مميزة' }));
-        foot.appendChild(b);
-        // demote the existing WhatsApp link to a ghost secondary action
-        const wa = foot.querySelector('a.btn-grad');
-        if (wa) { wa.classList.remove('btn-grad'); wa.classList.add('btn-ghost'); }
-      });
-    </script>
     <script src="firebase-config.js"></script>
     <script type="module">
       // ===== Live reviews: show approved Firestore reviews on the homepage =====
