@@ -98,8 +98,9 @@
             <button class="im-close" id="imClose" aria-label="إغلاق"><i class="fas fa-xmark"></i></button>
             <h3 class="im-title grad-text" id="imTitle"></h3>
             <div id="imBody"></div>
-            <a href="#" target="_blank" rel="noopener" class="btn btn-grad btn-lg im-order" id="imWa"><i class="fab fa-whatsapp"></i> اطلب عبر واتساب</a>
-            <p class="im-note">آخر محطة: تواصل مباشر مع العوضي لإتمام طلبك بأمان.</p>
+            <button class="btn btn-grad btn-lg im-order" id="imCart"><i class="fas fa-cart-plus"></i> أضف للسلة</button>
+            <a href="#" target="_blank" rel="noopener" class="btn btn-ghost btn-lg im-order" id="imWa"><i class="fab fa-whatsapp"></i> اطلب عبر واتساب</a>
+            <p class="im-note">أضف الخدمة للسلة وأكمل طلبك، أو تواصل مباشرة مع العوضي.</p>
         </div>
     </div>
 
@@ -158,14 +159,20 @@
             document.getElementById('imTitle').textContent = name;
             document.getElementById('imBody').innerHTML = body;
             document.getElementById('imWa').href = waFor(name);
+            im.dataset.item = name;
             im.classList.add('open'); im.setAttribute('aria-hidden','false'); document.body.classList.add('lb-open');
         }
         function closeItem(){ im.classList.remove('open'); im.setAttribute('aria-hidden','true'); document.body.classList.remove('lb-open'); }
         wrap.querySelectorAll('.chip[data-item]').forEach(b => b.addEventListener('click', () => openItem(b.dataset.item)));
         document.getElementById('imClose').addEventListener('click', closeItem);
+        document.getElementById('imCart').addEventListener('click', () => {
+            const name = im.dataset.item;
+            if (name && window.Cart) { window.Cart.add({ name, category: c.title }); closeItem(); }
+        });
         im.addEventListener('click', e => { if (e.target === im) closeItem(); });
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeItem(); });
     })();
     </script>
+    <script src="cart.js"></script>
 </body>
 </html>
