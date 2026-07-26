@@ -78,7 +78,7 @@ h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; line-height: 1.35; font-weight: 
     transition: var(--tr); white-space: nowrap;
 }
 .btn-grad {
-    background: var(--grad-btn); color: #1A0E00;
+    background: var(--grad); color: #1A0E00;
     box-shadow: 0 8px 30px rgba(255,45,170,.32), 0 0 0 1px rgba(255,255,255,.06) inset;
 }
 .btn-grad:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(255,45,170,.5); }
