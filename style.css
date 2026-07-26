@@ -565,3 +565,55 @@ body.lb-open { overflow: hidden; }
     .founder-stats { justify-content: space-between; gap: 1rem; }
     .pay-strip { padding: 1rem; }
 }
+
+/* =========================================================
+   Unified contact — WhatsApp + Messenger + Call
+   ========================================================= */
+.contact-fabs { position: fixed; right: 20px; bottom: 22px; z-index: 1200; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+.cf-menu { display: flex; flex-direction: column; gap: 12px; align-items: flex-end;
+    opacity: 0; visibility: hidden; transform: translateY(14px) scale(.96); transform-origin: bottom right; transition: all .28s cubic-bezier(.22,1,.36,1); }
+.contact-fabs.open .cf-menu { opacity: 1; visibility: visible; transform: none; }
+.cf-btn { display: inline-flex; align-items: center; gap: .6rem; height: 50px; padding: 0 1.1rem 0 .5rem;
+    border-radius: 999px; color: #fff; text-decoration: none; font-family: 'Cairo'; font-weight: 800; font-size: .95rem;
+    box-shadow: 0 10px 28px -6px rgba(0,0,0,.55); flex-direction: row-reverse; }
+.cf-btn i { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: rgba(255,255,255,.18); font-size: 1.2rem; }
+.cf-btn span { white-space: nowrap; }
+.cf-wa { background: #25D366; }
+.cf-mm { background: linear-gradient(135deg, #00B2FF, #006AFF); }
+.cf-tel { background: var(--grad-btn); color: #1A0E00; }
+.cf-btn:hover { transform: translateX(-4px); }
+.cf-toggle { width: 60px; height: 60px; border: none; border-radius: 50%; cursor: pointer; align-self: flex-end;
+    background: var(--grad); color: #1A0E00; font-size: 1.5rem; position: relative;
+    box-shadow: 0 12px 34px -6px rgba(255,45,170,.6); transition: var(--tr); }
+.cf-toggle:hover { transform: scale(1.05); }
+.cf-toggle .cf-i-close { display: none; }
+.contact-fabs.open .cf-toggle .cf-i-open { display: none; }
+.contact-fabs.open .cf-toggle .cf-i-close { display: inline; }
+
+/* choice popup */
+.contact-pop { position: fixed; inset: 0; z-index: 1400; display: grid; place-items: center; padding: 20px;
+    background: rgba(5,3,12,.74); backdrop-filter: blur(6px); opacity: 0; visibility: hidden; transition: opacity .28s; }
+.contact-pop.open { opacity: 1; visibility: visible; }
+.cp-card { width: min(420px, 100%); background: linear-gradient(180deg, #17102b, #120a22);
+    border: 1px solid var(--glass-brd); border-radius: 22px; padding: 1.8rem 1.6rem; position: relative;
+    box-shadow: 0 30px 70px rgba(0,0,0,.6); transform: translateY(12px); transition: transform .28s; }
+.contact-pop.open .cp-card { transform: none; }
+.cp-x { position: absolute; top: 14px; left: 16px; background: none; border: none; color: var(--muted); font-size: 1.4rem; cursor: pointer; }
+.cp-x:hover { color: #fff; }
+.cp-title { font-size: 1.3rem; margin-bottom: .3rem; }
+.cp-sub { color: var(--muted); font-size: .92rem; margin-bottom: 1.3rem; }
+.cp-opts { display: flex; flex-direction: column; gap: .8rem; }
+.cp-opt { display: flex; align-items: center; gap: .9rem; padding: .85rem 1rem; border-radius: 14px;
+    text-decoration: none; color: #fff; border: 1px solid var(--glass-brd); background: rgba(255,255,255,.03); transition: var(--tr); }
+.cp-opt:hover { transform: translateY(-2px); border-color: transparent; }
+.cp-ic { width: 46px; height: 46px; flex: none; display: grid; place-items: center; border-radius: 12px; font-size: 1.35rem; color: #fff; }
+.cp-wa .cp-ic { background: #25D366; }
+.cp-mm .cp-ic { background: linear-gradient(135deg, #00B2FF, #006AFF); }
+.cp-tel .cp-ic { background: var(--grad-btn); color: #1A0E00; }
+.cp-wa:hover { background: rgba(37,211,102,.12); }
+.cp-mm:hover { background: rgba(0,122,255,.12); }
+.cp-tel:hover { background: rgba(255,138,0,.12); }
+.cp-tx { flex: 1; display: flex; flex-direction: column; }
+.cp-tx strong { font-family: 'Cairo'; font-weight: 800; font-size: 1.02rem; }
+.cp-tx small { color: var(--muted); font-size: .82rem; }
+.cp-go { color: var(--dim); font-size: .9rem; }
