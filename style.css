@@ -15,7 +15,7 @@
     --violet: #17C8AC;
     --teal: #17C8AC;
     --text: #F2F6F5;
-    --muted: #97A6A2;
+    --muted: #EEF3F1;
     --dim: #5E706C;
     --glass: rgba(18, 150, 132, 0.06);
     --glass-brd: rgba(34, 210, 180, 0.16);
@@ -652,7 +652,7 @@ body.lb-open { overflow: hidden; }
     position: absolute; top: clamp(74px, 12vh, 150px); left: 0; right: 0; z-index: 2;
     text-align: center; pointer-events: none;
     font-family: 'Kufam', 'Cairo', sans-serif; font-weight: 900;
-    font-size: clamp(2.4rem, 11vw, 5.5rem); line-height: 1;
+    font-size: clamp(3.2rem, 15vw, 7.5rem); line-height: 1;
     letter-spacing: 1px;
     background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent;
     filter: drop-shadow(0 6px 26px rgba(23,200,172,.25));
