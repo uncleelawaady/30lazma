@@ -6,18 +6,19 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-    --bg: #0c0716;
-    --bg-2: #170e2b;
+    --bg: #06110f;
+    --bg-2: #0a1a17;
     --yellow: #FFD400;
     --orange: #FF8A00;
     --pink: #FF2DAA;
     --purple: #7B2CFF;
     --violet: #a855f7;
-    --text: #F5F5F7;
-    --muted: #9A9AA8;
-    --dim: #64646E;
-    --glass: rgba(124, 58, 173, 0.07);
-    --glass-brd: rgba(168, 85, 247, 0.14);
+    --teal: #17C8AC;
+    --text: #F2F6F5;
+    --muted: #97A6A2;
+    --dim: #5E706C;
+    --glass: rgba(18, 150, 132, 0.06);
+    --glass-brd: rgba(34, 210, 180, 0.16);
     --grad: linear-gradient(90deg, var(--yellow), var(--orange) 40%, var(--pink) 75%, var(--purple));
     --grad-btn: linear-gradient(90deg, var(--yellow), var(--orange) 45%, var(--pink));
     --radius: 24px;
@@ -29,7 +30,8 @@ html { scroll-behavior: smooth; }
 body {
     font-family: 'IBM Plex Sans Arabic', 'Cairo', sans-serif;
     background:
-        linear-gradient(180deg, #0a0512 0%, #150c28 45%, #1a1030 100%),
+        linear-gradient(180deg, rgba(5,17,17,.62), rgba(4,15,16,.82)),
+        url('assets/bg-grid.jpg') center top / cover no-repeat,
         var(--bg);
     background-attachment: fixed;
     color: var(--text);
@@ -38,37 +40,18 @@ body {
     position: relative;
 }
 
-/* ambient background glow — purple-forward to match EXP hero */
+/* ambient glow — teal-forward to harmonize with the grid background */
 body::before {
     content: '';
     position: fixed;
     inset: 0;
     background:
-        radial-gradient(55% 45% at 50% -5%, rgba(140,60,220,.28), transparent 62%),
-        radial-gradient(60% 40% at 82% 4%, rgba(123,44,255,.18), transparent 60%),
-        radial-gradient(50% 40% at 8% 18%, rgba(255,45,170,.10), transparent 60%),
-        radial-gradient(50% 50% at 50% 112%, rgba(255,138,0,.07), transparent 60%);
-    z-index: -2;
-    pointer-events: none;
-}
-
-/* perspective grid overlay — like the reference video/image */
-body::after {
-    content: '';
-    position: fixed;
-    inset: -10% -10% -10% -10%;
+        radial-gradient(45% 40% at 12% 88%, rgba(23,200,172,.22), transparent 62%),
+        radial-gradient(55% 45% at 50% -5%, rgba(20,180,158,.14), transparent 62%),
+        radial-gradient(45% 40% at 88% 10%, rgba(23,200,172,.10), transparent 60%);
     z-index: -1;
     pointer-events: none;
-    background-image:
-        linear-gradient(rgba(168,85,247,.09) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(168,85,247,.09) 1px, transparent 1px);
-    background-size: 48px 48px;
-    -webkit-mask-image: radial-gradient(115% 75% at 50% 22%, #000 45%, transparent 100%);
-    mask-image: radial-gradient(115% 75% at 50% 22%, #000 45%, transparent 100%);
-    animation: gridDrift 26s linear infinite;
 }
-@keyframes gridDrift { from { background-position: 0 0, 0 0; } to { background-position: 0 48px, 48px 0; } }
-@media (prefers-reduced-motion: reduce) { body::after { animation: none; } }
 
 h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; line-height: 1.35; font-weight: 800; }
 
@@ -137,9 +120,9 @@ h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; line-height: 1.35; font-weight: 
 }
 .hero-inner { position: relative; z-index: 2; text-align: center; max-width: 880px; margin-inline: auto; }
 .orb { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .5; z-index: 1; pointer-events: none; }
-.orb-1 { width: 420px; height: 420px; background: var(--purple); top: -80px; inset-inline-end: -60px; animation: float1 12s ease-in-out infinite; }
-.orb-2 { width: 360px; height: 360px; background: var(--pink); bottom: -60px; inset-inline-start: -40px; animation: float2 14s ease-in-out infinite; }
-.orb-3 { width: 300px; height: 300px; background: var(--orange); top: 40%; inset-inline-start: 45%; opacity: .3; animation: float1 16s ease-in-out infinite; }
+.orb-1 { width: 420px; height: 420px; background: var(--teal); top: -80px; inset-inline-end: -60px; animation: float1 12s ease-in-out infinite; }
+.orb-2 { width: 360px; height: 360px; background: var(--teal); bottom: -60px; inset-inline-start: -40px; opacity: .35; animation: float2 14s ease-in-out infinite; }
+.orb-3 { width: 300px; height: 300px; background: var(--teal); top: 40%; inset-inline-start: 45%; opacity: .22; animation: float1 16s ease-in-out infinite; }
 @keyframes float1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-30px,30px)} }
 @keyframes float2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(30px,-25px)} }
 
