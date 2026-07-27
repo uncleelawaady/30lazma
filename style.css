@@ -20,7 +20,7 @@
     --glass: rgba(18, 150, 132, 0.06);
     --glass-brd: rgba(34, 210, 180, 0.16);
     --grad: linear-gradient(90deg, var(--yellow), var(--orange) 40%, var(--pink) 75%, var(--purple));
-    --grad-btn: linear-gradient(90deg, var(--yellow), var(--orange) 45%, var(--pink));
+    --grad-btn: linear-gradient(90deg, #FFD400 0%, #2AA85E 45%, #0A5A38 100%);
     --radius: 24px;
     --tr: all .35s cubic-bezier(.22,1,.36,1);
 }
@@ -79,10 +79,10 @@ h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; line-height: 1.35; font-weight: 
     transition: var(--tr); white-space: nowrap;
 }
 .btn-grad {
-    background: var(--grad); color: #1A0E00;
-    box-shadow: 0 8px 30px rgba(255,45,170,.32), 0 0 0 1px rgba(255,255,255,.06) inset;
+    background: var(--grad-btn); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.3);
+    box-shadow: 0 8px 30px rgba(16,140,82,.4), 0 0 0 1px rgba(255,255,255,.06) inset;
 }
-.btn-grad:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(255,45,170,.5); }
+.btn-grad:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(23,168,95,.55); }
 .btn-ghost { background: rgba(255,255,255,.05); color: var(--text); border-color: var(--glass-brd); }
 .btn-ghost:hover { transform: translateY(-3px); border-color: var(--pink); box-shadow: 0 0 24px rgba(255,45,170,.3); }
 .btn-sm { padding: .55rem 1.1rem; font-size: .9rem; border-radius: 12px; }
@@ -206,7 +206,7 @@ h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; line-height: 1.35; font-weight: 
 .svc-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.1rem; }
 .svc-ico {
     width: 52px; height: 52px; display: grid; place-items: center; border-radius: 14px;
-    font-size: 1.4rem; color: #1A0E00; background: var(--grad-btn);
+    font-size: 1.4rem; color: #fff; background: var(--grad-btn);
     box-shadow: 0 0 24px rgba(255,138,0,.35);
 }
 .badge {
@@ -597,11 +597,11 @@ body.lb-open { overflow: hidden; }
 .cf-btn span { white-space: nowrap; }
 .cf-wa { background: #25D366; }
 .cf-mm { background: linear-gradient(135deg, #00B2FF, #006AFF); }
-.cf-tel { background: var(--grad-btn); color: #1A0E00; }
+.cf-tel { background: var(--grad-btn); color: #fff; }
 .cf-btn:hover { transform: translateX(-4px); }
 .cf-toggle { width: 60px; height: 60px; border: none; border-radius: 50%; cursor: pointer; align-self: flex-end;
-    background: var(--grad); color: #1A0E00; font-size: 1.5rem; position: relative;
-    box-shadow: 0 12px 34px -6px rgba(255,45,170,.6); transition: var(--tr); }
+    background: var(--grad-btn); color: #fff; font-size: 1.5rem; position: relative;
+    box-shadow: 0 12px 34px -6px rgba(16,140,82,.6); transition: var(--tr); }
 .cf-toggle:hover { transform: scale(1.05); }
 .cf-toggle .cf-i-close { display: none; }
 .contact-fabs.open .cf-toggle .cf-i-open { display: none; }
@@ -626,7 +626,7 @@ body.lb-open { overflow: hidden; }
 .cp-ic { width: 46px; height: 46px; flex: none; display: grid; place-items: center; border-radius: 12px; font-size: 1.35rem; color: #fff; }
 .cp-wa .cp-ic { background: #25D366; }
 .cp-mm .cp-ic { background: linear-gradient(135deg, #00B2FF, #006AFF); }
-.cp-tel .cp-ic { background: var(--grad-btn); color: #1A0E00; }
+.cp-tel .cp-ic { background: var(--grad-btn); color: #fff; }
 .cp-wa:hover { background: rgba(37,211,102,.12); }
 .cp-mm:hover { background: rgba(0,122,255,.12); }
 .cp-tel:hover { background: rgba(255,138,0,.12); }
@@ -634,3 +634,17 @@ body.lb-open { overflow: hidden; }
 .cp-tx strong { font-family: 'Cairo'; font-weight: 800; font-size: 1.02rem; }
 .cp-tx small { color: var(--muted); font-size: .82rem; }
 .cp-go { color: var(--dim); font-size: .9rem; }
+
+/* testimonials — badge word (مضمون/ضمان) + neutral stars */
+.tcard-top { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-bottom: .7rem; }
+.stars .off { opacity: .22; }
+.tbadge {
+    display: inline-flex; align-items: center; gap: .3rem;
+    font-family: 'Cairo'; font-weight: 800; font-size: .72rem;
+    padding: .24rem .66rem; border-radius: 999px;
+    background: var(--grad-btn); color: #fff; text-shadow: 0 1px 1px rgba(0,0,0,.25);
+    box-shadow: 0 3px 10px -2px rgba(16,140,82,.5);
+    white-space: nowrap;
+}
+.tbadge i { font-size: .7rem; }
+.tcard-neu { border-color: rgba(255,196,0,.28); }

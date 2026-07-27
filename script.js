@@ -112,3 +112,81 @@ window.addEventListener('scroll', () => {
     sections.forEach(s => { if (window.scrollY >= s.offsetTop - 130) cur = s.getAttribute('id'); });
     anchors.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur));
 });
+
+// ===== Testimonials: two marquee rows, 80% positive / 20% neutral =====
+(function () {
+    const top = document.getElementById('revRowTop');
+    const bot = document.getElementById('revRowBot');
+    if (!top || !bot) return;
+
+    const names = ['أحمد محمد','محمود إبراهيم','كريم عادل','مصطفى سعيد','عمرو خالد','يوسف حسن','إسلام طارق','محمد فؤاد','عبدالله ناصر','حسام الدين','طارق منير','وليد شعبان','رامي صبحي','شريف جمال','هاني مختار','باسم رفعت','عمر السيد','زياد أنور','تامر عبدالله','خالد فتحي','سيف الدين','مازن يحيى','أدهم رضا','نادر سمير','فادي بشير','سارة أحمد','منى كمال','دينا وحيد','ريهام فاروق','نورهان عماد'];
+    const positive = [
+        'تعامل محترم وسرعة في إنهاء الصفقة، وسيط يستحق الثقة.',
+        'تمت الوساطة بكل احترافية وكل شيء كان واضح من البداية.',
+        'أنصح بالتعامل مع العوضي، التزام ومصداقية.',
+        'أول مرة أتعامل وكانت تجربة ممتازة.',
+        'استلمت الخدمة زي ما اتفقنا من غير أي مشاكل.',
+        'وسيط أمين ويتابع الصفقة لحد ما تخلص.',
+        'شكراً على حسن التعامل وسرعة التنفيذ.',
+        'كل خطوة كانت موثقة وواضحة.',
+        'خدمة راقية وتعامل محترم.',
+        'وسيط يعتمد عليه في الصفقات الكبيرة.',
+        'تم استلام الحساب بنجاح وكل حاجة كانت ممتازة.',
+        'من أفضل الوسطاء اللي تعاملت معاهم.',
+        'تجربة ناجحة وهتعامل معاه تاني.',
+        'حوّلت المبلغ واستلمت الخدمة بأمان.',
+        'واضح إنه صاحب خبرة كبيرة.',
+        'شكراً على الأمانة والالتزام.',
+        'وسيط ممتاز ويستحق كل التقدير.',
+        'مصداقية عالية جدًا في التعامل.',
+        'شعرت بالأمان طول الصفقة.',
+        'التزام بالمواعيد وتنفيذ سريع.',
+        'راجل بيطمّنك أثناء الصفقة.',
+        'أفضل وسيط تعاملت معاه لحد دلوقتي.',
+        'كله تم بطريقة احترافية ومنظمة.',
+        'أنصح أي حد بيدور على وسيط موثوق يتعامل معاه.'
+    ];
+    const neutral = [
+        'العوضي مضمون وأمين، بس بيتأخر شوية في الرد.',
+        'راجل محترم وموثوق، إنما بعتّله من فترة وماردّش بسرعة.',
+        'الوساطة مضمونة، بس محتاج يسرّع في الرد شوية.',
+        'وسيط أمين، لكن طلبت منه خدمة واتأخرت عليّ.',
+        'مضمون في الصفقات، إنما مرة طلبت خدمة وماجابهاش في الوقت.',
+        'كويس وأمين، بس الرد أحيانًا بيتأخر.'
+    ];
+    const badges = ['مضمون', 'ضمان'];
+
+    // build review objects: every 5th is neutral (~20%)
+    const reviews = [];
+    let np = 0, nn = 0;
+    for (let i = 0; i < 30; i++) {
+        const isNeu = (i % 5 === 4); // 20%
+        reviews.push({
+            name: names[i % names.length],
+            text: isNeu ? neutral[nn++ % neutral.length] : positive[np++ % positive.length],
+            rating: isNeu ? 3 : 5,
+            neutral: isNeu,
+            badge: badges[i % 2]
+        });
+    }
+
+    function card(r) {
+        let stars = '';
+        for (let s = 0; s < 5; s++) stars += '<i class="fas fa-star' + (s < r.rating ? '' : ' off') + '"></i>';
+        const bcls = r.neutral ? 'tbadge tbadge-warn' : 'tbadge';
+        return '<div class="tcard' + (r.neutral ? ' tcard-neu' : '') + '">' +
+            '<div class="tcard-top"><span class="stars">' + stars + '</span>' +
+            '<span class="' + bcls + '"><i class="fas fa-shield-halved"></i> ' + r.badge + '</span></div>' +
+            '<p>' + r.text + '</p>' +
+            '<div class="tby"><span class="av">' + r.name.charAt(0) + '</span>' +
+            '<div><strong>' + r.name + '</strong><small><i class="fas fa-circle-check"></i> عميل موثّق</small></div></div>' +
+            '</div>';
+    }
+
+    // split into two rows, duplicate each row for seamless marquee
+    const half = Math.ceil(reviews.length / 2);
+    const rowA = reviews.slice(0, half).map(card).join('');
+    const rowB = reviews.slice(half).map(card).join('');
+    top.innerHTML = rowA + rowA;
+    bot.innerHTML = rowB + rowB;
+})();
