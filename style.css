@@ -635,16 +635,14 @@ body.lb-open { overflow: hidden; }
 .cp-tx small { color: var(--muted); font-size: .82rem; }
 .cp-go { color: var(--dim); font-size: .9rem; }
 
-/* testimonials — badge word (مضمون/ضمان) + neutral stars */
-.tcard-top { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-bottom: .7rem; }
+/* testimonials — word woven into the comment + Google-account avatar */
+.tcard .stars { display: block; margin-bottom: .6rem; }
 .stars .off { opacity: .22; }
-.tbadge {
-    display: inline-flex; align-items: center; gap: .3rem;
-    font-family: 'Cairo'; font-weight: 800; font-size: .72rem;
-    padding: .24rem .66rem; border-radius: 999px;
-    background: var(--grad-btn); color: #fff; text-shadow: 0 1px 1px rgba(0,0,0,.25);
-    box-shadow: 0 3px 10px -2px rgba(16,140,82,.5);
-    white-space: nowrap;
+.rev-word { color: #3ad07f; font-weight: 800; }
+.av-wrap { position: relative; display: inline-flex; flex: none; }
+.gbadge {
+    position: absolute; bottom: -4px; left: -4px; width: 20px; height: 20px;
+    background: #fff; border-radius: 50%; padding: 2.5px;
+    box-shadow: 0 1px 5px rgba(0,0,0,.4); border: 1px solid rgba(0,0,0,.06);
 }
-.tbadge i { font-size: .7rem; }
 .tcard-neu { border-color: rgba(255,196,0,.28); }
