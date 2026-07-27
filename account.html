@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>حسابي | Elwaset.net</title>
+  <meta name="description" content="سجّل حسابك على Elwaset لمتابعة خدماتك واستلام إشعارات العروض والخدمات الجديدة.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="assets/favicon.png" type="image/png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <nav class="nav" id="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="brand">
+        <img src="assets/logo.png" alt="Elwaset" class="brand-logo-img">
+        <span class="brand-name">Elwaset<em>.net</em></span>
+      </a>
+      <a href="index.html" class="btn btn-ghost btn-sm"><i class="fas fa-house"></i> الرئيسية</a>
+    </div>
+  </nav>
+
+  <header class="cat-hero">
+    <div class="orb orb-1"></div><div class="orb orb-2"></div>
+    <div class="container">
+      <a href="index.html" class="back-link"><i class="fas fa-arrow-right"></i> رجوع للرئيسية</a>
+      <div class="cat-hero-head">
+        <div class="cat-hero-ico"><i class="fas fa-user"></i></div>
+        <div><span class="eyebrow">حسابك</span><h1 class="grad-text">حسابي على Elwaset</h1></div>
+      </div>
+      <p class="cat-hero-intro">سجّل حسابك عشان تتابع خدماتك وتستلم إشعارات العروض والخدمات الجديدة أول بأول.</p>
+    </div>
+  </header>
+
+  <section class="section" style="padding-top:1rem">
+    <div class="container" style="max-width:620px">
+
+      <!-- Logged OUT -->
+      <div class="rev-form" id="authBox" style="text-align:center">
+        <div class="rev-avatar-lg"><i class="fas fa-user-plus"></i></div>
+        <h3 style="margin:1rem 0 .4rem">سجّل دخولك أو أنشئ حساب</h3>
+        <p style="margin-bottom:1.4rem">اختر طريقة التسجيل — بياناتك محفوظة وآمنة.</p>
+
+        <button class="btn-google" id="googleBtn">
+          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIj48cGF0aCBmaWxsPSIjRUE0MzM1IiBkPSJNMjQgOS41YzMuNTQgMCA2LjcxIDEuMjIgOS4yMSAzLjZsNi44NS02Ljg1QzM1LjkgMi4zOCAzMC40NyAwIDI0IDAgMTQuNjIgMCA2LjUxIDUuMzggMi41NiAxMy4yMmw3Ljk4IDYuMTlDMTIuNDMgMTMuNzIgMTcuNzQgOS41IDI0IDkuNXoiLz48cGF0aCBmaWxsPSIjNDI4NUY0IiBkPSJNNDYuOTggMjQuNTVjMC0xLjU3LS4xNS0zLjA5LS4zOC00LjU1SDI0djkuMDJoMTIuOTRjLS41OCAyLjk2LTIuMjYgNS40OC00Ljc4IDcuMThsNy43MyA2Yy40NS0uNCA4LjA5LTcuMjIgOC4wOS0xNy42NXoiLz48cGF0aCBmaWxsPSIjRkJCQzA1IiBkPSJNMTAuNTMgMjguNTljLS40OC0xLjQ1LS43Ni0yLjk5LS43Ni00LjU5czAuMjctMy4xNC43Ni00LjU5bC03Ljk4LTYuMTlDMC45MiAxNi40NiAwIDIwLjEyIDAgMjRjMCAzLjg4LjkyIDcuNTQgMi41NiAxMC43OGw3Ljk3LTYuMTl6Ii8+PHBhdGggZmlsbD0iIzM0QTg1MyIgZD0iTTI0IDQ4YzYuNDggMCAxMS45My0yLjEzIDE1Ljg5LTUuODFsLTcuNzMtNmMtMi4xNSAxLjQ1LTQuOTIgMi4zLTguMTYgMi4zLTYuMjYgMC0xMS41Ny00LjIyLTEzLjQ3LTkuOTFsLTcuOTggNi4xOUM2LjUxIDQyLjYyIDE0LjYyIDQ4IDI0IDQ4eiIvPjwvc3ZnPg==" alt="Google">
+          الدخول بجوجل
+        </button>
+        <button class="btn-facebook" id="facebookBtn"><i class="fab fa-facebook-f"></i> الدخول بفيسبوك</button>
+
+        <div class="rev-or"><span>أو بالإيميل</span></div>
+
+        <form id="emailForm" class="rev-phone" style="text-align:right">
+          <div class="rf-group" id="nameGroup"><label>الاسم</label><input type="text" id="acName" placeholder="اسمك"></div>
+          <div class="rf-group"><label>البريد الإلكتروني</label><input type="email" id="acEmail" placeholder="example@email.com" required></div>
+          <div class="rf-group"><label>كلمة المرور</label><input type="password" id="acPass" placeholder="6 أحرف على الأقل" required></div>
+          <div style="display:flex;gap:.6rem">
+            <button type="submit" class="btn btn-grad btn-lg" style="flex:1" id="registerBtn"><i class="fas fa-user-plus"></i> إنشاء حساب</button>
+            <button type="button" class="btn btn-ghost btn-lg" style="flex:1" id="loginBtn"><i class="fas fa-right-to-bracket"></i> دخول</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Logged IN -->
+      <div class="rev-form" id="profileBox" style="display:none">
+        <div class="rev-user-card" id="profileCard"></div>
+        <div class="rev-user-note" style="margin-top:1rem">
+          <p style="margin:0"><i class="fas fa-bell" style="color:var(--yellow)"></i> هتوصلك إشعارات العروض والخدمات الجديدة على الموقع.</p>
+        </div>
+        <a href="index.html" class="btn btn-grad btn-lg" style="width:100%;margin-top:1rem;justify-content:center"><i class="fas fa-grip"></i> تصفّح الخدمات</a>
+        <button type="button" class="btn-plain" id="signoutBtn" style="margin-top:.6rem">تسجيل خروج</button>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="footer"><div class="foot-bottom">© 2026 Elwaset.net — جميع الحقوق محفوظة | EXD | Elawaady XDigital</div></footer>
+
+  <script src="firebase-config.js"></script>
+  <script type="module">
+    const cfg = window.FIREBASE_CONFIG || {};
+    const authBox = document.getElementById('authBox');
+    const profileBox = document.getElementById('profileBox');
+    const esc = s => String(s || '').replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+
+    if (!cfg.apiKey) {
+      const notice = () => alert('التسجيل هيتفعل قريبًا.');
+      ['googleBtn','facebookBtn','registerBtn','loginBtn'].forEach(id => document.getElementById(id).addEventListener('click', e => { e.preventDefault(); notice(); }));
+    } else {
+      const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+      const { getAuth, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup, signOut, onAuthStateChanged,
+              createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } =
+        await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+      const { getFirestore, doc, setDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+
+      const app = initializeApp(cfg);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      async function upsertUser(u, extra) {
+        const pid = (u.providerData && u.providerData[0] && u.providerData[0].providerId) || 'password';
+        const provider = pid.indexOf('google') > -1 ? 'google' : pid.indexOf('facebook') > -1 ? 'facebook' : 'email';
+        const data = { name: u.displayName || (extra && extra.name) || 'مستخدم', email: u.email || '', photo: u.photoURL || '',
+                       provider, uid: u.uid, lastSeen: serverTimestamp() };
+        try { await setDoc(doc(db, 'users', u.uid), { ...data, createdAt: serverTimestamp() }, { merge: true }); } catch (e) {}
+        try { await setDoc(doc(db, 'customers', u.uid), { ...data, source: provider }, { merge: true }); } catch (e) {}
+      }
+
+      document.getElementById('googleBtn').addEventListener('click', async () => {
+        try { await signInWithPopup(auth, new GoogleAuthProvider()); } catch (e) { alert('تعذّر الدخول: ' + (e.message||e)); }
+      });
+      document.getElementById('facebookBtn').addEventListener('click', async () => {
+        try { await signInWithPopup(auth, new FacebookAuthProvider()); } catch (e) { alert('تعذّر الدخول بفيسبوك: ' + (e.message||e)); }
+      });
+      document.getElementById('emailForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const name = document.getElementById('acName').value.trim();
+        const email = document.getElementById('acEmail').value.trim();
+        const pass = document.getElementById('acPass').value;
+        try {
+          const cred = await createUserWithEmailAndPassword(auth, email, pass);
+          if (name) { try { await updateProfile(cred.user, { displayName: name }); } catch(e){} }
+          await upsertUser(cred.user, { name });
+        } catch (e) { alert('تعذّر إنشاء الحساب: ' + (e.message||e)); }
+      });
+      document.getElementById('loginBtn').addEventListener('click', async () => {
+        const email = document.getElementById('acEmail').value.trim();
+        const pass = document.getElementById('acPass').value;
+        if (!email || !pass) { alert('اكتب الإيميل وكلمة المرور'); return; }
+        try { await signInWithEmailAndPassword(auth, email, pass); } catch (e) { alert('تعذّر الدخول: ' + (e.message||e)); }
+      });
+      document.getElementById('signoutBtn').addEventListener('click', () => signOut(auth));
+
+      onAuthStateChanged(auth, async user => {
+        if (user) {
+          await upsertUser(user);
+          authBox.style.display = 'none'; profileBox.style.display = 'block';
+          const initial = (user.displayName || user.email || 'U').trim()[0] || 'U';
+          const pic = user.photoURL ? '<img src="' + user.photoURL + '" alt="">' : '<span class="av">' + esc(initial) + '</span>';
+          document.getElementById('profileCard').innerHTML = pic +
+            '<div><strong>' + esc(user.displayName || 'مستخدم') + '</strong><small>' + esc(user.email || '') + '</small></div>';
+        } else { authBox.style.display = 'block'; profileBox.style.display = 'none'; }
+      });
+    }
+  </script>
+  <script src="contact.js"></script>
+</body>
+</html>

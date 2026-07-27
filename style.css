@@ -680,3 +680,33 @@ body.lb-open { overflow: hidden; }
 }
 .btn-facebook:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(24,119,242,.4); }
 .btn-facebook i { font-size: 1.15rem; }
+
+/* ===== Navbar account + notifications bell ===== */
+.nav-account, .notif-bell {
+    width: 42px; height: 42px; flex: none; display: grid; place-items: center;
+    border-radius: 12px; border: 1px solid var(--glass-brd); background: rgba(255,255,255,.05);
+    color: var(--text); font-size: 1.05rem; cursor: pointer; text-decoration: none; position: relative; transition: var(--tr);
+}
+.nav-account:hover, .notif-bell:hover { border-color: var(--yellow); color: var(--yellow); transform: translateY(-2px); }
+.notif-badge {
+    position: absolute; top: -6px; left: -6px; min-width: 20px; height: 20px; padding: 0 5px;
+    display: grid; place-items: center; border-radius: 999px; background: #ff3b5c; color: #fff;
+    font-family: 'Cairo'; font-weight: 800; font-size: .72rem; border: 2px solid #0b1512;
+}
+.notif-panel {
+    position: fixed; top: 70px; inset-inline-start: 12px; z-index: 1300; width: min(360px, 92vw);
+    max-height: 70vh; overflow-y: auto; background: linear-gradient(180deg, #17102b00, transparent), #10201a;
+    border: 1px solid var(--glass-brd); border-radius: 16px; box-shadow: 0 24px 60px rgba(0,0,0,.6);
+    opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all .25s;
+}
+.notif-panel.open { opacity: 1; visibility: visible; transform: none; }
+.np-head { padding: 1rem 1.2rem; border-bottom: 1px solid var(--glass-brd); }
+.np-head strong i { color: var(--yellow); margin-inline-end: .3rem; }
+.np-list { padding: .6rem; }
+.np-empty { text-align: center; color: var(--muted); padding: 1.6rem; }
+.np-item { padding: .8rem 1rem; border-radius: 12px; border: 1px solid transparent; }
+.np-item + .np-item { margin-top: .3rem; }
+.np-item.np-new { background: rgba(23,168,94,.08); border-color: rgba(34,210,180,.2); }
+.np-item strong { display: block; font-size: .98rem; }
+.np-item p { color: var(--muted); font-size: .88rem; margin: .2rem 0 0; }
+.np-link { display: inline-block; margin-top: .4rem; color: var(--yellow); font-weight: 700; font-size: .85rem; }
