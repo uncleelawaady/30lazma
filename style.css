@@ -646,3 +646,18 @@ body.lb-open { overflow: hidden; }
     box-shadow: 0 1px 5px rgba(0,0,0,.4); border: 1px solid rgba(0,0,0,.06);
 }
 .tcard-neu { border-color: rgba(255,196,0,.28); }
+
+/* hero top word — "الوساطة" in Kufam */
+.hero-word {
+    position: absolute; top: clamp(74px, 12vh, 150px); left: 0; right: 0; z-index: 2;
+    text-align: center; pointer-events: none;
+    font-family: 'Kufam', 'Cairo', sans-serif; font-weight: 900;
+    font-size: clamp(2.4rem, 11vw, 5.5rem); line-height: 1;
+    letter-spacing: 1px;
+    background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 6px 26px rgba(23,200,172,.25));
+}
+@media (max-width: 768px){ .hero-word { top: clamp(66px, 10vh, 110px); } }
+
+/* small platform brand-mark on chips */
+.chip .plat-ic { font-size: 1.02rem !important; opacity: 1 !important; }

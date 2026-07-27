@@ -132,11 +132,33 @@
         document.getElementById('catWa').href = wa;
         document.getElementById('catWa2').href = wa;
 
+        // small platform brand-mark for chips
+        const PLAT = [
+            [/فيس|facebook|\bmeta\b/i, 'fa-facebook', '#1877F2'],
+            [/انستج|إنستج|instagram/i, 'fa-instagram', '#E4405F'],
+            [/تيك ?توك|tiktok/i, 'fa-tiktok', '#e9e9ee'],
+            [/يوتيوب|youtube/i, 'fa-youtube', '#FF0000'],
+            [/سناب|snap/i, 'fa-snapchat', '#F5C400'],
+            [/واتساب|whatsapp/i, 'fa-whatsapp', '#25D366'],
+            [/تيليجرام|telegram/i, 'fa-telegram', '#26A5E4'],
+            [/لينكد|linkedin/i, 'fa-linkedin', '#0A66C2'],
+            [/pinterest/i, 'fa-pinterest', '#E60023'],
+            [/threads/i, 'fa-threads', '#e9e9ee'],
+            [/reddit/i, 'fa-reddit', '#FF4500'],
+            [/discord/i, 'fa-discord', '#5865F2'],
+            [/twitch/i, 'fa-twitch', '#9146FF'],
+            [/gmail|google|adsense|youtube/i, 'fa-google', '#EA4335'],
+            [/تويتر|twitter|(^|\s)x(\s|$|\()/i, 'fa-x-twitter', '#e9e9ee']
+        ];
+        function platIcon(name) {
+            for (const [re, ic, col] of PLAT) { if (re.test(name)) return '<i class="fab ' + ic + ' plat-ic" style="color:' + col + '"></i>'; }
+            return '';
+        }
         const wrap = document.getElementById('catGroups');
         let html = '<div class="container">';
         c.groups.forEach(g => {
             html += '<h3 class="sub-title grad-text">' + g.h + '</h3><div class="chip-grid">';
-            g.items.forEach(it => { html += '<button class="chip glass" data-item="' + it.replace(/"/g,'&quot;') + '">' + it + ' <i class="fas fa-circle-info"></i></button>'; });
+            g.items.forEach(it => { html += '<button class="chip glass" data-item="' + it.replace(/"/g,'&quot;') + '">' + platIcon(it) + it + ' <i class="fas fa-circle-info chip-info"></i></button>'; });
             html += '</div>';
         });
         html += '</div>';
