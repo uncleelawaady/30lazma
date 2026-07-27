@@ -122,13 +122,9 @@
         document.getElementById('catTitle').textContent = c.title;
         document.getElementById('catIntro').textContent = c.intro;
         const ico = document.getElementById('catIco');
-        if (c.img) {
-            ico.innerHTML = '<img src="' + c.img + '" alt="' + c.title + '">';
-        } else {
-            ico.innerHTML = '<i class="fas ' + c.icon + '"></i>';
-            ico.style.background = 'linear-gradient(135deg,' + c.g1 + ',' + c.g2 + ')';
-            ico.style.boxShadow = '0 10px 30px -6px ' + c.g1;
-        }
+        ico.innerHTML = '<i class="fas ' + c.icon + '"></i>';
+        ico.style.background = 'linear-gradient(135deg,' + c.g1 + ',' + c.g2 + ')';
+        ico.style.boxShadow = '0 10px 30px -6px ' + c.g1;
         document.documentElement.style.setProperty('--cg1', c.g1);
         document.documentElement.style.setProperty('--cg2', c.g2);
 
@@ -143,11 +139,6 @@
             g.items.forEach(it => { html += '<button class="chip glass" data-item="' + it.replace(/"/g,'&quot;') + '">' + it + ' <i class="fas fa-circle-info"></i></button>'; });
             html += '</div>';
         });
-        if (c.platforms && c.platforms.length) {
-            html += '<div class="cat-plats"><h3 class="sub-title grad-text">المنصات اللي بنخدمها</h3><div class="plat-grid">';
-            c.platforms.forEach(p => { html += '<div class="plat"><img src="' + p + '" loading="lazy" alt="منصة"></div>'; });
-            html += '</div></div>';
-        }
         html += '</div>';
         wrap.innerHTML = html;
 
