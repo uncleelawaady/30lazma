@@ -1,6 +1,7 @@
 // Elwaset.net — categories data (used by category.html full pages)
 window.CATEGORIES = {
   "social-media": {
+    platforms: ["assets/platforms/facebook.jpg","assets/platforms/instagram.jpg","assets/platforms/youtube.jpg","assets/platforms/x.jpg","assets/platforms/snapchat.jpg","assets/platforms/whatsapp.jpg","assets/platforms/linkedin.jpg","assets/platforms/pinterest.jpg","assets/platforms/gmail.jpg"],
     icon: "fa-share-nodes", g1: "#17A85E", g2: "#0E7A45",
     title: "خدمات السوشيال ميديا",
     intro: "كل خدمات السوشيال ميديا لكل المنصات في مكان واحد — زيادة حقيقية، تفاعل، ودعم كامل لحساباتك وصفحاتك بجودة عالية وتنفيذ آمن يحافظ على حسابك.",
@@ -124,7 +125,7 @@ window.CATEGORIES = {
     ]
   },
   "finance": {
-    icon: "fa-wallet", g1: "#FFD400", g2: "#17A85E",
+    img: "assets/cat/finance.jpg", icon: "fa-wallet", g1: "#FFD400", g2: "#17A85E",
     title: "الخدمات المالية",
     intro: "فتح وتفعيل ودعم المحافظ والحسابات المالية العالمية باحترافية وأمان.",
     groups: [
@@ -132,7 +133,7 @@ window.CATEGORIES = {
     ]
   },
   "business": {
-    icon: "fa-building", g1: "#0E7A45", g2: "#FF8A00",
+    img: "assets/cat/business.jpg", icon: "fa-building", g1: "#0E7A45", g2: "#FF8A00",
     title: "الأعمال والشركات",
     intro: "حلول متكاملة للشركات — تأسيس، أنظمة إدارة أعمال، وبريد احترافي لبناء حضور تجاري قوي.",
     groups: [
@@ -140,7 +141,7 @@ window.CATEGORIES = {
     ]
   },
   "education": {
-    icon: "fa-graduation-cap", g1: "#FF8A00", g2: "#FFD400",
+    img: "assets/cat/education.jpg", icon: "fa-graduation-cap", g1: "#FF8A00", g2: "#FFD400",
     title: "التعليم والكورسات",
     intro: "كورسات واستشارات وتدريب عملي من خبرة حقيقية في السوق الرقمي.",
     groups: [
@@ -148,7 +149,7 @@ window.CATEGORIES = {
     ]
   },
   "marketplace": {
-    icon: "fa-shop", g1: "#17A85E", g2: "#FFD400",
+    img: "assets/cat/store.jpg", icon: "fa-shop", g1: "#17A85E", g2: "#FFD400",
     title: "Marketplace",
     intro: "سوق مفتوح يجمع خدمات الموردين والفريلانسر والشركات والشركاء المعتمدين — بأمان وتقييمات ووساطة في كل صفقة.",
     groups: [
@@ -156,7 +157,7 @@ window.CATEGORIES = {
     ]
   },
   "portfolio": {
-    icon: "fa-briefcase", g1: "#0E7A45", g2: "#17A85E",
+    img: "assets/cat/portfolio.jpg", icon: "fa-briefcase", g1: "#0E7A45", g2: "#17A85E",
     title: "Portfolio — أعمالنا",
     intro: "نماذج من تنفيذنا وقصص نجاح عملائنا عبر كل المجالات الرقمية.",
     groups: [
