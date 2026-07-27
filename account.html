@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>حسابي | Elwaset.net</title>
-  <meta name="description" content="سجّل حسابك على Elwaset لمتابعة خدماتك واستلام إشعارات العروض والخدمات الجديدة.">
+  <title>حساب جديد | Elwaset.net</title>
+  <meta name="description" content="أنشئ حسابك على Elwaset — حساب مستخدم للشراء أو حساب بائع للموردين وأصحاب المتاجر.">
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="assets/favicon.png" type="image/png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -26,44 +26,81 @@
     <div class="container">
       <a href="index.html" class="back-link"><i class="fas fa-arrow-right"></i> رجوع للرئيسية</a>
       <div class="cat-hero-head">
-        <div class="cat-hero-ico"><i class="fas fa-user"></i></div>
-        <div><span class="eyebrow">حسابك</span><h1 class="grad-text">حسابي على Elwaset</h1></div>
+        <div class="cat-hero-ico"><i class="fas fa-user-plus"></i></div>
+        <div><span class="eyebrow" id="acEyebrow">حساب جديد</span><h1 class="grad-text" id="acTitle">انضم إلى Elwaset</h1></div>
       </div>
-      <p class="cat-hero-intro">سجّل حسابك عشان تتابع خدماتك وتستلم إشعارات العروض والخدمات الجديدة أول بأول.</p>
+      <p class="cat-hero-intro" id="acIntro">اختر نوع الحساب المناسب لك، وانضم لمنصة Elwaset — لمتابعة خدماتك واستلام إشعارات العروض والخدمات الجديدة.</p>
     </div>
   </header>
 
   <section class="section" style="padding-top:1rem">
-    <div class="container" style="max-width:620px">
+    <div class="container" style="max-width:640px">
 
-      <!-- Logged OUT -->
-      <div class="rev-form" id="authBox" style="text-align:center">
-        <div class="rev-avatar-lg"><i class="fas fa-user-plus"></i></div>
-        <h3 style="margin:1rem 0 .4rem">سجّل دخولك أو أنشئ حساب</h3>
-        <p style="margin-bottom:1.4rem">اختر طريقة التسجيل — بياناتك محفوظة وآمنة.</p>
+      <!-- ==== Auth (register / login) ==== -->
+      <div class="acc-card" id="authBox">
 
+        <!-- account type (register only) -->
+        <div id="typeWrap">
+          <div class="acc-types">
+            <button type="button" class="acc-type active" data-type="user">
+              <i class="fas fa-user"></i>
+              <strong>حساب مستخدم</strong>
+              <small>للأفراد الراغبين في شراء الخدمات الرقمية</small>
+            </button>
+            <button type="button" class="acc-type" data-type="seller">
+              <i class="fas fa-store"></i>
+              <strong>حساب بائع / تاجر</strong>
+              <small>للموردين ومقدمي الخدمات وأصحاب المتاجر</small>
+            </button>
+          </div>
+        </div>
+
+        <form id="acForm">
+          <div class="rf-group" id="g-name">
+            <label>الاسم الكامل <span class="req">*</span></label>
+            <input type="text" id="acName" placeholder="مثال: محمد أحمد">
+          </div>
+          <div class="rf-group" id="g-phone">
+            <label>رقم الهاتف <span class="req">*</span></label>
+            <input type="tel" id="acPhone" placeholder="01xxxxxxxxx" inputmode="tel">
+          </div>
+          <div class="rf-group">
+            <label>البريد الإلكتروني <span class="req">*</span></label>
+            <input type="email" id="acEmail" placeholder="example@email.com" required>
+          </div>
+          <div class="rf-group">
+            <label>كلمة المرور <span class="req">*</span></label>
+            <input type="password" id="acPass" placeholder="6 أحرف على الأقل" required>
+          </div>
+          <div class="rf-group" id="g-pass2">
+            <label>تأكيد كلمة المرور <span class="req">*</span></label>
+            <input type="password" id="acPass2" placeholder="أعد إدخال كلمة المرور">
+          </div>
+          <label class="ac-terms" id="g-terms">
+            <input type="checkbox" id="acTerms"> أوافق على شروط الاستخدام وسياسة الخصوصية
+          </label>
+          <button type="submit" class="btn btn-grad btn-lg ac-submit" id="submitBtn"><i class="fas fa-user-plus"></i> إنشاء حساب</button>
+        </form>
+
+        <div class="rev-or"><span>أو</span></div>
         <button class="btn-google" id="googleBtn">
           <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIj48cGF0aCBmaWxsPSIjRUE0MzM1IiBkPSJNMjQgOS41YzMuNTQgMCA2LjcxIDEuMjIgOS4yMSAzLjZsNi44NS02Ljg1QzM1LjkgMi4zOCAzMC40NyAwIDI0IDAgMTQuNjIgMCA2LjUxIDUuMzggMi41NiAxMy4yMmw3Ljk4IDYuMTlDMTIuNDMgMTMuNzIgMTcuNzQgOS41IDI0IDkuNXoiLz48cGF0aCBmaWxsPSIjNDI4NUY0IiBkPSJNNDYuOTggMjQuNTVjMC0xLjU3LS4xNS0zLjA5LS4zOC00LjU1SDI0djkuMDJoMTIuOTRjLS41OCAyLjk2LTIuMjYgNS40OC00Ljc4IDcuMThsNy43MyA2Yy40NS0uNCA4LjA5LTcuMjIgOC4wOS0xNy42NXoiLz48cGF0aCBmaWxsPSIjRkJCQzA1IiBkPSJNMTAuNTMgMjguNTljLS40OC0xLjQ1LS43Ni0yLjk5LS43Ni00LjU5czAuMjctMy4xNC43Ni00LjU5bC03Ljk4LTYuMTlDMC45MiAxNi40NiAwIDIwLjEyIDAgMjRjMCAzLjg4LjkyIDcuNTQgMi41NiAxMC43OGw3Ljk3LTYuMTl6Ii8+PHBhdGggZmlsbD0iIzM0QTg1MyIgZD0iTTI0IDQ4YzYuNDggMCAxMS45My0yLjEzIDE1Ljg5LTUuODFsLTcuNzMtNmMtMi4xNSAxLjQ1LTQuOTIgMi4zLTguMTYgMi4zLTYuMjYgMC0xMS41Ny00LjIyLTEzLjQ3LTkuOTFsLTcuOTggNi4xOUM2LjUxIDQyLjYyIDE0LjYyIDQ4IDI0IDQ4eiIvPjwvc3ZnPg==" alt="Google">
-          الدخول بجوجل
+          التسجيل بواسطة جوجل
         </button>
-        <button class="btn-facebook" id="facebookBtn"><i class="fab fa-facebook-f"></i> الدخول بفيسبوك</button>
+        <button class="btn-facebook" id="facebookBtn"><i class="fab fa-facebook-f"></i> التسجيل بواسطة فيسبوك</button>
 
-        <div class="rev-or"><span>أو بالإيميل</span></div>
-
-        <form id="emailForm" class="rev-phone" style="text-align:right">
-          <div class="rf-group" id="nameGroup"><label>الاسم</label><input type="text" id="acName" placeholder="اسمك"></div>
-          <div class="rf-group"><label>البريد الإلكتروني</label><input type="email" id="acEmail" placeholder="example@email.com" required></div>
-          <div class="rf-group"><label>كلمة المرور</label><input type="password" id="acPass" placeholder="6 أحرف على الأقل" required></div>
-          <div style="display:flex;gap:.6rem">
-            <button type="submit" class="btn btn-grad btn-lg" style="flex:1" id="registerBtn"><i class="fas fa-user-plus"></i> إنشاء حساب</button>
-            <button type="button" class="btn btn-ghost btn-lg" style="flex:1" id="loginBtn"><i class="fas fa-right-to-bracket"></i> دخول</button>
-          </div>
-        </form>
+        <p class="ac-switch">لديك حساب بالفعل؟ <a href="#" id="toLogin">دخول</a></p>
+        <p class="ac-switch" id="toRegisterWrap" style="display:none">مستخدم جديد؟ <a href="#" id="toRegister">إنشاء حساب</a></p>
       </div>
 
-      <!-- Logged IN -->
-      <div class="rev-form" id="profileBox" style="display:none">
+      <!-- ==== Profile (logged in) ==== -->
+      <div class="acc-card" id="profileBox" style="display:none">
         <div class="rev-user-card" id="profileCard"></div>
+        <div class="acc-stats">
+          <div class="acc-stat"><strong id="stType">مستخدم</strong><span>نوع الحساب</span></div>
+          <div class="acc-stat"><strong>موثّق</strong><span>الحالة</span></div>
+          <div class="acc-stat"><strong id="stSince">اليوم</strong><span>عضو منذ</span></div>
+        </div>
         <div class="rev-user-note" style="margin-top:1rem">
           <p style="margin:0"><i class="fas fa-bell" style="color:var(--yellow)"></i> هتوصلك إشعارات العروض والخدمات الجديدة على الموقع.</p>
         </div>
@@ -79,13 +116,36 @@
   <script src="firebase-config.js"></script>
   <script type="module">
     const cfg = window.FIREBASE_CONFIG || {};
-    const authBox = document.getElementById('authBox');
-    const profileBox = document.getElementById('profileBox');
+    const $ = id => document.getElementById(id);
     const esc = s => String(s || '').replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+    let accType = 'user';
+    let mode = 'register'; // or 'login'
+
+    // account type selection
+    document.querySelectorAll('.acc-type').forEach(b => b.addEventListener('click', () => {
+      document.querySelectorAll('.acc-type').forEach(x => x.classList.remove('active'));
+      b.classList.add('active'); accType = b.dataset.type;
+    }));
+
+    function setMode(m) {
+      mode = m;
+      const reg = m === 'register';
+      $('typeWrap').style.display = reg ? 'block' : 'none';
+      ['g-name','g-phone','g-pass2','g-terms'].forEach(id => $(id).style.display = reg ? '' : 'none');
+      $('submitBtn').innerHTML = reg ? '<i class="fas fa-user-plus"></i> إنشاء حساب' : '<i class="fas fa-right-to-bracket"></i> تسجيل الدخول';
+      $('acTitle').textContent = reg ? 'انضم إلى Elwaset' : 'تسجيل الدخول';
+      $('acEyebrow').textContent = reg ? 'حساب جديد' : 'دخول';
+      $('toLogin').parentElement.style.display = reg ? '' : 'none';
+      $('toRegisterWrap').style.display = reg ? 'none' : '';
+      $('googleBtn').lastChild.textContent = reg ? ' التسجيل بواسطة جوجل' : ' الدخول بواسطة جوجل';
+    }
+    $('toLogin').addEventListener('click', e => { e.preventDefault(); setMode('login'); });
+    $('toRegister').addEventListener('click', e => { e.preventDefault(); setMode('register'); });
 
     if (!cfg.apiKey) {
       const notice = () => alert('التسجيل هيتفعل قريبًا.');
-      ['googleBtn','facebookBtn','registerBtn','loginBtn'].forEach(id => document.getElementById(id).addEventListener('click', e => { e.preventDefault(); notice(); }));
+      ['googleBtn','facebookBtn'].forEach(id => $(id).addEventListener('click', notice));
+      $('acForm').addEventListener('submit', e => { e.preventDefault(); notice(); });
     } else {
       const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
       const { getAuth, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup, signOut, onAuthStateChanged,
@@ -98,48 +158,56 @@
       const db = getFirestore(app);
 
       async function upsertUser(u, extra) {
+        extra = extra || {};
         const pid = (u.providerData && u.providerData[0] && u.providerData[0].providerId) || 'password';
         const provider = pid.indexOf('google') > -1 ? 'google' : pid.indexOf('facebook') > -1 ? 'facebook' : 'email';
-        const data = { name: u.displayName || (extra && extra.name) || 'مستخدم', email: u.email || '', photo: u.photoURL || '',
-                       provider, uid: u.uid, lastSeen: serverTimestamp() };
-        try { await setDoc(doc(db, 'users', u.uid), { ...data, createdAt: serverTimestamp() }, { merge: true }); } catch (e) {}
-        try { await setDoc(doc(db, 'customers', u.uid), { ...data, source: provider }, { merge: true }); } catch (e) {}
+        const base = { name: u.displayName || extra.name || 'مستخدم', email: u.email || '', photo: u.photoURL || '',
+                       provider, type: extra.type || accType, uid: u.uid, lastSeen: serverTimestamp() };
+        if (extra.phone) base.phone = extra.phone;
+        try { await setDoc(doc(db, 'users', u.uid), { ...base, createdAt: serverTimestamp() }, { merge: true }); } catch (e) {}
+        try { await setDoc(doc(db, 'customers', u.uid), { ...base, source: provider }, { merge: true }); } catch (e) {}
       }
 
-      document.getElementById('googleBtn').addEventListener('click', async () => {
+      $('googleBtn').addEventListener('click', async () => {
         try { await signInWithPopup(auth, new GoogleAuthProvider()); } catch (e) { alert('تعذّر الدخول: ' + (e.message||e)); }
       });
-      document.getElementById('facebookBtn').addEventListener('click', async () => {
+      $('facebookBtn').addEventListener('click', async () => {
         try { await signInWithPopup(auth, new FacebookAuthProvider()); } catch (e) { alert('تعذّر الدخول بفيسبوك: ' + (e.message||e)); }
       });
-      document.getElementById('emailForm').addEventListener('submit', async e => {
+
+      $('acForm').addEventListener('submit', async e => {
         e.preventDefault();
-        const name = document.getElementById('acName').value.trim();
-        const email = document.getElementById('acEmail').value.trim();
-        const pass = document.getElementById('acPass').value;
+        const email = $('acEmail').value.trim(), pass = $('acPass').value;
+        if (mode === 'login') {
+          if (!email || !pass) { alert('اكتب الإيميل وكلمة المرور'); return; }
+          try { await signInWithEmailAndPassword(auth, email, pass); } catch (err) { alert('تعذّر الدخول: ' + (err.message||err)); }
+          return;
+        }
+        // register
+        const name = $('acName').value.trim(), phone = $('acPhone').value.trim(), pass2 = $('acPass2').value;
+        if (!name) { alert('اكتب اسمك'); return; }
+        if (!phone) { alert('اكتب رقم هاتفك'); return; }
+        if (pass.length < 6) { alert('كلمة المرور 6 أحرف على الأقل'); return; }
+        if (pass !== pass2) { alert('كلمتا المرور غير متطابقتين'); return; }
+        if (!$('acTerms').checked) { alert('لازم توافق على الشروط'); return; }
         try {
           const cred = await createUserWithEmailAndPassword(auth, email, pass);
-          if (name) { try { await updateProfile(cred.user, { displayName: name }); } catch(e){} }
-          await upsertUser(cred.user, { name });
-        } catch (e) { alert('تعذّر إنشاء الحساب: ' + (e.message||e)); }
+          try { await updateProfile(cred.user, { displayName: name }); } catch (e) {}
+          await upsertUser(cred.user, { name, phone, type: accType });
+        } catch (err) { alert('تعذّر إنشاء الحساب: ' + (err.message||err)); }
       });
-      document.getElementById('loginBtn').addEventListener('click', async () => {
-        const email = document.getElementById('acEmail').value.trim();
-        const pass = document.getElementById('acPass').value;
-        if (!email || !pass) { alert('اكتب الإيميل وكلمة المرور'); return; }
-        try { await signInWithEmailAndPassword(auth, email, pass); } catch (e) { alert('تعذّر الدخول: ' + (e.message||e)); }
-      });
-      document.getElementById('signoutBtn').addEventListener('click', () => signOut(auth));
+
+      $('signoutBtn').addEventListener('click', () => signOut(auth));
 
       onAuthStateChanged(auth, async user => {
         if (user) {
-          await upsertUser(user);
-          authBox.style.display = 'none'; profileBox.style.display = 'block';
+          await upsertUser(user, { phone: $('acPhone').value.trim() });
+          $('authBox').style.display = 'none'; $('profileBox').style.display = 'block';
           const initial = (user.displayName || user.email || 'U').trim()[0] || 'U';
           const pic = user.photoURL ? '<img src="' + user.photoURL + '" alt="">' : '<span class="av">' + esc(initial) + '</span>';
-          document.getElementById('profileCard').innerHTML = pic +
-            '<div><strong>' + esc(user.displayName || 'مستخدم') + '</strong><small>' + esc(user.email || '') + '</small></div>';
-        } else { authBox.style.display = 'block'; profileBox.style.display = 'none'; }
+          $('profileCard').innerHTML = pic + '<div><strong>' + esc(user.displayName || 'مستخدم') + '</strong><small>' + esc(user.email || '') + '</small></div>';
+          $('stType').textContent = accType === 'seller' ? 'بائع / تاجر' : 'مستخدم';
+        } else { $('authBox').style.display = 'block'; $('profileBox').style.display = 'none'; }
       });
     }
   </script>
