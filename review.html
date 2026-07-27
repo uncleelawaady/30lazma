@@ -60,6 +60,10 @@
                     تسجيل الدخول بجوجل
                 </button>
 
+                <button class="btn-facebook" id="facebookBtn">
+                    <i class="fab fa-facebook-f"></i> تسجيل الدخول بفيسبوك
+                </button>
+
                 <div class="rev-or"><span>أو</span></div>
 
                 <!-- Phone registration -->
@@ -153,16 +157,18 @@
     if (!configured) {
         const notice = () => alert('التسجيل هيتفعل خلال لحظات — قاعدة البيانات بتتجهّز. جرّب تاني قريبًا.');
         document.getElementById('googleBtn').addEventListener('click', notice);
+        document.getElementById('facebookBtn').addEventListener('click', notice);
         phoneForm.addEventListener('submit', e => { e.preventDefault(); notice(); });
     } else {
         const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
-        const { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+        const { getAuth, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
         const { getFirestore, collection, addDoc, doc, setDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
 
         const app = initializeApp(cfg);
         const auth = getAuth(app);
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
+        const fbProvider = new FacebookAuthProvider();
 
         // save/merge a customer lead for future marketing
         async function saveCustomer(data) {
@@ -180,14 +186,21 @@
             try { await signInWithPopup(auth, provider); }
             catch (err) { alert('تعذّر تسجيل الدخول: ' + (err && err.message ? err.message : err)); }
         });
+        // Facebook
+        document.getElementById('facebookBtn').addEventListener('click', async () => {
+            try { await signInWithPopup(auth, fbProvider); }
+            catch (err) { alert('تعذّر تسجيل الدخول بفيسبوك: ' + (err && err.message ? err.message : err)); }
+        });
         document.getElementById('signoutBtn').addEventListener('click', async () => {
             try { await signOut(auth); } catch(e){}
             profile = null; revForm.style.display = 'none'; successBox.style.display = 'none'; signinBox.style.display = 'block';
         });
         onAuthStateChanged(auth, user => {
             if (user) {
-                profile = { name: user.displayName || 'مستخدم', email: user.email || '', uid: user.uid, photo: user.photoURL || '', source: 'google' };
-                saveCustomer({ uid: user.uid, name: profile.name, email: profile.email, photo: profile.photo, source: 'google' });
+                const pid = (user.providerData && user.providerData[0] && user.providerData[0].providerId) || '';
+                const prov = pid.indexOf('facebook') > -1 ? 'facebook' : 'google';
+                profile = { name: user.displayName || 'مستخدم', email: user.email || '', uid: user.uid, photo: user.photoURL || '', source: prov, provider: prov };
+                saveCustomer({ uid: user.uid, name: profile.name, email: profile.email, photo: profile.photo, source: prov });
                 showReview();
             }
         });
@@ -213,6 +226,7 @@
                 await addDoc(collection(db, 'reviews'), {
                     name: profile.name, email: profile.email || '', phone: profile.phone || '',
                     uid: profile.uid || '', photo: profile.photo || '', source: profile.source,
+                    provider: profile.provider || profile.source,
                     rating: +document.getElementById('rfRating').value,
                     text: document.getElementById('rfText').value.trim(),
                     approved: false, createdAt: serverTimestamp()

@@ -6,6 +6,15 @@
     tel: '201008002333',
     defaultMsg: 'أهلًا، عايز أتواصل مع العوضي بخصوص خدمة / وساطة.'
   };
+  // apply dashboard contact overrides if present
+  try {
+    const c = JSON.parse(localStorage.getItem('elwasetConfig') || 'null');
+    if (c && c.contact) {
+      if (c.contact.wa) CFG.wa = c.contact.wa;
+      if (c.contact.messenger) CFG.messenger = c.contact.messenger;
+      if (c.contact.tel) CFG.tel = c.contact.tel;
+    }
+  } catch (e) {}
   const enc = encodeURIComponent;
   const waLink = msg => 'https://wa.me/' + CFG.wa + '?text=' + enc(msg || CFG.defaultMsg);
   const mmLink = () => 'https://m.me/' + CFG.messenger + '?ref=elwaset_site';

@@ -43,14 +43,14 @@
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
         <div class="orb orb-3"></div>
-        <div class="hero-word">الوساطة</div>
+        <div class="hero-word" data-k="heroWord">الوساطة</div>
         <div class="container hero-inner">
-            <span class="pill"><i class="fas fa-star"></i> منصة الخدمات الرقمية رقم 1 في الوطن العربي</span>
+            <span class="pill"><i class="fas fa-star"></i> <span data-k="pillText">منصة الخدمات الرقمية رقم 1 في الوطن العربي</span></span>
             <h1 class="hero-title">
-                كل خدماتك الرقمية<br>
-                <span class="grad-text">في مكان واحد</span>
+                <span data-k="heroLine1">كل خدماتك الرقمية</span><br>
+                <span class="grad-text" data-k="heroLine2">في مكان واحد</span>
             </h1>
-            <p class="hero-sub">
+            <p class="hero-sub" data-k="heroSub">
                 سوشيال ميديا • توثيق رسمي • حسابات جاهزة • وساطة آمنة • ذكاء اصطناعي • برمجة • تصميم • اشتراكات رقمية.
                 تجربة فاخرة، تنفيذ سريع، وحقوق محفوظة بالكامل.
             </p>
@@ -126,9 +126,9 @@
     <section class="section" id="categories">
         <div class="container">
             <div class="head">
-                <span class="eyebrow">الأقسام الرئيسية</span>
+                <span class="eyebrow" data-k="catsEyebrow">الأقسام الرئيسية</span>
                 <h2>استكشف <span class="grad-text">20+ قسم</span> احترافي</h2>
-                <p>كل ما تحتاجه من خدمات رقمية منظمة في أقسام واضحة وسهلة التصفح.</p>
+                <p data-k="catsDesc">كل ما تحتاجه من خدمات رقمية منظمة في أقسام واضحة وسهلة التصفح.</p>
             </div>
 
             <div class="cat-grid">
@@ -260,9 +260,9 @@
     <section class="section section-alt" id="featured">
         <div class="container">
             <div class="head">
-                <span class="eyebrow">الخدمات المميزة</span>
+                <span class="eyebrow" data-k="featEyebrow">الخدمات المميزة</span>
                 <h2>الأكثر <span class="grad-text">طلبًا</span></h2>
-                <p>خدمات مختارة بعناية تحقق أعلى نتائج لعملائنا.</p>
+                <p data-k="featDesc">خدمات مختارة بعناية تحقق أعلى نتائج لعملائنا.</p>
             </div>
             <div class="svc-grid">
                 <div class="svc glass">
@@ -347,14 +347,13 @@
     <section class="section section-alt" id="testimonials">
         <div class="container">
             <div class="head">
-                <span class="eyebrow">آراء العملاء</span>
+                <span class="eyebrow" data-k="revEyebrow">آراء العملاء</span>
                 <h2>العوضي… <span class="grad-text">وسيط ثقة</span></h2>
-                <p>أكثر من 60 عميلًا يشهدون بالأمانة والاحترافية في كل صفقة.</p>
+                <p data-k="revDesc">آراء حقيقية من عملاء وثّقوا تقييمهم عبر Google و Facebook.</p>
             </div>
             <div id="liveReviews" class="rev-grid"></div>
+            <div id="reviewsEmpty" class="reviews-empty" style="display:none">كن أول من يشارك تقييمه بعد تعاملك مع العوضي.</div>
         </div>
-        <div class="mq"><div class="mq-row mq-right" id="revRowTop"></div></div>
-        <div class="mq"><div class="mq-row mq-left" id="revRowBot"></div></div>
         <div class="container rev-add"><a href="review.html" class="btn btn-grad btn-lg"><i class="fas fa-star"></i> أضف تقييمك</a></div>
     </section>
 
@@ -466,6 +465,7 @@
     <script src="script.js"></script>
     <script src="contact.js"></script>
     <script src="firebase-config.js"></script>
+    <script src="config.js"></script>
     <script type="module">
       // ===== Live reviews: show approved Firestore reviews on the homepage =====
       (async function () {
@@ -486,19 +486,28 @@
             snap = await getDocs(query(collection(db, 'reviews'), where('approved', '==', true), limit(12)));
           }
           const esc = s => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+          const GG = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIj48cGF0aCBmaWxsPSIjRUE0MzM1IiBkPSJNMjQgOS41YzMuNTQgMCA2LjcxIDEuMjIgOS4yMSAzLjZsNi44NS02Ljg1QzM1LjkgMi4zOCAzMC40NyAwIDI0IDAgMTQuNjIgMCA2LjUxIDUuMzggMi41NiAxMy4yMmw3Ljk4IDYuMTlDMTIuNDMgMTMuNzIgMTcuNzQgOS41IDI0IDkuNXoiLz48cGF0aCBmaWxsPSIjNDI4NUY0IiBkPSJNNDYuOTggMjQuNTVjMC0xLjU3LS4xNS0zLjA5LS4zOC00LjU1SDI0djkuMDJoMTIuOTRjLS41OCAyLjk2LTIuMjYgNS40OC00Ljc4IDcuMThsNy43MyA2Yy40NS0uNCA4LjA5LTcuMjIgOC4wOS0xNy42NXoiLz48cGF0aCBmaWxsPSIjRkJCQzA1IiBkPSJNMTAuNTMgMjguNTljLS40OC0xLjQ1LS43Ni0yLjk5LS43Ni00LjU5czAuMjctMy4xNC43Ni00LjU5bC03Ljk4LTYuMTlDMC45MiAxNi40NiAwIDIwLjEyIDAgMjRjMCAzLjg4LjkyIDcuNTQgMi41NiAxMC43OGw3Ljk3LTYuMTl6Ii8+PHBhdGggZmlsbD0iIzM0QTg1MyIgZD0iTTI0IDQ4YzYuNDggMCAxMS45My0yLjEzIDE1Ljg5LTUuODFsLTcuNzMtNmMtMi4xNSAxLjQ1LTQuOTIgMi4zLTguMTYgMi4zLTYuMjYgMC0xMS41Ny00LjIyLTEzLjQ3LTkuOTFsLTcuOTggNi4xOUM2LjUxIDQyLjYyIDE0LjYyIDQ4IDI0IDQ4eiIvPjwvc3ZnPg==";
+          const hl = t => t.replace(/(مضمون[ةه]?|المضمون[ةه]?|ضمان)/, '<span class="rev-word">$1</span>');
           const cards = [];
           snap.forEach(doc => {
             const d = doc.data();
             const name = esc(d.name || 'عميل');
             const rating = Math.max(1, Math.min(5, parseInt(d.rating, 10) || 5));
-            const text = esc(d.text || d.opinion || '');
-            const av = name.trim().charAt(0) || 'ع';
-            const stars = '<i class="fas fa-star"></i>'.repeat(rating);
+            const text = hl(esc(d.text || d.opinion || ''));
+            const av = esc(name.trim().charAt(0) || 'ع');
+            const fb = (d.provider === 'facebook');
+            const badge = fb ? '<span class="gbadge gbadge-fb"><i class="fab fa-facebook-f"></i></span>'
+                             : '<img class="gbadge" src="' + GG + '" alt="Google">';
+            const label = fb ? 'موثّق عبر Facebook' : 'موثّق عبر Google';
+            const stars = '<i class="fas fa-star"></i>'.repeat(rating) + '<i class="fas fa-star off"></i>'.repeat(5 - rating);
             cards.push('<div class="tcard"><span class="stars">' + stars + '</span><p>' + text +
-              '</p><div class="tby"><span class="av">' + esc(av) + '</span><div><strong>' + name +
-              '</strong><small><i class="fas fa-circle-check"></i> عميل موثّق</small></div></div></div>');
+              '</p><div class="tby"><span class="av-wrap"><span class="av">' + av + '</span>' + badge +
+              '</span><div><strong>' + name + '</strong><small><i class="fas fa-circle-check"></i> ' + label +
+              '</small></div></div></div>');
           });
-          if (cards.length) box.innerHTML = cards.join('');
+          box.innerHTML = cards.join('');
+          const emptyEl = document.getElementById('reviewsEmpty');
+          if (emptyEl) emptyEl.style.display = cards.length ? 'none' : 'block';
         } catch (err) {
           console.warn('live reviews unavailable', err);
         }

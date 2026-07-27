@@ -19,8 +19,11 @@
     --dim: #5E706C;
     --glass: rgba(18, 150, 132, 0.06);
     --glass-brd: rgba(34, 210, 180, 0.16);
-    --grad: linear-gradient(90deg, #FFD400, #4FBE6C 52%, #0E7A45);
-    --grad-btn: linear-gradient(90deg, #FFD400 0%, #2AA85E 45%, #0A5A38 100%);
+    --grad-from: #FFD400;
+    --grad-mid: #4FBE6C;
+    --grad-to: #0E7A45;
+    --grad: linear-gradient(90deg, var(--grad-from), var(--grad-mid) 52%, var(--grad-to));
+    --grad-btn: linear-gradient(90deg, var(--grad-from) 0%, var(--grad-mid) 45%, var(--grad-to) 100%);
     --radius: 24px;
     --tr: all .35s cubic-bezier(.22,1,.36,1);
 }
@@ -661,3 +664,19 @@ body.lb-open { overflow: hidden; }
 
 /* small platform brand-mark on chips */
 .chip .plat-ic { font-size: 1.02rem !important; opacity: 1 !important; }
+
+/* facebook review badge + empty state */
+.gbadge-fb { display: grid; place-items: center; background: #1877F2; color: #fff; }
+.gbadge-fb i { font-size: 11px; }
+.reviews-empty { text-align: center; color: var(--muted); padding: 1.4rem; font-weight: 600; }
+
+/* Facebook sign-in button */
+.btn-facebook {
+    width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: .6rem;
+    padding: .85rem 1.2rem; margin-top: .7rem; border-radius: 12px; cursor: pointer;
+    background: #1877F2; color: #fff; border: none;
+    font-family: 'Cairo', sans-serif; font-weight: 800; font-size: 1rem;
+    transition: var(--tr);
+}
+.btn-facebook:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(24,119,242,.4); }
+.btn-facebook i { font-size: 1.15rem; }
