@@ -46,9 +46,15 @@ window.addEventListener('scroll', () => {
     nav.style.boxShadow = window.scrollY > 20 ? '0 10px 40px rgba(0,0,0,.5)' : 'none';
 });
 
-// Reveal on scroll
+// Reveal on scroll (3D pop-in)
 const targets = document.querySelectorAll('.cat, .svc, .port, .rev, .stat, .head, .partners-row span, .cta-box');
 targets.forEach(el => el.classList.add('reveal'));
+// stagger cards inside their grids so they fly in one after another
+document.querySelectorAll('.cat-grid, .svc-grid, .port-grid, .stats-grid').forEach(grid => {
+    [...grid.children].forEach((c, i) => {
+        if (c.classList.contains('reveal')) c.style.transitionDelay = (Math.min(i, 9) * 65) + 'ms';
+    });
+});
 const io = new IntersectionObserver(entries => {
     entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('show'); io.unobserve(en.target); } });
 }, { threshold: 0.1 });

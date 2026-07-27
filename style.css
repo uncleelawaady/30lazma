@@ -52,6 +52,24 @@ body::before {
     pointer-events: none;
 }
 
+/* perspective grid overlay — like the reference video/image */
+body::after {
+    content: '';
+    position: fixed;
+    inset: -10% -10% -10% -10%;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(168,85,247,.09) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(168,85,247,.09) 1px, transparent 1px);
+    background-size: 48px 48px;
+    -webkit-mask-image: radial-gradient(115% 75% at 50% 22%, #000 45%, transparent 100%);
+    mask-image: radial-gradient(115% 75% at 50% 22%, #000 45%, transparent 100%);
+    animation: gridDrift 26s linear infinite;
+}
+@keyframes gridDrift { from { background-position: 0 0, 0 0; } to { background-position: 0 48px, 48px 0; } }
+@media (prefers-reduced-motion: reduce) { body::after { animation: none; } }
+
 h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; line-height: 1.35; font-weight: 800; }
 
 .container { width: min(1200px, 92%); margin-inline: auto; }
@@ -540,8 +558,24 @@ body.lb-open { overflow: hidden; }
 .step p { color: var(--muted); font-size: .92rem; }
 
 /* ===== Reveal ===== */
-.reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s ease, transform .7s ease; }
-.reveal.show { opacity: 1; transform: none; }
+/* 3D pop-in reveal (inspired by the flying-cards video) */
+.reveal {
+    opacity: 0;
+    transform: perspective(1100px) translateY(46px) translateZ(-90px) rotateX(-14deg) scale(.9);
+    transform-origin: 50% 100%;
+    transition: opacity .75s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1);
+    will-change: transform, opacity;
+}
+.reveal.show { opacity: 1; transform: perspective(1100px) translateY(0) translateZ(0) rotateX(0) scale(1); }
+
+/* extra life: icons give a little 3D pop after the card lands */
+.cat.reveal .cat-ico, .svc.reveal .svc-ico { transition: transform .6s cubic-bezier(.34,1.56,.64,1) .15s; transform: translateZ(0) scale(.6) rotate(-12deg); opacity: .6; }
+.cat.reveal.show .cat-ico, .svc.reveal.show .svc-ico { transform: none; opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+    .reveal, .reveal.show { transform: none; transition: opacity .4s ease; }
+    .cat.reveal .cat-ico, .svc.reveal .svc-ico { transform: none; opacity: 1; transition: none; }
+}
 
 /* ===== Responsive ===== */
 @media (max-width: 900px) {
