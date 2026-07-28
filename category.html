@@ -104,9 +104,13 @@
         </div>
     </div>
 
+    <script src="catalog.js"></script>
+    <script src="firebase-config.js"></script>
     <script src="data.js"></script>
     <script>
-    (function () {
+    (async function () {
+        // merge dashboard-managed catalog over the built-in defaults
+        try { const cat = window.getCatalog && await window.getCatalog(); if (cat) window.CATEGORIES = Object.assign({}, window.CATEGORIES, cat); } catch (e) {}
         const id = new URLSearchParams(location.search).get('id');
         const c = (window.CATEGORIES || {})[id];
         const nav = document.getElementById('nav');

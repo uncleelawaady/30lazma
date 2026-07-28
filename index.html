@@ -468,6 +468,32 @@
     <script src="config.js"></script>
     <script src="auth.js"></script>
     <script src="cart.js"></script>
+    <script src="catalog.js"></script>
+    <script>
+      // Render categories grid from the dashboard catalog (fallback: keep static cards)
+      (async function () {
+        try {
+          const cat = window.getCatalog && await window.getCatalog();
+          if (!cat) return;
+          const grid = document.querySelector('.cat-grid');
+          if (!grid) return;
+          const esc = s => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+          const ids = Object.keys(cat).filter(id => cat[id].active !== false).sort((a, b) => (cat[a].order || 0) - (cat[b].order || 0));
+          if (!ids.length) return;
+          grid.innerHTML = ids.map(id => {
+            const c = cat[id];
+            const items = (c.groups && c.groups[0] && c.groups[0].items) || [];
+            const tags = items.slice(0, 4).map(t => '<span>' + esc(t) + '</span>').join('');
+            const ico = c.img ? '<img src="' + esc(c.img) + '" alt="">' : '<i class="fas ' + esc(c.icon || 'fa-layer-group') + '"></i>';
+            return '<a href="category.html?id=' + encodeURIComponent(id) + '" class="cat glass" style="--g1:' + esc(c.g1 || '#17A85E') + ';--g2:' + esc(c.g2 || '#0E7A45') + '">' +
+              '<div class="cat-ico">' + ico + '</div><h3>' + esc(c.title || '') + '</h3><p>' + esc(c.intro || '') + '</p>' +
+              '<div class="cat-tags">' + tags + '</div></a>';
+          }).join('');
+          // re-apply reveal so new cards animate
+          grid.querySelectorAll('.cat').forEach((el, i) => { el.classList.add('reveal', 'show'); });
+        } catch (e) { /* keep static */ }
+      })();
+    </script>
     <script type="module">
       // ===== Live reviews: show approved Firestore reviews on the homepage =====
       (async function () {
