@@ -132,11 +132,45 @@
             </div>
 
             <div class="cat-grid">
-                <a href="category.html?id=social-media" class="cat glass" style="--g1:#17A85E;--g2:#0E7A45">
-                    <div class="cat-ico"><i class="fas fa-share-nodes"></i></div>
-                    <h3>خدمات السوشيال ميديا</h3>
-                    <p>فيسبوك، إنستجرام، تيك توك، يوتيوب، سناب، X، تيليجرام وأكثر.</p>
-                    <div class="cat-tags"><span>متابعين</span><span>لايكات</span><span>مشاهدات</span><span>ريلز</span></div>
+                <a href="category.html?id=facebook" class="cat glass" style="--g1:#17A85E;--g2:#0E7A45">
+                    <div class="cat-ico"><i class="fa-brands fa-facebook"></i></div>
+                    <h3>خدمات فيسبوك</h3>
+                    <p>متابعين، لايكات، مشاهدات، مشاركات، دعم صفحات وجروبات.</p>
+                </a>
+                <a href="category.html?id=instagram" class="cat glass" style="--g1:#FFD400;--g2:#FF8A00">
+                    <div class="cat-ico"><i class="fa-brands fa-instagram"></i></div>
+                    <h3>خدمات إنستجرام</h3>
+                    <p>متابعين، لايكات، مشاهدات ريلز وستوري، تعليقات وحفظ.</p>
+                </a>
+                <a href="category.html?id=tiktok" class="cat glass" style="--g1:#0E7A45;--g2:#17C8AC">
+                    <div class="cat-ico"><i class="fa-brands fa-tiktok"></i></div>
+                    <h3>خدمات تيك توك</h3>
+                    <p>متابعين، لايكات، مشاهدات، مشاركات ومشاهدات البث.</p>
+                </a>
+                <a href="category.html?id=youtube" class="cat glass" style="--g1:#FF8A00;--g2:#17A85E">
+                    <div class="cat-ico"><i class="fa-brands fa-youtube"></i></div>
+                    <h3>خدمات يوتيوب</h3>
+                    <p>مشتركين، مشاهدات، ساعات مشاهدة للربح، شورتس وتعليقات.</p>
+                </a>
+                <a href="category.html?id=telegram" class="cat glass" style="--g1:#17C8AC;--g2:#0E7A45">
+                    <div class="cat-ico"><i class="fa-brands fa-telegram"></i></div>
+                    <h3>خدمات تيليجرام</h3>
+                    <p>أعضاء، نقل أعضاء، نقل من قناة لقناة، إعلانات وإنشاء بوتات.</p>
+                </a>
+                <a href="category.html?id=twitter-x" class="cat glass" style="--g1:#0E7A45;--g2:#17A85E">
+                    <div class="cat-ico"><i class="fa-brands fa-x-twitter"></i></div>
+                    <h3>خدمات تويتر X</h3>
+                    <p>متابعين، لايكات، مشاهدات، ريتويت وتعليقات.</p>
+                </a>
+                <a href="category.html?id=snapchat" class="cat glass" style="--g1:#FFD400;--g2:#17A85E">
+                    <div class="cat-ico"><i class="fa-brands fa-snapchat"></i></div>
+                    <h3>خدمات سناب شات</h3>
+                    <p>متابعين، مشاهدات، ورفع النقاط بسرعة وأمان.</p>
+                </a>
+                <a href="category.html?id=linkedin" class="cat glass" style="--g1:#17A85E;--g2:#17C8AC">
+                    <div class="cat-ico"><i class="fa-brands fa-linkedin"></i></div>
+                    <h3>خدمات لينكدإن</h3>
+                    <p>زيادة المتابعين ورفع التفاعل على حسابك المهني.</p>
                 </a>
                 <a href="category.html?id=verification" class="cat glass" style="--g1:#FFD400;--g2:#FF8A00">
                     <div class="cat-ico"><i class="fas fa-circle-check"></i></div>
@@ -484,7 +518,7 @@
             const c = cat[id];
             const items = (c.groups && c.groups[0] && c.groups[0].items) || [];
             const tags = items.slice(0, 4).map(t => '<span>' + esc(t) + '</span>').join('');
-            const ico = c.img ? '<img src="' + esc(c.img) + '" alt="">' : '<i class="fas ' + esc(c.icon || 'fa-layer-group') + '"></i>';
+            const ico = c.img ? '<img src="' + esc(c.img) + '" alt="">' : '<i class="' + (window.faIcon ? window.faIcon(c.icon) : ('fas ' + esc(c.icon || 'fa-layer-group'))) + '"></i>';
             return '<a href="category.html?id=' + encodeURIComponent(id) + '" class="cat glass" style="--g1:' + esc(c.g1 || '#17A85E') + ';--g2:' + esc(c.g2 || '#0E7A45') + '">' +
               '<div class="cat-ico">' + ico + '</div><h3>' + esc(c.title || '') + '</h3><p>' + esc(c.intro || '') + '</p>' +
               '<div class="cat-tags">' + tags + '</div></a>';
