@@ -97,6 +97,39 @@ h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; line-height: 1.35; font-weight: 
     background: rgba(5,5,5,.7); backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--glass-brd); transition: var(--tr);
 }
+
+/* ===== Top scrolling ticker ===== */
+.top-ticker {
+    position: fixed; top: 0; inset-inline: 0; z-index: 1001; height: 34px; overflow: hidden;
+    display: flex; align-items: center;
+    background: linear-gradient(90deg, var(--yellow, #FFD400), var(--pink, #17A85E), var(--teal, #17C8AC));
+    box-shadow: 0 2px 14px rgba(0,0,0,.35);
+}
+.top-ticker .ticker-track { display: flex; align-items: center; gap: 2rem; white-space: nowrap; will-change: transform; animation: tickerMove 32s linear infinite; }
+.top-ticker span { color: #04140d; font-weight: 800; font-size: .82rem; display: inline-flex; align-items: center; gap: .5rem; }
+.top-ticker .tk-dot { opacity: .55; font-size: .6rem; }
+.top-ticker:hover .ticker-track { animation-play-state: paused; }
+@keyframes tickerMove { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+/* push the fixed navbar below the ticker when a ticker exists on the page */
+.top-ticker ~ .nav { top: 34px; }
+
+/* ===== Moving services marquee ===== */
+.svc-marquee { overflow: hidden; padding: 1.1rem 0; position: relative;
+    border-block: 1px solid var(--glass-brd); background: rgba(255,255,255,.02); }
+.svc-marquee::before, .svc-marquee::after { content: ''; position: absolute; top: 0; bottom: 0; width: 60px; z-index: 2; pointer-events: none; }
+.svc-marquee::before { inset-inline-start: 0; background: linear-gradient(90deg, var(--bg) , transparent); }
+.svc-marquee::after { inset-inline-end: 0; background: linear-gradient(270deg, var(--bg), transparent); }
+.svc-marquee .mq-track { display: flex; gap: 1rem; width: max-content; will-change: transform; animation: mqMove 45s linear infinite; }
+.svc-marquee:hover .mq-track { animation-play-state: paused; }
+@keyframes mqMove { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.mq-card { flex: 0 0 auto; width: 150px; text-decoration: none; color: var(--text);
+    border: 1px solid var(--glass-brd); border-radius: 14px; overflow: hidden; background: rgba(255,255,255,.02); transition: var(--tr); }
+.mq-card:hover { transform: translateY(-4px); border-color: transparent; box-shadow: 0 14px 34px -10px rgba(0,0,0,.5); }
+.mq-ico { width: 100%; aspect-ratio: 1 / 1; display: grid; place-items: center; font-size: 2.4rem; color: #fff;
+    background: linear-gradient(135deg, var(--g1, #17A85E), var(--g2, #0E7A45)); overflow: hidden; }
+.mq-ico img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mq-card h4 { font-size: .82rem; text-align: center; padding: .5rem .4rem; margin: 0; line-height: 1.4; }
+@media (max-width: 560px) { .mq-card { width: 116px; } .svc-marquee::before, .svc-marquee::after { width: 34px; } }
 .nav-inner { display: flex; align-items: center; gap: 1.4rem; padding: .85rem 0; }
 .brand { display: flex; align-items: center; gap: .65rem; text-decoration: none; color: var(--text); margin-inline-end: auto; }
 .brand-logo {
@@ -579,6 +612,7 @@ body.lb-open { overflow: hidden; }
         padding: 1.4rem 2rem; gap: 1.1rem; display: none;
     }
     .nav-links.open { display: flex; }
+    .top-ticker ~ .nav .nav-links { top: 96px; }
     .nav-toggle { display: block; }
     .search-bar { flex-wrap: nowrap; }
     .footer-grid { grid-template-columns: 1fr; }

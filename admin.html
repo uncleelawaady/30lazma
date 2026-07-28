@@ -167,6 +167,8 @@
         <div class="field"><label>واتساب (رقم دولي بدون +)</label><input type="tel" id="c_wa" placeholder="201055578777"></div>
         <div class="field"><label>ماسنجر (username)</label><input type="text" id="c_mm" placeholder="official.elawaady"></div>
         <div class="field"><label>رقم الاتصال (بدون +)</label><input type="tel" id="c_tel" placeholder="201008002333"></div>
+        <div class="field"><label>الشريط المتحرك أعلى الموقع (افصل بين العناصر بعلامة | )</label>
+          <textarea id="c_ticker" rows="2" placeholder="متجر الوسيط | خدمات مميزة ⭐ | دعم 24/7 | جروب الوسيط الرسمي"></textarea></div>
       </div>
       <div class="save-bar"><button class="btn" id="saveContact"><i class="fas fa-floppy-disk"></i> حفظ</button></div>
     </div>
@@ -562,6 +564,7 @@
       document.querySelectorAll('[data-sec]').forEach(c => { c.checked = hidden.indexOf(c.dataset.sec) === -1; });
       const ct = current.contact || {};
       $('#c_wa').value = ct.wa || ''; $('#c_mm').value = ct.messenger || ''; $('#c_tel').value = ct.tel || '';
+      $('#c_ticker').value = Array.isArray(current.ticker) ? current.ticker.join(' | ') : (current.ticker || '');
       const po = current.policies || {}, at = po.attach || {};
       $('#p_terms').value = po.terms || ''; $('#p_returns').value = po.returns || '';
       $('#p_refund').value = po.refund || ''; $('#p_service').value = po.service || '';
@@ -589,7 +592,8 @@
       save({ hidden }, 'اتحفظت الأقسام ✅');
     });
     $('#saveContact').addEventListener('click', () => {
-      save({ contact: { wa: $('#c_wa').value.trim(), messenger: $('#c_mm').value.trim(), tel: $('#c_tel').value.trim() } }, 'اتحفظ التواصل ✅');
+      const ticker = $('#c_ticker').value.split('|').map(s => s.trim()).filter(Boolean);
+      save({ contact: { wa: $('#c_wa').value.trim(), messenger: $('#c_mm').value.trim(), tel: $('#c_tel').value.trim() }, ticker }, 'اتحفظ التواصل ✅');
     });
     $('#savePolicies').addEventListener('click', () => {
       const policies = {
