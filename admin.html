@@ -90,6 +90,7 @@
       <button class="tab" data-tab="texts"><i class="fas fa-font"></i> النصوص</button>
       <button class="tab" data-tab="sections"><i class="fas fa-layer-group"></i> الأقسام</button>
       <button class="tab" data-tab="contact"><i class="fas fa-headset"></i> التواصل</button>
+      <button class="tab" data-tab="orders"><i class="fas fa-bag-shopping"></i> الطلبات</button>
       <button class="tab" data-tab="reviews"><i class="fas fa-star"></i> التقييمات</button>
       <button class="tab" data-tab="notify"><i class="fas fa-bullhorn"></i> الإشعارات</button>
       <button class="tab" data-tab="users"><i class="fas fa-users"></i> المستخدمين</button>
@@ -128,6 +129,11 @@
     <div class="panel" id="tab-reviews">
       <div class="card"><h3>تقييمات بانتظار الموافقة</h3><div id="pendingReviews"><p class="muted">جاري التحميل…</p></div></div>
       <div class="card"><h3>تقييمات منشورة</h3><div id="approvedReviews"><p class="muted">جاري التحميل…</p></div></div>
+    </div>
+
+    <!-- Orders -->
+    <div class="panel" id="tab-orders">
+      <div class="card"><h3>طلبات المتجر (<span id="orderCount">0</span>)</h3><div id="orderList"><p class="muted">جاري التحميل…</p></div></div>
     </div>
 
     <!-- Notifications -->
@@ -230,8 +236,36 @@
       if (!user) { $('#gate').style.display = 'block'; $('#app').style.display = 'none'; return; }
       $('#gate').style.display = 'none'; $('#app').style.display = 'block';
       await loadConfig();
-      loadReviews(); loadAnnouncements(); loadUsers();
+      loadReviews(); loadAnnouncements(); loadUsers(); loadOrders();
     });
+
+    async function loadOrders() {
+      const box = document.getElementById('orderList');
+      try {
+        let snap;
+        try { snap = await getDocs(query(collection(db, 'orders'), orderBy('createdAt', 'desc'))); }
+        catch (e) { snap = await getDocs(collection(db, 'orders')); }
+        const items = []; snap.forEach(d => { const o = d.data(); o._id = d.id; items.push(o); });
+        document.getElementById('orderCount').textContent = items.length;
+        box.innerHTML = items.length ? items.map(o => {
+          const list = (o.items || []).map(it => esc(it.name) + ' ×' + (it.qty || 1)).join('، ');
+          return '<div class="rev" data-id="' + o._id + '"><div class="meta"><span class="who">' + esc(o.orderNo || 'طلب') + ' — ' + esc(o.name || '') + ' <span class="pill wait">' + esc(o.status || 'new') + '</span></span>' +
+            '<span class="prov">' + esc(o.phone || '') + '</span></div><p>' + list + (o.notes ? '<br><small>ملاحظات: ' + esc(o.notes) + '</small>' : '') + '</p>' +
+            '<div class="acts"><button class="btn btn-sm" data-act="done"><i class="fas fa-check"></i> تم</button>' +
+            '<button class="btn btn-red btn-sm" data-act="del"><i class="fas fa-trash"></i> حذف</button></div></div>';
+        }).join('') : '<p class="muted">مفيش طلبات لسه.</p>';
+        box.querySelectorAll('.rev').forEach(el => {
+          const id = el.dataset.id;
+          el.querySelectorAll('[data-act]').forEach(b => b.addEventListener('click', async () => {
+            try {
+              if (b.dataset.act === 'del') { if (!confirm('حذف الطلب؟')) return; await deleteDoc(doc(db, 'orders', id)); }
+              else await updateDoc(doc(db, 'orders', id), { status: 'done' });
+              toast('تم ✅'); loadOrders();
+            } catch (e) { toast('تعذّر التنفيذ — صلاحيات المالك'); }
+          }));
+        });
+      } catch (e) { box.innerHTML = '<p class="muted">تعذّر التحميل — صلاحيات المالك.</p>'; }
+    }
 
     async function loadConfig() {
       try {
