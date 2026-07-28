@@ -88,6 +88,8 @@
     .se-imgrow:has(.se-preview:not([style*="none"])) .se-uplbl{position:absolute;inset:0;width:100%;height:100%;background:rgba(0,0,0,.35);opacity:0;transition:.2s}
     .se-imgrow:has(.se-preview:not([style*="none"])):hover .se-uplbl{opacity:1}
     .se-imgdel{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:0;background:#c0392b;color:#fff;font-size:.7rem;cursor:pointer;line-height:1}
+    .se-flag{flex:0 0 auto;display:flex;align-items:center;gap:.25rem;font-size:.75rem;color:var(--muted);white-space:nowrap;cursor:pointer}
+    .se-flag input{width:16px!important;height:16px!important;margin:0!important}
     .se-del{flex:0 0 auto}
     @media(max-width:640px){.svc-row-edit{flex-wrap:wrap}.svc-row-edit .se-name,.svc-row-edit .se-price,.svc-row-edit .se-desc{flex:1 1 100%;min-width:0}}
   </style>
@@ -335,12 +337,19 @@
       catch (e) { catalog = {}; }
       renderCatalog();
     }
-    // one service row (name + price + short desc + image)
+    // smart guess: does a service need a quantity / an account link? (mirrors service.html)
+    const QTY_RE = /(متابع|متابعين|لايك|إعجاب|مشاهد|مشاهدة|مشاهدات|تعليق|مشارك|مشاركة|شير|عضو|أعضاء|ريلز|بث|ريتويت|حفظ|مشترك|تفاعل|زياد|ساعات مشاهدة|نقل)/;
+    const LINK_RE = /(متابع|لايك|إعجاب|مشاهد|تعليق|مشارك|شير|عضو|أعضاء|ريلز|بث|ريتويت|حفظ|مشترك|تفاعل|رفع|نقل)/;
+    const guessQty = n => QTY_RE.test(n || '');
+    const guessLink = n => LINK_RE.test(n || '');
+    // one service row (name + price + short desc + image + quantity/link flags)
     function svcRowHtml(name, det) {
       det = det || {};
       const img = det.img || '';
       const price = det.price || det.p || '';
       const desc = det.d || det.desc || '';
+      const nq = det.needQty !== undefined ? det.needQty : guessQty(name);
+      const nl = det.needLink !== undefined ? det.needLink : guessLink(name);
       return '<div class="svc-row-edit">' +
         '<div class="se-imgrow">' +
           '<img class="se-preview" src="' + esc(img) + '" style="' + (img ? '' : 'display:none') + '">' +
@@ -351,6 +360,8 @@
         '<input class="se-name" value="' + esc(name) + '" placeholder="اسم الخدمة">' +
         '<input class="se-price" value="' + esc(price) + '" placeholder="السعر (اختياري)">' +
         '<input class="se-desc" value="' + esc(desc) + '" placeholder="وصف مختصر (اختياري)">' +
+        '<label class="se-flag" title="الخدمة بكمية (متابعين/لايكات/مشاهدات...)"><input type="checkbox" class="se-qty" ' + (nq ? 'checked' : '') + '> كمية</label>' +
+        '<label class="se-flag" title="تطلب رابط الحساب/الصفحة/المنشور"><input type="checkbox" class="se-link" ' + (nl ? 'checked' : '') + '> رابط</label>' +
         '<button type="button" class="btn btn-red btn-sm se-del" title="حذف الخدمة"><i class="fas fa-trash"></i></button>' +
       '</div>';
     }
@@ -449,13 +460,15 @@
           const img = r.querySelector('.se-img').value || '';
           const price = r.querySelector('.se-price').value.trim();
           const desc = r.querySelector('.se-desc').value.trim();
-          if (img || price || desc) {
-            const d = {};
-            if (img) d.img = img;
-            if (price) d.price = price;
-            if (desc) d.d = desc;
-            details[name] = d;
-          }
+          const d = {};
+          if (img) d.img = img;
+          if (price) d.price = price;
+          if (desc) d.d = desc;
+          // store the quantity/link flags only when they differ from the smart default
+          const qc = r.querySelector('.se-qty').checked, lc = r.querySelector('.se-link').checked;
+          if (qc !== guessQty(name)) d.needQty = qc;
+          if (lc !== guessLink(name)) d.needLink = lc;
+          if (Object.keys(d).length) details[name] = d;
         });
         out[id] = {
           title: el.querySelector('.ce-title').value.trim(),

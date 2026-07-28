@@ -94,7 +94,8 @@
         }
         box.innerHTML = items.map(it =>
           '<div class="co-item"><div><strong>' + esc(it.name) + '</strong>' +
-          (it.category ? '<small>' + esc(it.category) + '</small>' : '') + '</div>' +
+          (it.category ? '<small>' + esc(it.category) + '</small>' : '') +
+          (it.link ? '<small class="ci-link"><i class="fas fa-link"></i> ' + esc(it.link) + '</small>' : '') + '</div>' +
           '<span class="co-qty">×' + (it.qty || 1) + '</span></div>'
         ).join('');
         return items;
@@ -102,16 +103,21 @@
 
       function orderNumber() { return 'EL-' + (10000 + Math.floor(Math.random() * 89999)); }
       function buildOrderText(name, phone, notes, items, orderNo) {
-        let t = 'مرحبًا عمو العوضي 👋%0A';
-        t += 'أنا أريد إتمام طلب من المتجر%0A%0A';
-        t += 'اسم المستخدم: ' + name + '%0A';
-        t += 'رقم الهاتف: ' + phone + '%0A';
-        t += 'رقم الطلب: ' + orderNo + '%0A%0A';
-        t += 'الخدمات المطلوبة:%0A';
-        items.forEach((it, i) => { t += (i + 1) + ') ' + it.name + ' ×' + (it.qty || 1) + (it.category ? ' — ' + it.category : '') + '%0A'; });
-        t += '%0Aإجمالي السعر: حسب الطلب (يُحدد بعد التأكيد)%0A';
-        if (notes) t += '%0Aملاحظات المستخدم: ' + notes + '%0A';
-        t += '%0Aبرجاء متابعة الطلب وإتمام الصفقة.';
+        let t = 'مرحبًا عمو العوضي 👋\n';
+        t += 'أنا أريد إتمام طلب من المتجر\n\n';
+        t += 'اسم المستخدم: ' + name + '\n';
+        t += 'رقم الهاتف: ' + phone + '\n';
+        t += 'رقم الطلب: ' + orderNo + '\n\n';
+        t += 'الخدمات المطلوبة:\n';
+        items.forEach((it, i) => {
+          t += (i + 1) + ') ' + it.name + ' ×' + (it.qty || 1) + (it.category ? ' — ' + it.category : '') + '\n';
+          if (it.link) t += '   🔗 الرابط: ' + it.link + '\n';
+          if (it.coupon) t += '   🎟️ كوبون: ' + it.coupon + '\n';
+          if (it.notes) t += '   📝 ' + it.notes + '\n';
+        });
+        t += '\nإجمالي السعر: حسب الطلب (يُحدد بعد التأكيد)\n';
+        if (notes) t += '\nملاحظات المستخدم: ' + notes + '\n';
+        t += '\nبرجاء متابعة الطلب وإتمام الصفقة.';
         return t;
       }
 
@@ -140,7 +146,7 @@
             const db = getFirestore(initializeApp(cfg));
             const payload = {
               orderNo, name, phone, notes,
-              items: items.map(it => ({ name: it.name, category: it.category || '', qty: it.qty || 1 })),
+              items: items.map(it => ({ name: it.name, category: it.category || '', qty: it.qty || 1, link: it.link || '', notes: it.notes || '', coupon: it.coupon || '', code: it.code || '' })),
               count: items.reduce((s, x) => s + (x.qty || 1), 0),
               status: 'new', source: 'store', createdAt: serverTimestamp()
             };
@@ -152,7 +158,7 @@
         // Always send the order to WhatsApp to complete
         const text = buildOrderText(name, phone, notes, items, orderNo);
         window.Cart && window.Cart.clear();
-        window.location.href = 'https://wa.me/' + WA + '?text=' + text;
+        window.location.href = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(text);
       });
     </script>
 </body>

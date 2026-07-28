@@ -794,6 +794,7 @@ body.lb-open { overflow: hidden; }
 .ci-info { flex: 1; min-width: 0; }
 .ci-info strong { display: block; font-size: .95rem; }
 .ci-info small { color: var(--muted); font-size: .78rem; }
+.ci-info .ci-link, .co-item .ci-link { display: block; color: var(--teal); font-size: .74rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .ci-qty { display: flex; align-items: center; gap: .55rem; }
 .ci-qty button { width: 26px; height: 26px; border-radius: 8px; cursor: pointer; border: 1px solid var(--glass-brd); background: var(--glass); color: #fff; font-size: 1rem; line-height: 1; }
 .ci-qty button:hover { border-color: var(--pink); color: var(--pink); }
@@ -893,6 +894,15 @@ body.lb-open { overflow: hidden; }
 .svc-field input, .svc-field textarea { width: 100%; background: rgba(255,255,255,.04); border: 1px solid var(--glass-brd);
   border-radius: 12px; padding: .7rem .9rem; color: var(--text); font-family: inherit; font-size: .95rem; }
 .svc-field textarea { resize: vertical; min-height: 70px; }
+.svc-hint { display: block; color: var(--muted); font-size: .8rem; margin-top: .2rem; }
+.svc-warn { display: block; color: var(--yellow); font-size: .8rem; line-height: 1.7; margin-top: .4rem;
+    background: rgba(255,212,0,.07); border: 1px solid rgba(255,212,0,.25); border-radius: 10px; padding: .5rem .7rem; }
+.svc-warn i { margin-inline-end: .3rem; }
+.svc-field .req { color: #ff6b6b; }
+.qty-quick { display: flex; flex-wrap: wrap; gap: .4rem; }
+.qty-quick button { background: rgba(255,255,255,.05); border: 1px solid var(--glass-brd); color: var(--text);
+    font-family: inherit; font-size: .82rem; font-weight: 700; padding: .45rem .8rem; border-radius: 10px; cursor: pointer; transition: var(--tr); }
+.qty-quick button:hover, .qty-quick button.active { background: linear-gradient(135deg, var(--cg1,#17A85E), var(--cg2,#0E7A45)); border-color: transparent; color: #fff; }
 .svc-actions { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; margin-top: .3rem; }
 @media (max-width: 480px) { .svc-actions { grid-template-columns: 1fr; } }
 .svc-note { color: var(--muted); font-size: .82rem; text-align: center; margin-top: .7rem; }

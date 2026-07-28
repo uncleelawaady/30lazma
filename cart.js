@@ -11,8 +11,12 @@
     const a = read();
     const id = item.id || item.name;
     const ex = a.find(x => x.id === id);
-    if (ex) ex.qty = (ex.qty || 1) + 1;
-    else a.push({ id, name: item.name, category: item.category || '', qty: 1 });
+    const extra = {
+      category: item.category || '', link: item.link || '', notes: item.notes || '',
+      coupon: item.coupon || '', price: item.price || '', code: item.code || ''
+    };
+    if (ex) { ex.qty = (ex.qty || 1) + (item.qty || 1); Object.assign(ex, extra); }
+    else a.push(Object.assign({ id, name: item.name, qty: item.qty || 1 }, extra));
     write(a);
     toast('تم إضافة «' + item.name + '» للسلة');
     openDrawer();
@@ -87,7 +91,8 @@
     listEl.innerHTML = a.map(it =>
       '<div class="cart-item" data-id="' + esc(it.id) + '">' +
       '<div class="ci-info"><strong>' + esc(it.name) + '</strong>' +
-      (it.category ? '<small>' + esc(it.category) + '</small>' : '') + '</div>' +
+      (it.category ? '<small>' + esc(it.category) + '</small>' : '') +
+      (it.link ? '<small class="ci-link"><i class="fas fa-link"></i> ' + esc(it.link) + '</small>' : '') + '</div>' +
       '<div class="ci-qty"><button class="qm" aria-label="نقص">−</button><span>' + (it.qty || 1) + '</span><button class="qp" aria-label="زيادة">+</button></div>' +
       '<button class="ci-del" aria-label="حذف"><i class="fas fa-xmark"></i></button>' +
       '</div>'

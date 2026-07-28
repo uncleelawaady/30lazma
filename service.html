@@ -56,20 +56,34 @@
                     <p class="svc-lead" id="svcLead"></p>
 
                     <div class="svc-order-box glass">
-                        <div class="svc-row">
-                            <div class="svc-qty">
-                                <button type="button" id="qMinus" aria-label="نقص">−</button>
-                                <input type="text" id="qVal" value="1" inputmode="numeric" aria-label="الكمية">
-                                <button type="button" id="qPlus" aria-label="زيادة">+</button>
+                        <!-- quantity -->
+                        <div class="svc-field" id="qtyField" style="margin-bottom:1rem">
+                            <label for="qVal" id="qtyLabel">الكمية المطلوبة</label>
+                            <div class="svc-row" style="margin-bottom:.3rem">
+                                <div class="svc-qty">
+                                    <button type="button" id="qMinus" aria-label="نقص">−</button>
+                                    <input type="text" id="qVal" value="1" inputmode="numeric" aria-label="الكمية">
+                                    <button type="button" id="qPlus" aria-label="زيادة">+</button>
+                                </div>
+                                <div class="qty-quick" id="qtyQuick"></div>
                             </div>
-                            <div class="svc-field" style="flex:1;min-width:160px">
-                                <label for="couponIn">كود خصم (اختياري)</label>
-                                <input type="text" id="couponIn" placeholder="أدخل الكود إن وُجد">
-                            </div>
+                            <span class="svc-hint" id="qtyHint"></span>
                         </div>
+                        <!-- account / page / post link -->
+                        <div class="svc-field" id="linkField" style="margin-bottom:.6rem;display:none">
+                            <label for="linkIn" id="linkLabel">رابط الحساب / الصفحة / المنشور <span class="req">*</span></label>
+                            <input type="text" id="linkIn" placeholder="مثال: https://instagram.com/username" inputmode="url">
+                            <span class="svc-warn" id="linkWarn"><i class="fas fa-triangle-exclamation"></i> لازم يكون الحساب/الصفحة <b>عام (بابلك)</b> عشان نقدر ننفّذ الطلب، ومتغيّرش اليوزر أثناء التنفيذ.</span>
+                        </div>
+                        <!-- coupon -->
+                        <div class="svc-field" style="margin-bottom:.6rem">
+                            <label for="couponIn">كود خصم (اختياري)</label>
+                            <input type="text" id="couponIn" placeholder="أدخل الكود إن وُجد">
+                        </div>
+                        <!-- notes -->
                         <div class="svc-field" style="margin-bottom:1rem">
-                            <label for="notesIn">ملاحظات الطلب (اختياري)</label>
-                            <textarea id="notesIn" placeholder="اكتب أي تفاصيل تخص طلبك: الرابط، الباقة، العدد المطلوب..."></textarea>
+                            <label for="notesIn">ملاحظات إضافية (اختياري)</label>
+                            <textarea id="notesIn" placeholder="أي تفاصيل تخص طلبك: الدولة المستهدفة، السرعة، مواعيد..."></textarea>
                         </div>
                         <div class="svc-actions">
                             <button class="btn btn-grad btn-lg" id="btnCart"><i class="fas fa-cart-plus"></i> شراء الآن</button>
@@ -262,38 +276,79 @@
             }).join('');
         }
 
-        // ===== qty + actions =====
+        // ===== order form (quantity + account/page/post link) =====
+        // decide which fields this service needs (dashboard flags override the smart guess)
+        const QTY_RE = /(متابع|متابعين|لايك|إعجاب|مشاهد|مشاهدة|مشاهدات|تعليق|مشارك|مشاركة|شير|عضو|أعضاء|ريلز|بث|ريتويت|حفظ|مشترك|تفاعل|زياد|ساعات مشاهدة|نقل)/;
+        const LINK_RE = /(متابع|لايك|إعجاب|مشاهد|تعليق|مشارك|شير|عضو|أعضاء|ريلز|بث|ريتويت|حفظ|مشترك|تفاعل|رفع|نقل)/;
+        const needQty = (d.needQty !== undefined) ? !!d.needQty : QTY_RE.test(svcName);
+        const needLink = (d.needLink !== undefined) ? !!d.needLink : LINK_RE.test(svcName);
+
+        const qtyField = document.getElementById('qtyField');
         const qVal = document.getElementById('qVal');
+        const linkIn = document.getElementById('linkIn');
         const getQ = () => Math.max(1, parseInt(qVal.value, 10) || 1);
-        document.getElementById('qMinus').addEventListener('click', () => qVal.value = Math.max(1, getQ() - 1));
-        document.getElementById('qPlus').addEventListener('click', () => qVal.value = getQ() + 1);
-        qVal.addEventListener('input', () => { qVal.value = qVal.value.replace(/[^\d]/g, ''); });
+        const getLink = () => linkIn.value.trim();
+        const getNotes = () => document.getElementById('notesIn').value.trim();
+        const getCoupon = () => document.getElementById('couponIn').value.trim();
+        const btnWa = document.getElementById('btnWa');
+        function sync() { btnWa.href = buildWa(); }
+
+        if (needQty) {
+            document.getElementById('qtyHint').textContent = 'اكتب العدد اللي محتاجه (مثال: 1000 متابع).';
+            const quick = document.getElementById('qtyQuick');
+            [100, 500, 1000, 5000, 10000].forEach(n => {
+                const btn = document.createElement('button'); btn.type = 'button'; btn.textContent = n.toLocaleString('ar-EG');
+                btn.addEventListener('click', () => { qVal.value = n; quick.querySelectorAll('button').forEach(x => x.classList.remove('active')); btn.classList.add('active'); sync(); });
+                quick.appendChild(btn);
+            });
+            qVal.value = 1000;
+        } else {
+            qtyField.style.display = 'none'; qVal.value = 1;
+        }
+
+        let linkLabelText = '';
+        if (needLink) {
+            document.getElementById('linkField').style.display = '';
+            let label = 'رابط الحساب / الصفحة / المنشور', ph = 'الصق رابط الحساب أو الصفحة أو المنشور هنا';
+            if (/نقل/.test(svcName) && /قناة|أعضاء|اعضاء/.test(svcName)) { label = 'روابط القنوات (المصدر ثم المستهدفة)'; ph = 'رابط القناة المصدر — ثم رابط القناة المستهدفة'; }
+            else if (/مشاهد|لايك|إعجاب|تعليق|مشارك|شير|ريتويت|حفظ|ريلز/.test(svcName)) { label = 'رابط المنشور / الفيديو'; ph = 'الصق رابط المنشور أو الفيديو المطلوب'; }
+            else if (/متابع|مشترك|أعضاء|عضو/.test(svcName)) { label = 'رابط الحساب / الصفحة / القناة'; ph = 'الصق رابط الحساب أو الصفحة أو القناة'; }
+            linkLabelText = label;
+            document.getElementById('linkLabel').innerHTML = esc(label) + ' <span class="req">*</span>';
+            linkIn.placeholder = ph;
+        }
+
+        document.getElementById('qMinus').addEventListener('click', () => { qVal.value = Math.max(1, getQ() - 1); sync(); });
+        document.getElementById('qPlus').addEventListener('click', () => { qVal.value = getQ() + 1; sync(); });
+        qVal.addEventListener('input', () => { qVal.value = qVal.value.replace(/[^\d]/g, ''); sync(); });
+
+        function validate() {
+            if (needLink && !getLink()) { alert('من فضلك الصق «' + linkLabelText + '» عشان نقدر ننفّذ الطلب.'); linkIn.focus(); return false; }
+            return true;
+        }
 
         document.getElementById('btnCart').addEventListener('click', () => {
-            if (!window.Cart) return;
-            window.Cart.add({ name: svcName, category: c.title });
+            if (!window.Cart || !validate()) return;
+            window.Cart.add({ name: svcName, category: c.title, qty: getQ(), price: (d.price || d.p || ''), link: getLink(), notes: getNotes(), coupon: getCoupon(), code: code });
             window.Cart.setQty(svcName, getQ());
         });
 
         function buildWa() {
             const q = getQ();
-            const notes = document.getElementById('notesIn').value.trim();
-            const coupon = document.getElementById('couponIn').value.trim();
             let t = 'مرحبًا عمو العوضي 👋\nمهتم بالخدمة دي من متجر الوسيط:\n\n';
             t += '🛒 الخدمة: ' + svcName + '\n';
             t += '📂 القسم: ' + c.title + '\n';
-            t += '🔢 الكمية: ' + q + '\n';
+            if (needQty) t += '🔢 الكمية: ' + q + '\n';
+            if (needLink && getLink()) t += '🔗 الرابط: ' + getLink() + '\n';
             t += '🏷️ كود الخدمة: ' + code + '\n';
-            if (coupon) t += '🎟️ كود الخصم: ' + coupon + '\n';
-            if (notes) t += '📝 ملاحظات: ' + notes + '\n';
+            if (getCoupon()) t += '🎟️ كود الخصم: ' + getCoupon() + '\n';
+            if (getNotes()) t += '📝 ملاحظات: ' + getNotes() + '\n';
             t += '\nياريت التفاصيل والسعر المناسب 🌟';
             return 'https://wa.me/' + WA + '?text=' + encodeURIComponent(t);
         }
-        const btnWa = document.getElementById('btnWa');
-        btnWa.href = buildWa();
-        ['notesIn', 'couponIn', 'qVal'].forEach(id => document.getElementById(id).addEventListener('input', () => btnWa.href = buildWa()));
-        document.getElementById('qMinus').addEventListener('click', () => btnWa.href = buildWa());
-        document.getElementById('qPlus').addEventListener('click', () => btnWa.href = buildWa());
+        sync();
+        ['notesIn', 'couponIn', 'linkIn'].forEach(id => document.getElementById(id).addEventListener('input', sync));
+        btnWa.addEventListener('click', e => { if (!validate()) e.preventDefault(); });
 
         // live config (policies) update after Firestore loads
         document.addEventListener('siteconfig', () => { /* policies re-read on next load; page already rendered */ });
