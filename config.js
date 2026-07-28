@@ -5,6 +5,9 @@
 
   function apply(c) {
     if (!c) return;
+    // expose full config (theme/texts/policies/contact...) for other pages
+    window.SITE_CONFIG = c;
+    try { document.dispatchEvent(new CustomEvent('siteconfig', { detail: c })); } catch (e) {}
     // theme colors -> CSS variables
     if (c.theme) for (const k in c.theme) { if (c.theme[k]) root.style.setProperty('--' + k, c.theme[k]); }
     // editable texts -> elements tagged with data-k

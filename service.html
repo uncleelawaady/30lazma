@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تفاصيل الخدمة | Elwaset.net</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="assets/favicon.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="nav" id="nav">
+        <div class="container nav-inner">
+            <a href="index.html" class="brand">
+                <img src="assets/logo.png" alt="Elwaset" class="brand-logo-img">
+                <span class="brand-name">Elwaset<em>.net</em></span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html#categories">الأقسام</a></li>
+                <li><a href="index.html#featured">المميزة</a></li>
+                <li><a href="index.html#testimonials">آراء العملاء</a></li>
+                <li><a href="index.html#payments">الدفع</a></li>
+            </ul>
+            <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="btn btn-grad btn-sm"><i class="fas fa-bolt"></i> ابدأ الآن</a>
+            <button class="nav-toggle" id="navToggle" aria-label="القائمة"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <main class="svc-page">
+        <div class="container">
+            <nav class="svc-crumbs" id="crumbs">
+                <a href="index.html">الرئيسية</a><span class="sep">/</span>
+                <a href="index.html#categories">الأقسام</a>
+            </nav>
+
+            <div class="svc-layout">
+                <!-- Gallery -->
+                <div class="svc-gallery">
+                    <div class="svc-main-img is-ph" id="mainImg"><i class="fas fa-layer-group"></i>
+                        <span class="svc-badge" id="mainBadge">خدمة رقمية</span>
+                    </div>
+                    <div class="svc-thumbs" id="thumbs"></div>
+                </div>
+
+                <!-- Info -->
+                <div class="svc-info">
+                    <a class="svc-cat-tag" id="catTag" href="#"><i class="fas fa-tag"></i> <span id="catTagName"></span></a>
+                    <h1 id="svcTitle">اسم الخدمة</h1>
+                    <span class="svc-code" id="svcCode"><i class="fas fa-hashtag"></i> كود الخدمة</span>
+                    <div class="svc-price"><span class="val" id="svcPrice">حسب الطلب</span><span class="lbl" id="svcPriceLbl">— يُحدد عند تأكيد الطلب</span></div>
+                    <p class="svc-lead" id="svcLead"></p>
+
+                    <div class="svc-order-box glass">
+                        <div class="svc-row">
+                            <div class="svc-qty">
+                                <button type="button" id="qMinus" aria-label="نقص">−</button>
+                                <input type="text" id="qVal" value="1" inputmode="numeric" aria-label="الكمية">
+                                <button type="button" id="qPlus" aria-label="زيادة">+</button>
+                            </div>
+                            <div class="svc-field" style="flex:1;min-width:160px">
+                                <label for="couponIn">كود خصم (اختياري)</label>
+                                <input type="text" id="couponIn" placeholder="أدخل الكود إن وُجد">
+                            </div>
+                        </div>
+                        <div class="svc-field" style="margin-bottom:1rem">
+                            <label for="notesIn">ملاحظات الطلب (اختياري)</label>
+                            <textarea id="notesIn" placeholder="اكتب أي تفاصيل تخص طلبك: الرابط، الباقة، العدد المطلوب..."></textarea>
+                        </div>
+                        <div class="svc-actions">
+                            <button class="btn btn-grad btn-lg" id="btnCart"><i class="fas fa-cart-plus"></i> شراء الآن</button>
+                            <a href="#" target="_blank" rel="noopener" class="btn btn-ghost btn-lg" id="btnWa"><i class="fab fa-whatsapp"></i> تواصل مع العوضي</a>
+                        </div>
+                        <p class="svc-note">اضغط «شراء الآن» لإضافة الخدمة للسلة وإتمام الطلب، أو تواصل مباشرة مع العوضي.</p>
+                    </div>
+
+                    <div class="svc-attach" id="attachBox" style="display:none">
+                        <i class="fas fa-paperclip"></i>
+                        <div class="at-body"><b id="attachName">المرفق</b><span id="attachNote"></span></div>
+                        <a href="#" id="attachLink" target="_blank" rel="noopener" class="btn btn-ghost btn-sm"><i class="fas fa-download"></i> فتح</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="svc-tabs-wrap">
+                <div class="svc-tabs" id="tabsNav"></div>
+                <div id="tabsBody"></div>
+            </div>
+
+            <!-- Related -->
+            <div class="svc-related" id="relatedWrap" style="display:none">
+                <h3><i class="fas fa-layer-group"></i> خدمات ذات صلة</h3>
+                <div class="rel-grid" id="relGrid"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="foot-bottom">© 2026 Elwaset.net — جميع الحقوق محفوظة | EXD | Elawaady XDigital</div>
+    </footer>
+
+    <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="fab-wa" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+
+    <script src="catalog.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="config.js"></script>
+    <script src="data.js"></script>
+    <script>
+    (async function () {
+        const WA = '201055578777';
+        const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+
+        // navbar behaviour
+        const nav = document.getElementById('nav');
+        window.addEventListener('scroll', () => { nav.style.boxShadow = window.scrollY > 20 ? '0 10px 40px rgba(0,0,0,.5)' : 'none'; });
+        const nt = document.getElementById('navToggle'), nl = document.getElementById('navLinks');
+        nt && nt.addEventListener('click', () => nl.classList.toggle('open'));
+
+        // merge dashboard catalog over defaults (never block render if Firestore is slow/unreachable)
+        try {
+            const cat = await Promise.race([
+                (window.getCatalog && window.getCatalog()) || Promise.resolve(null),
+                new Promise(r => setTimeout(() => r(null), 1800))
+            ]);
+            if (cat) window.CATEGORIES = Object.assign({}, window.CATEGORIES, cat);
+        } catch (e) {}
+
+        const params = new URLSearchParams(location.search);
+        const catId = params.get('cat');
+        const svcName = params.get('svc') || '';
+        const CATS = window.CATEGORIES || {};
+        const c = CATS[catId];
+
+        if (!c) {
+            document.getElementById('svcTitle').textContent = 'الخدمة غير موجودة';
+            document.getElementById('svcLead').textContent = 'الرجاء العودة لاختيار خدمة من الأقسام.';
+            document.getElementById('tabsNav').innerHTML = '';
+            return;
+        }
+
+        // theme gradient from category
+        document.documentElement.style.setProperty('--cg1', c.g1 || '#17A85E');
+        document.documentElement.style.setProperty('--cg2', c.g2 || '#0E7A45');
+
+        // resolve rich detail
+        const D = (window.DETAILS || {})[svcName] || {};
+        const rich = (c.details && c.details[svcName]) || {};   // dashboard per-service (future)
+        const d = Object.assign({}, D, rich);
+
+        document.title = svcName + ' — ' + c.title + ' | Elwaset.net';
+
+        // crumbs + category tag
+        const crumbs = document.getElementById('crumbs');
+        crumbs.innerHTML =
+            '<a href="index.html">الرئيسية</a><span class="sep">/</span>' +
+            '<a href="index.html#categories">الأقسام</a><span class="sep">/</span>' +
+            '<a href="category.html?id=' + encodeURIComponent(catId) + '">' + esc(c.title) + '</a><span class="sep">/</span>' +
+            '<span>' + esc(svcName) + '</span>';
+        const catTag = document.getElementById('catTag');
+        catTag.href = 'category.html?id=' + encodeURIComponent(catId);
+        document.getElementById('catTagName').textContent = c.title;
+
+        // title / code / price
+        document.getElementById('svcTitle').textContent = svcName;
+        const code = d.code || ('EL-' + (catId || 'SVC').toString().slice(0, 3).toUpperCase() + '-' +
+            Math.abs(hash(svcName)).toString().slice(0, 4));
+        document.getElementById('svcCode').innerHTML = '<i class="fas fa-hashtag"></i> كود الخدمة: ' + esc(code);
+        if (d.p || d.price) {
+            document.getElementById('svcPrice').textContent = d.price || d.p;
+            document.getElementById('svcPriceLbl').textContent = '';
+        }
+
+        // lead / description
+        const desc = d.d || ('خدمة «' + svcName + '» ضمن قسم ' + c.title + ' — نوفرها بجودة عالية وتنفيذ آمن وسريع، مع دعم كامل ومتابعة حتى تمام الرضا.');
+        document.getElementById('svcLead').textContent = desc;
+        document.getElementById('mainBadge').textContent = c.title;
+
+        // ===== gallery =====
+        const mainImg = document.getElementById('mainImg');
+        const icoHtml = '<i class="fas ' + (c.icon || 'fa-layer-group') + '"></i>';
+        const gallery = []; // list of {img} or {ico}
+        if (d.img) gallery.push({ img: d.img });
+        (d.gallery || []).forEach(g => gallery.push({ img: g }));
+        // pad to at least 4 tiles using category icon placeholders
+        const placeholderIcons = [c.icon || 'fa-layer-group', 'fa-bolt', 'fa-shield-halved', 'fa-circle-check', 'fa-star'];
+        let pi = 0;
+        while (gallery.length < 5) gallery.push({ ico: placeholderIcons[pi++ % placeholderIcons.length] });
+
+        function showMain(g) {
+            if (g.img) { mainImg.classList.remove('is-ph'); mainImg.innerHTML = '<img src="' + esc(g.img) + '" alt="' + esc(svcName) + '"><span class="svc-badge">' + esc(c.title) + '</span>'; }
+            else { mainImg.classList.add('is-ph'); mainImg.innerHTML = '<i class="fas ' + esc(g.ico) + '"></i><span class="svc-badge">' + esc(c.title) + '</span>'; }
+        }
+        showMain(gallery[0]);
+        const thumbs = document.getElementById('thumbs');
+        thumbs.innerHTML = gallery.slice(0, 4).map((g, i) =>
+            '<div class="svc-thumb' + (i === 0 ? ' active' : '') + '" data-i="' + i + '">' +
+            (g.img ? '<img src="' + esc(g.img) + '" alt="">' : '<i class="fas ' + esc(g.ico) + '"></i>') + '</div>').join('');
+        thumbs.querySelectorAll('.svc-thumb').forEach(t => t.addEventListener('click', () => {
+            thumbs.querySelectorAll('.svc-thumb').forEach(x => x.classList.remove('active'));
+            t.classList.add('active');
+            showMain(gallery[+t.dataset.i]);
+        }));
+
+        // ===== attachment =====
+        const P = (window.SITE_CONFIG && window.SITE_CONFIG.policies) || readCachedPolicies() || {};
+        const attach = d.attach || (P.attach && P.attach.url ? P.attach : null);
+        if (attach && attach.url) {
+            document.getElementById('attachBox').style.display = '';
+            document.getElementById('attachName').textContent = attach.name || 'مرفق الخدمة';
+            document.getElementById('attachNote').textContent = attach.note || 'ملف إضافي خاص بالخدمة';
+            document.getElementById('attachLink').href = attach.url;
+        }
+
+        // ===== tabs =====
+        const feats = (d.f && d.f.length) ? d.f : ['جودة عالية وتنفيذ احترافي', 'تنفيذ آمن يحافظ على حسابك', 'دعم ومتابعة كاملة', 'سرعة في التسليم', 'ضمان أثناء فترة الخدمة'];
+        const reqs = (d.req && d.req.length) ? d.req : ['تحديد الخدمة والمواصفات المطلوبة بوضوح', 'توفير الروابط أو البيانات اللازمة للتنفيذ', 'الالتزام بشروط المنصة المستهدفة'];
+        const D_terms = P.terms || 'باستخدامك للخدمة فأنت توافق على تنفيذها وفق المواصفات المتفق عليها. أي تعديل بعد بدء التنفيذ يُتفق عليه مسبقًا. الصفقات الكبيرة تتم عبر نظام الوساطة الآمنة لحماية جميع الأطراف.';
+        const D_returns = P.returns || 'يمكن إلغاء الطلب واسترجاعه قبل بدء التنفيذ. بعد بدء التنفيذ يُحسب ما تم إنجازه فعليًا. الخدمات الرقمية المُسلّمة بالكامل غير قابلة للإرجاع بطبيعتها.';
+        const D_refund = P.refund || 'في حال عدم القدرة على تنفيذ الخدمة يُرد المبلغ كاملًا. لو نُفّذ جزء من الخدمة يُرد المتبقي بعد خصم ما تم إنجازه. تتم عمليات الرد خلال مدة قصيرة بنفس وسيلة الدفع قدر الإمكان.';
+        const D_service = P.service || 'نلتزم بتنفيذ الخدمة بأعلى جودة وفي الوقت المتفق عليه. نحافظ على خصوصية بياناتك ولا نشاركها مع أي طرف. الدعم متاح طوال فترة تنفيذ الخدمة وبعد التسليم.';
+
+        const tabs = [
+            { k: 'desc', t: 'الوصف الكامل', h: '<p>' + esc(d.long || desc) + '</p>' },
+            { k: 'feat', t: 'المميزات', h: '<ul>' + feats.map(x => '<li><i class="fas fa-check"></i>' + esc(x) + '</li>').join('') + '</ul>' },
+            { k: 'req', t: 'المتطلبات', h: '<ul>' + reqs.map(x => '<li><i class="fas fa-circle-dot"></i>' + esc(x) + '</li>').join('') + '</ul>' },
+            { k: 'terms', t: 'الشروط والاسترداد', h: '<p>' + esc(D_terms) + '</p>' },
+            { k: 'returns', t: 'سياسة الاسترجاع', h: '<p>' + esc(D_returns) + '</p>' },
+            { k: 'refund', t: 'رد الأموال', h: '<p>' + esc(D_refund) + '</p>' },
+            { k: 'service', t: 'سياسة الخدمات', h: '<p>' + esc(D_service) + '</p>' }
+        ];
+        const tabsNav = document.getElementById('tabsNav'), tabsBody = document.getElementById('tabsBody');
+        tabsNav.innerHTML = tabs.map((t, i) => '<button class="svc-tab' + (i === 0 ? ' active' : '') + '" data-k="' + t.k + '">' + t.t + '</button>').join('');
+        tabsBody.innerHTML = tabs.map((t, i) => '<div class="svc-tabpane' + (i === 0 ? ' active' : '') + '" data-k="' + t.k + '">' + t.h + '</div>').join('');
+        tabsNav.querySelectorAll('.svc-tab').forEach(b => b.addEventListener('click', () => {
+            tabsNav.querySelectorAll('.svc-tab').forEach(x => x.classList.remove('active'));
+            tabsBody.querySelectorAll('.svc-tabpane').forEach(x => x.classList.remove('active'));
+            b.classList.add('active');
+            tabsBody.querySelector('.svc-tabpane[data-k="' + b.dataset.k + '"]').classList.add('active');
+        }));
+
+        // ===== related services =====
+        let related = (d.related && d.related.length) ? d.related.map(n => ({ cat: catId, name: n })) : [];
+        if (!related.length) {
+            const all = [];
+            (c.groups || []).forEach(g => (g.items || []).forEach(n => { if (n !== svcName) all.push(n); }));
+            related = shuffle(all).slice(0, 4).map(n => ({ cat: catId, name: n }));
+        }
+        if (related.length) {
+            document.getElementById('relatedWrap').style.display = '';
+            const relGrid = document.getElementById('relGrid');
+            relGrid.innerHTML = related.slice(0, 4).map(r => {
+                const rc = CATS[r.cat] || c;
+                const rd = ((window.DETAILS || {})[r.name]) || {};
+                const media = rd.img ? '<img src="' + esc(rd.img) + '" alt="">' : '<i class="fas ' + (rc.icon || 'fa-layer-group') + '"></i>';
+                return '<a class="rel-card glass" href="service.html?cat=' + encodeURIComponent(r.cat) + '&svc=' + encodeURIComponent(r.name) + '">' +
+                    '<div class="rel-img">' + media + '</div><h4>' + esc(r.name) + '</h4></a>';
+            }).join('');
+        }
+
+        // ===== qty + actions =====
+        const qVal = document.getElementById('qVal');
+        const getQ = () => Math.max(1, parseInt(qVal.value, 10) || 1);
+        document.getElementById('qMinus').addEventListener('click', () => qVal.value = Math.max(1, getQ() - 1));
+        document.getElementById('qPlus').addEventListener('click', () => qVal.value = getQ() + 1);
+        qVal.addEventListener('input', () => { qVal.value = qVal.value.replace(/[^\d]/g, ''); });
+
+        document.getElementById('btnCart').addEventListener('click', () => {
+            if (!window.Cart) return;
+            window.Cart.add({ name: svcName, category: c.title });
+            window.Cart.setQty(svcName, getQ());
+        });
+
+        function buildWa() {
+            const q = getQ();
+            const notes = document.getElementById('notesIn').value.trim();
+            const coupon = document.getElementById('couponIn').value.trim();
+            let t = 'مرحبًا عمو العوضي 👋\nمهتم بالخدمة دي من متجر الوسيط:\n\n';
+            t += '🛒 الخدمة: ' + svcName + '\n';
+            t += '📂 القسم: ' + c.title + '\n';
+            t += '🔢 الكمية: ' + q + '\n';
+            t += '🏷️ كود الخدمة: ' + code + '\n';
+            if (coupon) t += '🎟️ كود الخصم: ' + coupon + '\n';
+            if (notes) t += '📝 ملاحظات: ' + notes + '\n';
+            t += '\nياريت التفاصيل والسعر المناسب 🌟';
+            return 'https://wa.me/' + WA + '?text=' + encodeURIComponent(t);
+        }
+        const btnWa = document.getElementById('btnWa');
+        btnWa.href = buildWa();
+        ['notesIn', 'couponIn', 'qVal'].forEach(id => document.getElementById(id).addEventListener('input', () => btnWa.href = buildWa()));
+        document.getElementById('qMinus').addEventListener('click', () => btnWa.href = buildWa());
+        document.getElementById('qPlus').addEventListener('click', () => btnWa.href = buildWa());
+
+        // live config (policies) update after Firestore loads
+        document.addEventListener('siteconfig', () => { /* policies re-read on next load; page already rendered */ });
+
+        function hash(s) { let h = 0; for (let i = 0; i < s.length; i++) { h = (h << 5) - h + s.charCodeAt(i); h |= 0; } return h; }
+        function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+        function readCachedPolicies() { try { return (JSON.parse(localStorage.getItem('elwasetConfig') || 'null') || {}).policies || null; } catch (e) { return null; } }
+    })();
+    </script>
+    <script src="cart.js"></script>
+    <script src="contact.js"></script>
+</body>
+</html>

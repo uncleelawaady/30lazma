@@ -105,6 +105,7 @@
       <button class="tab" data-tab="sections"><i class="fas fa-eye"></i> إظهار الأقسام</button>
       <button class="tab" data-tab="contact"><i class="fas fa-headset"></i> التواصل</button>
       <button class="tab" data-tab="orders"><i class="fas fa-bag-shopping"></i> الطلبات</button>
+      <button class="tab" data-tab="policies"><i class="fas fa-file-shield"></i> سياسات المتجر</button>
       <button class="tab" data-tab="reviews"><i class="fas fa-star"></i> التقييمات</button>
       <button class="tab" data-tab="notify"><i class="fas fa-bullhorn"></i> الإشعارات</button>
       <button class="tab" data-tab="users"><i class="fas fa-users"></i> المستخدمين</button>
@@ -150,6 +151,23 @@
         <div class="field"><label>رقم الاتصال (بدون +)</label><input type="tel" id="c_tel" placeholder="201008002333"></div>
       </div>
       <div class="save-bar"><button class="btn" id="saveContact"><i class="fas fa-floppy-disk"></i> حفظ</button></div>
+    </div>
+
+    <!-- Store policies (service page tabs) -->
+    <div class="panel" id="tab-policies">
+      <div class="card"><h3>سياسات المتجر (تظهر في تبويبات صفحة كل خدمة)</h3>
+        <div class="field"><label>الشروط والاسترداد</label><textarea id="p_terms" rows="3" placeholder="شروط استخدام الخدمة والاسترداد..."></textarea></div>
+        <div class="field"><label>سياسة الاسترجاع</label><textarea id="p_returns" rows="3" placeholder="متى يمكن إلغاء الطلب أو استرجاعه..."></textarea></div>
+        <div class="field"><label>رد الأموال</label><textarea id="p_refund" rows="3" placeholder="كيف ومتى يتم رد المبلغ..."></textarea></div>
+        <div class="field"><label>سياسة الخدمات</label><textarea id="p_service" rows="3" placeholder="التزامات التنفيذ والخصوصية والدعم..."></textarea></div>
+        <p class="hint">سيب أي خانة فاضية عشان يفضل النص الافتراضي المكتوب في الموقع.</p>
+      </div>
+      <div class="card"><h3>المرفق العام (اختياري — يظهر في كل خدمة)</h3>
+        <div class="field"><label>اسم المرفق</label><input type="text" id="p_at_name" placeholder="مثال: كتالوج الخدمات PDF"></div>
+        <div class="field"><label>وصف مختصر</label><input type="text" id="p_at_note" placeholder="ملف إضافي خاص بالخدمة"></div>
+        <div class="field"><label>رابط المرفق</label><input type="text" id="p_at_url" placeholder="https://..."></div>
+      </div>
+      <div class="save-bar"><button class="btn" id="savePolicies"><i class="fas fa-floppy-disk"></i> حفظ السياسات</button></div>
     </div>
 
     <!-- Reviews -->
@@ -416,6 +434,10 @@
       document.querySelectorAll('[data-sec]').forEach(c => { c.checked = hidden.indexOf(c.dataset.sec) === -1; });
       const ct = current.contact || {};
       $('#c_wa').value = ct.wa || ''; $('#c_mm').value = ct.messenger || ''; $('#c_tel').value = ct.tel || '';
+      const po = current.policies || {}, at = po.attach || {};
+      $('#p_terms').value = po.terms || ''; $('#p_returns').value = po.returns || '';
+      $('#p_refund').value = po.refund || ''; $('#p_service').value = po.service || '';
+      $('#p_at_name').value = at.name || ''; $('#p_at_note').value = at.note || ''; $('#p_at_url').value = at.url || '';
     }
 
     async function save(patch, msg) {
@@ -440,6 +462,14 @@
     });
     $('#saveContact').addEventListener('click', () => {
       save({ contact: { wa: $('#c_wa').value.trim(), messenger: $('#c_mm').value.trim(), tel: $('#c_tel').value.trim() } }, 'اتحفظ التواصل ✅');
+    });
+    $('#savePolicies').addEventListener('click', () => {
+      const policies = {
+        terms: $('#p_terms').value.trim(), returns: $('#p_returns').value.trim(),
+        refund: $('#p_refund').value.trim(), service: $('#p_service').value.trim(),
+        attach: { name: $('#p_at_name').value.trim(), note: $('#p_at_note').value.trim(), url: $('#p_at_url').value.trim() }
+      };
+      save({ policies }, 'اتحفظت السياسات ✅');
     });
 
     // ===== Reviews moderation =====

@@ -92,25 +92,19 @@
 
     <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="fab-wa" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
 
-    <!-- Item detail modal -->
-    <div class="item-modal" id="itemModal" aria-hidden="true">
-        <div class="im-card">
-            <button class="im-close" id="imClose" aria-label="إغلاق"><i class="fas fa-xmark"></i></button>
-            <h3 class="im-title grad-text" id="imTitle"></h3>
-            <div id="imBody"></div>
-            <button class="btn btn-grad btn-lg im-order" id="imCart"><i class="fas fa-cart-plus"></i> شراء الآن (أضف للسلة)</button>
-            <a href="#" target="_blank" rel="noopener" class="btn btn-ghost btn-lg im-order" id="imWa"><i class="fab fa-whatsapp"></i> تواصل مع العوضي</a>
-            <p class="im-note">أضف الخدمة للسلة وكمّل طلبك، أو تواصل مباشرة مع العوضي.</p>
-        </div>
-    </div>
-
     <script src="catalog.js"></script>
     <script src="firebase-config.js"></script>
     <script src="data.js"></script>
     <script>
     (async function () {
         // merge dashboard-managed catalog over the built-in defaults
-        try { const cat = window.getCatalog && await window.getCatalog(); if (cat) window.CATEGORIES = Object.assign({}, window.CATEGORIES, cat); } catch (e) {}
+        try {
+            const cat = await Promise.race([
+                (window.getCatalog && window.getCatalog()) || Promise.resolve(null),
+                new Promise(r => setTimeout(() => r(null), 1800))
+            ]);
+            if (cat) window.CATEGORIES = Object.assign({}, window.CATEGORIES, cat);
+        } catch (e) {}
         const id = new URLSearchParams(location.search).get('id');
         const c = (window.CATEGORIES || {})[id];
         const nav = document.getElementById('nav');
@@ -169,34 +163,11 @@
         html += '</div>';
         wrap.innerHTML = html;
 
-        // ===== item detail modal =====
-        const D = window.DETAILS || {};
-        const im = document.getElementById('itemModal');
-        const waFor = name => 'https://wa.me/201055578777?text=' + encodeURIComponent('أهلًا، مهتم بـ: ' + name + ' (' + c.title + ') — ممكن التفاصيل والسعر؟');
+        // ===== open full service page for each item =====
         function openItem(name) {
-            const d = D[name];
-            const desc = d && d.d ? d.d : ('خدمة ' + name + ' ضمن قسم ' + c.title + '. نوفرها بجودة عالية وتنفيذ آمن — تواصل معنا لمعرفة كل التفاصيل والسعر المناسب لطلبك.');
-            let body = '<p class="im-desc">' + desc + '</p>';
-            if (d && d.f && d.f.length) {
-                body += '<div class="im-feats"><h4><i class="fas fa-star"></i> المميزات</h4><ul>' + d.f.map(x => '<li><i class="fas fa-check"></i> ' + x + '</li>').join('') + '</ul></div>';
-            }
-            const price = d && d.p ? d.p : 'السعر يُحدد حسب الطلب — تواصل عبر واتساب';
-            body += '<div class="im-price"><i class="fas fa-tag"></i> ' + price + '</div>';
-            document.getElementById('imTitle').textContent = name;
-            document.getElementById('imBody').innerHTML = body;
-            document.getElementById('imWa').href = waFor(name);
-            im.dataset.item = name;
-            im.classList.add('open'); im.setAttribute('aria-hidden','false'); document.body.classList.add('lb-open');
+            location.href = 'service.html?cat=' + encodeURIComponent(id) + '&svc=' + encodeURIComponent(name);
         }
-        function closeItem(){ im.classList.remove('open'); im.setAttribute('aria-hidden','true'); document.body.classList.remove('lb-open'); }
         wrap.querySelectorAll('.chip[data-item]').forEach(b => b.addEventListener('click', () => openItem(b.dataset.item)));
-        document.getElementById('imClose').addEventListener('click', closeItem);
-        document.getElementById('imCart').addEventListener('click', () => {
-            const nm = im.dataset.item;
-            if (nm && window.Cart) { window.Cart.add({ name: nm, category: c.title }); closeItem(); }
-        });
-        im.addEventListener('click', e => { if (e.target === im) closeItem(); });
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeItem(); });
     })();
     </script>
     <script src="cart.js"></script>
