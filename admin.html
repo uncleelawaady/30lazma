@@ -72,6 +72,8 @@
     .cat-edit .ce-lbl{display:block;font-size:.8rem;color:var(--muted);margin:.2rem 0 .3rem}
     .cat-edit textarea{resize:vertical}
     .ce-count{font-size:.75rem;color:var(--muted)}
+    .ce-imgrow{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.5rem}
+    .ce-preview{width:56px;height:56px;object-fit:contain;border-radius:12px;background:#0a140f;border:1px solid var(--line);padding:4px}
   </style>
 </head>
 <body>
@@ -294,7 +296,11 @@
           '<div class="ce-head"><input class="ce-title" value="' + av + '" placeholder="اسم القسم">' +
           '<label class="ce-active"><input type="checkbox" class="ce-on" ' + (c.active !== false ? 'checked' : '') + '> نشط</label>' +
           '<button class="btn btn-red btn-sm ce-del"><i class="fas fa-trash"></i></button></div>' +
-          '<input class="ce-icon" value="' + esc(c.icon || 'fa-layer-group') + '" placeholder="أيقونة مثل fa-share-nodes">' +
+          '<div class="ce-imgrow"><img class="ce-preview" src="' + esc(c.img || '') + '" style="' + (c.img ? '' : 'display:none') + '">' +
+          '<label class="btn btn-ghost btn-sm"><i class="fas fa-image"></i> صورة القسم<input type="file" accept="image/*" class="ce-file" hidden></label>' +
+          '<button class="btn btn-ghost btn-sm ce-imgdel" style="' + (c.img ? '' : 'display:none') + '">إزالة الصورة</button>' +
+          '<input type="hidden" class="ce-img" value="' + esc(c.img || '') + '"></div>' +
+          '<input class="ce-icon" value="' + esc(c.icon || 'fa-layer-group') + '" placeholder="أيقونة احتياطية مثل fa-share-nodes">' +
           '<textarea class="ce-intro" rows="2" placeholder="وصف القسم">' + esc(c.intro || '') + '</textarea>' +
           '<span class="ce-lbl">الخدمات (خدمة في كل سطر):</span>' +
           '<textarea class="ce-services" rows="5">' + esc(services) + '</textarea></div>';
@@ -302,6 +308,32 @@
       box.querySelectorAll('.ce-del').forEach(b => b.addEventListener('click', () => {
         const el = b.closest('.cat-edit'); if (confirm('حذف القسم؟')) { delete catalog[el.dataset.id]; renderCatalog(); }
       }));
+      box.querySelectorAll('.ce-file').forEach(inp => inp.addEventListener('change', e => {
+        const f = e.target.files[0]; if (!f) return;
+        const row = inp.closest('.ce-imgrow');
+        resizeImg(f, 256, url => {
+          row.querySelector('.ce-img').value = url;
+          const pv = row.querySelector('.ce-preview'); pv.src = url; pv.style.display = '';
+          row.querySelector('.ce-imgdel').style.display = '';
+        });
+      }));
+      box.querySelectorAll('.ce-imgdel').forEach(b => b.addEventListener('click', () => {
+        const row = b.closest('.ce-imgrow');
+        row.querySelector('.ce-img').value = ''; const pv = row.querySelector('.ce-preview'); pv.src = ''; pv.style.display = 'none'; b.style.display = 'none';
+      }));
+    }
+    function resizeImg(file, max, cb) {
+      const img = new Image(); const url = URL.createObjectURL(file);
+      img.onload = () => {
+        let w = img.width, h = img.height; const s = Math.min(1, max / Math.max(w, h));
+        w = Math.round(w * s); h = Math.round(h * s);
+        const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+        cv.getContext('2d').drawImage(img, 0, 0, w, h);
+        URL.revokeObjectURL(url);
+        try { cb(cv.toDataURL('image/png')); } catch (e) { alert('تعذّر قراءة الصورة'); }
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); alert('صورة غير صالحة'); };
+      img.src = url;
     }
     function collectCatalog() {
       const out = {};
@@ -315,7 +347,7 @@
           active: el.querySelector('.ce-on').checked,
           order: i,
           g1: (catalog[id] && catalog[id].g1) || '#17A85E', g2: (catalog[id] && catalog[id].g2) || '#0E7A45',
-          img: (catalog[id] && catalog[id].img) || '',
+          img: el.querySelector('.ce-img').value || '',
           groups: [{ h: 'الخدمات', items }]
         };
       });
