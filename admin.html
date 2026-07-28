@@ -99,8 +99,19 @@
   <div id="gate" class="gate">
     <i class="fas fa-lock big"></i>
     <h2>لوحة تحكم Elwaset</h2>
-    <p>سجّل دخولك بحساب المالك للمتابعة.</p>
-    <button class="btn btn-blue" id="loginBtn" style="width:100%;justify-content:center"><i class="fab fa-google"></i> دخول بجوجل</button>
+    <p>سجّل دخولك لإدارة المتجر.</p>
+    <div style="width:100%;text-align:right">
+      <input type="email" id="liEmail" placeholder="البريد الإلكتروني (اليوزر)" autocomplete="username"
+        style="width:100%;margin-bottom:.6rem;background:#0a140f;border:1px solid var(--line);color:var(--text);border-radius:9px;padding:.7rem .8rem;font-family:inherit">
+      <input type="password" id="liPass" placeholder="كلمة المرور" autocomplete="current-password"
+        style="width:100%;margin-bottom:.7rem;background:#0a140f;border:1px solid var(--line);color:var(--text);border-radius:9px;padding:.7rem .8rem;font-family:inherit">
+      <button class="btn" id="loginPassBtn" style="width:100%;justify-content:center"><i class="fas fa-right-to-bracket"></i> دخول</button>
+      <p style="text-align:center;margin:.55rem 0"><a href="#" id="liForgot" class="hint" style="color:var(--muted)">نسيت كلمة السر؟</a></p>
+    </div>
+    <div style="display:flex;align-items:center;gap:.6rem;width:100%;margin:.2rem 0 .7rem;color:var(--muted);font-size:.8rem">
+      <span style="flex:1;height:1px;background:var(--line)"></span>أو<span style="flex:1;height:1px;background:var(--line)"></span>
+    </div>
+    <button class="btn btn-blue" id="loginBtn" style="width:100%;justify-content:center"><i class="fab fa-google"></i> دخول بجوجل (المالك)</button>
     <p id="gateMsg" class="hint" style="display:none;color:#ff6b6b"></p>
   </div>
 
@@ -127,6 +138,7 @@
       <button class="tab" data-tab="reviews"><i class="fas fa-star"></i> التقييمات</button>
       <button class="tab" data-tab="notify"><i class="fas fa-bullhorn"></i> الإشعارات</button>
       <button class="tab" data-tab="users"><i class="fas fa-users"></i> المستخدمين</button>
+      <button class="tab" data-tab="admins" id="adminsTabBtn"><i class="fas fa-user-shield"></i> المشرفين</button>
     </div>
 
     <!-- Theme -->
@@ -218,6 +230,22 @@
       <div class="card"><h3>المستخدمون (<span id="userCount">0</span>)</h3>
         <div id="userList"><p class="muted">جاري التحميل…</p></div></div>
     </div>
+
+    <!-- Admins (owner only) -->
+    <div class="panel" id="tab-admins">
+      <div class="card"><h3>إضافة مشرف جديد (يوزر + باسورد)</h3>
+        <p class="hint">اكتب إيميل وكلمة سر للمشرف، واضغط «إنشاء مشرف». هيقدر يدخل لوحة التحكم بالبيانات دي ويدير المتجر.</p>
+        <div class="field"><label>إيميل المشرف (اليوزر)</label><input type="email" id="ad_email" placeholder="admin@example.com"></div>
+        <div class="field"><label>كلمة السر (6 أحرف على الأقل)</label><input type="text" id="ad_pass" placeholder="كلمة سر تديها للمشرف"></div>
+        <button class="btn" id="createAdminBtn"><i class="fas fa-user-plus"></i> إنشاء مشرف</button>
+        <p id="ad_msg" class="hint" style="display:none"></p>
+      </div>
+      <div class="card"><h3>المشرفون الحاليون</h3>
+        <div id="adminList"><p class="muted">—</p></div>
+        <div class="save-bar" style="margin-top:1rem"><button class="btn" id="saveAdmins"><i class="fas fa-floppy-disk"></i> حفظ قائمة المشرفين</button></div>
+        <p class="hint">المالك (<b id="ownerEmailLbl"></b>) مشرف دائم ولا يمكن حذفه. حذف مشرف من هنا بيمنعه من الإدارة (لكن حسابه يفضل موجود).</p>
+      </div>
+    </div>
   </div>
 
   <div class="toast" id="toast"></div>
@@ -283,7 +311,8 @@
     if (!cfg || !cfg.apiKey) { $('#gateMsg').style.display = 'block'; $('#gateMsg').textContent = 'قاعدة البيانات مش متظبطة بعد.'; }
 
     const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
-    const { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+    const { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged,
+            signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
     const { getFirestore, doc, getDoc, setDoc, addDoc, collection, getDocs, query, orderBy, updateDoc, deleteDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
     let storageMod = null;
     try { storageMod = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js'); } catch (e) { storageMod = null; }
@@ -308,26 +337,102 @@
       });
     }
     let current = {};
+    const OWNER = 'elawaady.official@gmail.com';
+    let isOwner = false, adminsList = [];
+    const gateErr = m => { const g = $('#gateMsg'); g.style.display = 'block'; g.textContent = m; };
 
+    // Google (owner) login
     $('#loginBtn').addEventListener('click', async () => {
       try { const prov = new GoogleAuthProvider(); prov.setCustomParameters({ prompt: 'select_account' }); await signInWithPopup(auth, prov); }
-      catch (e) { $('#gateMsg').style.display = 'block'; $('#gateMsg').textContent = 'فشل الدخول: ' + (e.message || e); }
+      catch (e) { gateErr('فشل الدخول: ' + (e.message || e)); }
+    });
+    // Email + password login (admins)
+    $('#loginPassBtn').addEventListener('click', async () => {
+      const email = $('#liEmail').value.trim(), pass = $('#liPass').value;
+      if (!email || !pass) { gateErr('اكتب الإيميل وكلمة السر.'); return; }
+      try { await signInWithEmailAndPassword(auth, email, pass); }
+      catch (e) {
+        const c = e && e.code || '';
+        if (c === 'auth/invalid-credential' || c === 'auth/wrong-password' || c === 'auth/user-not-found') gateErr('الإيميل أو كلمة السر غلط.');
+        else if (c === 'auth/operation-not-allowed') gateErr('لازم تفعّل Email/Password في Firebase Authentication الأول.');
+        else gateErr('تعذّر الدخول: ' + (e.message || e));
+      }
+    });
+    $('#liPass').addEventListener('keydown', e => { if (e.key === 'Enter') $('#loginPassBtn').click(); });
+    $('#liForgot').addEventListener('click', async e => {
+      e.preventDefault();
+      const email = $('#liEmail').value.trim();
+      if (!email) { gateErr('اكتب إيميلك فوق الأول، وبعدين اضغط «نسيت كلمة السر؟».'); return; }
+      try { await sendPasswordResetEmail(auth, email); gateErr('بعتنا رابط إعادة تعيين كلمة السر على: ' + email); $('#gateMsg').style.color = '#34d399'; }
+      catch (e2) { gateErr('تعذّر الإرسال: ' + (e2.message || e2)); }
     });
     $('#logoutBtn').addEventListener('click', () => signOut(auth));
 
     onAuthStateChanged(auth, async user => {
       if (!user) { $('#gate').style.display = 'block'; $('#app').style.display = 'none'; return; }
-      $('#gate').style.display = 'none'; $('#app').style.display = 'block';
-      const OWNER = 'elawaady.official@gmail.com';
       const email = (user.email || '').toLowerCase();
-      $('#whoami').textContent = 'داخل بـ: ' + (user.email || '؟');
-      const warn = $('#ownerWarn');
-      if (email !== OWNER) {
-        warn.style.display = 'block';
-        warn.innerHTML = '⚠️ إنت داخل بإيميل <b>' + (user.email || '؟') + '</b> — ده مش إيميل المالك، فالحفظ هيترفض.<br>اضغط «خروج» وسجّل دخول بـ <b>' + OWNER + '</b>.';
-      } else { warn.style.display = 'none'; }
+      // load config first so we know the admins list
       await loadConfig();
+      adminsList = (current.admins || []).map(x => String(x).toLowerCase());
+      isOwner = email === OWNER;
+      const allowed = isOwner || adminsList.indexOf(email) > -1;
+      if (!allowed) {
+        // signed in but not an authorized admin
+        $('#gate').style.display = 'block'; $('#app').style.display = 'none';
+        gateErr('الحساب ده (' + (user.email || '') + ') مش مصرّح له بإدارة المتجر. كلّم المالك يضيفك كمشرف.');
+        return;
+      }
+      $('#gate').style.display = 'none'; $('#app').style.display = 'block';
+      $('#whoami').textContent = 'داخل بـ: ' + (user.email || '؟') + (isOwner ? ' (المالك)' : ' (مشرف)');
+      // admins tab is owner-only
+      $('#adminsTabBtn').style.display = isOwner ? '' : 'none';
+      $('#ownerWarn').style.display = 'none';
+      if (isOwner) renderAdmins();
       loadReviews(); loadAnnouncements(); loadUsers(); loadOrders(); loadCatalog();
+    });
+
+    // ===== Admins management (owner only) =====
+    $('#ownerEmailLbl') && ($('#ownerEmailLbl').textContent = OWNER);
+    function renderAdmins() {
+      const box = $('#adminList');
+      if (!adminsList.length) { box.innerHTML = '<p class="muted">مفيش مشرفين مضافين غير المالك.</p>'; return; }
+      box.innerHTML = adminsList.map(e =>
+        '<div class="row" style="justify-content:space-between"><span>' + esc(e) + '</span>' +
+        '<button class="btn btn-red btn-sm" data-adm="' + esc(e) + '"><i class="fas fa-trash"></i> إزالة</button></div>').join('');
+      box.querySelectorAll('[data-adm]').forEach(b => b.addEventListener('click', () => {
+        adminsList = adminsList.filter(x => x !== b.dataset.adm); renderAdmins();
+      }));
+    }
+    $('#saveAdmins').addEventListener('click', async () => {
+      try { await setDoc(CFG_REF, { admins: adminsList }, { merge: true }); Object.assign(current, { admins: adminsList }); toast('اتحفظت قائمة المشرفين ✅'); }
+      catch (e) { toast('تعذّر الحفظ — لازم تكون المالك'); }
+    });
+    $('#createAdminBtn').addEventListener('click', async () => {
+      const email = $('#ad_email').value.trim().toLowerCase(), pass = $('#ad_pass').value;
+      const msg = $('#ad_msg'); msg.style.display = 'block'; msg.style.color = 'var(--muted)';
+      if (!email || pass.length < 6) { msg.style.color = '#ff6b6b'; msg.textContent = 'اكتب إيميل صحيح وكلمة سر 6 أحرف على الأقل.'; return; }
+      msg.textContent = 'جاري إنشاء المشرف...';
+      try {
+        // create the auth account in a SECOND app so the owner stays logged in
+        const maker = initializeApp(cfg, 'adminMaker-' + Date.now());
+        const makerAuth = getAuth(maker);
+        await createUserWithEmailAndPassword(makerAuth, email, pass);
+        try { await signOut(makerAuth); } catch (e) {}
+        if (adminsList.indexOf(email) === -1) adminsList.push(email);
+        await setDoc(CFG_REF, { admins: adminsList }, { merge: true }); Object.assign(current, { admins: adminsList });
+        renderAdmins();
+        msg.style.color = '#34d399';
+        msg.textContent = '✅ اتعمل المشرف. اديله الإيميل وكلمة السر يدخل بيهم لوحة التحكم.';
+        $('#ad_email').value = ''; $('#ad_pass').value = '';
+      } catch (e) {
+        const c = e && e.code || ''; msg.style.color = '#ff6b6b';
+        if (c === 'auth/email-already-in-use') { // account exists — just authorize it
+          if (adminsList.indexOf(email) === -1) adminsList.push(email);
+          try { await setDoc(CFG_REF, { admins: adminsList }, { merge: true }); Object.assign(current, { admins: adminsList }); renderAdmins(); msg.style.color = '#34d399'; msg.textContent = '✅ الحساب موجود قبل كده واتصرّح له كمشرف.'; }
+          catch (e2) { msg.textContent = 'الحساب موجود لكن تعذّر حفظ الصلاحية.'; }
+        } else if (c === 'auth/operation-not-allowed') msg.textContent = 'لازم تفعّل Email/Password في Firebase Authentication الأول.';
+        else msg.textContent = 'تعذّر الإنشاء: ' + (e.message || e);
+      }
     });
 
     // ===== Catalog (categories + services) =====

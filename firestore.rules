@@ -1,0 +1,63 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // The permanent owner (full control, can manage admins).
+    function owner() {
+      return request.auth != null
+        && request.auth.token.email == 'elawaady.official@gmail.com';
+    }
+
+    // Owner OR any email listed in config/site.admins can manage the store.
+    function isAdmin() {
+      return owner() || (
+        request.auth != null
+        && exists(/databases/$(database)/documents/config/site)
+        && request.auth.token.email in get(/databases/$(database)/documents/config/site).data.admins
+      );
+    }
+
+    // Site config, theme, texts, catalog, policies, admins list, ticker...
+    // Public read (the storefront needs it). Only admins can write.
+    // The `admins` list itself can only be changed by the owner.
+    match /config/{docId} {
+      allow read: if true;
+      allow write: if isAdmin()
+        && (owner() || !('admins' in request.resource.data)
+            || request.resource.data.admins == resource.data.admins);
+    }
+
+    // Reviews: visitors submit (pending), admins moderate.
+    match /reviews/{id} {
+      allow read: if true;
+      allow create: if true;
+      allow update, delete: if isAdmin();
+    }
+
+    // Orders: visitors create at checkout, admins read/manage.
+    match /orders/{id} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Customers: created at checkout/registration; admins read/manage;
+    // a signed-in user can write their own doc.
+    match /customers/{id} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+      allow write: if request.auth != null && request.auth.uid == id;
+    }
+
+    // Users (accounts): the user manages their own doc, admins can read.
+    match /users/{id} {
+      allow read: if isAdmin();
+      allow write: if request.auth != null && (request.auth.uid == id || isAdmin());
+    }
+
+    // Announcements (notifications): public read, admins write.
+    match /announcements/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}

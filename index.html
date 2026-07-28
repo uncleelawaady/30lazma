@@ -537,39 +537,7 @@
         } catch (e) { /* keep static */ }
       })();
     </script>
-    <script>
-      // ===== Top ticker + moving services marquee =====
-      (function () {
-        const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-
-        // --- ticker ---
-        const tickerDefaults = ['متجر الوسيط — Elwaset.net', 'خدمات مميزة ⭐', 'دعم فني 24/7', 'جروب الوسيط الرسمي', 'أسعار تنافسية 🔥', 'تنفيذ فوري وآمن 🔒'];
-        function toList(v) { return Array.isArray(v) ? v : String(v || '').split('|').map(s => s.trim()).filter(Boolean); }
-        function buildTicker(items) {
-          const track = document.getElementById('tickerTrack'); if (!track) return;
-          if (!items || !items.length) items = tickerDefaults;
-          const one = items.map(t => '<span>' + esc(t) + '</span><span class="tk-dot">◆</span>').join('');
-          track.innerHTML = one + one; // duplicate for a seamless loop
-        }
-        const cfgTicker = window.SITE_CONFIG && window.SITE_CONFIG.ticker;
-        buildTicker(cfgTicker ? toList(cfgTicker) : tickerDefaults);
-        document.addEventListener('siteconfig', e => { const t = e.detail && e.detail.ticker; if (t) buildTicker(toList(t)); });
-
-        // --- moving services marquee ---
-        const track = document.getElementById('mqTrack');
-        if (track && window.CATEGORIES) {
-          const ids = Object.keys(window.CATEGORIES);
-          const card = id => {
-            const c = window.CATEGORIES[id];
-            const ico = c.img ? '<img src="' + esc(c.img) + '" alt="">' : '<i class="' + (window.faIcon ? window.faIcon(c.icon) : ('fas ' + esc(c.icon || 'fa-layer-group'))) + '"></i>';
-            return '<a class="mq-card" href="category.html?id=' + encodeURIComponent(id) + '" style="--g1:' + esc(c.g1 || '#17A85E') + ';--g2:' + esc(c.g2 || '#0E7A45') + '">' +
-              '<div class="mq-ico">' + ico + '</div><h4>' + esc(c.title || '') + '</h4></a>';
-          };
-          const one = ids.map(card).join('');
-          track.innerHTML = one + one; // duplicate for a seamless loop
-        }
-      })();
-    </script>
+    <script src="widgets.js"></script>
     <script type="module">
       // ===== Live reviews: show approved Firestore reviews on the homepage =====
       (async function () {
