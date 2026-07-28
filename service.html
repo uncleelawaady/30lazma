@@ -255,7 +255,7 @@
             const relGrid = document.getElementById('relGrid');
             relGrid.innerHTML = related.slice(0, 4).map(r => {
                 const rc = CATS[r.cat] || c;
-                const rd = ((window.DETAILS || {})[r.name]) || {};
+                const rd = Object.assign({}, (window.DETAILS || {})[r.name] || {}, (rc.details && rc.details[r.name]) || {});
                 const media = rd.img ? '<img src="' + esc(rd.img) + '" alt="">' : '<i class="fas ' + (rc.icon || 'fa-layer-group') + '"></i>';
                 return '<a class="rel-card glass" href="service.html?cat=' + encodeURIComponent(r.cat) + '&svc=' + encodeURIComponent(r.name) + '">' +
                     '<div class="rel-img">' + media + '</div><h4>' + esc(r.name) + '</h4></a>';

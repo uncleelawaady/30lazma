@@ -153,21 +153,26 @@
             for (const [re, ic, col] of PLAT) { if (re.test(name)) return '<i class="fab ' + ic + ' plat-ic" style="color:' + col + '"></i>'; }
             return '';
         }
+        const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, ch => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[ch]));
+        const DET = window.DETAILS || {};
+        const det = c.details || {};
         const wrap = document.getElementById('catGroups');
         let html = '<div class="container">';
         c.groups.forEach(g => {
-            html += '<h3 class="sub-title grad-text">' + g.h + '</h3><div class="chip-grid">';
-            g.items.forEach(it => { html += '<button class="chip glass" data-item="' + it.replace(/"/g,'&quot;') + '">' + platIcon(it) + it + ' <i class="fas fa-circle-info chip-info"></i></button>'; });
+            html += '<h3 class="sub-title grad-text">' + esc(g.h) + '</h3><div class="cat-grid">';
+            g.items.forEach(it => {
+                const d = Object.assign({}, DET[it] || {}, det[it] || {});
+                const href = 'service.html?cat=' + encodeURIComponent(id) + '&svc=' + encodeURIComponent(it);
+                const media = d.img ? '<img src="' + esc(d.img) + '" alt="">' : (platIcon(it) || '<i class="fas ' + esc(c.icon || 'fa-layer-group') + '"></i>');
+                const price = d.price || d.p || '';
+                html += '<a class="cat glass" href="' + href + '" style="--g1:' + esc(c.g1) + ';--g2:' + esc(c.g2) + '">' +
+                    '<div class="cat-ico">' + media + '</div><h3>' + esc(it) + '</h3>' +
+                    (price ? '<p class="svc-price-tag">' + esc(price) + '</p>' : '<p>اضغط للتفاصيل والطلب</p>') + '</a>';
+            });
             html += '</div>';
         });
         html += '</div>';
         wrap.innerHTML = html;
-
-        // ===== open full service page for each item =====
-        function openItem(name) {
-            location.href = 'service.html?cat=' + encodeURIComponent(id) + '&svc=' + encodeURIComponent(name);
-        }
-        wrap.querySelectorAll('.chip[data-item]').forEach(b => b.addEventListener('click', () => openItem(b.dataset.item)));
     })();
     </script>
     <script src="cart.js"></script>
