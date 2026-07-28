@@ -72,6 +72,9 @@
             <label>كلمة المرور <span class="req">*</span></label>
             <input type="password" id="acPass" placeholder="6 أحرف على الأقل" required>
           </div>
+          <p class="ac-switch" id="forgotWrap" style="display:none;text-align:left;margin:-.2rem 0 .5rem">
+            <a href="#" id="forgotLink"><i class="fas fa-key"></i> نسيت كلمة السر؟</a>
+          </p>
           <div class="rf-group" id="g-pass2">
             <label>تأكيد كلمة المرور <span class="req">*</span></label>
             <input type="password" id="acPass2" placeholder="أعد إدخال كلمة المرور">
@@ -132,6 +135,7 @@
       const reg = m === 'register';
       $('typeWrap').style.display = reg ? 'block' : 'none';
       ['g-name','g-phone','g-pass2','g-terms'].forEach(id => $(id).style.display = reg ? '' : 'none');
+      $('forgotWrap').style.display = reg ? 'none' : '';
       $('submitBtn').innerHTML = reg ? '<i class="fas fa-user-plus"></i> إنشاء حساب' : '<i class="fas fa-right-to-bracket"></i> تسجيل الدخول';
       $('acTitle').textContent = reg ? 'انضم إلى Elwaset' : 'تسجيل الدخول';
       $('acEyebrow').textContent = reg ? 'حساب جديد' : 'دخول';
@@ -145,11 +149,12 @@
     if (!cfg.apiKey) {
       const notice = () => alert('التسجيل هيتفعل قريبًا.');
       ['googleBtn','facebookBtn'].forEach(id => $(id).addEventListener('click', notice));
+      $('forgotLink').addEventListener('click', e => { e.preventDefault(); notice(); });
       $('acForm').addEventListener('submit', e => { e.preventDefault(); notice(); });
     } else {
       const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
       const { getAuth, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup, signOut, onAuthStateChanged,
-              createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } =
+              createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, sendPasswordResetEmail } =
         await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
       const { getFirestore, doc, setDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
 
@@ -195,6 +200,21 @@
           try { await updateProfile(cred.user, { displayName: name }); } catch (e) {}
           await upsertUser(cred.user, { name, phone, type: accType });
         } catch (err) { alert('تعذّر إنشاء الحساب: ' + (err.message||err)); }
+      });
+
+      $('forgotLink').addEventListener('click', async e => {
+        e.preventDefault();
+        const email = $('acEmail').value.trim();
+        if (!email) { alert('اكتب بريدك الإلكتروني في الخانة فوق الأول، وبعدين اضغط «نسيت كلمة السر؟».'); $('acEmail').focus(); return; }
+        try {
+          await sendPasswordResetEmail(auth, email);
+          alert('بعتنا لك رابط إعادة تعيين كلمة السر على:\n' + email + '\n\nافتح إيميلك واتبع الرابط (لو مش لاقيه بُص في Spam / المهملات).');
+        } catch (err) {
+          const c = err && err.code || '';
+          if (c === 'auth/user-not-found') alert('مفيش حساب مسجّل بالإيميل ده. اتأكد من كتابته أو اعمل حساب جديد.');
+          else if (c === 'auth/invalid-email') alert('البريد الإلكتروني غير صحيح.');
+          else alert('تعذّر الإرسال: ' + (err.message || err));
+        }
       });
 
       $('signoutBtn').addEventListener('click', () => signOut(auth));
