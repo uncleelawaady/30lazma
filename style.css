@@ -722,16 +722,16 @@ body.lb-open { overflow: hidden; }
 .tcard-neu { border-color: rgba(255,196,0,.28); }
 
 /* hero top word — "الوساطة" in Kufam */
-/* big decorative word — subtle watermark BEHIND the hero text (no overlap) */
+/* small decorative brand word on the right side (no overlap with hero text) */
 .hero-word {
-    position: absolute; top: clamp(60px, 9vh, 120px); left: 0; right: 0; z-index: 0;
-    text-align: center; pointer-events: none;
-    font-family: 'Kufam', 'Cairo', sans-serif; font-weight: 900;
-    font-size: clamp(3rem, 13vw, 6.5rem); line-height: 1; letter-spacing: 1px;
+    position: absolute; top: clamp(80px, 12vh, 132px); right: clamp(18px, 4vw, 64px); left: auto; inset-inline: auto; z-index: 1;
+    text-align: right; pointer-events: none; white-space: nowrap;
+    font-family: 'Kufam', 'Cairo', sans-serif; font-weight: 800;
+    font-size: clamp(1rem, 2.2vw, 1.6rem); line-height: 1; letter-spacing: .5px;
     background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent;
-    opacity: .12;
+    opacity: .85;
 }
-@media (max-width: 768px){ .hero-word { top: clamp(54px, 8vh, 96px); opacity: .10; } }
+@media (max-width: 768px){ .hero-word { top: clamp(64px, 9vh, 92px); right: 16px; font-size: clamp(.9rem, 4vw, 1.15rem); opacity: .75; } }
 
 /* small platform brand-mark on chips */
 .chip .plat-ic { font-size: 1.02rem !important; opacity: 1 !important; }
