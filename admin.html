@@ -276,9 +276,16 @@
       ['revEyebrow','عنوان صغير — الآراء'],['revDesc','وصف — الآراء']
     ];
     const THEME_KEYS = [
-      ['bg','لون الخلفية','#06110f'],['yellow','الأصفر','#FFD400'],['pink','الأخضر الأساسي','#17A85E'],
-      ['teal','التوهّج التركوازي','#17C8AC'],['text','لون النص','#F2F6F5'],
-      ['grad-from','الجرادينت — من','#FFD400'],['grad-to','الجرادينت — إلى','#0E7A45']
+      ['bg','لون الخلفية','#0b0b0d'],
+      ['bg-2','لون الكروت والأسطح','#17141d'],
+      ['text','لون النص','#f4f4f6'],
+      ['muted','لون النص الثانوي','#aeaeb0'],
+      ['pink','اللون الأساسي (وعند التمرير)','#a855f7'],
+      ['yellow','اللون الثاني','#f472b6'],
+      ['teal','لون التوهّج','#8b5cf6'],
+      ['glass-brd','لون الحواف','#3a2f4a'],
+      ['grad-from','التدرّج — من','#a855f7'],
+      ['grad-to','التدرّج — إلى','#ec4899']
     ];
     const SECTIONS = [
       ['founder','قسم المؤسس'],['categories','الأقسام'],['featured','الخدمات المميزة'],
@@ -350,7 +357,7 @@
         pink: v.pink, purple: v['grad-to'], teal: v.teal, violet: v.teal,
         yellow: v.yellow, orange: v.yellow,
         'grad-from': v['grad-from'], 'grad-mid': _mix(v['grad-from'], v['grad-to'], .5), 'grad-to': v['grad-to'],
-        glass: _rgba(v.pink, .06), 'glass-brd': _rgba(v.teal, .18)
+        glass: _rgba(v.pink, .06), 'glass-brd': _mix(v.teal, v.bg, .55)
       };
     }
     function applyPreset(v, doSave) {
