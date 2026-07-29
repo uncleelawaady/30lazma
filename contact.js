@@ -4,7 +4,7 @@
     wa: '201055578777',
     messenger: 'official.elawaady',
     tel: '201008002333',
-    defaultMsg: 'أهلًا، عايز أتواصل مع العوضي بخصوص خدمة / وساطة.'
+    defaultMsg: 'أهلًا، عايز أتواصل معنا بخصوص خدمة / وساطة.'
   };
   // apply dashboard contact overrides if present
   try {

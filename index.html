@@ -76,10 +76,21 @@
         </div>
     </header>
 
-    <!-- ===== Moving services strip ===== -->
-    <div class="svc-marquee" id="svcMarquee" aria-label="خدماتنا المتحركة">
-        <div class="mq-track" id="mqTrack"></div>
-    </div>
+    <!-- ===== 3D Coverflow showcase ===== -->
+    <section class="coverflow-sec">
+        <div class="container">
+            <div class="head">
+                <span class="eyebrow">خدماتنا</span>
+                <h2>تصفّح <span class="grad-text">أقسامنا</span></h2>
+            </div>
+            <div class="coverflow" id="coverflow">
+                <button class="cf-arrow cf-prev" aria-label="السابق"><i class="fas fa-chevron-right"></i></button>
+                <div class="cf-stage" id="cfStage"></div>
+                <button class="cf-arrow cf-next" aria-label="التالي"><i class="fas fa-chevron-left"></i></button>
+                <div class="cf-dots" id="cfDots"></div>
+            </div>
+        </div>
+    </section>
 
     <!-- ===== Founder ===== -->
     <!-- ===== Stats ===== -->
@@ -352,11 +363,11 @@
         <div class="container">
             <div class="head">
                 <span class="eyebrow" data-k="revEyebrow">آراء العملاء</span>
-                <h2>العوضي… <span class="grad-text">وسيط ثقة</span></h2>
+                <h2>الوسيط… <span class="grad-text">ثقة وأمان</span></h2>
                 <p data-k="revDesc">آراء حقيقية من عملاء وثّقوا تقييمهم عبر Google و Facebook.</p>
             </div>
             <div id="liveReviews" class="rev-grid"></div>
-            <div id="reviewsEmpty" class="reviews-empty" style="display:none">كن أول من يشارك تقييمه بعد تعاملك مع العوضي.</div>
+            <div id="reviewsEmpty" class="reviews-empty" style="display:none">كن أول من يشارك تقييمه بعد تعاملك معنا.</div>
         </div>
         <div class="container rev-add"><a href="review.html" class="btn btn-grad btn-lg"><i class="fas fa-star"></i> أضف تقييمك</a></div>
     </section>
@@ -388,7 +399,7 @@
                 <div class="proof-cta-icon"><i class="fas fa-shield-halved"></i></div>
                 <div class="proof-cta-text">
                     <span class="eyebrow">موثّق</span>
-                    <h2>إثبات <span class="grad-text">تعاملات العوضي</span></h2>
+                    <h2>إثبات <span class="grad-text">تعاملاتنا الموثقة</span></h2>
                     <p>أكثر من 40 وساطة وصفقة تمت بنجاح — كلها موثقة ومحفوظة الحقوق. شوف الإثباتات بنفسك.</p>
                     <a href="proofs.html" class="btn btn-grad btn-lg"><i class="fas fa-shield-halved"></i> اعرض كل الإثباتات</a>
                 </div>
@@ -431,7 +442,7 @@
         <div class="container founder-grid founder-noimg">
             <div class="founder-text">
                 <span class="eyebrow">المؤسس</span>
-                <h2>أحمد <span class="grad-text">العوضي</span></h2>
+                <h2>أحمد <span class="grad-text">الوسيط</span></h2>
                 <p class="founder-role">Founder &amp; CEO — EXD | Elawaady XDigital</p>
                 <p>
                     أعمل في مجال الخدمات الرقمية منذ سنوات، وبنيت <strong>Elwaset</strong> عشان تكون
@@ -452,7 +463,7 @@
                     <div class="sat-bar"><i style="width:1%;background:#17A85E"></i></div>
                 </div>
                 <div class="hero-cta">
-                    <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="btn btn-grad"><i class="fab fa-whatsapp"></i> تواصل مع العوضي</a>
+                    <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="btn btn-grad"><i class="fab fa-whatsapp"></i> تواصل معنا</a>
                     <a href="#testimonials" class="btn btn-ghost"><i class="fas fa-star"></i> آراء العملاء</a>
                 </div>
             </div>
@@ -533,6 +544,7 @@
       })();
     </script>
     <script src="widgets.js"></script>
+    <script src="coverflow.js"></script>
     <script type="module">
       // ===== Live reviews: show approved Firestore reviews on the homepage =====
       (async function () {

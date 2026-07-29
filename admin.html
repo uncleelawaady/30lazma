@@ -398,14 +398,20 @@
     // Upload an image: try Firebase Storage (scales, tiny Firestore doc); fall back to inline base64.
     function uploadImage(file, folder, maxSize, cb) {
       resizeImg(file, maxSize, dataUrl => {
-        if (storage && storageMod) {
+        if (!storage || !storageMod) { cb(dataUrl); return; }
+        let done = false;
+        const finish = v => { if (!done) { done = true; cb(v); } };
+        // If Storage doesn't respond (not enabled / rules / CORS), don't hang forever —
+        // fall back to storing the image inline so the upload always completes.
+        const timer = setTimeout(() => finish(dataUrl), 7000);
+        try {
           const path = folder + '/' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.png';
           const r = storageMod.ref(storage, path);
           storageMod.uploadString(r, dataUrl, 'data_url')
             .then(snap => storageMod.getDownloadURL(snap.ref))
-            .then(url => cb(url))
-            .catch(() => cb(dataUrl)); // Storage not enabled → keep base64
-        } else { cb(dataUrl); }
+            .then(url => { clearTimeout(timer); finish(url); })
+            .catch(() => { clearTimeout(timer); finish(dataUrl); });
+        } catch (e) { clearTimeout(timer); finish(dataUrl); }
       });
     }
     let current = {};
