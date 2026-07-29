@@ -125,7 +125,6 @@
         const ico = document.getElementById('catIco');
         ico.innerHTML = '<i class="' + (window.faIcon ? window.faIcon(c.icon) : ('fas ' + c.icon)) + '"></i>';
         ico.style.background = 'linear-gradient(135deg,' + c.g1 + ',' + c.g2 + ')';
-        ico.style.boxShadow = '0 10px 30px -6px ' + c.g1;
         document.documentElement.style.setProperty('--cg1', c.g1);
         document.documentElement.style.setProperty('--cg2', c.g2);
 

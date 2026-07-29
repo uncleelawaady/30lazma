@@ -10,6 +10,8 @@
     try { document.dispatchEvent(new CustomEvent('siteconfig', { detail: c })); } catch (e) {}
     // theme colors -> CSS variables
     if (c.theme) for (const k in c.theme) { if (c.theme[k]) root.style.setProperty('--' + k, c.theme[k]); }
+    // unify category tile colors with the theme (optional)
+    if (document.body) document.body.classList.toggle('unify-cats', !!c.unifyCats);
     // editable texts -> elements tagged with data-k
     if (c.texts) for (const k in c.texts) {
       const v = c.texts[k];

@@ -32,9 +32,9 @@ html { scroll-behavior: smooth; overflow-x: hidden; max-width: 100%; }
 
 body {
     font-family: 'IBM Plex Sans Arabic', 'Cairo', sans-serif;
+    /* fully theme-driven background — no fixed image, follows the active theme */
     background:
-        linear-gradient(180deg, rgba(5,17,17,.62), rgba(4,15,16,.82)),
-        url('assets/bg-grid.jpg') center top / cover no-repeat,
+        radial-gradient(75% 55% at 50% -8%, var(--bg-2), transparent 65%),
         var(--bg);
     background-attachment: fixed;
     color: var(--text);
@@ -43,17 +43,27 @@ body {
     position: relative;
 }
 
-/* ambient glow — teal-forward to harmonize with the grid background */
+/* ambient glow — uses the theme accent colors so it changes with every theme */
 body::before {
     content: '';
     position: fixed;
     inset: 0;
     background:
-        radial-gradient(45% 40% at 12% 88%, rgba(23,200,172,.22), transparent 62%),
-        radial-gradient(55% 45% at 50% -5%, rgba(20,180,158,.14), transparent 62%),
-        radial-gradient(45% 40% at 88% 10%, rgba(23,200,172,.10), transparent 60%);
+        radial-gradient(45% 40% at 12% 88%, color-mix(in srgb, var(--teal) 20%, transparent), transparent 62%),
+        radial-gradient(55% 45% at 50% -5%, color-mix(in srgb, var(--pink) 14%, transparent), transparent 62%),
+        radial-gradient(45% 40% at 88% 10%, color-mix(in srgb, var(--teal) 12%, transparent), transparent 60%);
     z-index: -1;
     pointer-events: none;
+}
+
+/* faint grid overlay drawn in CSS (theme-aware, replaces the green image) */
+body::after {
+    content: '';
+    position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: .5;
+    background-image:
+        linear-gradient(color-mix(in srgb, var(--text) 5%, transparent) 1px, transparent 1px),
+        linear-gradient(90deg, color-mix(in srgb, var(--text) 5%, transparent) 1px, transparent 1px);
+    background-size: 46px 46px;
 }
 
 h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; line-height: 1.35; font-weight: 800; }
@@ -234,6 +244,10 @@ h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; line-height: 1.35; font-weight: 
 .cat-tags { display: none !important; }
 .cat .svc-price-tag { color: var(--yellow); font-weight: 800; -webkit-line-clamp: 1; }
 .cat-ico .plat-ic { font-size: clamp(1.8rem, 7vw, 3.4rem); }
+/* optional: unify category tile colors with the active theme */
+.unify-cats .cat-ico, .unify-cats .cf-media, .unify-cats .mq-ico, .unify-cats .cat-hero-ico {
+    background: linear-gradient(135deg, var(--pink), var(--purple)) !important;
+}
 @media (max-width: 560px) {
     .cat h3 { padding: .5rem .45rem .15rem; }
     .cat > p { font-size: .72rem; padding: 0 .45rem .6rem; }
@@ -247,7 +261,6 @@ h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; line-height: 1.35; font-weight: 
 .svc-ico {
     width: 52px; height: 52px; display: grid; place-items: center; border-radius: 14px;
     font-size: 1.4rem; color: #fff; background: var(--grad-btn);
-    box-shadow: 0 0 24px rgba(255,138,0,.35);
 }
 .badge {
     font-family: 'Cairo'; font-weight: 800; font-size: .78rem; color: var(--yellow);
