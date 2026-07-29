@@ -403,7 +403,7 @@
         const finish = v => { if (!done) { done = true; cb(v); } };
         // If Storage doesn't respond (not enabled / rules / CORS), don't hang forever —
         // fall back to storing the image inline so the upload always completes.
-        const timer = setTimeout(() => finish(dataUrl), 7000);
+        const timer = setTimeout(() => finish(dataUrl), 5000);
         try {
           const path = folder + '/' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.png';
           const r = storageMod.ref(storage, path);
@@ -585,7 +585,7 @@
           const f = t.files[0]; if (!f) return;
           const row = t.closest('.ce-imgrow'); const lbl = row.querySelector('label'); const old = lbl.innerHTML;
           lbl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الرفع...';
-          uploadImage(f, 'categories', 512, url => {
+          uploadImage(f, 'categories', 460, url => {
             row.querySelector('.ce-img').value = url;
             const pv = row.querySelector('.ce-preview'); pv.src = url; pv.style.display = '';
             row.querySelector('.ce-imgdel').style.display = ''; lbl.innerHTML = old;
@@ -594,7 +594,7 @@
           const f = t.files[0]; if (!f) return;
           const row = t.closest('.se-imgrow'); const lbl = row.querySelector('.se-uplbl'); const old = lbl.innerHTML;
           lbl.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-          uploadImage(f, 'services', 700, url => {
+          uploadImage(f, 'services', 560, url => {
             row.querySelector('.se-img').value = url;
             const pv = row.querySelector('.se-preview'); pv.src = url; pv.style.display = '';
             row.querySelector('.se-imgdel').style.display = ''; lbl.innerHTML = old;
@@ -625,9 +625,19 @@
         let w = img.width, h = img.height; const s = Math.min(1, max / Math.max(w, h));
         w = Math.round(w * s); h = Math.round(h * s);
         const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
-        cv.getContext('2d').drawImage(img, 0, 0, w, h);
+        const ctx = cv.getContext('2d'); ctx.drawImage(img, 0, 0, w, h);
         URL.revokeObjectURL(url);
-        try { cb(cv.toDataURL('image/png')); } catch (e) { alert('تعذّر قراءة الصورة'); }
+        // detect transparency: transparent logos stay PNG, solid photos become
+        // light JPEG (about 1/5 the size) so uploads are fast and not heavy
+        let hasAlpha = false;
+        try {
+          const d = ctx.getImageData(0, 0, w, h).data;
+          for (let i = 3; i < d.length; i += 4) { if (d[i] < 250) { hasAlpha = true; break; } }
+        } catch (e) { hasAlpha = true; }
+        try {
+          const out = hasAlpha ? cv.toDataURL('image/png') : cv.toDataURL('image/jpeg', 0.82);
+          cb(out);
+        } catch (e) { alert('تعذّر قراءة الصورة'); }
       };
       img.onerror = () => { URL.revokeObjectURL(url); alert('صورة غير صالحة'); };
       img.src = url;
