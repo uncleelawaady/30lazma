@@ -230,7 +230,8 @@ h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; line-height: 1.35; font-weight: 
 }
 .cat::after {
     content: ''; position: absolute; inset: 0; border-radius: 18px;
-    padding: 1px; background: linear-gradient(135deg, var(--g1), var(--g2));
+    /* neutral white/light-gray highlight on hover (no neon color) */
+    padding: 1px; background: linear-gradient(135deg, color-mix(in srgb, var(--text) 62%, transparent), color-mix(in srgb, var(--text) 22%, transparent));
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor; mask-composite: exclude;
     opacity: 0; transition: var(--tr); pointer-events: none;
@@ -268,8 +269,8 @@ h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; line-height: 1.35; font-weight: 
     font-size: 1.4rem; color: #fff; background: var(--grad-btn);
 }
 .badge {
-    font-family: 'Cairo'; font-weight: 800; font-size: .78rem; color: var(--yellow);
-    background: rgba(255,212,0,.1); border: 1px solid rgba(255,212,0,.3);
+    font-family: 'Cairo'; font-weight: 800; font-size: .78rem; color: #fff;
+    background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.55);
     padding: .3rem .8rem; border-radius: 999px;
 }
 .svc h3 { font-size: 1.15rem; margin-bottom: .5rem; }
