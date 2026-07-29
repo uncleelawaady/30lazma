@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Elwaset — منصة الخدمات الرقمية الفاخرة</title>
     <meta name="description" content="Elwaset | الوسيط — منصة رقمية فاخرة لكل الخدمات: سوشيال ميديا، توثيق، حسابات جاهزة، وساطة آمنة، ذكاء اصطناعي، برمجة، تصميم، واشتراكات رقمية.">
-    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="stylesheet" href="style.css?v=3">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,6 +32,9 @@
                 <li><a href="proofs.html">إثبات التعاملات</a></li>
                 <li><a href="#payments">الدفع</a></li>
                 <li><a href="#partners">شركاؤنا</a></li>
+                <li class="nav-m-only"><a href="account.html"><i class="fas fa-right-to-bracket"></i> تسجيل دخول</a></li>
+                <li class="nav-m-only"><a href="account.html"><i class="fas fa-user-plus"></i> إنشاء حساب</a></li>
+                <li class="nav-m-only"><a href="https://wa.me/201055578777" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> تواصل الآن</a></li>
             </ul>
             <a href="account.html" class="btn btn-ghost btn-sm nav-auth"><i class="fas fa-right-to-bracket"></i> تسجيل دخول</a>
             <a href="account.html" class="btn btn-ghost btn-sm nav-auth"><i class="fas fa-user-plus"></i> سجّل</a>
@@ -537,7 +540,7 @@
             const tags = items.slice(0, 4).map(t => '<span>' + esc(t) + '</span>').join('');
             const ico = c.img ? '<img src="' + esc(c.img) + '" alt="">' : '<i class="' + (window.faIcon ? window.faIcon(c.icon) : ('fas ' + esc(c.icon || 'fa-layer-group'))) + '"></i>';
             return '<a href="category.html?id=' + encodeURIComponent(id) + '" class="cat glass" style="--g1:' + esc(c.g1 || '#17A85E') + ';--g2:' + esc(c.g2 || '#0E7A45') + '">' +
-              '<div class="cat-ico">' + ico + '</div><h3>' + esc(c.title || '') + '</h3><p>' + esc(c.intro || '') + '</p>' +
+              '<div class="cat-ico">' + ico + '</div><h3>' + esc(c.title || '') + '</h3><p>' + esc(window.catDesc ? window.catDesc(c.title || '') : (c.intro || '')) + '</p>' +
               '<div class="cat-tags">' + tags + '</div></a>';
           }).join('');
           // re-apply reveal so new cards animate
@@ -547,6 +550,20 @@
     </script>
     <script src="widgets.js"></script>
     <script src="coverflow.js"></script>
+    <script>
+      // Unified card description under every category card (works on static + dynamic cards)
+      (function () {
+        function apply() {
+          document.querySelectorAll('.cat-grid .cat').forEach(function (c) {
+            var h = c.querySelector('h3'), p = c.querySelector('p');
+            if (h && p && window.catDesc) p.textContent = window.catDesc(h.textContent.trim());
+          });
+        }
+        apply();
+        setTimeout(apply, 2200);           // after the Firestore catalog re-renders the grid
+        document.addEventListener('siteconfig', function () { setTimeout(apply, 120); });
+      })();
+    </script>
     <script type="module">
       // ===== Live reviews: show approved Firestore reviews on the homepage =====
       (async function () {

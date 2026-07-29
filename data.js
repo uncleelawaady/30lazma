@@ -6,6 +6,10 @@ window.faIcon = function (ic) {
   return /^fa-(facebook|instagram|tiktok|youtube|telegram|x-twitter|twitter|snapchat|linkedin|whatsapp|discord|twitch|pinterest|reddit|threads|google|kickstarter)$/.test(ic)
     ? 'fa-brands ' + ic : 'fas ' + ic;
 };
+// Unified card description generated from the category title.
+window.catDesc = function (title) {
+  return 'كل ' + (title || 'الخدمات') + ' في مكان واحد بجودة عالية وضمان دائم مع متابعة ما بعد الشراء ودعم 24/7';
+};
 window.CATEGORIES = {
   "facebook": {
     icon: "fa-facebook", g1: "#17A85E", g2: "#0E7A45",

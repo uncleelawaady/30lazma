@@ -245,8 +245,7 @@ h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; line-height: 1.35; font-weight: 
     background: linear-gradient(135deg, var(--g1), var(--g2));
 }
 .cat h3 { font-size: clamp(.85rem, 2.4vw, 1.12rem); margin: 0; padding: .7rem .75rem .2rem; text-align: center; line-height: 1.4; }
-.cat > p { color: var(--muted); font-size: .82rem; line-height: 1.55; margin: 0; padding: 0 .75rem .85rem; text-align: center;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.cat > p { color: var(--muted); font-size: .8rem; line-height: 1.6; margin: 0; padding: 0 .7rem .9rem; text-align: center; }
 .cat-tags { display: none !important; }
 .cat .svc-price-tag { color: var(--yellow); font-weight: 800; -webkit-line-clamp: 1; }
 .cat-ico .plat-ic { font-size: clamp(1.8rem, 7vw, 3.4rem); }
@@ -657,23 +656,34 @@ body.lb-open { overflow: hidden; }
     .footer-grid { grid-template-columns: 1fr 1fr; }
     .btn-nav { display: none; }
 }
-@media (max-width: 768px) {
+/* Tablet + mobile: collapse the whole navbar into a hamburger menu */
+@media (max-width: 1024px) {
+    .nav-inner { gap: .6rem; }
     .nav-links {
-        position: fixed; top: 62px; inset-inline: 0; flex-direction: column;
-        background: rgba(5,5,5,.97); border-bottom: 1px solid var(--glass-brd);
-        padding: 1.4rem 2rem; gap: 1.1rem; display: none;
+        position: fixed; top: 60px; inset-inline: 0; flex-direction: column; align-items: stretch;
+        background: rgba(8,8,10,.98); border-bottom: 1px solid var(--glass-brd);
+        padding: 1rem 1.4rem 1.4rem; gap: .3rem; display: none; max-height: 80vh; overflow-y: auto;
     }
     .nav-links.open { display: flex; }
-    .top-ticker ~ .nav .nav-links { top: 96px; }
-    .nav-toggle { display: block; }
+    .top-ticker ~ .nav .nav-links { top: 94px; }
+    .nav-links li a { display: block; padding: .8rem .4rem; border-bottom: 1px solid var(--glass-brd); }
+    .nav-toggle { display: block; margin-inline-start: auto; }
+    /* hide the desktop CTA + auth text buttons; they move into the menu / FABs */
+    .nav .nav-inner > .btn-grad, .nav-auth { display: none; }
+    .nav-m-only { display: block; }
+}
+.nav-m-only { display: none; }
+
+@media (max-width: 768px) {
     .search-bar { flex-wrap: nowrap; }
     .footer-grid { grid-template-columns: 1fr; }
-    .section { padding: 4rem 0; }
+    .section { padding: 3.4rem 0; }
     .founder-grid { grid-template-columns: 1fr; gap: 2rem; }
     .proof-cta { grid-template-columns: 1fr; gap: 1.4rem; text-align: center; justify-items: center; }
     .founder-photo { max-width: 360px; margin-inline: auto; }
     .founder-stats { justify-content: space-between; gap: 1rem; }
     .pay-strip { padding: 1rem; }
+    .hero { min-height: auto; padding: 7rem 0 3.5rem; }
 }
 
 /* =========================================================
