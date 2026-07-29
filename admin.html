@@ -330,16 +330,33 @@
       { g:'ثيمات افتتاحية', n:'كحلي وذهبي فاخر', e:'⭐', v:{ bg:'#070b16', text:'#eef2fb', pink:'#eab308', yellow:'#facc15', teal:'#1e40af', 'grad-from':'#facc15', 'grad-to':'#1e3a8a' } }
     ];
     const THEME_GROUPS = ['ثيمات داكنة', 'ثيمات ملونة', 'ثيمات ليلية متميزة', 'ثيمات دافئة', 'ثيمات افتتاحية'];
+    // color helpers to derive a FULL palette from the preset's core colors
+    function _hx(h) { h = String(h).replace('#', ''); if (h.length === 3) h = h.split('').map(c => c + c).join(''); const n = parseInt(h, 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+    function _toHex(r, g, b) { return '#' + [r, g, b].map(x => Math.max(0, Math.min(255, Math.round(x))).toString(16).padStart(2, '0')).join(''); }
+    function _mix(a, b, t) { const A = _hx(a), B = _hx(b); return _toHex(A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t); }
+    function _rgba(h, a) { const c = _hx(h); return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')'; }
+    // turn the 7 core colors into every CSS variable the site uses (radical, full change)
+    function fullVars(v) {
+      return {
+        bg: v.bg, 'bg-2': _mix(v.bg, v.pink, .14), text: v.text,
+        muted: _mix(v.text, v.bg, .30), dim: _mix(v.text, v.bg, .55),
+        pink: v.pink, purple: v['grad-to'], teal: v.teal, violet: v.teal,
+        yellow: v.yellow, orange: v.yellow,
+        'grad-from': v['grad-from'], 'grad-mid': _mix(v['grad-from'], v['grad-to'], .5), 'grad-to': v['grad-to'],
+        glass: _rgba(v.pink, .06), 'glass-brd': _rgba(v.teal, .18)
+      };
+    }
     function applyPreset(v, doSave) {
-      for (const k in v) {
+      const full = fullVars(v);
+      for (const k in full) {
+        document.documentElement.style.setProperty('--' + k, full[k]);
         const inp = document.querySelector('[data-theme="' + k + '"]');
         const hex = document.querySelector('[data-themehex="' + k + '"]');
-        if (inp) inp.value = v[k];
-        if (hex) hex.value = v[k];
-        document.documentElement.style.setProperty('--' + k, v[k]);
+        if (inp && /^#[0-9a-fA-F]{6}$/.test(full[k])) inp.value = full[k];
+        if (hex) hex.value = full[k];
       }
-      if (doSave) { document.getElementById('saveTheme').click(); }
-      else { toast('اتملت الحقول — دوس «حفظ الألوان» تحت'); }
+      if (doSave) { save({ theme: full }, 'اتطبّق الثيم على الموقع ✅'); }
+      else { toast('اتملت الحقول — دوس «حفظ الألوان» عشان يتسجل'); }
     }
     function renderPresets() {
       const box = $('#themePresets'); if (!box) return;

@@ -8,23 +8,23 @@ service cloud.firestore {
         && request.auth.token.email == 'elawaady.official@gmail.com';
     }
 
-    // Owner OR any email listed in config/site.admins can manage the store.
-    function isAdmin() {
-      return owner() || (
-        request.auth != null
-        && exists(/databases/$(database)/documents/config/site)
-        && request.auth.token.email in get(/databases/$(database)/documents/config/site).data.admins
-      );
+    // Safe read of the admins list (never errors if the field/doc is missing).
+    function adminList() {
+      return exists(/databases/$(database)/documents/config/site)
+        ? get(/databases/$(database)/documents/config/site).data.get('admins', [])
+        : [];
     }
 
-    // Site config, theme, texts, catalog, policies, admins list, ticker...
-    // Public read (the storefront needs it). Only admins can write.
-    // The `admins` list itself can only be changed by the owner.
+    // Owner OR any email listed in config/site.admins can manage the store.
+    function isAdmin() {
+      return owner() || (request.auth != null && request.auth.token.email in adminList());
+    }
+
+    // Site config: theme, texts, catalog, policies, admins, ticker...
+    // Public read (the storefront needs it). Admins can write.
     match /config/{docId} {
       allow read: if true;
-      allow write: if isAdmin()
-        && (owner() || !('admins' in request.resource.data)
-            || request.resource.data.admins == resource.data.admins);
+      allow write: if isAdmin();
     }
 
     // Reviews: visitors submit (pending), admins moderate.
