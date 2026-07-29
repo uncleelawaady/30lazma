@@ -91,6 +91,14 @@
     .se-flag{flex:0 0 auto;display:flex;align-items:center;gap:.25rem;font-size:.75rem;color:var(--muted);white-space:nowrap;cursor:pointer}
     .se-flag input{width:16px!important;height:16px!important;margin:0!important}
     .se-del{flex:0 0 auto}
+    /* theme presets */
+    .tp-group{font-size:.72rem;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin:1.1rem 0 .6rem;font-weight:800}
+    .tp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.7rem}
+    .tp-card{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#0a140f}
+    .tp-prev{height:56px;width:100%}
+    .tp-name{font-size:.82rem;font-weight:700;padding:.45rem .55rem .3rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .tp-btns{display:flex;gap:.35rem;padding:0 .45rem .5rem}
+    .tp-btns .btn{flex:1;justify-content:center;padding:.4rem .3rem;font-size:.75rem}
     @media(max-width:640px){.svc-row-edit{flex-wrap:wrap}.svc-row-edit .se-name,.svc-row-edit .se-price,.svc-row-edit .se-desc{flex:1 1 100%;min-width:0}}
   </style>
 </head>
@@ -143,7 +151,11 @@
 
     <!-- Theme -->
     <div class="panel active" id="tab-theme">
-      <div class="card"><h3>ألوان الموقع</h3><div id="themeFields"></div></div>
+      <div class="card"><h3>🎨 ثيمات جاهزة — Theme Presets</h3>
+        <p class="hint">اختر ثيم بروفيشنال جاهز: «معاينة» بيملأ الحقول عشان تعدّل قبل الحفظ، و«تطبيق» بيملأ ويحفظ على الموقع فورًا.</p>
+        <div id="themePresets"></div>
+      </div>
+      <div class="card"><h3>ألوان الموقع (يدوي)</h3><div id="themeFields"></div></div>
       <div class="save-bar"><button class="btn" id="saveTheme"><i class="fas fa-floppy-disk"></i> حفظ الألوان</button></div>
     </div>
 
@@ -287,6 +299,66 @@
       inp.addEventListener('input', () => { hex.value = inp.value; });
       hex.addEventListener('input', () => { if (/^#[0-9a-fA-F]{6}$/.test(hex.value)) inp.value = hex.value; });
     });
+
+    // ===== 20 professional theme presets =====
+    // vars keys map to THEME_KEYS: bg, text, pink(accent), yellow, teal, grad-from, grad-to
+    const THEME_PRESETS = [
+      // DARK
+      { g:'ثيمات داكنة', n:'EXP برتقالي وأسود', e:'🔥', v:{ bg:'#0b0b0b', text:'#f5f5f5', pink:'#FF8A00', yellow:'#FFB020', teal:'#FF8A00', 'grad-from':'#FFB020', 'grad-to':'#FF6A00' } },
+      { g:'ثيمات داكنة', n:'الفضاء العميق', e:'🌌', v:{ bg:'#0a0a16', text:'#eef0ff', pink:'#7c5cff', yellow:'#b39cff', teal:'#6a5cff', 'grad-from':'#7c5cff', 'grad-to':'#3a2a8f' } },
+      { g:'ثيمات داكنة', n:'الأسود الصافي', e:'⚫', v:{ bg:'#050505', text:'#f2f2f2', pink:'#d0d0d0', yellow:'#ffffff', teal:'#9aa0a6', 'grad-from':'#e0e0e0', 'grad-to':'#6f6f6f' } },
+      { g:'ثيمات داكنة', n:'التيل الداكن', e:'🩵', v:{ bg:'#06110f', text:'#eafaf5', pink:'#17C8AC', yellow:'#17A85E', teal:'#17C8AC', 'grad-from':'#17C8AC', 'grad-to':'#0E7A45' } },
+      // COLOR
+      { g:'ثيمات ملونة', n:'النار الحمراء', e:'🔴', v:{ bg:'#120606', text:'#ffecec', pink:'#ff3b3b', yellow:'#ff8a3b', teal:'#ff5b5b', 'grad-from':'#ff5b3b', 'grad-to':'#b0141a' } },
+      { g:'ثيمات ملونة', n:'الأخضر الرقمي', e:'💚', v:{ bg:'#05130b', text:'#eafff2', pink:'#17A85E', yellow:'#7CFF00', teal:'#17C8AC', 'grad-from':'#7CFF00', 'grad-to':'#0E7A45' } },
+      { g:'ثيمات ملونة', n:'البنفسجي الغامق', e:'💜', v:{ bg:'#0d0716', text:'#f3eaff', pink:'#a855f7', yellow:'#d8b4fe', teal:'#8b5cf6', 'grad-from':'#a855f7', 'grad-to':'#5b21b6' } },
+      { g:'ثيمات ملونة', n:'الأزرق الداكن', e:'🌊', v:{ bg:'#060b16', text:'#eaf2ff', pink:'#3b82f6', yellow:'#38bdf8', teal:'#2563eb', 'grad-from':'#38bdf8', 'grad-to':'#1e3a8a' } },
+      // PREMIUM NIGHT
+      { g:'ثيمات ليلية متميزة', n:'التيل الرقمي', e:'🌐', v:{ bg:'#041413', text:'#eafffb', pink:'#14b8a6', yellow:'#2dd4bf', teal:'#14b8a6', 'grad-from':'#2dd4bf', 'grad-to':'#0f766e' } },
+      { g:'ثيمات ليلية متميزة', n:'الفولاذ الليلي', e:'🌩️', v:{ bg:'#0b0f16', text:'#eef2f8', pink:'#7c8aa0', yellow:'#aab7c8', teal:'#4b5a6e', 'grad-from':'#aab7c8', 'grad-to':'#334155' } },
+      { g:'ثيمات ليلية متميزة', n:'الذهب الملكي', e:'✨', v:{ bg:'#0f0c05', text:'#fff8e6', pink:'#d4af37', yellow:'#f5d76e', teal:'#b8860b', 'grad-from':'#f5d76e', 'grad-to':'#a67c00' } },
+      // WARM TONES
+      { g:'ثيمات دافئة', n:'نحاسي صدئ', e:'🔥', v:{ bg:'#140a06', text:'#ffeede', pink:'#c0561f', yellow:'#e08a3c', teal:'#a34518', 'grad-from':'#e08a3c', 'grad-to':'#8a3410' } },
+      { g:'ثيمات دافئة', n:'شوكولاتة إسبريسو', e:'☕', v:{ bg:'#0f0a08', text:'#f3e9e2', pink:'#a06a48', yellow:'#c79a6f', teal:'#6a4429', 'grad-from':'#c79a6f', 'grad-to':'#4a2c1c' } },
+      { g:'ثيمات دافئة', n:'جمل تُبغي', e:'🐫', v:{ bg:'#12100b', text:'#f6efe2', pink:'#c19a6b', yellow:'#e0c39a', teal:'#a17d4e', 'grad-from':'#e0c39a', 'grad-to':'#8a6a3e' } },
+      { g:'ثيمات دافئة', n:'رمل كريمي فاخر', e:'🏜️', v:{ bg:'#14110c', text:'#fbf6ea', pink:'#d9c39a', yellow:'#efe0bf', teal:'#c2a877', 'grad-from':'#efe0bf', 'grad-to':'#b89a63' } },
+      { g:'ثيمات دافئة', n:'زيتوني تراثي', e:'🌿', v:{ bg:'#0d0f08', text:'#eef3e0', pink:'#8aa04a', yellow:'#9db35a', teal:'#55622c', 'grad-from':'#9db35a', 'grad-to':'#3f4a1f' } },
+      // EDITORIAL
+      { g:'ثيمات افتتاحية', n:'لايم جرافيت', e:'⚡', v:{ bg:'#0c0c0c', text:'#f2f2f2', pink:'#a3e635', yellow:'#d9f99d', teal:'#84cc16', 'grad-from':'#a3e635', 'grad-to':'#4d7c0f' } },
+      { g:'ثيمات افتتاحية', n:'حجر أردوازي عصري', e:'🩶', v:{ bg:'#0e0f11', text:'#f4f6f8', pink:'#cbd5e1', yellow:'#ffffff', teal:'#94a3b8', 'grad-from':'#e2e8f0', 'grad-to':'#64748b' } },
+      { g:'ثيمات افتتاحية', n:'أحمر جمر بحري', e:'🔴', v:{ bg:'#0a0d14', text:'#eef2f8', pink:'#ef4444', yellow:'#f87171', teal:'#b91c1c', 'grad-from':'#ef4444', 'grad-to':'#7f1d1d' } },
+      { g:'ثيمات افتتاحية', n:'كحلي وذهبي فاخر', e:'⭐', v:{ bg:'#070b16', text:'#eef2fb', pink:'#eab308', yellow:'#facc15', teal:'#1e40af', 'grad-from':'#facc15', 'grad-to':'#1e3a8a' } }
+    ];
+    const THEME_GROUPS = ['ثيمات داكنة', 'ثيمات ملونة', 'ثيمات ليلية متميزة', 'ثيمات دافئة', 'ثيمات افتتاحية'];
+    function applyPreset(v, doSave) {
+      for (const k in v) {
+        const inp = document.querySelector('[data-theme="' + k + '"]');
+        const hex = document.querySelector('[data-themehex="' + k + '"]');
+        if (inp) inp.value = v[k];
+        if (hex) hex.value = v[k];
+        document.documentElement.style.setProperty('--' + k, v[k]);
+      }
+      if (doSave) { document.getElementById('saveTheme').click(); }
+      else { toast('اتملت الحقول — دوس «حفظ الألوان» تحت'); }
+    }
+    function renderPresets() {
+      const box = $('#themePresets'); if (!box) return;
+      box.innerHTML = THEME_GROUPS.map(g => {
+        const items = THEME_PRESETS.map((p, i) => ({ p, i })).filter(x => x.p.g === g);
+        if (!items.length) return '';
+        return '<div class="tp-group">' + esc(g) + '</div><div class="tp-grid">' + items.map(({ p, i }) => {
+          const sw = 'linear-gradient(135deg,' + p.v.bg + ' 0%,' + p.v['grad-from'] + ' 60%,' + p.v['grad-to'] + ' 100%)';
+          return '<div class="tp-card"><div class="tp-prev" style="background:' + sw + '"></div>' +
+            '<div class="tp-name">' + esc(p.e + ' ' + p.n) + '</div>' +
+            '<div class="tp-btns"><button class="btn btn-sm tp-apply" data-i="' + i + '"><i class="fas fa-floppy-disk"></i> تطبيق</button>' +
+            '<button class="btn btn-ghost btn-sm tp-previewbtn" data-i="' + i + '"><i class="fas fa-eye"></i> معاينة</button></div></div>';
+        }).join('') + '</div>';
+      }).join('');
+      box.querySelectorAll('.tp-apply').forEach(b => b.addEventListener('click', () => applyPreset(THEME_PRESETS[+b.dataset.i].v, true)));
+      box.querySelectorAll('.tp-previewbtn').forEach(b => b.addEventListener('click', () => applyPreset(THEME_PRESETS[+b.dataset.i].v, false)));
+    }
+    renderPresets();
+
     // build text fields
     TEXT_KEYS.forEach(([k, label]) => {
       const w = document.createElement('div'); w.className = 'field';

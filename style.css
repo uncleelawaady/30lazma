@@ -28,7 +28,7 @@
     --tr: all .35s cubic-bezier(.22,1,.36,1);
 }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: hidden; max-width: 100%; }
 
 body {
     font-family: 'IBM Plex Sans Arabic', 'Cairo', sans-serif;
@@ -479,6 +479,14 @@ body.lb-open { overflow: hidden; }
 /* ===== Founder ===== */
 .founder-top { padding-top: 7rem; }
 .founder-grid { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 3rem; align-items: center; }
+/* founder without photo: single centered column */
+.founder-grid.founder-noimg { grid-template-columns: 1fr; max-width: 860px; margin-inline: auto; }
+.founder-noimg .founder-text { text-align: center; }
+.founder-noimg .founder-stats { justify-content: center; }
+.founder-noimg .hero-cta { justify-content: center; }
+.founder-noimg .sat-meter { max-width: 540px; margin-inline: auto; text-align: right; }
+/* keep the moving strips fully inside the screen */
+.svc-marquee, .top-ticker { max-width: 100%; }
 .founder-photo { position: relative; }
 .founder-photo img {
     width: 100%; border-radius: 26px; display: block;
