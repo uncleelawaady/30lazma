@@ -1182,3 +1182,36 @@ body.lb-open { overflow: hidden; }
 .elbot-input input:focus { border-color: var(--pink); }
 .elbot-input button { width: 42px; border: 0; border-radius: 12px; background: var(--grad-btn); color: #fff; cursor: pointer; font-size: .95rem; }
 @media (max-width: 480px) { .elbot { left: 14px; bottom: 16px; } .elbot-panel { bottom: 70px; } }
+
+/* =========================================================
+   Card images: feathered edges (no hard frame) + 3D depth.
+   The image melts into the card/background and floats with a
+   soft shadow. Works with any size and transparent PNGs.
+   ========================================================= */
+.cat-ico img, .cat-hero-ico img, .cf-media img, .mq-ico img,
+.svc-main-img img, .rel-img img, .svc-thumb img {
+    -webkit-mask-image:
+        linear-gradient(to right, transparent 0, #000 9%, #000 91%, transparent 100%),
+        linear-gradient(to bottom, transparent 0, #000 9%, #000 91%, transparent 100%);
+    -webkit-mask-composite: source-in; -webkit-mask-repeat: no-repeat;
+    mask-image:
+        linear-gradient(to right, transparent 0, #000 9%, #000 91%, transparent 100%),
+        linear-gradient(to bottom, transparent 0, #000 9%, #000 91%, transparent 100%);
+    mask-composite: intersect; mask-repeat: no-repeat;
+    filter: drop-shadow(0 12px 26px rgba(0,0,0,.55));
+    transition: transform .35s var(--pop), filter .35s var(--pop);
+}
+/* remove hard frames/backgrounds so the feathered image blends into the page */
+.svc-main-img, .rel-img, .svc-thumb {
+    background: transparent !important; border: none !important; box-shadow: none !important; overflow: visible !important;
+}
+.svc-thumb.active { outline: 2px solid var(--pink); outline-offset: 3px; border-radius: 12px; }
+/* icon-only cards (no image): soft 3D glow instead of a solid block */
+.unify-cats .cat-ico, .unify-cats .cat-hero-ico {
+    background: radial-gradient(62% 62% at 50% 42%, color-mix(in srgb, var(--pink) 42%, transparent), transparent 72%) !important;
+}
+/* lift the image a touch on card hover for the 3D feel */
+.cat:hover .cat-ico img, .rel-card:hover .rel-img img, .cf-card.cf-active .cf-media img {
+    transform: translateY(-4px) scale(1.03);
+    filter: drop-shadow(0 18px 34px rgba(0,0,0,.6));
+}
