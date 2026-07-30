@@ -1135,3 +1135,50 @@ body.lb-open { overflow: hidden; }
         transform: none;
     }
 }
+
+/* =========================================================
+   Chatbot assistant widget (bottom-left; contact fabs are right)
+   ========================================================= */
+.elbot { position: fixed; left: 20px; bottom: 22px; z-index: 1250; direction: rtl; }
+.elbot-fab { width: 60px; height: 60px; border: none; border-radius: 50%; cursor: pointer;
+    background: var(--grad-btn); color: #fff; font-size: 1.5rem; box-shadow: 0 12px 30px -6px color-mix(in srgb, var(--pink) 60%, transparent);
+    display: grid; place-items: center; transition: transform .25s var(--pop); }
+.elbot-fab:hover { transform: scale(1.08) translateY(-2px); }
+.elbot-fab .elbot-i-close { display: none; }
+.elbot.open .elbot-fab .elbot-i-open { display: none; }
+.elbot.open .elbot-fab .elbot-i-close { display: block; }
+.elbot-panel { position: absolute; left: 0; bottom: 74px; width: min(360px, calc(100vw - 32px));
+    height: min(540px, calc(100vh - 130px)); background: var(--bg-2); border: 1px solid var(--glass-brd);
+    border-radius: 20px; box-shadow: 0 30px 70px -20px rgba(0,0,0,.7); display: flex; flex-direction: column;
+    overflow: hidden; opacity: 0; visibility: hidden; transform: translateY(16px) scale(.96); transform-origin: bottom left;
+    transition: opacity .25s ease, transform .3s var(--pop), visibility .25s; }
+.elbot.open .elbot-panel { opacity: 1; visibility: visible; transform: none; }
+.elbot-head { display: flex; align-items: center; gap: .6rem; padding: .9rem 1rem; background: var(--grad-btn); color: #fff; }
+.elbot-av { width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,.18); display: grid; place-items: center; font-size: 1.1rem; flex-shrink: 0; }
+.elbot-av.sm { width: 30px; height: 30px; font-size: .85rem; background: var(--glass); color: var(--pink); }
+.elbot-h-tx { flex: 1; line-height: 1.3; }
+.elbot-h-tx strong { display: block; font-family: var(--font-head); font-size: 1rem; }
+.elbot-h-tx small { opacity: .85; font-size: .78rem; }
+.elbot-x { background: rgba(255,255,255,.15); border: 0; color: #fff; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; }
+.elbot-msgs { flex: 1; overflow-y: auto; padding: 1rem .9rem; display: flex; flex-direction: column; gap: .7rem; }
+.elbot-msg { display: flex; gap: .5rem; align-items: flex-end; max-width: 100%; }
+.elbot-msg.me { justify-content: flex-start; flex-direction: row-reverse; }
+.elbot-msg .elbot-b { padding: .65rem .85rem; border-radius: 14px; font-size: .9rem; line-height: 1.7; max-width: 82%; }
+.elbot-msg.bot .elbot-b { background: var(--glass); border: 1px solid var(--glass-brd); color: var(--text); border-bottom-right-radius: 4px; }
+.elbot-msg.me .elbot-b { background: var(--grad-btn); color: #fff; border-bottom-left-radius: 4px; }
+.elbot-sugg { display: flex; flex-direction: column; gap: .4rem; margin-top: .6rem; }
+.elbot-sg { text-align: right; background: var(--bg); border: 1px solid var(--glass-brd); color: var(--text);
+    border-radius: 10px; padding: .5rem .7rem; font-family: inherit; font-size: .84rem; cursor: pointer; transition: var(--tr); }
+.elbot-sg:hover { border-color: var(--pink); color: #fff; transform: translateX(-3px); }
+.elbot-wa { display: inline-flex; align-items: center; gap: .4rem; margin-top: .5rem; background: #25D366; color: #fff;
+    padding: .5rem .9rem; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: .85rem; }
+.elbot-chips { display: flex; flex-wrap: wrap; gap: .4rem; padding: .5rem .9rem; border-top: 1px solid var(--glass-brd); max-height: 92px; overflow-y: auto; }
+.elbot-chip { background: var(--glass); border: 1px solid var(--glass-brd); color: var(--text); border-radius: 999px;
+    padding: .35rem .8rem; font-family: inherit; font-size: .8rem; font-weight: 700; cursor: pointer; transition: var(--tr); }
+.elbot-chip:hover { background: var(--grad-btn); color: #fff; border-color: transparent; }
+.elbot-input { display: flex; gap: .5rem; padding: .7rem .9rem; border-top: 1px solid var(--glass-brd); background: var(--bg); }
+.elbot-input input { flex: 1; background: var(--bg-2); border: 1px solid var(--glass-brd); color: var(--text);
+    border-radius: 12px; padding: .6rem .8rem; font-family: inherit; font-size: .9rem; outline: none; }
+.elbot-input input:focus { border-color: var(--pink); }
+.elbot-input button { width: 42px; border: 0; border-radius: 12px; background: var(--grad-btn); color: #fff; cursor: pointer; font-size: .95rem; }
+@media (max-width: 480px) { .elbot { left: 14px; bottom: 16px; } .elbot-panel { bottom: 70px; } }
