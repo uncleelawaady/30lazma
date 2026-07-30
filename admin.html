@@ -101,6 +101,14 @@
     .ce-grp-head{display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem}
     .ce-grp-head>i{color:var(--yellow)}
     .ce-grp-name{flex:1;background:#0c1712;border:1px solid var(--line);color:var(--text);border-radius:9px;padding:.5rem .7rem;font-family:inherit;font-weight:700;font-size:.92rem}
+    .se-sec{margin-top:.7rem;padding-top:.6rem;border-top:1px dashed var(--line)}
+    .se-sec>b{display:block;font-size:.82rem;color:var(--yellow);margin-bottom:.5rem}
+    .se-secchk{display:flex;gap:1rem;flex-wrap:wrap;margin-top:.3rem}
+    .se-fld{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap;margin-bottom:.4rem}
+    .se-fld .se-fld-type{flex:0 0 auto}
+    .se-fld .se-fld-label{flex:1 1 140px}
+    .se-fld .se-fld-opts{flex:1 1 120px}
+    .se-fld select,.se-fld input{background:#0c1712;border:1px solid var(--line);color:var(--text);border-radius:8px;padding:.4rem .55rem;font-family:inherit;font-size:.82rem}
     .se-flag input{width:16px!important;height:16px!important;margin:0!important}
     .se-del{flex:0 0 auto}
     /* theme presets */
@@ -672,6 +680,47 @@
         '<label class="se-af"><span>المتطلبات (سطر لكل متطلب)</span><textarea class="se-req" rows="2" placeholder="رابط أو معرف الحساب&#10;أن يكون الحساب عام وغير مقفل">' + esc(arr(det.req)) + '</textarea></label>' +
         '<label class="se-af"><span>الشروط الخاصة</span><textarea class="se-terms" rows="2" placeholder="يبدأ التنفيذ بعد تأكيد الطلب...">' + esc(det.terms || '') + '</textarea></label>' +
         '<label class="se-af"><span>وسوم (بفاصلة)</span><input class="se-tags" value="' + esc(tags) + '" placeholder="متابعين، فيسبوك، سريع"></label>' +
+        // ===== order settings =====
+        '<div class="se-sec"><b>⚙️ إعدادات الطلب</b><div class="se-adv-grid">' +
+          '<label class="se-af"><span>طريقة التنفيذ</span><select class="se-ordermethod">' +
+            [['whatsapp', 'واتساب'], ['link', 'رابط مباشر'], ['telegram', 'بوت تليجرام']].map(o => '<option value="' + o[0] + '"' + ((det.orderMethod || 'whatsapp') === o[0] ? ' selected' : '') + '>' + o[1] + '</option>').join('') +
+          '</select></label>' +
+          '<label class="se-af"><span>رابط طلب مباشر</span><input class="se-orderlink" value="' + esc(det.orderLink || '') + '" placeholder="https://..."></label>' +
+          '<label class="se-af"><span>واتساب التنفيذ</span><input class="se-orderwa" value="' + esc(det.orderWa || '') + '" placeholder="مثال: 2010..."></label>' +
+          '<label class="se-af"><span>بوت تليجرام</span><input class="se-orderbot" value="' + esc(det.orderBot || '') + '" placeholder="https://t.me/..."></label>' +
+        '</div><div class="se-secchk">' +
+          '<label class="se-flag"><input type="checkbox" class="se-nocart" ' + (det.noCart ? 'checked' : '') + '> إخفاء «إضافة للسلة»</label>' +
+          '<label class="se-flag"><input type="checkbox" class="se-approval" ' + (det.approval ? 'checked' : '') + '> يتطلب موافقة قبل التنفيذ</label>' +
+        '</div></div>' +
+        // ===== mediation =====
+        '<div class="se-sec"><b>🤝 الوساطة</b><div class="se-adv-grid">' +
+          '<label class="se-af se-af-chk"><input type="checkbox" class="se-medon" ' + (det.medOn ? 'checked' : '') + '> <span>تفعيل الوساطة لهذه الخدمة</span></label>' +
+          '<label class="se-af"><span>رسوم الوساطة</span><input class="se-medfee" value="' + esc(det.medFee || '') + '" placeholder="مثال: 5%"></label>' +
+        '</div><label class="se-af"><span>ملاحظة الوساطة (تظهر قبل الطلب)</span><textarea class="se-mednote" rows="2" placeholder="تتم الصفقة عبر وساطة رسمية بإشراف العوضي لحماية الطرفين.">' + esc(det.medNote || '') + '</textarea></label></div>' +
+        // ===== supplier =====
+        '<div class="se-sec"><b>🏷️ المورّد</b><div class="se-adv-grid">' +
+          '<label class="se-af"><span>نوع المزوّد</span><input class="se-suptype" value="' + esc(det.supType || 'متجر داخلي') + '" placeholder="متجر داخلي"></label>' +
+          '<label class="se-af"><span>اسم المورّد</span><input class="se-supname" value="' + esc(det.supName || '') + '" placeholder="اسم المورّد (اختياري)"></label>' +
+          '<label class="se-af se-af-chk"><input type="checkbox" class="se-supshow" ' + (det.supShow ? 'checked' : '') + '> <span>إظهار اسم المورّد للعميل</span></label>' +
+        '</div></div>' +
+        // ===== dynamic form fields =====
+        '<div class="se-sec"><b>📝 حقول الطلب المخصّصة</b>' +
+          '<div class="se-flds">' + (det.fields || []).map(fieldRowHtml).join('') + '</div>' +
+          '<button type="button" class="btn btn-ghost btn-sm se-fld-add"><i class="fas fa-plus"></i> إضافة حقل</button>' +
+        '</div>' +
+      '</div>';
+    }
+    // one custom order-form field row (type + label + options + required)
+    function fieldRowHtml(f) {
+      f = f || {};
+      const typeOpts = [['text', 'نص قصير'], ['textarea', 'نص طويل'], ['number', 'رقم'], ['select', 'اختيار من قائمة'], ['link', 'رابط']]
+        .map(o => '<option value="' + o[0] + '"' + (f.type === o[0] ? ' selected' : '') + '>' + o[1] + '</option>').join('');
+      return '<div class="se-fld">' +
+        '<select class="se-fld-type">' + typeOpts + '</select>' +
+        '<input class="se-fld-label" value="' + esc(f.label || '') + '" placeholder="اسم الحقل (مثال: رابط الحساب)">' +
+        '<input class="se-fld-opts" value="' + esc((f.options || []).join('، ')) + '" placeholder="خيارات القائمة (بفاصلة)">' +
+        '<label class="se-flag"><input type="checkbox" class="se-fld-req" ' + (f.req ? 'checked' : '') + '> مطلوب</label>' +
+        '<button type="button" class="btn btn-red btn-sm se-fld-del"><i class="fas fa-xmark"></i></button>' +
       '</div>';
     }
     function renderCatalog() {
@@ -754,6 +803,11 @@
           const grp = b.closest('.ce-group');
           if (grp.parentElement.querySelectorAll('.ce-group').length <= 1) { toast('لازم يفضل قسم فرعي واحد على الأقل'); return; }
           if (confirm('حذف القسم الفرعي وكل خدماته؟')) grp.remove();
+        } else if (b.classList.contains('se-fld-add')) {
+          const list = b.closest('.se-sec').querySelector('.se-flds');
+          list.insertAdjacentHTML('beforeend', fieldRowHtml({ type: 'text', label: '' }));
+        } else if (b.classList.contains('se-fld-del')) {
+          b.closest('.se-fld').remove();
         } else if (b.classList.contains('se-adv-toggle')) {
           const adv = b.closest('.svc-row-edit').querySelector('.se-adv');
           if (adv) { const open = adv.style.display !== 'none'; adv.style.display = open ? 'none' : 'block'; b.classList.toggle('active', !open); }
@@ -820,6 +874,31 @@
           const req = lines('.se-req'); if (req.length) d.req = req;
           const terms = val('.se-terms'); if (terms) d.terms = terms;
           const tags = val('.se-tags').split(/[,،]/).map(s => s.trim()).filter(Boolean); if (tags.length) d.tags = tags;
+          // order settings / mediation / supplier
+          const chk = sel => { const e = r.querySelector(sel); return !!(e && e.checked); };
+          const om = val('.se-ordermethod'); if (om && om !== 'whatsapp') d.orderMethod = om;
+          const ol = val('.se-orderlink'); if (ol) d.orderLink = ol;
+          const owa = val('.se-orderwa'); if (owa) d.orderWa = owa;
+          const obot = val('.se-orderbot'); if (obot) d.orderBot = obot;
+          if (chk('.se-nocart')) d.noCart = true;
+          if (chk('.se-approval')) d.approval = true;
+          if (chk('.se-medon')) d.medOn = true;
+          const mf = val('.se-medfee'); if (mf) d.medFee = mf;
+          const mn = val('.se-mednote'); if (mn) d.medNote = mn;
+          const st = val('.se-suptype'); if (st && st !== 'متجر داخلي') d.supType = st;
+          const sn = val('.se-supname'); if (sn) d.supName = sn;
+          if (chk('.se-supshow')) d.supShow = true;
+          // dynamic form fields
+          const fields = [];
+          r.querySelectorAll('.se-fld').forEach(fe => {
+            const label = fe.querySelector('.se-fld-label').value.trim(); if (!label) return;
+            const f = { type: fe.querySelector('.se-fld-type').value, label };
+            if (fe.querySelector('.se-fld-req').checked) f.req = true;
+            const opts = fe.querySelector('.se-fld-opts').value.split(/[,،]/).map(s => s.trim()).filter(Boolean);
+            if (f.type === 'select' && opts.length) f.options = opts;
+            fields.push(f);
+          });
+          if (fields.length) d.fields = fields;
           if (Object.keys(d).length) details[name] = d;
           return name;
         };

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تفاصيل الخدمة | Elwaset.net</title>
-    <link rel="stylesheet" href="style.css?v=10">
+    <link rel="stylesheet" href="style.css?v=11">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -60,6 +60,7 @@
                     <div class="svc-tags-row" id="svcTags"></div>
 
                     <div class="svc-order-box glass">
+                        <div id="medNotice" class="svc-med" style="display:none"></div>
                         <!-- quantity -->
                         <div class="svc-field" id="qtyField" style="margin-bottom:1rem">
                             <label for="qVal" id="qtyLabel">الكمية المطلوبة</label>
@@ -79,6 +80,8 @@
                             <input type="text" id="linkIn" placeholder="مثال: https://instagram.com/username" inputmode="url">
                             <span class="svc-warn" id="linkWarn"><i class="fas fa-triangle-exclamation"></i> لازم يكون الحساب/الصفحة <b>عام (بابلك)</b> عشان نقدر ننفّذ الطلب، ومتغيّرش اليوزر أثناء التنفيذ.</span>
                         </div>
+                        <!-- dynamic custom fields (per-service) -->
+                        <div id="dynFields"></div>
                         <!-- coupon -->
                         <div class="svc-field" style="margin-bottom:.6rem">
                             <label for="couponIn">كود خصم (اختياري)</label>
@@ -95,6 +98,8 @@
                         </div>
                         <p class="svc-note">اضغط «شراء الآن» لإضافة الخدمة للسلة وإتمام الطلب، أو تواصل مباشرة معنا.</p>
                     </div>
+
+                    <div id="supMeta" class="svc-supmeta"></div>
 
                     <div class="svc-attach" id="attachBox" style="display:none">
                         <i class="fas fa-paperclip"></i>
@@ -321,7 +326,45 @@
         const getNotes = () => document.getElementById('notesIn').value.trim();
         const getCoupon = () => document.getElementById('couponIn').value.trim();
         const btnWa = document.getElementById('btnWa');
-        function sync() { btnWa.href = buildWa(); }
+
+        // ===== mediation notice =====
+        if (d.medOn) {
+            const mn = document.getElementById('medNotice');
+            mn.style.display = '';
+            mn.innerHTML = '<i class="fas fa-handshake"></i> <b>وساطة آمنة:</b> ' +
+                esc(d.medNote || 'تتم هذه الصفقة عبر نظام وساطة رسمي لحماية حقوق الطرفين.') +
+                (d.medFee ? ' <span class="med-fee">رسوم الوساطة: ' + esc(d.medFee) + '</span>' : '');
+        }
+        // ===== supplier meta + refund guarantee =====
+        (function () {
+            const rows = [];
+            rows.push('<span><i class="fas fa-store"></i> نوع المزوّد: <b>' + esc(d.supType || 'متجر داخلي') + '</b></span>');
+            if (d.supShow && d.supName) rows.push('<span><i class="fas fa-user-gear"></i> المورّد: <b>' + esc(d.supName) + '</b></span>');
+            rows.push('<span><i class="fas fa-shield-halved"></i> ضمان الاسترداد: <b class="ok">✓ متوفر</b></span>');
+            document.getElementById('supMeta').innerHTML = rows.join('');
+        })();
+
+        // ===== dynamic custom fields =====
+        const dynDefs = Array.isArray(d.fields) ? d.fields : [];
+        (function () {
+            const wrap = document.getElementById('dynFields');
+            wrap.innerHTML = dynDefs.map((f, i) => {
+                const id = 'dyn_' + i;
+                const reqMark = f.req ? ' <span class="req">*</span>' : '';
+                let input;
+                if (f.type === 'textarea') input = '<textarea id="' + id + '" data-i="' + i + '"></textarea>';
+                else if (f.type === 'select') input = '<select id="' + id + '" data-i="' + i + '"><option value="">— اختر —</option>' + (f.options || []).map(o => '<option value="' + esc(o) + '">' + esc(o) + '</option>').join('') + '</select>';
+                else { const t = f.type === 'number' ? 'number' : (f.type === 'link' ? 'url' : 'text'); input = '<input type="' + t + '" id="' + id + '" data-i="' + i + '">'; }
+                return '<div class="svc-field" style="margin-bottom:.6rem"><label for="' + id + '">' + esc(f.label) + reqMark + '</label>' + input + '</div>';
+            }).join('');
+            wrap.querySelectorAll('input,textarea,select').forEach(el => el.addEventListener('input', sync));
+        })();
+        const getDyn = () => dynDefs.map((f, i) => { const el = document.getElementById('dyn_' + i); return { label: f.label, req: f.req, val: el ? el.value.trim() : '' }; });
+
+        // ===== order routing (per-service) =====
+        const orderWA = (d.orderWa || '').replace(/\D/g, '') || WA;
+
+        function sync() { if (!btnWa.dataset.stat) btnWa.href = buildWa(); }
 
         if (needQty) {
             document.getElementById('qtyHint').textContent = 'اكتب العدد اللي محتاجه (مثال: 1000 متابع).';
@@ -354,12 +397,17 @@
 
         function validate() {
             if (needLink && !getLink()) { alert('من فضلك الصق «' + linkLabelText + '» عشان نقدر ننفّذ الطلب.'); linkIn.focus(); return false; }
+            for (const f of getDyn()) { if (f.req && !f.val) { alert('من فضلك املأ «' + f.label + '».'); return false; } }
             return true;
         }
 
-        document.getElementById('btnCart').addEventListener('click', () => {
+        const btnCart = document.getElementById('btnCart');
+        if (d.noCart) btnCart.style.display = 'none';
+        else btnCart.addEventListener('click', () => {
             if (!window.Cart || !validate()) return;
-            window.Cart.add({ name: svcName, category: c.title, qty: getQ(), price: (d.price || d.p || ''), link: getLink(), notes: getNotes(), coupon: getCoupon(), code: code });
+            const extras = getDyn().filter(f => f.val).map(f => f.label + ': ' + f.val).join(' | ');
+            const notes = [getNotes(), extras].filter(Boolean).join(' | ');
+            window.Cart.add({ name: svcName, category: c.title, qty: getQ(), price: (d.price || d.p || ''), link: getLink(), notes: notes, coupon: getCoupon(), code: code });
             window.Cart.setQty(svcName, getQ());
         });
 
@@ -370,12 +418,17 @@
             t += '📂 القسم: ' + c.title + '\n';
             if (needQty) t += '🔢 الكمية: ' + q + '\n';
             if (needLink && getLink()) t += '🔗 الرابط: ' + getLink() + '\n';
+            getDyn().forEach(f => { if (f.val) t += '• ' + f.label + ': ' + f.val + '\n'; });
             t += '🏷️ كود الخدمة: ' + code + '\n';
             if (getCoupon()) t += '🎟️ كود الخصم: ' + getCoupon() + '\n';
             if (getNotes()) t += '📝 ملاحظات: ' + getNotes() + '\n';
+            if (d.medOn) t += '🤝 مطلوب وساطة\n';
             t += '\nياريت التفاصيل والسعر المناسب 🌟';
-            return 'https://wa.me/' + WA + '?text=' + encodeURIComponent(t);
+            return 'https://wa.me/' + orderWA + '?text=' + encodeURIComponent(t);
         }
+        // per-service order routing for the secondary button
+        if (d.orderMethod === 'link' && d.orderLink) { btnWa.dataset.stat = '1'; btnWa.href = d.orderLink; btnWa.innerHTML = '<i class="fas fa-up-right-from-square"></i> اطلب الآن'; }
+        else if (d.orderMethod === 'telegram' && d.orderBot) { btnWa.dataset.stat = '1'; btnWa.href = d.orderBot; btnWa.innerHTML = '<i class="fab fa-telegram"></i> اطلب عبر تليجرام'; }
         sync();
         ['notesIn', 'couponIn', 'linkIn'].forEach(id => document.getElementById(id).addEventListener('input', sync));
         btnWa.addEventListener('click', e => { if (!validate()) e.preventDefault(); });
