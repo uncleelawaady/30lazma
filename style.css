@@ -6,9 +6,9 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-    /* Fonts: elongated display headings + rounded readable body */
-    --font-head: 'Rakkas', var(--font-body), cursive;
-    --font-body: var(--font-body);
+    /* Fonts: rounded heavy Arabic (headings + body) */
+    --font-head: 'Baloo Bhaijaan 2', 'Cairo', sans-serif;
+    --font-body: 'Baloo Bhaijaan 2', 'Cairo', sans-serif;
     /* Default = To-Do-app-inspired: deep navy background + orange & teal accents on white */
     --bg: #14202E;
     --bg-2: #1B2C3D;
@@ -66,7 +66,7 @@ body::after {
     background-size: 46px 46px;
 }
 
-h1,h2,h3,h4 { font-family: var(--font-head); line-height: 1.5; font-weight: 400; letter-spacing: .5px; }
+h1,h2,h3,h4 { font-family: var(--font-head); line-height: 1.35; font-weight: 800; }
 
 .container { width: min(1200px, 92%); margin-inline: auto; }
 
