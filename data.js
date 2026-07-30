@@ -8,7 +8,7 @@ window.faIcon = function (ic) {
 };
 // Unified card description generated from the category title.
 window.catDesc = function (title) {
-  return 'كل ' + (title || 'الخدمات') + ' في مكان واحد بجودة عالية وضمان دائم مع متابعة ما بعد الشراء ودعم 24/7';
+  return 'كل ' + (title || 'الخدمات') + ' في مكان واحد — جودة عالية وتنفيذ آمن.';
 };
 window.CATEGORIES = {
   "facebook": {
