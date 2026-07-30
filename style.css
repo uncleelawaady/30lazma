@@ -3,12 +3,18 @@
    Palette: #FFD400 (yellow) + green / teal on dark
    ========================================================= */
 
+/* ===== Custom font: The Year of Handicrafts (عام الحرف اليدوية 2025) ===== */
+@font-face { font-family: 'The Year of Handicrafts'; src: url('assets/fonts/TheYearofHandicrafts-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'The Year of Handicrafts'; src: url('assets/fonts/TheYearofHandicrafts-Medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'The Year of Handicrafts'; src: url('assets/fonts/TheYearofHandicrafts-Bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'The Year of Handicrafts'; src: url('assets/fonts/TheYearofHandicrafts-Black.woff2') format('woff2'); font-weight: 900; font-style: normal; font-display: swap; }
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-    /* Fonts: Tajawal (heavy for headings, medium for body) */
-    --font-head: 'Tajawal', 'Cairo', sans-serif;
-    --font-body: 'Tajawal', 'Cairo', sans-serif;
+    /* Fonts: The Year of Handicrafts (عام الحرف اليدوية 2025), Tajawal fallback */
+    --font-head: 'The Year of Handicrafts', 'Tajawal', 'Cairo', sans-serif;
+    --font-body: 'The Year of Handicrafts', 'Tajawal', 'Cairo', sans-serif;
     /* bouncy easing for the "bubble/3D pop" hover motion */
     --pop: cubic-bezier(.34, 1.56, .64, 1);
     /* Default = elawaady.com-inspired: deep purple bg + orange→magenta→purple gradient */
