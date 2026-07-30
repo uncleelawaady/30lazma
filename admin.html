@@ -316,6 +316,7 @@
     // vars keys map to THEME_KEYS: bg, text, pink(accent), yellow, teal, grad-from, grad-to
     const THEME_PRESETS = [
       // FEATURED — matches the store's current brand look
+      { g:'الثيم الأساسي', n:'EXP — بنفسجي (إعلاوي)', e:'🟣', v:{ bg:'#0E0A1A', text:'#F3EEFF', pink:'#A24BFF', yellow:'#F5A623', teal:'#E0208F', 'grad-from':'#F5A623', 'grad-mid':'#E0208F', 'grad-to':'#7C3AED' } },
       { g:'الثيم الأساسي', n:'كحلي • برتقالي • تركواز', e:'🟠', v:{ bg:'#14202E', text:'#F3F7FA', pink:'#F3971E', yellow:'#F7B04A', teal:'#23A0B5', 'grad-from':'#F7B04A', 'grad-to':'#E07E12' } },
       { g:'الثيم الأساسي', n:'وتَر — أخضر وبرتقالي', e:'🟢', v:{ bg:'#0E3B2C', text:'#F2FBF6', pink:'#EE9A2E', yellow:'#F4B048', teal:'#1E9E6A', 'grad-from':'#F4B048', 'grad-to':'#E07E1B' } },
       // DARK
@@ -363,7 +364,7 @@
         muted: _mix(v.text, v.bg, .30), dim: _mix(v.text, v.bg, .55),
         pink: v.pink, purple: v['grad-to'], teal: v.teal, violet: v.teal,
         yellow: v.yellow, orange: v.yellow,
-        'grad-from': v['grad-from'], 'grad-mid': _mix(v['grad-from'], v['grad-to'], .5), 'grad-to': v['grad-to'],
+        'grad-from': v['grad-from'], 'grad-mid': v['grad-mid'] || _mix(v['grad-from'], v['grad-to'], .5), 'grad-to': v['grad-to'],
         glass: _rgba(v.pink, .06), 'glass-brd': _mix(v.teal, v.bg, .55), 'ticker-bg': v.pink
       };
     }

@@ -62,8 +62,11 @@
             <input type="text" id="acName" placeholder="مثال: محمد أحمد">
           </div>
           <div class="rf-group" id="g-phone">
-            <label>رقم الهاتف <span class="req">*</span></label>
-            <input type="tel" id="acPhone" placeholder="01xxxxxxxxx" inputmode="tel">
+            <label><i class="fab fa-whatsapp" style="color:#25D366"></i> رقم واتساب <span class="req">*</span></label>
+            <input type="tel" id="acPhone" placeholder="مثال: 201055578777 (بكود الدولة)" inputmode="tel">
+            <small style="display:block;color:var(--muted);font-size:.8rem;margin-top:.35rem;line-height:1.6">
+              إجباري — بنستخدمه للتواصل معك، وفي الوساطة بينك وبين العملاء لو بتقدّم خدمة. اكتبه بكود الدولة (من غير + أو مسافات).
+            </small>
           </div>
           <div class="rf-group">
             <label>البريد الإلكتروني <span class="req">*</span></label>
@@ -165,14 +168,29 @@
         const base = { name: u.displayName || extra.name || 'مستخدم', email: u.email || '', photo: u.photoURL || '',
                        provider, type: extra.type || accType, uid: u.uid, lastSeen: serverTimestamp() };
         if (extra.phone) base.phone = extra.phone;
+        if (extra.whatsapp) base.whatsapp = extra.whatsapp;
         try { await setDoc(doc(db, 'users', u.uid), { ...base, createdAt: serverTimestamp() }, { merge: true }); } catch (e) {}
         try { await setDoc(doc(db, 'customers', u.uid), { ...base, source: provider }, { merge: true }); } catch (e) {}
       }
 
+      // WhatsApp is mandatory for NEW registrations (email + social).
+      function checkWa() {
+        if (mode !== 'register') return true;   // login doesn't re-collect it
+        const d = ($('acPhone').value || '').replace(/\D/g, '');
+        if (d.length < 8 || d.length > 15) {
+          alert('قبل التسجيل، اكتب رقم واتساب صحيح بكود الدولة (٨–١٥ رقم) في خانة الواتساب فوق.');
+          $('acPhone').focus();
+          return false;
+        }
+        return true;
+      }
+
       $('googleBtn').addEventListener('click', async () => {
+        if (!checkWa()) return;
         try { await signInWithPopup(auth, new GoogleAuthProvider()); } catch (e) { alert('تعذّر الدخول: ' + (e.message||e)); }
       });
       $('facebookBtn').addEventListener('click', async () => {
+        if (!checkWa()) return;
         try { await signInWithPopup(auth, new FacebookAuthProvider()); } catch (e) { alert('تعذّر الدخول بفيسبوك: ' + (e.message||e)); }
       });
 
@@ -186,15 +204,17 @@
         }
         // register
         const name = $('acName').value.trim(), phone = $('acPhone').value.trim(), pass2 = $('acPass2').value;
+        const wa = phone.replace(/\D/g, '');
         if (!name) { alert('اكتب اسمك'); return; }
-        if (!phone) { alert('اكتب رقم هاتفك'); return; }
+        if (!phone) { alert('اكتب رقم الواتساب'); $('acPhone').focus(); return; }
+        if (wa.length < 8 || wa.length > 15) { alert('اكتب رقم واتساب صحيح بكود الدولة (٨–١٥ رقم).'); $('acPhone').focus(); return; }
         if (pass.length < 6) { alert('كلمة المرور 6 أحرف على الأقل'); return; }
         if (pass !== pass2) { alert('كلمتا المرور غير متطابقتين'); return; }
         if (!$('acTerms').checked) { alert('لازم توافق على الشروط'); return; }
         try {
           const cred = await createUserWithEmailAndPassword(auth, email, pass);
           try { await updateProfile(cred.user, { displayName: name }); } catch (e) {}
-          await upsertUser(cred.user, { name, phone, type: accType });
+          await upsertUser(cred.user, { name, phone: wa, whatsapp: wa, type: accType });
         } catch (err) { alert('تعذّر إنشاء الحساب: ' + (err.message||err)); }
       });
 

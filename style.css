@@ -11,24 +11,24 @@
     --font-body: 'Tajawal', 'Cairo', sans-serif;
     /* bouncy easing for the "bubble/3D pop" hover motion */
     --pop: cubic-bezier(.34, 1.56, .64, 1);
-    /* Default = To-Do-app-inspired: deep navy background + orange & teal accents on white */
-    --bg: #14202E;
-    --bg-2: #1B2C3D;
-    --yellow: #F7B04A;
-    --orange: #F7B04A;
-    --pink: #F3971E;
-    --purple: #E07E12;
-    --violet: #23A0B5;
-    --teal: #23A0B5;
-    --text: #F3F7FA;
-    --muted: #a9b7c4;
-    --dim: #6e8090;
-    --glass: rgba(243, 151, 30, 0.06);
-    --glass-brd: #294a5c;
-    --grad-from: #F7B04A;
-    --grad-mid: #EF9430;
-    --grad-to: #E07E12;
-    --ticker-bg: #F3971E;
+    /* Default = elawaady.com-inspired: deep purple bg + orange→magenta→purple gradient */
+    --bg: #0E0A1A;
+    --bg-2: #1A1030;
+    --yellow: #F5A623;
+    --orange: #F5A623;
+    --pink: #A24BFF;
+    --purple: #7C3AED;
+    --violet: #E0208F;
+    --teal: #E0208F;
+    --text: #F3EEFF;
+    --muted: #b3a6cf;
+    --dim: #7d6ea3;
+    --glass: rgba(162, 75, 255, 0.06);
+    --glass-brd: #3a2560;
+    --grad-from: #F5A623;
+    --grad-mid: #E0208F;
+    --grad-to: #7C3AED;
+    --ticker-bg: #7C3AED;
     --grad: linear-gradient(90deg, var(--grad-from), var(--grad-mid) 52%, var(--grad-to));
     --grad-btn: linear-gradient(90deg, var(--grad-from) 0%, var(--grad-mid) 45%, var(--grad-to) 100%);
     --radius: 24px;
