@@ -89,6 +89,14 @@
     .se-imgrow:has(.se-preview:not([style*="none"])):hover .se-uplbl{opacity:1}
     .se-imgdel{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:0;background:#c0392b;color:#fff;font-size:.7rem;cursor:pointer;line-height:1}
     .se-flag{flex:0 0 auto;display:flex;align-items:center;gap:.25rem;font-size:.75rem;color:var(--muted);white-space:nowrap;cursor:pointer}
+    .se-adv-toggle.active{background:var(--grad);color:#fff;border-color:transparent}
+    .se-adv{flex:1 1 100%;margin-top:.6rem;padding:.7rem;border:1px dashed var(--line);border-radius:10px;background:#0a140f}
+    .se-adv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.5rem;margin-bottom:.5rem}
+    .se-af{display:flex;flex-direction:column;gap:.25rem;margin-bottom:.5rem}
+    .se-af>span{font-size:.72rem;color:var(--muted)}
+    .se-af input,.se-af textarea,.se-af select{width:100%;background:#0c1712;border:1px solid var(--line);color:var(--text);border-radius:8px;padding:.45rem .6rem;font-family:inherit;font-size:.85rem}
+    .se-af-chk{flex-direction:row;align-items:center;gap:.4rem}
+    .se-af-chk input{width:18px;height:18px}
     .se-flag input{width:16px!important;height:16px!important;margin:0!important}
     .se-del{flex:0 0 auto}
     /* theme presets */
@@ -635,7 +643,31 @@
         '<input class="se-desc" value="' + esc(desc) + '" placeholder="وصف مختصر (اختياري)">' +
         '<label class="se-flag" title="الخدمة بكمية (متابعين/لايكات/مشاهدات...)"><input type="checkbox" class="se-qty" ' + (nq ? 'checked' : '') + '> كمية</label>' +
         '<label class="se-flag" title="تطلب رابط الحساب/الصفحة/المنشور"><input type="checkbox" class="se-link" ' + (nl ? 'checked' : '') + '> رابط</label>' +
+        '<button type="button" class="btn btn-ghost btn-sm se-adv-toggle" title="تفاصيل متقدّمة"><i class="fas fa-sliders"></i> تفاصيل</button>' +
         '<button type="button" class="btn btn-red btn-sm se-del" title="حذف الخدمة"><i class="fas fa-trash"></i></button>' +
+        svcAdvHtml(det) +
+      '</div>';
+    }
+    // advanced per-service fields (collapsed by default) — mirrors elawaady's editor
+    const BADGES = ['', 'الأكثر مبيعًا', 'مميز', 'جديد', 'خصم', 'موصى به'];
+    function svcAdvHtml(det) {
+      det = det || {};
+      const arr = v => Array.isArray(v) ? v.join('\n') : (v || '');
+      const tags = Array.isArray(det.tags) ? det.tags.join('، ') : (det.tags || '');
+      const badgeOpts = BADGES.map(b => '<option value="' + esc(b) + '"' + (det.badge === b ? ' selected' : '') + '>' + (b || 'بدون شارة') + '</option>').join('');
+      return '<div class="se-adv" style="display:none">' +
+        '<div class="se-adv-grid">' +
+          '<label class="se-af"><span>السعر القديم (مشطوب)</span><input class="se-oldprice" value="' + esc(det.oldPrice || '') + '" placeholder="مثال: 500"></label>' +
+          '<label class="se-af"><span>كود الخدمة (SKU)</span><input class="se-code" value="' + esc(det.code || '') + '" placeholder="يتولّد تلقائيًا لو فاضي"></label>' +
+          '<label class="se-af"><span>مدة التنفيذ</span><input class="se-exec" value="' + esc(det.exec || '') + '" placeholder="مثال: من ساعة إلى 72 ساعة"></label>' +
+          '<label class="se-af"><span>الشارة (Badge)</span><select class="se-badge">' + badgeOpts + '</select></label>' +
+          '<label class="se-af"><span>عدد المشتريات (Social Proof)</span><input class="se-social" type="number" min="0" value="' + esc(det.social || '') + '" placeholder="مثال: 189"></label>' +
+          '<label class="se-af se-af-chk"><input type="checkbox" class="se-featured" ' + (det.featured ? 'checked' : '') + '> <span>إظهار في المميّزة بالرئيسية</span></label>' +
+        '</div>' +
+        '<label class="se-af"><span>المميزات (سطر لكل ميزة)</span><textarea class="se-features" rows="2" placeholder="جودة عالية ونتائج حقيقية&#10;تنفيذ سريع وآمن&#10;دعم طوال فترة التنفيذ">' + esc(arr(det.features)) + '</textarea></label>' +
+        '<label class="se-af"><span>المتطلبات (سطر لكل متطلب)</span><textarea class="se-req" rows="2" placeholder="رابط أو معرف الحساب&#10;أن يكون الحساب عام وغير مقفل">' + esc(arr(det.req)) + '</textarea></label>' +
+        '<label class="se-af"><span>الشروط الخاصة</span><textarea class="se-terms" rows="2" placeholder="يبدأ التنفيذ بعد تأكيد الطلب...">' + esc(det.terms || '') + '</textarea></label>' +
+        '<label class="se-af"><span>وسوم (بفاصلة)</span><input class="se-tags" value="' + esc(tags) + '" placeholder="متابعين، فيسبوك، سريع"></label>' +
       '</div>';
     }
     function renderCatalog() {
@@ -699,6 +731,9 @@
         } else if (b.classList.contains('ce-addsvc')) {
           const list = b.closest('.cat-edit').querySelector('.ce-svclist');
           list.insertAdjacentHTML('beforeend', svcRowHtml('', {}));
+        } else if (b.classList.contains('se-adv-toggle')) {
+          const adv = b.closest('.svc-row-edit').querySelector('.se-adv');
+          if (adv) { const open = adv.style.display !== 'none'; adv.style.display = open ? 'none' : 'block'; b.classList.toggle('active', !open); }
         } else if (b.classList.contains('se-del')) {
           if (confirm('حذف الخدمة؟')) b.closest('.svc-row-edit').remove();
         } else if (b.classList.contains('se-imgdel')) {
@@ -751,6 +786,19 @@
           const qc = r.querySelector('.se-qty').checked, lc = r.querySelector('.se-link').checked;
           if (qc !== guessQty(name)) d.needQty = qc;
           if (lc !== guessLink(name)) d.needLink = lc;
+          // advanced fields
+          const val = sel => { const e = r.querySelector(sel); return e ? e.value.trim() : ''; };
+          const lines = sel => val(sel).split('\n').map(s => s.trim()).filter(Boolean);
+          const op = val('.se-oldprice'); if (op) d.oldPrice = op;
+          const code = val('.se-code'); if (code) d.code = code;
+          const exec = val('.se-exec'); if (exec) d.exec = exec;
+          const badge = val('.se-badge'); if (badge) d.badge = badge;
+          const social = val('.se-social'); if (social) d.social = social;
+          const featEl = r.querySelector('.se-featured'); if (featEl && featEl.checked) d.featured = true;
+          const feats = lines('.se-features'); if (feats.length) d.features = feats;
+          const req = lines('.se-req'); if (req.length) d.req = req;
+          const terms = val('.se-terms'); if (terms) d.terms = terms;
+          const tags = val('.se-tags').split(/[,،]/).map(s => s.trim()).filter(Boolean); if (tags.length) d.tags = tags;
           if (Object.keys(d).length) details[name] = d;
         });
         out[id] = {

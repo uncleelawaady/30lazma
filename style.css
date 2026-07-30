@@ -1238,3 +1238,22 @@ body.lb-open { overflow: hidden; }
     text-decoration: none; font-weight: 700; font-size: .85rem; transition: transform .25s var(--pop), box-shadow .25s var(--pop); }
 .elbot-link:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 10px 24px -8px color-mix(in srgb, var(--pink) 60%, transparent); }
 .elbot-sugg a.elbot-link { justify-content: flex-start; text-align: right; }
+
+/* ===== Service page: old price, discount, meta badges, tags ===== */
+.svc-price { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+.svc-price .old { color: var(--muted); text-decoration: line-through; font-size: 1.1rem; opacity: .8; }
+.svc-price .disc { background: #e11d48; color: #fff; font-weight: 800; font-size: .8rem; padding: .15rem .5rem; border-radius: 8px; }
+.svc-badges { display: flex; flex-wrap: wrap; gap: .5rem; margin: .9rem 0 .2rem; }
+.svc-b { display: inline-flex; align-items: center; gap: .4rem; font-size: .82rem; font-weight: 700; color: var(--text);
+    background: var(--glass); border: 1px solid var(--glass-brd); border-radius: 999px; padding: .4rem .8rem; }
+.svc-b i { color: var(--pink); }
+.svc-b.ok i { color: #22c55e; }
+.svc-b.hot { background: linear-gradient(90deg, color-mix(in srgb, var(--pink) 22%, transparent), transparent); }
+.svc-b.hot i { color: #f59e0b; }
+.svc-tags-row { display: flex; flex-wrap: wrap; gap: .45rem; margin: .3rem 0 1rem; }
+.svc-tag { font-size: .78rem; color: var(--muted); background: var(--glass); border: 1px solid var(--glass-brd); border-radius: 8px; padding: .25rem .6rem; }
+/* discount badge on storefront cards */
+.cat .card-disc, .rel-card .card-disc { position: absolute; top: 8px; inset-inline-start: 8px; z-index: 3;
+    background: #e11d48; color: #fff; font-weight: 800; font-size: .72rem; padding: .18rem .5rem; border-radius: 8px; }
+.cat .card-badge { position: absolute; top: 8px; inset-inline-end: 8px; z-index: 3;
+    background: var(--grad-btn); color: #fff; font-weight: 800; font-size: .72rem; padding: .18rem .5rem; border-radius: 8px; }

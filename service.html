@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تفاصيل الخدمة | Elwaset.net</title>
-    <link rel="stylesheet" href="style.css?v=9">
+    <link rel="stylesheet" href="style.css?v=10">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -54,8 +54,10 @@
                     <a class="svc-cat-tag" id="catTag" href="#"><i class="fas fa-tag"></i> <span id="catTagName"></span></a>
                     <h1 id="svcTitle">اسم الخدمة</h1>
                     <span class="svc-code" id="svcCode"><i class="fas fa-hashtag"></i> كود الخدمة</span>
-                    <div class="svc-price"><span class="val" id="svcPrice">حسب الطلب</span><span class="lbl" id="svcPriceLbl">— يُحدد عند تأكيد الطلب</span></div>
+                    <div class="svc-price"><span class="val" id="svcPrice">حسب الطلب</span><span class="old" id="svcOldPrice" style="display:none"></span><span class="disc" id="svcDisc" style="display:none"></span><span class="lbl" id="svcPriceLbl">— يُحدد عند تأكيد الطلب</span></div>
+                    <div class="svc-badges" id="svcBadges"></div>
                     <p class="svc-lead" id="svcLead"></p>
+                    <div class="svc-tags-row" id="svcTags"></div>
 
                     <div class="svc-order-box glass">
                         <!-- quantity -->
@@ -190,6 +192,27 @@
             document.getElementById('svcPrice').textContent = d.price || d.p;
             document.getElementById('svcPriceLbl').textContent = '';
         }
+        // old price (strike) + discount %
+        const numOf = v => { const m = String(v || '').replace(/[^\d.]/g, ''); return m ? parseFloat(m) : 0; };
+        const np = numOf(d.price || d.p), op = numOf(d.oldPrice);
+        if (op && op > np && np > 0) {
+            const oe = document.getElementById('svcOldPrice'); oe.textContent = d.oldPrice; oe.style.display = '';
+            const pct = Math.round((1 - np / op) * 100);
+            const de = document.getElementById('svcDisc'); de.textContent = '-' + pct + '%'; de.style.display = '';
+        } else if (d.oldPrice) {
+            const oe = document.getElementById('svcOldPrice'); oe.textContent = d.oldPrice; oe.style.display = '';
+        }
+        // meta badges: exec time, badge label, social proof
+        const badges = [];
+        const execTxt = d.exec || 'من ساعة إلى 72 ساعة حسب الخدمة';
+        badges.push('<span class="svc-b"><i class="fas fa-clock"></i> ' + esc(execTxt) + '</span>');
+        badges.push('<span class="svc-b ok"><i class="fas fa-circle-check"></i> متاح الآن</span>');
+        if (d.badge) badges.push('<span class="svc-b hot"><i class="fas fa-fire"></i> ' + esc(d.badge) + '</span>');
+        if (d.social) badges.push('<span class="svc-b"><i class="fas fa-cart-shopping"></i> ' + esc(d.social) + ' مشتريات</span>');
+        document.getElementById('svcBadges').innerHTML = badges.join('');
+        // tags
+        const tags = Array.isArray(d.tags) ? d.tags : (d.tags ? String(d.tags).split(/[,،]/) : []);
+        if (tags.length) document.getElementById('svcTags').innerHTML = tags.map(t => '<span class="svc-tag">#' + esc(String(t).trim()) + '</span>').join('');
 
         // lead / description
         const desc = d.d || ('خدمة «' + svcName + '» ضمن قسم ' + c.title + ' — نوفرها بجودة عالية وتنفيذ آمن وسريع، مع دعم كامل ومتابعة حتى تمام الرضا.');
@@ -233,7 +256,7 @@
         }
 
         // ===== tabs =====
-        const feats = (d.f && d.f.length) ? d.f : ['جودة عالية وتنفيذ احترافي', 'تنفيذ آمن يحافظ على حسابك', 'دعم ومتابعة كاملة', 'سرعة في التسليم', 'ضمان أثناء فترة الخدمة'];
+        const feats = (d.features && d.features.length) ? d.features : (d.f && d.f.length) ? d.f : ['جودة عالية وتنفيذ احترافي', 'تنفيذ آمن يحافظ على حسابك', 'دعم ومتابعة كاملة', 'سرعة في التسليم', 'ضمان أثناء فترة الخدمة'];
         const reqs = (d.req && d.req.length) ? d.req : ['تحديد الخدمة والمواصفات المطلوبة بوضوح', 'توفير الروابط أو البيانات اللازمة للتنفيذ', 'الالتزام بشروط المنصة المستهدفة'];
         const D_terms = P.terms || 'باستخدامك للخدمة فأنت توافق على تنفيذها وفق المواصفات المتفق عليها. أي تعديل بعد بدء التنفيذ يُتفق عليه مسبقًا. الصفقات الكبيرة تتم عبر نظام الوساطة الآمنة لحماية جميع الأطراف.';
         const D_returns = P.returns || 'يمكن إلغاء الطلب واسترجاعه قبل بدء التنفيذ. بعد بدء التنفيذ يُحسب ما تم إنجازه فعليًا. الخدمات الرقمية المُسلّمة بالكامل غير قابلة للإرجاع بطبيعتها.';
@@ -244,7 +267,7 @@
             { k: 'desc', t: 'الوصف الكامل', h: '<p>' + esc(d.long || desc) + '</p>' },
             { k: 'feat', t: 'المميزات', h: '<ul>' + feats.map(x => '<li><i class="fas fa-check"></i>' + esc(x) + '</li>').join('') + '</ul>' },
             { k: 'req', t: 'المتطلبات', h: '<ul>' + reqs.map(x => '<li><i class="fas fa-circle-dot"></i>' + esc(x) + '</li>').join('') + '</ul>' },
-            { k: 'terms', t: 'الشروط والاسترداد', h: '<p>' + esc(D_terms) + '</p>' },
+            { k: 'terms', t: 'الشروط والاسترداد', h: '<p>' + esc(d.terms || D_terms) + '</p>' },
             { k: 'returns', t: 'سياسة الاسترجاع', h: '<p>' + esc(D_returns) + '</p>' },
             { k: 'refund', t: 'رد الأموال', h: '<p>' + esc(D_refund) + '</p>' },
             { k: 'service', t: 'سياسة الخدمات', h: '<p>' + esc(D_service) + '</p>' }

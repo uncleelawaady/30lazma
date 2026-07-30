@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تفاصيل القسم | Elwaset.net</title>
-    <link rel="stylesheet" href="style.css?v=9">
+    <link rel="stylesheet" href="style.css?v=10">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -166,9 +166,18 @@
                 const href = 'service.html?cat=' + encodeURIComponent(id) + '&svc=' + encodeURIComponent(it);
                 const media = d.img ? '<img src="' + esc(d.img) + '" alt="">' : (platIcon(it) || '<i class="' + (window.faIcon ? window.faIcon(c.icon) : ('fas ' + esc(c.icon || 'fa-layer-group'))) + '"></i>');
                 const price = d.price || d.p || '';
-                html += '<a class="cat glass" href="' + href + '" style="--g1:' + esc(c.g1) + ';--g2:' + esc(c.g2) + '">' +
+                // discount % (from old price) + badge label
+                const numOf = v => { const m = String(v || '').replace(/[^\d.]/g, ''); return m ? parseFloat(m) : 0; };
+                const np = numOf(price), op = numOf(d.oldPrice);
+                const discHtml = (op && np && op > np) ? '<span class="card-disc">-' + Math.round((1 - np / op) * 100) + '%</span>' : '';
+                const badgeHtml = d.badge ? '<span class="card-badge">' + esc(d.badge) + '</span>' : '';
+                const priceHtml = (op && np && op > np)
+                    ? '<p class="svc-price-tag">' + esc(price) + ' <s style="opacity:.6;font-weight:400">' + esc(d.oldPrice) + '</s></p>'
+                    : (price ? '<p class="svc-price-tag">' + esc(price) + '</p>' : '<p>اضغط للتفاصيل والطلب</p>');
+                html += '<a class="cat glass" href="' + href + '" style="position:relative;--g1:' + esc(c.g1) + ';--g2:' + esc(c.g2) + '">' +
+                    discHtml + badgeHtml +
                     '<div class="cat-ico">' + media + '</div><h3>' + esc(it) + '</h3>' +
-                    (price ? '<p class="svc-price-tag">' + esc(price) + '</p>' : '<p>اضغط للتفاصيل والطلب</p>') + '</a>';
+                    priceHtml + '</a>';
             });
             html += '</div>';
         });
