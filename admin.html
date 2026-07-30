@@ -467,7 +467,7 @@
         const finish = v => { if (!done) { done = true; cb(v); } };
         // If Storage doesn't respond (not enabled / rules / CORS), don't hang forever —
         // fall back to storing the image inline so the upload always completes.
-        const timer = setTimeout(() => finish(dataUrl), 5000);
+        const timer = setTimeout(() => finish(dataUrl), 20000);
         try {
           const path = folder + '/' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.png';
           const r = storageMod.ref(storage, path);
@@ -787,10 +787,52 @@
       }
       renderCatalog(); toast('اتحمّلت — دوس حفظ');
     });
+    // Upload a base64 data URL to Firebase Storage and return its public URL.
+    function uploadDataUrl(dataUrl, folder) {
+      return new Promise((resolve, reject) => {
+        if (!storage || !storageMod) return reject(new Error('no-storage'));
+        const path = folder + '/' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.png';
+        const r = storageMod.ref(storage, path);
+        const timer = setTimeout(() => reject(new Error('timeout')), 20000);
+        storageMod.uploadString(r, dataUrl, 'data_url')
+          .then(snap => storageMod.getDownloadURL(snap.ref))
+          .then(url => { clearTimeout(timer); resolve(url); })
+          .catch(err => { clearTimeout(timer); reject(err); });
+      });
+    }
+    // Move any inline base64 images (category + service) to Storage so the doc stays small.
+    async function migrateCatalogImages(cat) {
+      const isB64 = v => typeof v === 'string' && v.indexOf('data:image') === 0;
+      let moved = 0, failed = 0;
+      for (const id in cat) {
+        const c = cat[id];
+        if (isB64(c.img)) { try { c.img = await uploadDataUrl(c.img, 'categories'); moved++; } catch (e) { failed++; } }
+        const det = c.details || {};
+        for (const name in det) {
+          if (det[name] && isB64(det[name].img)) { try { det[name].img = await uploadDataUrl(det[name].img, 'services'); moved++; } catch (e) { failed++; } }
+        }
+      }
+      return { moved, failed };
+    }
     document.getElementById('saveCatalog').addEventListener('click', async () => {
+      const btn = document.getElementById('saveCatalog'); const old = btn.innerHTML;
       catalog = collectCatalog();
+      const raw = JSON.stringify({ categories: catalog });
+      // If the doc is heavy or has inline images, offload images to Storage first.
+      if (raw.length > 700000 || raw.indexOf('data:image') > -1) {
+        btn.disabled = true; btn.innerHTML = '<i class="fas fa-cloud-arrow-up"></i> جاري نقل الصور لتخزين Storage...';
+        const { moved, failed } = await migrateCatalogImages(catalog);
+        btn.disabled = false; btn.innerHTML = old;
+        if (failed > 0) {
+          permDenied({ code: 'storage-failed', message: 'تعذّر رفع ' + failed + ' صورة على Firebase Storage. لازم تفعّل Storage وتنشر قواعده (storage.rules) عشان الصور تتخزن كروابط بدل base64.' });
+          return;
+        }
+        if (moved > 0) { renderCatalog(); toast('اتنقلت ' + moved + ' صورة لتخزين Storage ✅'); }
+      }
+      btn.disabled = true; btn.innerHTML = '<i class="fas fa-floppy-disk"></i> جاري الحفظ...';
       try { await setDoc(CAT_REF, { categories: catalog }, { merge: false }); toast('اتحفظت الأقسام ✅'); }
       catch (e) { permDenied(e); }
+      finally { btn.disabled = false; btn.innerHTML = old; }
     });
 
     async function loadOrders() {
