@@ -1267,3 +1267,33 @@ body.lb-open { overflow: hidden; }
 .svc-supmeta span { display: inline-flex; align-items: center; gap: .4rem; }
 .svc-supmeta i { color: var(--pink); }
 .svc-supmeta b.ok { color: #22c55e; }
+
+/* =========================================================
+   Service page images: CLEAN & FRAMED (like elawaady) —
+   NOT feathered. Fills a rounded card edge-to-edge.
+   ========================================================= */
+.svc-main-img {
+    background: linear-gradient(135deg, var(--cg1, #7c3aed), var(--cg2, #e0208f)) !important;
+    border: 1px solid var(--glass-brd) !important;
+    border-radius: 20px !important; overflow: hidden !important;
+    box-shadow: 0 22px 55px -20px rgba(0,0,0,.65) !important;
+}
+.svc-main-img img {
+    -webkit-mask-image: none !important; mask-image: none !important; filter: none !important;
+    width: 100% !important; height: 100% !important; object-fit: cover !important; transform: none !important;
+}
+.svc-thumb {
+    overflow: hidden !important; border-radius: 12px !important; background: var(--glass) !important; border: 1px solid var(--glass-brd) !important;
+}
+.svc-thumb.active { border-color: var(--pink) !important; }
+.svc-thumb img {
+    -webkit-mask-image: none !important; mask-image: none !important; filter: none !important; object-fit: cover !important;
+}
+.rel-img {
+    overflow: hidden !important; border-radius: 14px !important; border: 1px solid var(--glass-brd) !important;
+    background: linear-gradient(135deg, var(--cg1, #7c3aed), var(--cg2, #e0208f)) !important;
+}
+.rel-img img {
+    -webkit-mask-image: none !important; mask-image: none !important; filter: none !important; object-fit: cover !important;
+}
+.rel-card:hover .rel-img img { transform: none !important; }
