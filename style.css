@@ -6,9 +6,11 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-    /* Fonts: rounded heavy Arabic (headings + body) */
-    --font-head: 'Baloo Bhaijaan 2', 'Cairo', sans-serif;
-    --font-body: 'Baloo Bhaijaan 2', 'Cairo', sans-serif;
+    /* Fonts: Tajawal (heavy for headings, medium for body) */
+    --font-head: 'Tajawal', 'Cairo', sans-serif;
+    --font-body: 'Tajawal', 'Cairo', sans-serif;
+    /* bouncy easing for the "bubble/3D pop" hover motion */
+    --pop: cubic-bezier(.34, 1.56, .64, 1);
     /* Default = To-Do-app-inspired: deep navy background + orange & teal accents on white */
     --bg: #14202E;
     --bg-2: #1B2C3D;
@@ -1082,3 +1084,54 @@ body.lb-open { overflow: hidden; }
 .pt-list-item .ico { width: 42px; height: 42px; border-radius: 10px; display: grid; place-items: center; background: var(--grad-btn); color: #fff; flex: none; }
 .pt-list-item .body { flex: 1; min-width: 0; }
 .pt-list-item .body b { display: block; } .pt-list-item .body small { color: var(--muted); font-size: .8rem; }
+
+/* =========================================================
+   Bubble / 3D pop on hover — buttons, cards, options, tabs
+   Uses the bouncy --pop easing so elements "spring" up and
+   cast a soft shadow, reading as a lightweight 3D lift.
+   (Coverflow .cf-card is intentionally excluded: it already
+   drives its own 3D transforms from JS.)
+   ========================================================= */
+.btn, .cat, .svc, .port, .rev, .chip, .pay, .step, .acc-type, .mq-card,
+.partners-row span, .foot-social a, .tab, .svc-tab, .cat-tags span,
+.related .rel-card, .rel-card, .qp, .qty-preset, .se-flag, .pill,
+.acc-menu-item, .cp-card, .proof-card, .plat-card {
+    transition: transform .34s var(--pop), box-shadow .34s var(--pop),
+                border-color .3s ease, background .3s ease, color .3s ease;
+    transform-origin: center;
+    will-change: transform;
+}
+.btn:hover, .cat:hover, .svc:hover, .port:hover, .rev:hover, .chip:hover,
+.pay:hover, .step:hover, .acc-type:hover, .mq-card:hover,
+.partners-row span:hover, .foot-social a:hover, .tab:hover, .svc-tab:hover,
+.cat-tags span:hover, .related .rel-card:hover, .rel-card:hover,
+.qp:hover, .qty-preset:hover, .acc-menu-item:hover, .cp-card:hover,
+.proof-card:hover, .plat-card:hover {
+    transform: translateY(-7px) scale(1.055);
+    box-shadow: 0 20px 44px -14px rgba(0,0,0,.6),
+                0 0 0 1px color-mix(in srgb, var(--pink) 24%, transparent);
+    z-index: 3;
+}
+/* buttons pop a touch more + tilt slightly for a 3D feel */
+.btn:hover {
+    transform: perspective(520px) translateY(-6px) translateZ(10px) scale(1.06);
+}
+/* quick "press in" feedback on click */
+.btn:active, .cat:active, .svc:active, .chip:active, .pay:active,
+.acc-type:active, .tab:active, .svc-tab:active, .rel-card:active,
+.qp:active, .qty-preset:active {
+    transform: translateY(-2px) scale(.97);
+    transition-duration: .09s;
+}
+/* respect users who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+    .btn, .cat, .svc, .port, .rev, .chip, .pay, .step, .acc-type, .mq-card,
+    .partners-row span, .foot-social a, .tab, .svc-tab, .cat-tags span,
+    .rel-card, .qp, .qty-preset, .cp-card, .proof-card, .plat-card {
+        transition: box-shadow .2s ease, border-color .2s ease, background .2s ease, color .2s ease;
+    }
+    .btn:hover, .cat:hover, .svc:hover, .chip:hover, .pay:hover,
+    .acc-type:hover, .tab:hover, .rel-card:hover, .qp:hover, .qty-preset:hover {
+        transform: none;
+    }
+}
