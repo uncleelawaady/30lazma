@@ -65,8 +65,51 @@
 
   // ---------- UI ----------
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const nl = s => esc(s).replace(/\n/g, '<br>');
+  // format an answer: escape, keep line breaks, and turn [label](url) into a clickable link
+  function fmt(s) {
+    let out = esc(s).replace(/\n/g, '<br>');
+    out = out.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, label, url) => {
+      const ext = /^https?:\/\//.test(url);
+      return '<a class="elbot-link" href="' + url + '"' + (ext ? ' target="_blank" rel="noopener"' : '') + '>' + label + ' <i class="fas fa-arrow-left"></i></a>';
+    });
+    return out;
+  }
+  const nl = fmt; // welcome/answers all go through the same formatter
   let root, panel, msgs, chipsBox;
+
+  // ---------- live catalog index (for direct service/category links) ----------
+  let CATALOG = {};
+  function ensureCatalog() {
+    if (!Object.keys(CATALOG).length && window.CATEGORIES && Object.keys(window.CATEGORIES).length) CATALOG = window.CATEGORIES;
+    if (window.getCatalog) { Promise.resolve(window.getCatalog()).then(c => { if (c && Object.keys(c).length) CATALOG = c; }).catch(() => {}); }
+  }
+  function searchCatalog(qn) {
+    ensureCatalog();
+    const CAT = Object.keys(CATALOG).length ? CATALOG : (window.CATEGORIES || {});
+    const res = [];
+    const qWords = qn.split(' ').filter(w => w.length > 1);
+    Object.keys(CAT).forEach(id => {
+      const c = CAT[id]; if (!c || c.active === false) return;
+      const items = (c.groups && c.groups[0] && c.groups[0].items) || [];
+      items.forEach(name => {
+        const nn = norm(name); let score = 0;
+        qWords.forEach(w => { if (nn.indexOf(w) > -1) score += 2; });
+        nn.split(' ').filter(w => w.length > 1).forEach(w => { if (qn.indexOf(w) > -1) score += 1; });
+        if (score >= 3) res.push({ type: 'service', name, catId: id, catTitle: c.title || '', score });
+      });
+      const ct = norm(c.title || ''); let cs = 0;
+      ct.split(' ').filter(w => w.length > 1).forEach(w => { if (qn.indexOf(w) > -1) cs += 2; });
+      if (cs >= 2) res.push({ type: 'cat', catId: id, catTitle: c.title || '', score: cs });
+    });
+    // de-dup categories, keep best, sort
+    res.sort((a, b) => b.score - a.score);
+    return res.slice(0, 5);
+  }
+  function svcHref(s) {
+    return s.type === 'service'
+      ? 'service.html?cat=' + encodeURIComponent(s.catId) + '&svc=' + encodeURIComponent(s.name)
+      : 'category.html?id=' + encodeURIComponent(s.catId);
+  }
 
   function build() {
     root = document.createElement('div');
@@ -139,21 +182,36 @@
   }
   function ask(text) {
     addMsg(esc(text), 'me');
+    const qn = norm(text);
+    const svc = searchCatalog(qn);
     const hit = findAnswer(text, KB.faqs);
     setTimeout(() => {
-      if (hit) { addMsg(nl(hit.a), 'bot'); }
-      else {
+      let handled = false;
+      if (svc.length) {
+        const b = addMsg('لقيتلك ده — اضغط عشان تروح للطلب مباشرة 👇', 'bot');
+        const wrap = document.createElement('div'); wrap.className = 'elbot-sugg';
+        svc.forEach(s => {
+          const a = document.createElement('a'); a.className = 'elbot-link';
+          a.href = svcHref(s);
+          a.innerHTML = '<i class="fas fa-arrow-left"></i> ' + esc(s.type === 'service' ? s.name : ('قسم ' + s.catTitle));
+          wrap.appendChild(a);
+        });
+        b.querySelector('.elbot-b').appendChild(wrap);
+        handled = true;
+      }
+      if (hit) { addMsg(fmt(hit.a), 'bot'); handled = true; }
+      if (!handled) {
         const wa = (window.ElwasetContact && window.ElwasetContact.cfg && window.ElwasetContact.cfg.wa) || '201055578777';
-        addMsg('معلش، مش متأكد من الإجابة على ده بالظبط 🤔 جرّب تختار فئة من الأزرار، أو تواصل مع الدعم مباشرة:<br>' +
+        addMsg('معلش، مش لاقي ده بالظبط 🤔 جرّب تكتب اسم الخدمة (زي «متابعين فيسبوك») أو اختر فئة من تحت، أو تواصل مع الدعم:<br>' +
           '<a class="elbot-wa" href="https://wa.me/' + wa + '" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> تواصل مع الدعم</a>', 'bot');
       }
-    }, 200);
+    }, 220);
   }
 
   function setOpen(v) { root.classList.toggle('open', v); if (v) { greet(); setTimeout(() => { const i = root.querySelector('.elbot-input input'); i && i.focus(); }, 250); } }
   function toggle() { setOpen(!root.classList.contains('open')); }
 
-  function init() { build(); loadKB(); }
+  function init() { build(); loadKB(); ensureCatalog(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 })();

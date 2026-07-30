@@ -1215,3 +1215,10 @@ body.lb-open { overflow: hidden; }
     transform: translateY(-4px) scale(1.03);
     filter: drop-shadow(0 18px 34px rgba(0,0,0,.6));
 }
+
+/* chatbot inline links (direct deep links to services/categories) */
+.elbot-link { display: inline-flex; align-items: center; gap: .4rem; margin-top: .4rem;
+    background: var(--grad-btn); color: #fff !important; padding: .5rem .85rem; border-radius: 10px;
+    text-decoration: none; font-weight: 700; font-size: .85rem; transition: transform .25s var(--pop), box-shadow .25s var(--pop); }
+.elbot-link:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 10px 24px -8px color-mix(in srgb, var(--pink) 60%, transparent); }
+.elbot-sugg a.elbot-link { justify-content: flex-start; text-align: right; }
