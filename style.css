@@ -965,8 +965,8 @@ body.lb-open { overflow: hidden; }
 @media (max-width: 900px) { .svc-layout { grid-template-columns: 1fr; gap: 1.4rem; } }
 
 /* gallery */
-.svc-gallery { position: sticky; top: 90px; }
-@media (max-width: 900px) { .svc-gallery { position: static; } }
+.svc-gallery { position: sticky; top: 104px; margin-top: 1.4rem; }
+@media (max-width: 900px) { .svc-gallery { position: static; margin-top: .4rem; } }
 .svc-main-img { width: 100%; aspect-ratio: 1 / 1; border-radius: 20px; overflow: hidden; display: grid; place-items: center;
   background: linear-gradient(135deg, var(--cg1,#17A85E), var(--cg2,#0E7A45)); box-shadow: 0 20px 50px -14px rgba(0,0,0,.55); position: relative; }
 .svc-main-img img { width: 100%; height: 100%; object-fit: contain; display: block; }
