@@ -11,6 +11,17 @@
   const cf = document.getElementById('coverflow');
   let cards = [], dots = [], active = 0, timer = null;
 
+  // Fallback image for a category with no own image: first service image inside it.
+  function firstServiceImg(c) {
+    const items = (c && c.groups && c.groups[0] && c.groups[0].items) || [];
+    const det = (c && c.details) || {};
+    for (let i = 0; i < items.length; i++) {
+      const d = det[items[i]];
+      if (d && d.img) return d.img;
+    }
+    return '';
+  }
+
   function layout() {
     cards.forEach((card, i) => {
       const off = i - active, abs = Math.abs(off), sign = off < 0 ? -1 : 1;
@@ -38,7 +49,9 @@
 
     stage.innerHTML = ids.map((id, i) => {
       const c = CATS[id];
-      const media = c.img ? '<img src="' + esc(c.img) + '" alt="">'
+      // image priority: the category's own image, else the first service image, else the icon
+      const imgSrc = c.img || firstServiceImg(c);
+      const media = imgSrc ? '<img src="' + esc(imgSrc) + '" alt="">'
         : '<i class="' + (window.faIcon ? window.faIcon(c.icon) : ('fas ' + esc(c.icon || 'fa-layer-group'))) + '"></i>';
       return '<a class="cf-card" data-i="' + i + '" href="category.html?id=' + encodeURIComponent(id) + '" ' +
         'style="--g1:' + esc(c.g1 || '#17A85E') + ';--g2:' + esc(c.g2 || '#0E7A45') + '">' +
