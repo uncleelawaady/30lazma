@@ -172,12 +172,17 @@
 
         document.title = svcName + ' — ' + c.title + ' | Elwaset.net';
 
+        // find the sub-category (group) this service belongs to
+        let subCat = '';
+        (c.groups || []).forEach(g => { if ((g.items || []).indexOf(svcName) > -1) subCat = g.h || ''; });
+        const showSub = subCat && subCat !== 'الخدمات';
         // crumbs + category tag
         const crumbs = document.getElementById('crumbs');
         crumbs.innerHTML =
             '<a href="index.html">الرئيسية</a><span class="sep">/</span>' +
             '<a href="index.html#categories">الأقسام</a><span class="sep">/</span>' +
             '<a href="category.html?id=' + encodeURIComponent(catId) + '">' + esc(c.title) + '</a><span class="sep">/</span>' +
+            (showSub ? '<span>' + esc(subCat) + '</span><span class="sep">/</span>' : '') +
             '<span>' + esc(svcName) + '</span>';
         const catTag = document.getElementById('catTag');
         catTag.href = 'category.html?id=' + encodeURIComponent(catId);

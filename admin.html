@@ -97,6 +97,10 @@
     .se-af input,.se-af textarea,.se-af select{width:100%;background:#0c1712;border:1px solid var(--line);color:var(--text);border-radius:8px;padding:.45rem .6rem;font-family:inherit;font-size:.85rem}
     .se-af-chk{flex-direction:row;align-items:center;gap:.4rem}
     .se-af-chk input{width:18px;height:18px}
+    .ce-group{border:1px solid var(--line);border-radius:12px;padding:.7rem;margin-bottom:.7rem;background:rgba(255,255,255,.015)}
+    .ce-grp-head{display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem}
+    .ce-grp-head>i{color:var(--yellow)}
+    .ce-grp-name{flex:1;background:#0c1712;border:1px solid var(--line);color:var(--text);border-radius:9px;padding:.5rem .7rem;font-family:inherit;font-weight:700;font-size:.92rem}
     .se-flag input{width:16px!important;height:16px!important;margin:0!important}
     .se-del{flex:0 0 auto}
     /* theme presets */
@@ -676,9 +680,9 @@
       if (!ids.length) { box.innerHTML = '<p class="muted">مفيش أقسام. اضغط «استيراد الأقسام الحالية» أو «إضافة قسم».</p>'; return; }
       box.innerHTML = ids.map(id => {
         const c = catalog[id];
-        const items = (c.groups && c.groups[0] && c.groups[0].items) || [];
         const det = c.details || {};
-        const rows = items.map(n => svcRowHtml(n, det[n])).join('');
+        const groups = (c.groups && c.groups.length) ? c.groups : [{ h: 'الخدمات', items: [] }];
+        const groupsHtml = groups.map(g => grpHtml(g, det)).join('');
         const av = String(esc(c.title || '')).replace(/"/g, '&quot;');
         return '<div class="cat-edit" data-id="' + id + '">' +
           '<div class="ce-head"><input class="ce-title" value="' + av + '" placeholder="اسم القسم">' +
@@ -690,11 +694,23 @@
           '<input type="hidden" class="ce-img" value="' + esc(c.img || '') + '"></div>' +
           '<input class="ce-icon" value="' + esc(c.icon || 'fa-layer-group') + '" placeholder="أيقونة احتياطية مثل fa-share-nodes">' +
           '<textarea class="ce-intro" rows="2" placeholder="وصف القسم">' + esc(c.intro || '') + '</textarea>' +
-          '<span class="ce-lbl">الخدمات (لكل خدمة: صورة + اسم + سعر + وصف):</span>' +
-          '<div class="ce-svclist">' + rows + '</div>' +
-          '<button type="button" class="btn btn-ghost btn-sm ce-addsvc"><i class="fas fa-plus"></i> إضافة خدمة</button>' +
+          '<span class="ce-lbl">الأقسام الفرعية والخدمات:</span>' +
+          '<div class="ce-groups">' + groupsHtml + '</div>' +
+          '<button type="button" class="btn btn-ghost btn-sm ce-addgrp"><i class="fas fa-folder-plus"></i> إضافة قسم فرعي</button>' +
           '</div>';
       }).join('');
+    }
+    // one sub-category group (name + its services + add-service)
+    function grpHtml(g, det) {
+      g = g || {}; det = det || {};
+      const rows = (g.items || []).map(n => svcRowHtml(n, det[n])).join('');
+      return '<div class="ce-group">' +
+        '<div class="ce-grp-head"><i class="fas fa-folder"></i>' +
+          '<input class="ce-grp-name" value="' + esc(g.h || 'الخدمات') + '" placeholder="اسم القسم الفرعي (مثال: متابعين)">' +
+          '<button type="button" class="btn btn-red btn-sm ce-grp-del" title="حذف القسم الفرعي"><i class="fas fa-trash"></i></button></div>' +
+        '<div class="ce-svclist">' + rows + '</div>' +
+        '<button type="button" class="btn btn-ghost btn-sm ce-addsvc"><i class="fas fa-plus"></i> إضافة خدمة</button>' +
+        '</div>';
     }
     // delegated events for the catalog editor (survives dynamic service rows)
     (function wireCatalog() {
@@ -729,8 +745,15 @@
           const row = b.closest('.ce-imgrow');
           row.querySelector('.ce-img').value = ''; const pv = row.querySelector('.ce-preview'); pv.src = ''; pv.style.display = 'none'; b.style.display = 'none';
         } else if (b.classList.contains('ce-addsvc')) {
-          const list = b.closest('.cat-edit').querySelector('.ce-svclist');
+          const list = (b.closest('.ce-group') || b.closest('.cat-edit')).querySelector('.ce-svclist');
           list.insertAdjacentHTML('beforeend', svcRowHtml('', {}));
+        } else if (b.classList.contains('ce-addgrp')) {
+          const groups = b.closest('.cat-edit').querySelector('.ce-groups');
+          groups.insertAdjacentHTML('beforeend', grpHtml({ h: 'قسم فرعي جديد', items: [] }, {}));
+        } else if (b.classList.contains('ce-grp-del')) {
+          const grp = b.closest('.ce-group');
+          if (grp.parentElement.querySelectorAll('.ce-group').length <= 1) { toast('لازم يفضل قسم فرعي واحد على الأقل'); return; }
+          if (confirm('حذف القسم الفرعي وكل خدماته؟')) grp.remove();
         } else if (b.classList.contains('se-adv-toggle')) {
           const adv = b.closest('.svc-row-edit').querySelector('.se-adv');
           if (adv) { const open = adv.style.display !== 'none'; adv.style.display = open ? 'none' : 'block'; b.classList.toggle('active', !open); }
@@ -769,12 +792,10 @@
       const out = {};
       document.querySelectorAll('#catList .cat-edit').forEach((el, i) => {
         const id = el.dataset.id;
-        const items = [];
         const details = {};
-        el.querySelectorAll('.svc-row-edit').forEach(r => {
+        const collectRow = r => {
           const name = r.querySelector('.se-name').value.trim();
-          if (!name) return;
-          items.push(name);
+          if (!name) return null;
           const img = r.querySelector('.se-img').value || '';
           const price = r.querySelector('.se-price').value.trim();
           const desc = r.querySelector('.se-desc').value.trim();
@@ -800,7 +821,18 @@
           const terms = val('.se-terms'); if (terms) d.terms = terms;
           const tags = val('.se-tags').split(/[,،]/).map(s => s.trim()).filter(Boolean); if (tags.length) d.tags = tags;
           if (Object.keys(d).length) details[name] = d;
+          return name;
+        };
+        // build sub-category groups from the editor
+        const groups = [];
+        el.querySelectorAll('.ce-group').forEach(ge => {
+          const nameEl = ge.querySelector('.ce-grp-name');
+          const h = (nameEl ? nameEl.value.trim() : '') || 'الخدمات';
+          const gItems = [];
+          ge.querySelectorAll('.svc-row-edit').forEach(r => { const n = collectRow(r); if (n) gItems.push(n); });
+          groups.push({ h, items: gItems });
         });
+        if (!groups.length) groups.push({ h: 'الخدمات', items: [] });
         out[id] = {
           title: el.querySelector('.ce-title').value.trim(),
           intro: el.querySelector('.ce-intro').value.trim(),
