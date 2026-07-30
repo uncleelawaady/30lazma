@@ -7,7 +7,7 @@
   <title>لوحة تحكم Elwaset</title>
   <link rel="icon" href="assets/favicon.png" type="image/png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400;500;600;700;800&family=Cairo:wght@400;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root{ --bg:#0b1512; --card:#12201b; --line:rgba(34,210,180,.18); --text:#eef3f1; --muted:#9fb2ab;
            --green:#17A85E; --yellow:#FFD400; --grad:linear-gradient(90deg,#FFD400,#2AA85E 55%,#0A5A38); }
@@ -315,6 +315,8 @@
     // ===== 20 professional theme presets =====
     // vars keys map to THEME_KEYS: bg, text, pink(accent), yellow, teal, grad-from, grad-to
     const THEME_PRESETS = [
+      // FEATURED — matches the store's new brand look
+      { g:'ثيم وتَر (الأساسي)', n:'وتَر — أخضر وبرتقالي', e:'🟢', v:{ bg:'#0E3B2C', text:'#F2FBF6', pink:'#EE9A2E', yellow:'#F4B048', teal:'#1E9E6A', 'grad-from':'#F4B048', 'grad-to':'#E07E1B' } },
       // DARK
       { g:'ثيمات داكنة', n:'EXP برتقالي وأسود', e:'🔥', v:{ bg:'#0b0b0b', text:'#f5f5f5', pink:'#FF8A00', yellow:'#FFB020', teal:'#FF8A00', 'grad-from':'#FFB020', 'grad-to':'#FF6A00' } },
       { g:'ثيمات داكنة', n:'الفضاء العميق', e:'🌌', v:{ bg:'#0a0a16', text:'#eef0ff', pink:'#7c5cff', yellow:'#b39cff', teal:'#6a5cff', 'grad-from':'#7c5cff', 'grad-to':'#3a2a8f' } },
@@ -347,7 +349,7 @@
       { g:'ثيمات رمادية / هيقسفيلد', n:'فحمي دافئ', e:'🌘', v:{ bg:'#141211', text:'#f5f2ee', pink:'#fb923c', yellow:'#fbbf24', teal:'#f97316', 'grad-from':'#fbbf24', 'grad-to':'#ea580c' } },
       { g:'ثيم Elawaady', n:'Elawaady', e:'🅰️', v:{ bg:'#052b2b', text:'#eafffb', pink:'#c6ff2e', yellow:'#ff2d9b', teal:'#17c8ac', 'grad-from':'#c6ff2e', 'grad-to':'#17c8ac' } }
     ];
-    const THEME_GROUPS = ['ثيم Elawaady', 'ثيمات رمادية / هيقسفيلد', 'ثيمات داكنة', 'ثيمات ملونة', 'ثيمات ليلية متميزة', 'ثيمات دافئة', 'ثيمات افتتاحية'];
+    const THEME_GROUPS = ['ثيم وتَر (الأساسي)', 'ثيم Elawaady', 'ثيمات رمادية / هيقسفيلد', 'ثيمات داكنة', 'ثيمات ملونة', 'ثيمات ليلية متميزة', 'ثيمات دافئة', 'ثيمات افتتاحية'];
     // color helpers to derive a FULL palette from the preset's core colors
     function _hx(h) { h = String(h).replace('#', ''); if (h.length === 3) h = h.split('').map(c => c + c).join(''); const n = parseInt(h, 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
     function _toHex(r, g, b) { return '#' + [r, g, b].map(x => Math.max(0, Math.min(255, Math.round(x))).toString(16).padStart(2, '0')).join(''); }
