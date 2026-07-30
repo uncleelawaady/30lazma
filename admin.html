@@ -147,6 +147,7 @@
       <button class="tab" data-tab="policies"><i class="fas fa-file-shield"></i> سياسات المتجر</button>
       <button class="tab" data-tab="reviews"><i class="fas fa-star"></i> التقييمات</button>
       <button class="tab" data-tab="notify"><i class="fas fa-bullhorn"></i> الإشعارات</button>
+      <button class="tab" data-tab="chatbot"><i class="fas fa-robot"></i> الشات بوت</button>
       <button class="tab" data-tab="users"><i class="fas fa-users"></i> المستخدمين</button>
       <button class="tab" data-tab="admins" id="adminsTabBtn"><i class="fas fa-user-shield"></i> المشرفين</button>
     </div>
@@ -241,6 +242,29 @@
       <div class="card"><h3>الإشعارات المُرسلة</h3><div id="annList"><p class="muted">جاري التحميل…</p></div></div>
     </div>
 
+    <!-- Chatbot knowledge base -->
+    <div class="panel" id="tab-chatbot">
+      <div class="card"><h3>🤖 إعدادات الشات بوت</h3>
+        <div class="field"><label>اسم البوت</label><input type="text" id="cb_name" placeholder="مثال: مساعد الوسيط"></div>
+        <div class="field"><label>رسالة الترحيب</label><textarea id="cb_welcome" rows="3" placeholder="أهلًا! أنا مساعد المتجر..."></textarea></div>
+        <div class="save-bar"><button class="btn btn-ghost" id="cbSeed"><i class="fas fa-file-import"></i> استيراد الأسئلة الافتراضية</button><button class="btn" id="cbSave"><i class="fas fa-floppy-disk"></i> حفظ الشات بوت</button></div>
+        <p class="hint">قاعدة المعرفة اللي تحت بيرد بيها البوت. أضف/عدّل/احذف أي سؤال، وحدّد كلمات مفتاحية عشان يلاقيه بسهولة.</p>
+      </div>
+      <div class="card"><h3>➕ إضافة سؤال جديد</h3>
+        <div class="field"><label>السؤال</label><input type="text" id="cbq_q" placeholder="مثال: إزاي أطلب خدمة؟"></div>
+        <div class="field"><label>الجواب</label><textarea id="cbq_a" rows="3" placeholder="اكتب الرد الكامل للبوت..."></textarea></div>
+        <div class="row" style="gap:.6rem;flex-wrap:wrap">
+          <div class="field" style="flex:1;min-width:160px"><label>الفئة</label><input type="text" id="cbq_cat" placeholder="مثال: الطلب" list="cbCats"></div>
+          <div class="field" style="flex:2;min-width:200px"><label>كلمات مفتاحية (بفاصلة)</label><input type="text" id="cbq_kw" placeholder="اطلب, طلب, ازاي اشتري, order"></div>
+        </div>
+        <datalist id="cbCats"></datalist>
+        <button class="btn" id="cbAdd"><i class="fas fa-plus"></i> إضافة السؤال</button>
+      </div>
+      <div class="card"><h3>قاعدة المعرفة (<span id="cbCount">0</span> سؤال)</h3>
+        <div id="cbList"><p class="muted">—</p></div>
+      </div>
+    </div>
+
     <!-- Users -->
     <div class="panel" id="tab-users">
       <div class="card"><h3>المستخدمون (<span id="userCount">0</span>)</h3>
@@ -267,6 +291,7 @@
   <div class="toast" id="toast"></div>
 
   <script src="data.js"></script>
+  <script src="chatbot-seed.js?v=1"></script>
   <script src="firebase-config.js"></script>
   <script type="module">
     const TEXT_KEYS = [
@@ -521,7 +546,7 @@
       $('#adminsTabBtn').style.display = isOwner ? '' : 'none';
       $('#ownerWarn').style.display = 'none';
       if (isOwner) renderAdmins();
-      loadReviews(); loadAnnouncements(); loadUsers(); loadOrders(); loadCatalog();
+      loadReviews(); loadAnnouncements(); loadUsers(); loadOrders(); loadCatalog(); loadChatbot();
     });
 
     // ===== Admins management (owner only) =====
@@ -824,6 +849,82 @@
       try { await setDoc(CFG_REF, patch, { merge: true }); Object.assign(current, patch); toast(msg || 'تم الحفظ ✅'); }
       catch (e) { toast('تعذّر الحفظ — تأكد إنك المالك'); console.warn(e); }
     }
+
+    // ===== Chatbot knowledge base =====
+    const CB_REF = doc(db, 'config', 'chatbot');
+    let cbFaqs = [];
+    async function loadChatbot() {
+      try {
+        const snap = await getDoc(CB_REF);
+        if (snap.exists()) {
+          const d = snap.data();
+          $('#cb_name').value = d.botName || '';
+          $('#cb_welcome').value = d.welcome || '';
+          cbFaqs = Array.isArray(d.faqs) ? d.faqs.slice() : [];
+        } else { cbFaqs = []; }
+      } catch (e) { cbFaqs = []; }
+      renderChatbot();
+    }
+    function renderChatbot() {
+      const box = $('#cbList'); $('#cbCount').textContent = cbFaqs.length;
+      // category suggestions
+      const cats = [...new Set(cbFaqs.map(f => f.cat).filter(Boolean))];
+      $('#cbCats').innerHTML = cats.map(c => '<option value="' + esc(c) + '">').join('');
+      if (!cbFaqs.length) { box.innerHTML = '<p class="muted">مفيش أسئلة بعد. اضغط «استيراد الأسئلة الافتراضية» أو أضف سؤال.</p>'; return; }
+      box.innerHTML = cbFaqs.map((f, i) =>
+        '<div class="cat-edit" data-i="' + i + '" style="margin-bottom:.7rem">' +
+          '<div class="row" style="justify-content:space-between;gap:.5rem;align-items:center">' +
+            '<b style="flex:1">' + esc(f.q || '(سؤال بدون عنوان)') + '</b>' +
+            '<span class="pill ' + (f.active === false ? 'wait' : 'ok') + '">' + (f.active === false ? 'موقوف' : 'نشط') + '</span>' +
+          '</div>' +
+          '<span class="ce-lbl">الفئة: ' + esc(f.cat || '—') + ' • كلمات: ' + esc(f.kw || '—') + '</span>' +
+          '<textarea class="cb-a" rows="2">' + esc(f.a || '') + '</textarea>' +
+          '<div class="row" style="gap:.4rem;margin-top:.4rem">' +
+            '<input class="cb-q" value="' + esc(f.q || '') + '" placeholder="السؤال" style="flex:2;min-width:140px">' +
+            '<input class="cb-cat" value="' + esc(f.cat || '') + '" placeholder="الفئة" list="cbCats" style="flex:1;min-width:90px">' +
+            '<input class="cb-kw" value="' + esc(f.kw || '') + '" placeholder="كلمات مفتاحية" style="flex:2;min-width:140px">' +
+          '</div>' +
+          '<div class="row" style="gap:.5rem;margin-top:.4rem">' +
+            '<label class="se-flag"><input type="checkbox" class="cb-on" ' + (f.active === false ? '' : 'checked') + '> نشط</label>' +
+            '<button class="btn btn-ghost btn-sm cb-del" data-i="' + i + '"><i class="fas fa-trash"></i> حذف</button>' +
+          '</div>' +
+        '</div>').join('');
+      box.querySelectorAll('.cb-del').forEach(b => b.addEventListener('click', () => { cbFaqs.splice(+b.dataset.i, 1); renderChatbot(); }));
+    }
+    function collectChatbot() {
+      document.querySelectorAll('#cbList .cat-edit').forEach(el => {
+        const i = +el.dataset.i; if (!cbFaqs[i]) return;
+        cbFaqs[i].q = el.querySelector('.cb-q').value.trim();
+        cbFaqs[i].a = el.querySelector('.cb-a').value.trim();
+        cbFaqs[i].cat = el.querySelector('.cb-cat').value.trim();
+        cbFaqs[i].kw = el.querySelector('.cb-kw').value.trim();
+        cbFaqs[i].active = el.querySelector('.cb-on').checked;
+      });
+    }
+    $('#cbAdd').addEventListener('click', () => {
+      const q = $('#cbq_q').value.trim(), a = $('#cbq_a').value.trim();
+      if (!q || !a) { toast('اكتب السؤال والجواب'); return; }
+      cbFaqs.unshift({ q, a, cat: $('#cbq_cat').value.trim() || 'عام', kw: $('#cbq_kw').value.trim(), active: true });
+      $('#cbq_q').value = $('#cbq_a').value = $('#cbq_cat').value = $('#cbq_kw').value = '';
+      renderChatbot(); toast('اتضاف السؤال — دوس «حفظ الشات بوت»');
+    });
+    $('#cbSeed').addEventListener('click', () => {
+      const seed = window.CHATBOT_SEED;
+      if (!seed || !seed.faqs) { toast('الأسئلة الافتراضية مش متاحة'); return; }
+      if (cbFaqs.length && !confirm('ده هيضيف الأسئلة الافتراضية للموجود. تكمّل؟')) return;
+      if (!$('#cb_name').value) $('#cb_name').value = seed.botName || '';
+      if (!$('#cb_welcome').value) $('#cb_welcome').value = seed.welcome || '';
+      const have = new Set(cbFaqs.map(f => (f.q || '').trim()));
+      seed.faqs.forEach(f => { if (!have.has((f.q || '').trim())) cbFaqs.push({ q: f.q, a: f.a, cat: f.cat, kw: f.kw, active: f.active !== false }); });
+      renderChatbot(); toast('اتحمّلت الأسئلة الافتراضية — دوس «حفظ الشات بوت»');
+    });
+    $('#cbSave').addEventListener('click', async () => {
+      collectChatbot();
+      const payload = { botName: $('#cb_name').value.trim(), welcome: $('#cb_welcome').value.trim(),
+                        faqs: cbFaqs.filter(f => f.q && f.a) };
+      try { await setDoc(CB_REF, payload, { merge: false }); toast('اتحفظ الشات بوت ✅'); }
+      catch (e) { toast('تعذّر الحفظ — تأكد إنك المالك'); console.warn(e); }
+    });
 
     $('#saveTheme').addEventListener('click', () => {
       const theme = {};
