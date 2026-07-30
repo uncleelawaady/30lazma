@@ -119,7 +119,9 @@
     <div style="display:flex;align-items:center;gap:.6rem;width:100%;margin:.2rem 0 .7rem;color:var(--muted);font-size:.8rem">
       <span style="flex:1;height:1px;background:var(--line)"></span>أو<span style="flex:1;height:1px;background:var(--line)"></span>
     </div>
-    <button class="btn btn-blue" id="loginBtn" style="width:100%;justify-content:center"><i class="fab fa-google"></i> دخول بجوجل (المالك)</button>
+    <button class="btn btn-ghost" id="createOwnerBtn" style="width:100%;justify-content:center;margin-bottom:.5rem"><i class="fas fa-user-shield"></i> أول مرة؟ إنشاء حساب المالك</button>
+    <p class="hint" style="color:var(--muted);text-align:center;margin:.1rem 0 .6rem;font-size:.78rem">اكتب إيميل المالك وكلمة سر (6 أحرف على الأقل) فوق، وبعدين اضغط الزرار ده مرّة واحدة.</p>
+    <button class="btn btn-blue" id="loginBtn" style="width:100%;justify-content:center"><i class="fab fa-google"></i> دخول بجوجل (اختياري)</button>
     <p id="gateMsg" class="hint" style="display:none;color:#ff6b6b"></p>
   </div>
 
@@ -471,6 +473,21 @@
       }
     });
     $('#liPass').addEventListener('keydown', e => { if (e.key === 'Enter') $('#loginPassBtn').click(); });
+    // First-time owner: create the owner account with email+password (no Google needed)
+    $('#createOwnerBtn').addEventListener('click', async () => {
+      const email = $('#liEmail').value.trim().toLowerCase(), pass = $('#liPass').value;
+      if (!email || pass.length < 6) { gateErr('اكتب إيميل المالك وكلمة سر 6 أحرف على الأقل فوق.'); return; }
+      if (OWNERS.indexOf(email) === -1) { gateErr('الإيميل ده مش إيميل مالك. استخدم إيميل المالك المعتمد، أو كلّمني أضيفه.'); return; }
+      try {
+        await createUserWithEmailAndPassword(auth, email, pass);
+        gateErr('✅ اتعمل حساب المالك ودخلت. من دلوقتي ادخل بالإيميل وكلمة السر دول.'); $('#gateMsg').style.color = '#34d399';
+      } catch (e) {
+        const c = e && e.code || '';
+        if (c === 'auth/email-already-in-use') { gateErr('الحساب موجود بالفعل — اكتب كلمة السر واضغط «دخول». نسيتها؟ اضغط «نسيت كلمة السر؟».'); }
+        else if (c === 'auth/operation-not-allowed') gateErr('لازم تفعّل Email/Password في Firebase Authentication الأول (خطوة مرة واحدة).');
+        else gateErr('تعذّر إنشاء الحساب: ' + (e.message || e));
+      }
+    });
     $('#liForgot').addEventListener('click', async e => {
       e.preventDefault();
       const email = $('#liEmail').value.trim();
