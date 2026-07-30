@@ -845,19 +845,33 @@
       $('#p_at_name').value = at.name || ''; $('#p_at_note').value = at.note || ''; $('#p_at_url').value = at.url || '';
     }
 
-    // Clear diagnostic when Firestore rejects a write (almost always: rules not published).
+    // Diagnostic when a Firestore write fails — shows the REAL error so we fix the right thing.
     function permDenied(e) {
       const email = (auth.currentUser && auth.currentUser.email) || '؟';
-      const w = document.getElementById('ownerWarn');
-      if (w) {
-        w.style.display = 'block';
-        w.innerHTML = '❌ <b>Firestore رفض الحفظ.</b> إنت داخل بـ <b>' + email + '</b>.<br>' +
-          'السبب الأغلب إن <b>قواعد الأمان مش منشورة في Firebase</b>. الحل: افتح صفحة القواعد، الصق محتوى ملف <b>firestore.rules</b>، واضغط <b>Publish</b>.<br>' +
-          '<a href="https://console.firebase.google.com/project/elwaset-store/firestore/rules" target="_blank" rel="noopener" style="color:#ffd0c4;text-decoration:underline">↗ افتح صفحة قواعد Firestore</a>';
-        w.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const code = (e && e.code) || '';
+      const msg = (e && (e.message || String(e))) || '';
+      const blob = (code + ' ' + msg).toLowerCase();
+      const tooBig = /longer than|exceeds|too large|1048|invalid-argument|resource-exhausted|maximum|entity/i.test(blob);
+      const perm = code === 'permission-denied' || /permission|insufficient/i.test(blob);
+      let html;
+      if (tooBig) {
+        html = '⚠️ <b>المستند أكبر من الحد المسموح في Firestore (1 ميجابايت).</b><br>' +
+          'السبب إن صور الأقسام/الخدمات محفوظة <b>جوّه القاعدة نفسها</b> (base64) وكبرت أوي. ده مش خطأ صلاحيات.<br>' +
+          'الحل: نفعّل <b>Firebase Storage</b> عشان الصور تتخزن كملفات وروابط بدل ما تكبّر المستند — قوللي أظبطه.<br>' +
+          '<small style="opacity:.8">' + esc(code || 'error') + ' — ' + esc(msg).slice(0, 160) + '</small>';
+      } else if (perm) {
+        html = '❌ <b>Firestore رفض الحفظ (صلاحيات).</b> إنت داخل بـ <b>' + esc(email) + '</b>.<br>' +
+          'تأكد إن القواعد اتنشرت في <b>نفس المشروع (elwaset-store)</b>، وإن <b>App Check</b> مش مفعّل ومُلزِم.<br>' +
+          '<a href="https://console.firebase.google.com/project/elwaset-store/firestore/rules" target="_blank" rel="noopener" style="color:#ffd0c4;text-decoration:underline">↗ صفحة القواعد</a><br>' +
+          '<small style="opacity:.8">' + esc(code || 'permission-denied') + '</small>';
+      } else {
+        html = '❌ تعذّر الحفظ. إنت داخل بـ <b>' + esc(email) + '</b>.<br>الخطأ الحقيقي:<br>' +
+          '<b>' + esc(code || '؟') + '</b><br><small style="opacity:.85">' + esc(msg).slice(0, 220) + '</small>';
       }
-      toast('تعذّر الحفظ — انشر قواعد Firestore (شوف التنبيه الأحمر فوق)');
-      console.warn('permission error:', e);
+      const w = document.getElementById('ownerWarn');
+      if (w) { w.style.display = 'block'; w.innerHTML = html; w.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+      toast('تعذّر الحفظ — شوف التنبيه الأحمر فوق للتفاصيل');
+      console.warn('save error:', code, msg, e);
     }
 
     async function save(patch, msg) {
