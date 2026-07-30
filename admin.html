@@ -284,6 +284,7 @@
       ['yellow','اللون الثاني','#f472b6'],
       ['teal','لون التوهّج','#8b5cf6'],
       ['glass-brd','لون الحواف','#3a2f4a'],
+      ['ticker-bg','لون الشريط العلوي','#a855f7'],
       ['grad-from','التدرّج — من','#a855f7'],
       ['grad-to','التدرّج — إلى','#ec4899']
     ];
@@ -358,7 +359,7 @@
         pink: v.pink, purple: v['grad-to'], teal: v.teal, violet: v.teal,
         yellow: v.yellow, orange: v.yellow,
         'grad-from': v['grad-from'], 'grad-mid': _mix(v['grad-from'], v['grad-to'], .5), 'grad-to': v['grad-to'],
-        glass: _rgba(v.pink, .06), 'glass-brd': _mix(v.teal, v.bg, .55)
+        glass: _rgba(v.pink, .06), 'glass-brd': _mix(v.teal, v.bg, .55), 'ticker-bg': v.pink
       };
     }
     function applyPreset(v, doSave) {
@@ -447,7 +448,8 @@
       });
     }
     let current = {};
-    const OWNER = 'elawaady.official@gmail.com';
+    const OWNERS = ['elawaady.official@gmail.com', 'elawadi.store4@gmail.com'];
+    const OWNER = OWNERS[0];
     let isOwner = false, adminsList = [];
     const gateErr = m => { const g = $('#gateMsg'); g.style.display = 'block'; g.textContent = m; };
 
@@ -484,7 +486,7 @@
       // load config first so we know the admins list
       await loadConfig();
       adminsList = (current.admins || []).map(x => String(x).toLowerCase());
-      isOwner = email === OWNER;
+      isOwner = OWNERS.indexOf(email) > -1;
       const allowed = isOwner || adminsList.indexOf(email) > -1;
       if (!allowed) {
         // signed in but not an authorized admin

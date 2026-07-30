@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>حساب جديد | Elwaset.net</title>
   <meta name="description" content="أنشئ حسابك على Elwaset — حساب مستخدم للشراء أو حساب بائع للموردين وأصحاب المتاجر.">
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
   <link rel="icon" href="assets/favicon.png" type="image/png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -35,7 +35,7 @@
   </header>
 
   <section class="section" style="padding-top:1rem">
-    <div class="container" style="max-width:640px">
+    <div class="container" id="authWrap" style="max-width:640px">
 
       <!-- ==== Auth (register / login) ==== -->
       <div class="acc-card" id="authBox">
@@ -96,22 +96,17 @@
         <p class="ac-switch">لديك حساب بالفعل؟ <a href="#" id="toLogin">دخول</a></p>
         <p class="ac-switch" id="toRegisterWrap" style="display:none">مستخدم جديد؟ <a href="#" id="toRegister">إنشاء حساب</a></p>
       </div>
+    </div>
 
-      <!-- ==== Profile (logged in) ==== -->
-      <div class="acc-card" id="profileBox" style="display:none">
-        <div class="rev-user-card" id="profileCard"></div>
-        <div class="acc-stats">
-          <div class="acc-stat"><strong id="stType">مستخدم</strong><span>نوع الحساب</span></div>
-          <div class="acc-stat"><strong>موثّق</strong><span>الحالة</span></div>
-          <div class="acc-stat"><strong id="stSince">اليوم</strong><span>عضو منذ</span></div>
-        </div>
-        <div class="rev-user-note" style="margin-top:1rem">
-          <p style="margin:0"><i class="fas fa-bell" style="color:var(--yellow)"></i> هتوصلك إشعارات العروض والخدمات الجديدة على الموقع.</p>
-        </div>
-        <a href="index.html" class="btn btn-grad btn-lg" style="width:100%;margin-top:1rem;justify-content:center"><i class="fas fa-grip"></i> تصفّح الخدمات</a>
-        <button type="button" class="btn-plain" id="signoutBtn" style="margin-top:.6rem">تسجيل خروج</button>
+    <!-- ==== Account portal (logged in) ==== -->
+    <div class="container" id="profileBox" style="max-width:1080px;display:none">
+      <div class="portal">
+        <aside class="portal-side">
+          <div class="pt-user" id="ptUser"></div>
+          <nav class="pt-menu" id="ptMenu"></nav>
+        </aside>
+        <div class="portal-main" id="ptMain"></div>
       </div>
-
     </div>
   </section>
 
@@ -157,7 +152,7 @@
       const { getAuth, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup, signOut, onAuthStateChanged,
               createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, sendPasswordResetEmail } =
         await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
-      const { getFirestore, doc, setDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+      const { getFirestore, doc, getDoc, setDoc, serverTimestamp, collection, getDocs, query, where } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
 
       const app = initializeApp(cfg);
       const auth = getAuth(app);
@@ -218,17 +213,147 @@
         }
       });
 
-      $('signoutBtn').addEventListener('click', () => signOut(auth));
+      const WA = '201055578777';
+      const soon = (t) => '<div class="pt-empty"><i class="fas fa-clock"></i><p>' + t + '</p><span class="pt-soon">قريبًا</span></div>';
+      const MENU = [
+        { sep: 'الحساب' },
+        { k:'home', i:'fa-house', t:'الرئيسية' },
+        { k:'orders', i:'fa-bag-shopping', t:'طلباتي' },
+        { k:'fav', i:'fa-heart', t:'المفضلة' },
+        { k:'wallet', i:'fa-wallet', t:'المحفظة والرصيد' },
+        { k:'invoices', i:'fa-file-invoice-dollar', t:'المدفوعات والفواتير' },
+        { k:'mediation', i:'fa-handshake', t:'الوساطة' },
+        { k:'support', i:'fa-comments', t:'الرسائل والدعم' },
+        { k:'notif', i:'fa-bell', t:'الإشعارات' },
+        { k:'coupons', i:'fa-gift', t:'أكواد الخصم والعروض' },
+        { sep: 'حسابي' },
+        { k:'profile', i:'fa-user', t:'الملف الشخصي' },
+        { k:'security', i:'fa-lock', t:'الأمان' },
+        { k:'paymethods', i:'fa-credit-card', t:'وسائل الدفع' },
+        { k:'settings', i:'fa-gear', t:'الإعدادات' },
+        { k:'stats', i:'fa-chart-simple', t:'الإحصائيات' },
+        { sep: 'أخرى' },
+        { k:'contact', i:'fa-headset', t:'تواصل معنا' },
+        { k:'logout', i:'fa-right-from-bracket', t:'تسجيل الخروج', cls:'pt-logout' }
+      ];
+      const MENU_SELLER = [
+        { sep: 'لوحة البائع' },
+        { k:'s_panel', i:'fa-store', t:'لوحة البائع' },
+        { k:'s_services', i:'fa-box', t:'خدماتي' },
+        { k:'s_orders', i:'fa-inbox', t:'الطلبات الواردة' },
+        { k:'s_earn', i:'fa-money-bill-wave', t:'الأرباح' },
+        { k:'s_withdraw', i:'fa-money-bill-transfer', t:'طلب سحب الأرباح' },
+        { k:'s_stats', i:'fa-chart-line', t:'إحصائيات البائع' }
+      ];
+
+      let curUser = null, curData = {}, myOrders = [];
+
+      function panelHTML(k) {
+        const name = esc(curData.name || (curUser && curUser.displayName) || 'مستخدم');
+        if (k === 'home') return '<div class="pt-panel active"><h2>أهلًا ' + name + ' 👋</h2><p class="sub">ده حسابك على الوسيط — تابع طلباتك وخدماتك من هنا.</p>' +
+          '<div class="pt-stats"><div class="pt-stat"><strong>' + myOrders.length + '</strong><span>عدد الطلبات</span></div>' +
+          '<div class="pt-stat"><strong>' + (curData.type === 'seller' ? 'بائع' : 'مستخدم') + '</strong><span>نوع الحساب</span></div>' +
+          '<div class="pt-stat"><strong>موثّق</strong><span>الحالة</span></div></div>' +
+          '<a href="index.html#categories" class="btn btn-grad btn-lg" style="justify-content:center"><i class="fas fa-grip"></i> تصفّح الخدمات</a></div>';
+        if (k === 'orders') {
+          if (!myOrders.length) return '<div class="pt-panel active"><h2>طلباتي</h2>' + '<div class="pt-empty"><i class="fas fa-bag-shopping"></i><p>لسه مفيش طلبات.</p><a href="index.html#categories" class="pt-soon" style="color:var(--pink)">ابدأ التسوق</a></div></div>';
+          return '<div class="pt-panel active"><h2>طلباتي (' + myOrders.length + ')</h2>' + myOrders.map(o =>
+            '<div class="pt-list-item"><span class="ico"><i class="fas fa-receipt"></i></span><div class="body"><b>طلب ' + esc(o.orderNo || '') + '</b>' +
+            '<small>' + ((o.items || []).map(x => esc(x.name)).join('، ') || 'خدمات') + '</small></div>' +
+            '<span class="pt-soon">' + esc(o.status === 'new' ? 'جديد' : (o.status || 'قيد التنفيذ')) + '</span></div>').join('') + '</div>';
+        }
+        if (k === 'fav') {
+          let fav = []; try { fav = JSON.parse(localStorage.getItem('elwaset_fav') || '[]'); } catch (e) {}
+          if (!fav.length) return '<div class="pt-panel active"><h2>المفضلة</h2><div class="pt-empty"><i class="fas fa-heart"></i><p>مفيش خدمات في المفضلة.</p></div></div>';
+          return '<div class="pt-panel active"><h2>المفضلة</h2>' + fav.map(f => '<div class="pt-list-item"><span class="ico"><i class="fas fa-heart"></i></span><div class="body"><b>' + esc(f.name || f) + '</b></div></div>').join('') + '</div>';
+        }
+        if (k === 'wallet') return '<div class="pt-panel active"><h2>المحفظة والرصيد</h2><div class="pt-stats"><div class="pt-stat"><strong>0 ج.م</strong><span>الرصيد الحالي</span></div></div>' + soon('نظام المحفظة والشحن هيتفعّل قريبًا.') + '</div>';
+        if (k === 'invoices') return '<div class="pt-panel active"><h2>المدفوعات والفواتير</h2>' + soon('سجل المدفوعات والفواتير هيظهر هنا.') + '</div>';
+        if (k === 'mediation') return '<div class="pt-panel active"><h2>الوساطة</h2><p class="sub">وساطة آمنة بإشراف فريق الوسيط لكل صفقة.</p><a href="category.html?id=escrow" class="btn btn-grad" style="justify-content:center"><i class="fas fa-handshake"></i> ابدأ وساطة</a></div>';
+        if (k === 'support') return '<div class="pt-panel active"><h2>الرسائل والدعم الفني</h2><p class="sub">فريق الدعم متاح 24/7.</p><a href="https://wa.me/' + WA + '" target="_blank" rel="noopener" class="btn btn-grad" style="justify-content:center"><i class="fab fa-whatsapp"></i> تواصل مع الدعم</a></div>';
+        if (k === 'notif') return '<div class="pt-panel active"><h2>الإشعارات</h2><div id="ptNotif"><div class="pt-empty"><i class="fas fa-bell"></i><p>جاري التحميل…</p></div></div></div>';
+        if (k === 'coupons') return '<div class="pt-panel active"><h2>أكواد الخصم والعروض</h2>' + soon('عروضك وأكواد الخصم هتظهر هنا.') + '</div>';
+        if (k === 'profile') return '<div class="pt-panel active"><h2>الملف الشخصي</h2>' +
+          '<div class="pt-field"><label>الاسم الكامل</label><input id="pfName" value="' + name + '"></div>' +
+          '<div class="pt-field"><label>البريد الإلكتروني</label><input value="' + esc(curUser.email || '') + '" disabled></div>' +
+          '<div class="pt-field"><label>رقم الهاتف</label><input id="pfPhone" value="' + esc(curData.phone || '') + '" inputmode="tel"></div>' +
+          '<button class="btn btn-grad" id="pfSave" style="justify-content:center"><i class="fas fa-floppy-disk"></i> حفظ التعديلات</button>' +
+          '<p class="sub" style="margin-top:.6rem">تغيير الصورة: بتتحدّث تلقائيًا من حساب جوجل/فيسبوك.</p></div>';
+        if (k === 'security') return '<div class="pt-panel active"><h2>الأمان</h2>' +
+          '<div class="pt-row"><div class="t"><b>كلمة المرور</b><small>غيّرها عبر رابط يوصلك على إيميلك</small></div><button class="btn btn-ghost btn-sm" id="pfPass">تغيير</button></div>' +
+          '<div class="pt-row"><div class="t"><b>التحقق بخطوتين (2FA)</b><small>حماية إضافية لحسابك</small></div><span class="pt-soon">قريبًا</span></div>' +
+          '<div class="pt-row"><div class="t"><b>الأجهزة المسجّلة</b><small>الأجهزة اللي دخلت بحسابك</small></div><span class="pt-soon">قريبًا</span></div></div>';
+        if (k === 'paymethods') return '<div class="pt-panel active"><h2>وسائل الدفع</h2>' + soon('إضافة وسائل الدفع هتتفعّل قريبًا.') + '</div>';
+        if (k === 'settings') return '<div class="pt-panel active"><h2>الإعدادات</h2>' +
+          '<div class="pt-field"><label>اللغة</label><select id="setLang"><option>العربية</option><option>English</option></select></div>' +
+          '<div class="pt-row"><div class="t"><b>إشعارات العروض</b></div><input type="checkbox" id="setNotif" checked style="width:22px;height:22px"></div>' +
+          '<div class="pt-row"><div class="t"><b>الخصوصية</b><small>إخفاء نشاطي</small></div><input type="checkbox" id="setPriv" style="width:22px;height:22px"></div></div>';
+        if (k === 'stats') { const spent = myOrders.reduce((s, o) => s + (o.count || (o.items ? o.items.length : 0)), 0);
+          return '<div class="pt-panel active"><h2>الإحصائيات</h2><div class="pt-stats"><div class="pt-stat"><strong>' + myOrders.length + '</strong><span>إجمالي الطلبات</span></div>' +
+          '<div class="pt-stat"><strong>' + spent + '</strong><span>إجمالي الخدمات</span></div><div class="pt-stat"><strong>' + (myOrders[0] ? 'نشط' : '—') + '</strong><span>آخر نشاط</span></div></div></div>'; }
+        if (k === 'contact') return '<div class="pt-panel active"><h2>تواصل معنا</h2><p class="sub">إحنا في خدمتك على مدار الساعة.</p><a href="https://wa.me/' + WA + '" target="_blank" rel="noopener" class="btn btn-grad" style="justify-content:center"><i class="fab fa-whatsapp"></i> واتساب</a></div>';
+        // seller panels
+        if (k === 's_panel') return '<div class="pt-panel active"><h2>لوحة البائع 🏪</h2><p class="sub">من هنا تدير خدماتك وطلباتك وأرباحك.</p>' + soon('لوحة البائع الكاملة هتتفعّل قريبًا.') + '</div>';
+        if (k === 's_services') return '<div class="pt-panel active"><h2>خدماتي</h2>' + soon('إضافة وإدارة خدماتك هتكون هنا.') + '</div>';
+        if (k === 's_orders') return '<div class="pt-panel active"><h2>الطلبات الواردة</h2>' + soon('طلبات عملائك هتظهر هنا.') + '</div>';
+        if (k === 's_earn') return '<div class="pt-panel active"><h2>الأرباح</h2><div class="pt-stats"><div class="pt-stat"><strong>0 ج.م</strong><span>إجمالي الأرباح</span></div></div>' + soon('تتبع أرباحك هيتفعّل قريبًا.') + '</div>';
+        if (k === 's_withdraw') return '<div class="pt-panel active"><h2>طلب سحب الأرباح</h2>' + soon('سحب الأرباح هيتفعّل قريبًا.') + '</div>';
+        if (k === 's_stats') return '<div class="pt-panel active"><h2>إحصائيات البائع</h2>' + soon('إحصائيات مبيعاتك هتظهر هنا.') + '</div>';
+        return '<div class="pt-panel active"><h2>—</h2></div>';
+      }
+
+      function openPanel(k) {
+        document.querySelectorAll('#ptMenu button').forEach(b => b.classList.toggle('active', b.dataset.k === k));
+        $('ptMain').innerHTML = panelHTML(k);
+        wirePanel(k);
+      }
+      function wirePanel(k) {
+        if (k === 'logout') { signOut(auth); return; }
+        if (k === 'notif') loadNotif();
+        if (k === 'profile') {
+          const s = document.getElementById('pfSave');
+          s && s.addEventListener('click', async () => {
+            const nm = document.getElementById('pfName').value.trim(), ph = document.getElementById('pfPhone').value.trim();
+            try { await updateProfile(curUser, { displayName: nm }); } catch (e) {}
+            try { await setDoc(doc(db, 'users', curUser.uid), { name: nm, phone: ph }, { merge: true }); curData.name = nm; curData.phone = ph; s.innerHTML = '<i class="fas fa-check"></i> اتحفظ ✅'; } catch (e) { alert('تعذّر الحفظ'); }
+          });
+        }
+        if (k === 'security') {
+          const b = document.getElementById('pfPass');
+          b && b.addEventListener('click', async () => { try { await sendPasswordResetEmail(auth, curUser.email); alert('بعتنا رابط تغيير كلمة السر على إيميلك.'); } catch (e) { alert('تعذّر الإرسال (لو دخلت بجوجل غيّرها من إعدادات جوجل).'); } });
+        }
+      }
+      async function loadNotif() {
+        const box = document.getElementById('ptNotif'); if (!box) return;
+        try {
+          const snap = await getDocs(collection(db, 'announcements'));
+          const items = []; snap.forEach(d => items.push(d.data()));
+          box.innerHTML = items.length ? items.map(a => '<div class="pt-list-item"><span class="ico"><i class="fas fa-bullhorn"></i></span><div class="body"><b>' + esc(a.title || 'إشعار') + '</b><small>' + esc(a.body || '') + '</small></div></div>').join('') : '<div class="pt-empty"><i class="fas fa-bell"></i><p>مفيش إشعارات.</p></div>';
+        } catch (e) { box.innerHTML = '<div class="pt-empty"><i class="fas fa-bell"></i><p>مفيش إشعارات.</p></div>'; }
+      }
+      function buildMenu(isSeller) {
+        const items = isSeller ? MENU.slice(0, -2).concat(MENU_SELLER, MENU.slice(-2)) : MENU;
+        $('ptMenu').innerHTML = items.map(m => m.sep
+          ? '<div class="pt-sep">' + m.sep + '</div>'
+          : '<button data-k="' + m.k + '" class="' + (m.cls || '') + '"><i class="fas ' + m.i + '"></i> ' + m.t + '</button>').join('');
+        $('ptMenu').querySelectorAll('button').forEach(b => b.addEventListener('click', () => openPanel(b.dataset.k)));
+      }
 
       onAuthStateChanged(auth, async user => {
-        if (user) {
-          await upsertUser(user, { phone: $('acPhone').value.trim() });
-          $('authBox').style.display = 'none'; $('profileBox').style.display = 'block';
-          const initial = (user.displayName || user.email || 'U').trim()[0] || 'U';
-          const pic = user.photoURL ? '<img src="' + user.photoURL + '" alt="">' : '<span class="av">' + esc(initial) + '</span>';
-          $('profileCard').innerHTML = pic + '<div><strong>' + esc(user.displayName || 'مستخدم') + '</strong><small>' + esc(user.email || '') + '</small></div>';
-          $('stType').textContent = accType === 'seller' ? 'بائع / تاجر' : 'مستخدم';
-        } else { $('authBox').style.display = 'block'; $('profileBox').style.display = 'none'; }
+        if (!user) { $('authWrap').style.display = 'block'; $('profileBox').style.display = 'none'; return; }
+        await upsertUser(user, { phone: $('acPhone') ? $('acPhone').value.trim() : '' });
+        $('authWrap').style.display = 'none'; $('profileBox').style.display = 'block';
+        curUser = user;
+        try { const d = await getDoc(doc(db, 'users', user.uid)); curData = d.exists() ? d.data() : {}; } catch (e) { curData = {}; }
+        // header
+        const initial = (user.displayName || user.email || 'U').trim()[0] || 'U';
+        const pic = user.photoURL ? '<img src="' + user.photoURL + '" alt="">' : '<span class="av">' + esc(initial) + '</span>';
+        $('ptUser').innerHTML = pic + '<div><b>' + esc(curData.name || user.displayName || 'مستخدم') + '</b><small>' + esc(user.email || '') + '</small></div>';
+        // my orders (by phone)
+        myOrders = [];
+        try { if (curData.phone) { const os = await getDocs(query(collection(db, 'orders'), where('phone', '==', curData.phone))); os.forEach(d => myOrders.push(d.data())); } } catch (e) {}
+        buildMenu(curData.type === 'seller');
+        openPanel('home');
       });
     }
   </script>
