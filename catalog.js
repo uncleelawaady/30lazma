@@ -10,6 +10,10 @@
   window.getCoupons = function () {
     try { return JSON.parse(localStorage.getItem('elwasetCoupons') || '[]'); } catch (e) { return []; }
   };
+  // Section dividers (banners between category groups) — config/dividers.
+  window.getDividers = function () {
+    try { return JSON.parse(localStorage.getItem('elwasetDividers') || '[]'); } catch (e) { return []; }
+  };
   window.getCatalog = function () {
     if (promise) return promise;
     promise = (async function () {
@@ -33,6 +37,8 @@
             cats[data._id || d.id.slice(4)] = data;
           } else if (d.id === 'coupons') {
             try { localStorage.setItem('elwasetCoupons', JSON.stringify(d.data().list || [])); } catch (e) {}
+          } else if (d.id === 'dividers') {
+            try { localStorage.setItem('elwasetDividers', JSON.stringify(d.data().list || [])); } catch (e) {}
           }
         });
         if (hasSplit) { localStorage.setItem('elwasetCatalog', JSON.stringify(cats)); return cats; }

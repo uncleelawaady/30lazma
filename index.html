@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Elwaset — منصة الخدمات الرقمية الفاخرة</title>
     <meta name="description" content="Elwaset | الوسيط — منصة رقمية فاخرة لكل الخدمات: سوشيال ميديا، توثيق، حسابات جاهزة، وساطة آمنة، ذكاء اصطناعي، برمجة، تصميم، واشتراكات رقمية.">
-    <link rel="stylesheet" href="style.css?v=14">
+    <link rel="stylesheet" href="style.css?v=15">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -536,7 +536,16 @@
           const esc = s => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
           const ids = Object.keys(cat).filter(id => cat[id].active !== false).sort((a, b) => (cat[a].order || 0) - (cat[b].order || 0));
           if (!ids.length) return;
-          grid.innerHTML = ids.map(id => {
+          // section dividers (banners between category groups) grouped by the category they appear before
+          const divs = (window.getDividers && window.getDividers()) || [];
+          const byBefore = {};
+          divs.filter(d => d && d.active !== false).forEach(d => { const k = d.before || '__top'; (byBefore[k] = byBefore[k] || []).push(d); });
+          const dividerHtml = d =>
+            '<div class="cat-divider' + (d.img ? '' : ' no-art') + '" style="--dg1:' + esc(d.g1 || '#0c2a2f') + ';--dg2:' + esc(d.g2 || '#0b1c24') + '">' +
+            '<div class="cd-text"><h3>' + esc(d.title || '') + '</h3>' + (d.sub ? '<span>' + esc(d.sub) + '</span>' : '') + '</div>' +
+            (d.img ? '<div class="cd-art"><img src="' + esc(d.img) + '" alt=""></div>' : '') +
+            '<span class="cd-tab"></span></div>';
+          const catHtml = id => {
             const c = cat[id];
             const items = (c.groups && c.groups[0] && c.groups[0].items) || [];
             const tags = items.slice(0, 4).map(t => '<span>' + esc(t) + '</span>').join('');
@@ -544,7 +553,11 @@
             return '<a href="category.html?id=' + encodeURIComponent(id) + '" class="cat glass" style="--g1:' + esc(c.g1 || '#17A85E') + ';--g2:' + esc(c.g2 || '#0E7A45') + '">' +
               '<div class="cat-ico">' + ico + '</div><h3>' + esc(c.title || '') + '</h3><p>' + esc(window.catDesc ? window.catDesc(c.title || '') : (c.intro || '')) + '</p>' +
               '<div class="cat-tags">' + tags + '</div></a>';
-          }).join('');
+          };
+          let html = '';
+          (byBefore['__top'] || []).forEach(d => html += dividerHtml(d));
+          ids.forEach(id => { (byBefore[id] || []).forEach(d => html += dividerHtml(d)); html += catHtml(id); });
+          grid.innerHTML = html;
           // re-apply reveal so new cards animate
           grid.querySelectorAll('.cat').forEach((el, i) => { el.classList.add('reveal', 'show'); });
         } catch (e) { /* keep static */ }
