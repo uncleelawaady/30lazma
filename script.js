@@ -83,12 +83,13 @@ counters.forEach(el => cio.observe(el));
 const searchInput = document.getElementById('searchInput');
 const searchBtn = document.getElementById('searchBtn');
 function runSearch() {
-    const q = (searchInput.value || '').trim().toLowerCase();
+    const strip = s => String(s || '').replace(/ـ/g, '');
+    const q = strip(searchInput.value || '').trim().toLowerCase();
     if (!q) { document.getElementById('categories').scrollIntoView({ behavior: 'smooth' }); return; }
     const cats = document.querySelectorAll('.cat');
     let firstMatch = null;
     cats.forEach(c => {
-        const txt = c.textContent.toLowerCase();
+        const txt = strip(c.textContent).toLowerCase();
         const hit = txt.includes(q);
         c.style.opacity = hit ? '1' : '0.25';
         c.style.filter = hit ? 'none' : 'grayscale(0.6)';
