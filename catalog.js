@@ -6,6 +6,10 @@
 // legacy single config/catalog document for older data.
 (function () {
   let promise = null;
+  // Coupons captured during the same config-collection read (config/coupons).
+  window.getCoupons = function () {
+    try { return JSON.parse(localStorage.getItem('elwasetCoupons') || '[]'); } catch (e) { return []; }
+  };
   window.getCatalog = function () {
     if (promise) return promise;
     promise = (async function () {
@@ -27,6 +31,8 @@
             hasSplit = true;
             const data = d.data();
             cats[data._id || d.id.slice(4)] = data;
+          } else if (d.id === 'coupons') {
+            try { localStorage.setItem('elwasetCoupons', JSON.stringify(d.data().list || [])); } catch (e) {}
           }
         });
         if (hasSplit) { localStorage.setItem('elwasetCatalog', JSON.stringify(cats)); return cats; }

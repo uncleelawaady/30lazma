@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تفاصيل الخدمة | Elwaset.net</title>
-    <link rel="stylesheet" href="style.css?v=13">
+    <link rel="stylesheet" href="style.css?v=14">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -85,7 +85,11 @@
                         <!-- coupon -->
                         <div class="svc-field" style="margin-bottom:.6rem">
                             <label for="couponIn">كود خصم (اختياري)</label>
-                            <input type="text" id="couponIn" placeholder="أدخل الكود إن وُجد">
+                            <div class="coupon-row">
+                                <input type="text" id="couponIn" placeholder="أدخل الكود إن وُجد" style="text-transform:uppercase">
+                                <button type="button" class="btn btn-ghost btn-sm" id="couponApply"><i class="fas fa-ticket"></i> تطبيق</button>
+                            </div>
+                            <span class="coupon-msg" id="couponMsg"></span>
                         </div>
                         <!-- notes -->
                         <div class="svc-field" style="margin-bottom:1rem">
@@ -407,9 +411,53 @@
             if (!window.Cart || !validate()) return;
             const extras = getDyn().filter(f => f.val).map(f => f.label + ': ' + f.val).join(' | ');
             const notes = [getNotes(), extras].filter(Boolean).join(' | ');
-            window.Cart.add({ name: svcName, category: c.title, qty: getQ(), price: (d.price || d.p || ''), link: getLink(), notes: notes, coupon: getCoupon(), code: code });
+            const cpTxt = appliedCoupon ? (appliedCoupon.code + ' (خصم ' + (appliedCoupon.type === 'fixed' ? appliedCoupon.value + ' ج' : appliedCoupon.value + '%') + ')') : getCoupon();
+            window.Cart.add({ name: svcName, category: c.title, qty: getQ(), price: (d.price || d.p || ''), link: getLink(), notes: notes, coupon: cpTxt, code: code });
             window.Cart.setQty(svcName, getQ());
         });
+
+        // ===== coupon apply =====
+        let appliedCoupon = null;
+        const couponMsg = document.getElementById('couponMsg');
+        const couponInEl = document.getElementById('couponIn');
+        const basePriceText = (d.price || d.p || '');
+        function findCoupon(code) {
+            const list = (window.getCoupons && window.getCoupons()) || [];
+            return list.find(c => (c.code || '').toUpperCase() === code.toUpperCase());
+        }
+        function couponDiscount(c, base) {
+            if (!c || !(base > 0)) return 0;
+            const off = c.type === 'fixed' ? (+c.value || 0) : base * ((+c.value || 0) / 100);
+            return Math.min(off, base);
+        }
+        function updatePrice() {
+            const pe = document.getElementById('svcPrice');
+            if (!(np > 0)) return;
+            if (appliedCoupon) {
+                const final = Math.max(0, Math.round(np - couponDiscount(appliedCoupon, np)));
+                pe.innerHTML = final.toLocaleString('en') + ' ج <span class="price-was">' + esc(basePriceText) + '</span>';
+            } else pe.textContent = basePriceText;
+        }
+        function couponFail(msg) { appliedCoupon = null; couponMsg.textContent = msg; couponMsg.className = 'coupon-msg bad'; updatePrice(); sync(); }
+        function applyCoupon() {
+            const code = couponInEl.value.trim();
+            couponMsg.className = 'coupon-msg';
+            if (!code) { appliedCoupon = null; couponMsg.textContent = ''; updatePrice(); sync(); return; }
+            const c = findCoupon(code);
+            if (!c) return couponFail('كود غير صحيح');
+            if (c.active === false) return couponFail('الكوبون موقوف حاليًا');
+            if (c.exp && new Date(c.exp).getTime() < Date.now() - 86400000) return couponFail('الكوبون منتهي');
+            if (c.max && (c.used || 0) >= c.max) return couponFail('الكوبون خلص عدد الاستخدامات');
+            if (np > 0 && c.min && np < c.min) return couponFail('الكوبون يبدأ من ' + c.min + ' ج');
+            appliedCoupon = c;
+            if (np > 0) couponMsg.textContent = '✓ تم تطبيق الخصم: -' + Math.round(couponDiscount(c, np)) + ' ج';
+            else couponMsg.textContent = '✓ الكوبون مضاف (السعر بيتحدد عند التأكيد)';
+            couponMsg.className = 'coupon-msg good';
+            updatePrice(); sync();
+        }
+        document.getElementById('couponApply').addEventListener('click', applyCoupon);
+        couponInEl.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); applyCoupon(); } });
+        couponInEl.addEventListener('input', () => { if (appliedCoupon) { appliedCoupon = null; couponMsg.textContent = ''; couponMsg.className = 'coupon-msg'; updatePrice(); } });
 
         function buildWa() {
             const q = getQ();
@@ -420,7 +468,10 @@
             if (needLink && getLink()) t += '🔗 الرابط: ' + getLink() + '\n';
             getDyn().forEach(f => { if (f.val) t += '• ' + f.label + ': ' + f.val + '\n'; });
             t += '🏷️ كود الخدمة: ' + code + '\n';
-            if (getCoupon()) t += '🎟️ كود الخصم: ' + getCoupon() + '\n';
+            if (appliedCoupon) {
+                t += '🎟️ كوبون: ' + appliedCoupon.code + ' (خصم ' + (appliedCoupon.type === 'fixed' ? appliedCoupon.value + ' ج' : appliedCoupon.value + '%') + ')\n';
+                if (np > 0) t += '💰 السعر بعد الخصم: ' + Math.max(0, Math.round(np - couponDiscount(appliedCoupon, np))).toLocaleString('en') + ' ج\n';
+            } else if (getCoupon()) t += '🎟️ كود الخصم: ' + getCoupon() + '\n';
             if (getNotes()) t += '📝 ملاحظات: ' + getNotes() + '\n';
             if (d.medOn) t += '🤝 مطلوب وساطة\n';
             t += '\nياريت التفاصيل والسعر المناسب 🌟';

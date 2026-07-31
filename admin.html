@@ -185,6 +185,7 @@
       <button class="tab" data-tab="sections"><i class="fas fa-eye"></i> إظهار الأقسام</button>
       <button class="tab" data-tab="contact"><i class="fas fa-headset"></i> التواصل</button>
       <button class="tab" data-tab="orders"><i class="fas fa-bag-shopping"></i> الطلبات</button>
+      <button class="tab" data-tab="coupons"><i class="fas fa-ticket"></i> الكوبونات</button>
       <button class="tab" data-tab="policies"><i class="fas fa-file-shield"></i> سياسات المتجر</button>
       <button class="tab" data-tab="reviews"><i class="fas fa-star"></i> التقييمات</button>
       <button class="tab" data-tab="notify"><i class="fas fa-bullhorn"></i> الإشعارات</button>
@@ -284,7 +285,43 @@
 
     <!-- Orders -->
     <div class="panel" id="tab-orders">
-      <div class="card"><h3>طلبات المتجر (<span id="orderCount">0</span>)</h3><div id="orderList"><p class="muted">جاري التحميل…</p></div></div>
+      <div class="card"><h3>طلبات المتجر (<span id="orderCount">0</span>)</h3>
+        <div class="ord-toolbar">
+          <div class="ord-filters" id="ordFilters">
+            <button data-f="all" class="active">الكل</button>
+            <button data-f="new">جديدة</button>
+            <button data-f="processing">قيد التنفيذ</button>
+            <button data-f="done">مكتملة</button>
+            <button data-f="cancelled">ملغية</button>
+          </div>
+          <input type="text" id="ordSearch" class="ord-search" placeholder="بحث بالاسم / الرقم / التليفون…">
+        </div>
+        <div id="orderList"><p class="muted">جاري التحميل…</p></div>
+      </div>
+    </div>
+
+    <!-- Coupons -->
+    <div class="panel" id="tab-coupons">
+      <div class="card"><h3>🎟️ إضافة / تعديل كوبون خصم</h3>
+        <p class="hint">اعمل أكواد خصم للعملاء. الكوبون بيتطبّق تلقائيًا في صفحة الخدمة على الخدمات اللي ليها سعر رقمي، وبيتبعت مع الطلب.</p>
+        <input type="hidden" id="cp_edit" value="">
+        <div class="row" style="gap:.6rem;flex-wrap:wrap">
+          <div class="field" style="flex:1;min-width:150px"><label>كود الكوبون</label><input type="text" id="cp_code" placeholder="مثال: SUMMER25" style="text-transform:uppercase"></div>
+          <div class="field" style="flex:1;min-width:150px"><label>نوع الخصم</label>
+            <select id="cp_type"><option value="percent">نسبة مئوية %</option><option value="fixed">مبلغ ثابت (جنيه)</option></select></div>
+          <div class="field" style="flex:1;min-width:120px"><label>قيمة الخصم</label><input type="number" id="cp_value" placeholder="مثال: 25" min="0"></div>
+        </div>
+        <div class="row" style="gap:.6rem;flex-wrap:wrap">
+          <div class="field" style="flex:1;min-width:150px"><label>أقل مبلغ للطلب (اختياري)</label><input type="number" id="cp_min" placeholder="0 = بدون حد" min="0"></div>
+          <div class="field" style="flex:1;min-width:150px"><label>حد أقصى للاستخدام (اختياري)</label><input type="number" id="cp_max" placeholder="0 = غير محدود" min="0"></div>
+          <div class="field" style="flex:1;min-width:150px"><label>تاريخ الانتهاء (اختياري)</label><input type="date" id="cp_exp"></div>
+        </div>
+        <label class="se-flag" style="margin:.3rem 0"><input type="checkbox" id="cp_active" checked> الكوبون مفعّل</label>
+        <div class="save-bar"><button class="btn btn-ghost" id="cpReset" style="display:none"><i class="fas fa-xmark"></i> إلغاء التعديل</button><button class="btn" id="cpSave"><i class="fas fa-plus"></i> حفظ الكوبون</button></div>
+      </div>
+      <div class="card"><h3>الكوبونات الحالية (<span id="cpCount">0</span>)</h3>
+        <div id="cpList"><p class="muted">جاري التحميل…</p></div>
+      </div>
     </div>
 
     <!-- Notifications -->
@@ -325,6 +362,7 @@
     <!-- Users -->
     <div class="panel" id="tab-users">
       <div class="card"><h3>المستخدمون (<span id="userCount">0</span>)</h3>
+        <div class="ord-toolbar"><input type="text" id="usrSearch" class="ord-search" placeholder="بحث بالاسم / الإيميل / التليفون…"></div>
         <div id="userList"><p class="muted">جاري التحميل…</p></div></div>
     </div>
 
@@ -603,7 +641,7 @@
       $('#adminsTabBtn').style.display = isOwner ? '' : 'none';
       $('#ownerWarn').style.display = 'none';
       if (isOwner) renderAdmins();
-      loadReviews(); loadAnnouncements(); loadUsers(); loadOrders(); loadChatbot();
+      loadReviews(); loadAnnouncements(); loadUsers(); loadOrders(); loadChatbot(); loadCoupons();
       loadCatalog().then(loadDashboard).catch(loadDashboard);
     });
 
@@ -1134,33 +1172,158 @@
     }
     document.getElementById('dashRefresh').addEventListener('click', loadDashboard);
 
+    // ===== Orders (Module 2) =====
+    let allOrders = [];
+    let ordFilter = 'all', ordQuery = '';
+    const ORD_STATES = { new: 'جديد', processing: 'قيد التنفيذ', done: 'مكتمل', cancelled: 'ملغي' };
+    const ORD_STCLASS = { new: 'st-new', processing: 'st-proc', done: 'st-done', cancelled: 'st-cancel' };
+    function orderWaLink(phone, o) {
+      const num = String(phone || '').replace(/\D/g, '').replace(/^0/, '20');
+      const t = 'مرحبًا ' + (o.name || '') + ' 👋\nبخصوص طلبك رقم ' + (o.orderNo || '') + ' من متجر الوسيط.';
+      return 'https://wa.me/' + num + '?text=' + encodeURIComponent(t);
+    }
+    function orderEst(o) {
+      let sum = 0; (o.items || []).forEach(it => { const p = svcPrice(it.name); if (p) sum += p * (it.qty || 1); });
+      return sum;
+    }
+    function orderTime(o) { const t = o.createdAt; if (t && t.seconds) return t.seconds * 1000; if (t && t.toDate) return t.toDate().getTime(); return 0; }
+    function renderOrders() {
+      const box = document.getElementById('orderList');
+      const strip = s => String(s || '').toLowerCase();
+      let items = allOrders.filter(o => {
+        const st = o.status || 'new';
+        if (ordFilter !== 'all' && st !== ordFilter) return false;
+        if (ordQuery) { const hay = strip(o.name + ' ' + o.phone + ' ' + o.orderNo); if (hay.indexOf(ordQuery) === -1) return false; }
+        return true;
+      });
+      if (!items.length) { box.innerHTML = '<p class="muted">مفيش طلبات مطابقة.</p>'; return; }
+      box.innerHTML = items.map(o => {
+        const st = o.status || 'new';
+        const list = (o.items || []).map(it => esc(it.name) + ' ×' + (it.qty || 1) + (it.coupon ? ' 🎟️' : '')).join('، ');
+        const est = orderEst(o);
+        const when = orderTime(o) ? new Date(orderTime(o)).toLocaleString('ar-EG', { dateStyle: 'medium', timeStyle: 'short' }) : '';
+        const sel = '<select class="ord-status-sel" data-sel="1">' + Object.keys(ORD_STATES).map(k =>
+          '<option value="' + k + '"' + (k === st ? ' selected' : '') + '>' + ORD_STATES[k] + '</option>').join('') + '</select>';
+        return '<div class="rev" data-id="' + o._id + '"><div class="meta"><span class="who">' + esc(o.orderNo || 'طلب') + ' — ' + esc(o.name || '') +
+          ' <span class="pill ' + (ORD_STCLASS[st] || 'wait') + '">' + esc(ORD_STATES[st] || st) + '</span></span>' +
+          '<span class="prov">' + esc(o.phone || '') + (when ? ' · ' + when : '') + '</span></div>' +
+          '<p>' + list + (est ? ' <span class="ord-total">≈ ' + est.toLocaleString('en') + ' ج</span>' : '') +
+          (o.notes ? '<br><small>ملاحظات: ' + esc(o.notes) + '</small>' : '') + '</p>' +
+          '<div class="acts">' + sel +
+          '<a class="btn btn-sm wa-mini" href="' + orderWaLink(o.phone, o) + '" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> تواصل</a>' +
+          '<button class="btn btn-red btn-sm" data-act="del"><i class="fas fa-trash"></i> حذف</button></div></div>';
+      }).join('');
+      box.querySelectorAll('.rev').forEach(el => {
+        const id = el.dataset.id;
+        const sel = el.querySelector('[data-sel]');
+        if (sel) sel.addEventListener('change', async () => {
+          try { await updateDoc(doc(db, 'orders', id), { status: sel.value }); const o = allOrders.find(x => x._id === id); if (o) o.status = sel.value; toast('تم تحديث الحالة ✅'); renderOrders(); }
+          catch (e) { toast('تعذّر التحديث — صلاحيات المالك'); }
+        });
+        const del = el.querySelector('[data-act="del"]');
+        if (del) del.addEventListener('click', async () => {
+          if (!confirm('حذف الطلب؟')) return;
+          try { await deleteDoc(doc(db, 'orders', id)); allOrders = allOrders.filter(x => x._id !== id); document.getElementById('orderCount').textContent = allOrders.length; toast('اتحذف ✅'); renderOrders(); }
+          catch (e) { toast('تعذّر الحذف — صلاحيات المالك'); }
+        });
+      });
+    }
     async function loadOrders() {
       const box = document.getElementById('orderList');
       try {
         let snap;
         try { snap = await getDocs(query(collection(db, 'orders'), orderBy('createdAt', 'desc'))); }
         catch (e) { snap = await getDocs(collection(db, 'orders')); }
-        const items = []; snap.forEach(d => { const o = d.data(); o._id = d.id; items.push(o); });
-        document.getElementById('orderCount').textContent = items.length;
-        box.innerHTML = items.length ? items.map(o => {
-          const list = (o.items || []).map(it => esc(it.name) + ' ×' + (it.qty || 1)).join('، ');
-          return '<div class="rev" data-id="' + o._id + '"><div class="meta"><span class="who">' + esc(o.orderNo || 'طلب') + ' — ' + esc(o.name || '') + ' <span class="pill wait">' + esc(o.status || 'new') + '</span></span>' +
-            '<span class="prov">' + esc(o.phone || '') + '</span></div><p>' + list + (o.notes ? '<br><small>ملاحظات: ' + esc(o.notes) + '</small>' : '') + '</p>' +
-            '<div class="acts"><button class="btn btn-sm" data-act="done"><i class="fas fa-check"></i> تم</button>' +
-            '<button class="btn btn-red btn-sm" data-act="del"><i class="fas fa-trash"></i> حذف</button></div></div>';
-        }).join('') : '<p class="muted">مفيش طلبات لسه.</p>';
-        box.querySelectorAll('.rev').forEach(el => {
-          const id = el.dataset.id;
-          el.querySelectorAll('[data-act]').forEach(b => b.addEventListener('click', async () => {
-            try {
-              if (b.dataset.act === 'del') { if (!confirm('حذف الطلب؟')) return; await deleteDoc(doc(db, 'orders', id)); }
-              else await updateDoc(doc(db, 'orders', id), { status: 'done' });
-              toast('تم ✅'); loadOrders();
-            } catch (e) { toast('تعذّر التنفيذ — صلاحيات المالك'); }
-          }));
-        });
+        allOrders = []; snap.forEach(d => { const o = d.data(); o._id = d.id; allOrders.push(o); });
+        document.getElementById('orderCount').textContent = allOrders.length;
+        renderOrders();
       } catch (e) { box.innerHTML = '<p class="muted">تعذّر التحميل — صلاحيات المالك.</p>'; }
     }
+    document.querySelectorAll('#ordFilters button').forEach(b => b.addEventListener('click', () => {
+      document.querySelectorAll('#ordFilters button').forEach(x => x.classList.remove('active'));
+      b.classList.add('active'); ordFilter = b.dataset.f; renderOrders();
+    }));
+    document.getElementById('ordSearch').addEventListener('input', e => { ordQuery = e.target.value.trim().toLowerCase(); renderOrders(); });
+
+    // ===== Coupons (Module 3) =====
+    const CP_REF = doc(db, 'config', 'coupons');
+    let coupons = [];
+    async function loadCoupons() {
+      try { const s = await getDoc(CP_REF); coupons = (s.exists() && Array.isArray(s.data().list)) ? s.data().list : []; }
+      catch (e) { coupons = []; }
+      renderCoupons();
+    }
+    function cpTypeLabel(c) { return c.type === 'fixed' ? (c.value + ' ج') : (c.value + '%'); }
+    function cpExpired(c) { return c.exp && new Date(c.exp).getTime() < Date.now() - 86400000; }
+    function renderCoupons() {
+      const box = $('#cpList'); $('#cpCount').textContent = coupons.length;
+      if (!coupons.length) { box.innerHTML = '<p class="muted">مفيش كوبونات لسه. أضف أول كوبون من فوق.</p>'; return; }
+      box.innerHTML = coupons.map((c, i) => {
+        const off = !c.active, exp = cpExpired(c);
+        const badges = [];
+        badges.push('<span class="pill ' + (c.active && !exp ? 'ok' : 'wait') + '">' + (exp ? 'منتهي' : (c.active ? 'مفعّل' : 'موقوف')) + '</span>');
+        if (c.min) badges.push('<span class="cp-tag">حد أدنى ' + esc(c.min) + ' ج</span>');
+        if (c.max) badges.push('<span class="cp-tag">استخدام ' + (c.used || 0) + '/' + esc(c.max) + '</span>');
+        if (c.exp) badges.push('<span class="cp-tag"><i class="fas fa-calendar"></i> ' + esc(c.exp) + '</span>');
+        return '<div class="rev cp-row' + (off || exp ? ' cp-off' : '') + '" data-i="' + i + '">' +
+          '<div class="meta"><span class="who"><i class="fas fa-ticket"></i> <b class="cp-code">' + esc(c.code) + '</b> — خصم ' + esc(cpTypeLabel(c)) + '</span>' +
+          '<span class="prov">' + badges.join(' ') + '</span></div>' +
+          '<div class="acts"><button class="btn btn-sm" data-act="edit"><i class="fas fa-pen"></i> تعديل</button>' +
+          '<button class="btn btn-sm btn-ghost" data-act="toggle"><i class="fas fa-power-off"></i> ' + (c.active ? 'إيقاف' : 'تفعيل') + '</button>' +
+          '<button class="btn btn-red btn-sm" data-act="del"><i class="fas fa-trash"></i> حذف</button></div></div>';
+      }).join('');
+      box.querySelectorAll('.cp-row').forEach(el => {
+        const i = +el.dataset.i;
+        el.querySelectorAll('[data-act]').forEach(b => b.addEventListener('click', async () => {
+          const act = b.dataset.act;
+          if (act === 'edit') { fillCouponForm(coupons[i]); document.querySelector('[data-tab="coupons"]').scrollIntoView({ behavior: 'smooth' }); return; }
+          if (act === 'toggle') { coupons[i].active = !coupons[i].active; await saveCoupons(); return; }
+          if (act === 'del') { if (!confirm('حذف الكوبون «' + coupons[i].code + '»؟')) return; coupons.splice(i, 1); await saveCoupons(); }
+        }));
+      });
+    }
+    function fillCouponForm(c) {
+      $('#cp_edit').value = c.code; $('#cp_code').value = c.code; $('#cp_type').value = c.type || 'percent';
+      $('#cp_value').value = c.value || ''; $('#cp_min').value = c.min || ''; $('#cp_max').value = c.max || '';
+      $('#cp_exp').value = c.exp || ''; $('#cp_active').checked = c.active !== false;
+      $('#cpReset').style.display = ''; $('#cpSave').innerHTML = '<i class="fas fa-floppy-disk"></i> حفظ التعديل';
+    }
+    function resetCouponForm() {
+      $('#cp_edit').value = ''; $('#cp_code').value = ''; $('#cp_type').value = 'percent';
+      $('#cp_value').value = ''; $('#cp_min').value = ''; $('#cp_max').value = ''; $('#cp_exp').value = '';
+      $('#cp_active').checked = true; $('#cpReset').style.display = 'none';
+      $('#cpSave').innerHTML = '<i class="fas fa-plus"></i> حفظ الكوبون';
+    }
+    async function saveCoupons() {
+      try { await setDoc(CP_REF, { list: coupons }, { merge: false }); renderCoupons(); toast('اتحفظت الكوبونات ✅'); return true; }
+      catch (e) { toast('تعذّر الحفظ — صلاحيات المالك'); return false; }
+    }
+    $('#cpReset') && $('#cpReset').addEventListener('click', resetCouponForm);
+    $('#cpSave') && $('#cpSave').addEventListener('click', async () => {
+      const code = $('#cp_code').value.trim().toUpperCase();
+      const value = parseFloat($('#cp_value').value);
+      if (!code) { toast('اكتب كود الكوبون'); return; }
+      if (!(value > 0)) { toast('اكتب قيمة خصم صحيحة'); return; }
+      const type = $('#cp_type').value;
+      if (type === 'percent' && value > 100) { toast('النسبة لازم تكون 100% أو أقل'); return; }
+      const obj = {
+        code, type, value,
+        min: parseFloat($('#cp_min').value) || 0,
+        max: parseInt($('#cp_max').value, 10) || 0,
+        exp: $('#cp_exp').value || '',
+        active: $('#cp_active').checked,
+        used: 0
+      };
+      const editing = $('#cp_edit').value;
+      const dupIdx = coupons.findIndex(c => c.code.toUpperCase() === code && c.code.toUpperCase() !== editing.toUpperCase());
+      if (dupIdx > -1) { toast('الكود ده موجود قبل كده'); return; }
+      if (editing) {
+        const idx = coupons.findIndex(c => c.code.toUpperCase() === editing.toUpperCase());
+        if (idx > -1) { obj.used = coupons[idx].used || 0; coupons[idx] = obj; }
+        else coupons.push(obj);
+      } else coupons.push(obj);
+      if (await saveCoupons()) resetCouponForm();
+    });
 
     async function loadConfig() {
       try {
@@ -1396,21 +1559,54 @@
       } catch (e) { box.innerHTML = '<p class="muted">تعذّر التحميل.</p>'; }
     }
 
-    // ===== Users =====
+    // ===== Users (Module 2) =====
+    let allUsers = [], usrQuery = '';
+    function userTime(u) { const t = u.createdAt; if (t && t.seconds) return t.seconds * 1000; if (t && t.toDate) return t.toDate().getTime(); return 0; }
+    function provLabel(u) {
+      const p = (u.provider || u.source || '').toLowerCase();
+      if (p.indexOf('google') > -1) return 'Google';
+      if (p.indexOf('face') > -1) return 'Facebook';
+      if (u.phone) return 'هاتف';
+      return u.email ? 'إيميل' : '';
+    }
+    function userOrders(u) {
+      const ph = String(u.phone || '').replace(/\D/g, '');
+      if (!ph) return 0;
+      return allOrders.filter(o => String(o.phone || '').replace(/\D/g, '') === ph).length;
+    }
+    function renderUsers() {
+      const box = $('#userList');
+      const strip = s => String(s || '').toLowerCase();
+      let items = allUsers.filter(u => {
+        if (!usrQuery) return true;
+        return strip(u.name + ' ' + u.email + ' ' + u.phone).indexOf(usrQuery) > -1;
+      });
+      if (!items.length) { box.innerHTML = '<p class="muted">مفيش مستخدمين مطابقين.</p>'; return; }
+      box.innerHTML = items.map(u => {
+        const oc = userOrders(u);
+        const when = userTime(u) ? new Date(userTime(u)).toLocaleDateString('ar-EG', { dateStyle: 'medium' }) : '';
+        const waNum = String(u.phone || '').replace(/\D/g, '').replace(/^0/, '20');
+        const badges = [];
+        if (u.type === 'seller') badges.push('<span class="pill wait">تاجر</span>');
+        if (oc) badges.push('<span class="cp-tag"><i class="fas fa-bag-shopping"></i> ' + oc + ' طلب</span>');
+        return '<div class="rev"><div class="meta"><span class="who">' + esc(u.name || 'مستخدم') + ' ' + badges.join(' ') + '</span>' +
+          '<span class="prov">' + esc(provLabel(u)) + (u.email ? ' · ' + esc(u.email) : '') + (u.phone ? ' · ' + esc(u.phone) : '') + (when ? ' · انضم ' + when : '') + '</span></div>' +
+          (u.phone ? '<div class="acts"><a class="btn btn-sm wa-mini" href="https://wa.me/' + waNum + '" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> واتساب</a></div>' : '') +
+          '</div>';
+      }).join('');
+    }
     async function loadUsers() {
       const box = $('#userList');
       try {
         let snap;
         try { snap = await getDocs(query(collection(db, 'users'), orderBy('createdAt', 'desc'))); }
         catch (e) { snap = await getDocs(collection(db, 'users')); }
-        const items = []; snap.forEach(d => items.push(d.data()));
-        $('#userCount').textContent = items.length;
-        box.innerHTML = items.length ? items.map(u =>
-          '<div class="rev"><div class="meta"><span class="who">' + esc(u.name || 'مستخدم') + '</span>' +
-          '<span class="prov">' + esc(u.provider || '') + (u.email ? ' · ' + esc(u.email) : '') + (u.phone ? ' · ' + esc(u.phone) : '') + '</span></div></div>'
-        ).join('') : '<p class="muted">مفيش مستخدمين مسجّلين لسه.</p>';
+        allUsers = []; snap.forEach(d => allUsers.push(d.data()));
+        $('#userCount').textContent = allUsers.length;
+        renderUsers();
       } catch (e) { box.innerHTML = '<p class="muted">تعذّر التحميل — صلاحيات المالك.</p>'; }
     }
+    document.getElementById('usrSearch').addEventListener('input', e => { usrQuery = e.target.value.trim().toLowerCase(); renderUsers(); });
   </script>
 </body>
 </html>
