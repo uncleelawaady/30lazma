@@ -857,23 +857,38 @@
         }
       });
     })();
+    // Resize + compress an image so its base64 stays SMALL (so many images fit
+    // under Firestore's per-document limit even without Storage). It keeps
+    // reducing quality/size until the result is roughly <= 140 KB.
     function resizeImg(file, max, cb) {
       const img = new Image(); const url = URL.createObjectURL(file);
       img.onload = () => {
-        let w = img.width, h = img.height; const s = Math.min(1, max / Math.max(w, h));
-        w = Math.round(w * s); h = Math.round(h * s);
-        const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
-        const ctx = cv.getContext('2d'); ctx.drawImage(img, 0, 0, w, h);
         URL.revokeObjectURL(url);
-        // detect transparency: transparent logos stay PNG, solid photos become
-        // light JPEG (about 1/5 the size) so uploads are fast and not heavy
+        const s0 = Math.min(1, max / Math.max(img.width, img.height));
+        const baseW = Math.max(1, Math.round(img.width * s0)), baseH = Math.max(1, Math.round(img.height * s0));
+        const ratio = baseH / baseW;
+        // detect *meaningful* transparency (>1.5% of pixels) — otherwise flatten to JPEG (much smaller)
         let hasAlpha = false;
         try {
-          const d = ctx.getImageData(0, 0, w, h).data;
-          for (let i = 3; i < d.length; i += 4) { if (d[i] < 250) { hasAlpha = true; break; } }
-        } catch (e) { hasAlpha = true; }
+          const t = document.createElement('canvas'); t.width = baseW; t.height = baseH;
+          const tx = t.getContext('2d'); tx.drawImage(img, 0, 0, baseW, baseH);
+          const d = tx.getImageData(0, 0, baseW, baseH).data; let tr = 0;
+          for (let i = 3; i < d.length; i += 4) { if (d[i] < 200) tr++; }
+          hasAlpha = tr > (baseW * baseH * 0.015);
+        } catch (e) { hasAlpha = false; }
+        const TARGET = 140 * 1024;
+        function render(w, q) {
+          const cv = document.createElement('canvas'); cv.width = Math.max(1, Math.round(w)); cv.height = Math.max(1, Math.round(w * ratio));
+          cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+          return hasAlpha ? cv.toDataURL('image/png') : cv.toDataURL('image/jpeg', q);
+        }
         try {
-          const out = hasAlpha ? cv.toDataURL('image/png') : cv.toDataURL('image/jpeg', 0.82);
+          let w = baseW, q = 0.72, out = render(w, q), guard = 0;
+          while (out.length > TARGET && guard++ < 10) {
+            if (!hasAlpha && q > 0.42) q -= 0.12; else w = w * 0.85;
+            if (w < 120) break;
+            out = render(w, q);
+          }
           cb(out);
         } catch (e) { alert('تعذّر قراءة الصورة'); }
       };
@@ -1000,26 +1015,40 @@
       const resetBtn = () => { btn.disabled = false; btn.innerHTML = old; };
       catalog = collectCatalog();
       const ids = Object.keys(catalog);
+      const failed = []; let saved = 0; let lastErr = null;
       setBtn('<i class="fas fa-floppy-disk"></i> جاري الحفظ... 0/' + ids.length);
-      try {
-        // write each category to its own small document
-        for (let i = 0; i < ids.length; i++) {
-          const id = ids[i];
-          const data = Object.assign({}, catalog[id], { _id: id });
-          await setDoc(doc(db, 'config', 'cat_' + id), data, { merge: false });
-          setBtn('<i class="fas fa-floppy-disk"></i> جاري الحفظ... ' + (i + 1) + '/' + ids.length);
+      // write each category to its own small document — independently
+      for (let i = 0; i < ids.length; i++) {
+        const id = ids[i];
+        const data = Object.assign({}, catalog[id], { _id: id });
+        try {
+          const size = JSON.stringify(data).length;
+          if (size > 1000000) { failed.push({ id, title: catalog[id].title || id, big: true }); }
+          else { await setDoc(doc(db, 'config', 'cat_' + id), data, { merge: false }); saved++; }
+        } catch (e) { lastErr = e; failed.push({ id, title: catalog[id].title || id }); }
+        setBtn('<i class="fas fa-floppy-disk"></i> جاري الحفظ... ' + (i + 1) + '/' + ids.length);
+      }
+      // delete categories that were removed since load
+      for (const oldId of catStoredIds) {
+        if (ids.indexOf(oldId) === -1) { try { await deleteDoc(doc(db, 'config', 'cat_' + oldId)); } catch (e) {} }
+      }
+      try { await deleteDoc(CAT_REF); } catch (e) {} // remove legacy monolithic doc
+      catStoredIds = ids.slice();
+      try { localStorage.setItem('elwasetCatalog', JSON.stringify(catalog)); } catch (e) {}
+      resetBtn();
+      if (!failed.length) { toast('اتحفظت الأقسام ✅'); }
+      else {
+        const big = failed.filter(f => f.big).map(f => f.title);
+        const w = document.getElementById('ownerWarn');
+        if (w) {
+          w.style.display = 'block';
+          w.innerHTML = '⚠️ اتحفظ ' + saved + ' قسم، لكن ' + failed.length + ' قسم مش قادر يتحفظ' +
+            (big.length ? ': <b>' + big.map(esc).join('، ') + '</b> — صوره أكبر من الحد. جرّب تشيل/تصغّر صور فيه.' : '.') +
+            (lastErr && !big.length ? '<br><small>' + esc((lastErr.code || '') + ' ' + (lastErr.message || '')) + '</small>' : '');
+          w.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-        // delete categories that were removed since load
-        for (const oldId of catStoredIds) {
-          if (ids.indexOf(oldId) === -1) { try { await deleteDoc(doc(db, 'config', 'cat_' + oldId)); } catch (e) {} }
-        }
-        // remove the legacy monolithic document (no longer used) to keep loads fast
-        try { await deleteDoc(CAT_REF); } catch (e) {}
-        catStoredIds = ids.slice();
-        try { localStorage.setItem('elwasetCatalog', JSON.stringify(catalog)); } catch (e) {}
-        toast('اتحفظت الأقسام ✅');
-      } catch (e) { permDenied(e); }
-      finally { resetBtn(); }
+        toast('بعض الأقسام مش اتحفظت — شوف التنبيه الأحمر');
+      }
     });
 
     // ===== Dashboard / stats (computed from Firestore) =====
