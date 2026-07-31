@@ -246,22 +246,25 @@
     <!-- Section dividers -->
     <div class="panel" id="tab-dividers">
       <div class="card"><h3>🖼️ إضافة / تعديل فاصل (بانر قسم)</h3>
-        <p class="hint">الفاصل بانر عريض بيظهر في الصفحة الرئيسية بين مجموعات الأقسام (زي «منصات التواصل»، «منصات الموسيقى»…). حطّ صورة <b>بدون خلفية (PNG شفاف)</b> عشان تطلع بارزة على البانر.</p>
+        <p class="hint">الفاصل بانر عريض بيظهر في الصفحة الرئيسية بين مجموعات الأقسام. حطّ عنصر أو أكتر <b>بدون خلفية (PNG شفاف)</b> — هيطلعوا بارزين <b>برّه الشريط</b> بمنظر ثلاثي الأبعاد.</p>
         <input type="hidden" id="dv_edit" value="">
         <div class="field"><label>عنوان الفاصل</label><input type="text" id="dv_title" placeholder="مثال: 📱 منصات التواصل الاجتماعي"></div>
         <div class="field"><label>سطر صغير تحت العنوان (اختياري)</label><input type="text" id="dv_sub" placeholder="مثال: كل خدمات السوشيال ميديا في مكان واحد"></div>
         <div class="row" style="gap:.6rem;flex-wrap:wrap">
           <div class="field" style="flex:2;min-width:180px"><label>يظهر قبل قسم</label><select id="dv_before"></select></div>
-          <div class="field" style="flex:1;min-width:120px"><label>لون البداية</label><input type="color" id="dv_g1" value="#0c2a2f"></div>
-          <div class="field" style="flex:1;min-width:120px"><label>لون النهاية</label><input type="color" id="dv_g2" value="#0b1c24"></div>
+          <div class="field" style="flex:1;min-width:110px"><label>لون البداية</label><input type="color" id="dv_g1" value="#0c2a2f"></div>
+          <div class="field" style="flex:1;min-width:110px"><label>لون النهاية</label><input type="color" id="dv_g2" value="#0b1c24"></div>
         </div>
-        <div class="ce-imgrow">
-          <img class="dv-preview" id="dv_prev" src="" style="display:none">
-          <label class="btn btn-ghost btn-sm"><i class="fas fa-image"></i> صورة الفاصل (شفافة)<input type="file" accept="image/*" id="dv_file" hidden></label>
-          <button class="btn btn-ghost btn-sm" id="dv_imgdel" style="display:none">إزالة الصورة</button>
-          <input type="hidden" id="dv_img" value="">
+        <div class="row" style="gap:.6rem;flex-wrap:wrap">
+          <div class="field" style="flex:1;min-width:120px"><label>لون النص</label><input type="color" id="dv_tc" value="#eef7f5"></div>
+          <div class="field" style="flex:1;min-width:120px"><label>حجم العنوان</label>
+            <select id="dv_ts"><option value="sm">صغير</option><option value="md" selected>متوسط</option><option value="lg">كبير</option><option value="xl">ضخم</option></select></div>
+          <div class="field" style="flex:1;min-width:120px"><label>انحناء الحواف (px)</label><input type="number" id="dv_radius" value="20" min="0" max="60"></div>
         </div>
-        <label class="se-flag" style="margin:.3rem 0"><input type="checkbox" id="dv_active" checked> الفاصل ظاهر</label>
+        <label style="display:block;margin:.4rem 0 .2rem;font-size:.85rem;color:var(--muted)">عناصر الفاصل (صور شفافة تطلع بارزة) — تقدر تضيف أكتر من عنصر:</label>
+        <div class="dv-arts" id="dv_arts"></div>
+        <input type="file" accept="image/*" id="dv_file" hidden>
+        <label class="se-flag" style="margin:.5rem 0"><input type="checkbox" id="dv_active" checked> الفاصل ظاهر</label>
         <div class="save-bar"><button class="btn btn-ghost" id="dvReset" style="display:none"><i class="fas fa-xmark"></i> إلغاء التعديل</button><button class="btn" id="dvSave"><i class="fas fa-plus"></i> حفظ الفاصل</button></div>
       </div>
       <div class="card"><h3>الفواصل الحالية (<span id="dvCount">0</span>)</h3>
@@ -1364,10 +1367,17 @@
     // ===== Section dividers (banners between category groups) =====
     const DV_REF = doc(db, 'config', 'dividers');
     let dividers = [];
+    let dvArts = [];   // arts of the divider currently being edited: [{img,size}]
+    const DV_SIZE_LBL = { sm: 'صغير', md: 'متوسط', lg: 'كبير', xl: 'ضخم' };
     async function loadDividers() {
       try { const s = await getDoc(DV_REF); dividers = (s.exists() && Array.isArray(s.data().list)) ? s.data().list : []; }
       catch (e) { dividers = []; }
       renderDividers();
+    }
+    function dvArtsOf(d) {
+      if (d.arts && d.arts.length) return d.arts.slice();
+      if (d.img) return [{ img: d.img, size: d.size || 'lg' }];
+      return [];
     }
     function dvBeforeOptions(sel) {
       const opts = ['<option value="">🔝 في أول الصفحة</option>'];
@@ -1379,16 +1389,32 @@
       if (!id) return 'أول الصفحة';
       return catalog[id] ? ('قبل ' + (catalog[id].title || id)) : 'قسم محذوف';
     }
+    // render the arts editor (thumbnails + size selector + add button)
+    function renderDvArts() {
+      const box = $('#dv_arts');
+      const opts = s => Object.keys(DV_SIZE_LBL).map(k => '<option value="' + k + '"' + (k === s ? ' selected' : '') + '>' + DV_SIZE_LBL[k] + '</option>').join('');
+      box.innerHTML = dvArts.map((a, i) =>
+        '<div class="dv-art" data-i="' + i + '"><button type="button" class="dv-art-del" title="حذف">×</button>' +
+        '<img src="' + esc(a.img) + '"><select class="dv-art-size">' + opts(a.size || 'lg') + '</select></div>'
+      ).join('') + '<div class="dv-artadd" id="dvArtAdd"><i class="fas fa-plus"></i><small>أضف عنصر</small></div>';
+      box.querySelectorAll('.dv-art').forEach(el => {
+        const i = +el.dataset.i;
+        el.querySelector('.dv-art-del').addEventListener('click', () => { dvArts.splice(i, 1); renderDvArts(); });
+        el.querySelector('.dv-art-size').addEventListener('change', e => { dvArts[i].size = e.target.value; });
+      });
+      $('#dvArtAdd').addEventListener('click', () => $('#dv_file').click());
+    }
     function renderDividers() {
       $('#dv_before').innerHTML = dvBeforeOptions($('#dv_before').value);
       const box = $('#dvList'); $('#dvCount').textContent = dividers.length;
       if (!dividers.length) { box.innerHTML = '<p class="muted">مفيش فواصل لسه. أضف أول فاصل من فوق.</p>'; return; }
       box.innerHTML = dividers.map((d, i) => {
         const pill = '<span class="pill ' + (d.active !== false ? 'ok' : 'wait') + '">' + (d.active !== false ? 'ظاهر' : 'مخفي') + '</span>';
-        const img = d.img ? '<img class="dv-preview" src="' + esc(d.img) + '">' : '';
+        const arts = dvArtsOf(d);
+        const imgs = arts.map(a => '<img class="dv-preview" src="' + esc(a.img) + '">').join(' ');
         return '<div class="rev dv-row" data-i="' + i + '"><div class="meta"><span class="who"><i class="fas fa-panorama"></i> ' + esc(d.title || '(بدون عنوان)') + ' ' + pill + '</span>' +
-          '<span class="prov"><span class="dv-swatch" style="background:' + esc(d.g1 || '#0c2a2f') + '"></span><span class="dv-swatch" style="background:' + esc(d.g2 || '#0b1c24') + '"></span> ' + esc(dvBeforeLabel(d.before)) + '</span></div>' +
-          (img ? '<div style="margin:.3rem 0">' + img + '</div>' : '') +
+          '<span class="prov"><span class="dv-swatch" style="background:' + esc(d.g1 || '#0c2a2f') + '"></span><span class="dv-swatch" style="background:' + esc(d.g2 || '#0b1c24') + '"></span> ' + esc(dvBeforeLabel(d.before)) + (arts.length ? ' · ' + arts.length + ' عنصر' : '') + '</span></div>' +
+          (imgs ? '<div style="margin:.3rem 0;display:flex;gap:.4rem;flex-wrap:wrap">' + imgs + '</div>' : '') +
           '<div class="acts"><button class="btn btn-sm" data-act="edit"><i class="fas fa-pen"></i> تعديل</button>' +
           '<button class="btn btn-sm" data-act="up"><i class="fas fa-arrow-up"></i></button>' +
           '<button class="btn btn-sm" data-act="down"><i class="fas fa-arrow-down"></i></button>' +
@@ -1410,14 +1436,16 @@
     function fillDividerForm(d, i) {
       $('#dv_edit').value = String(i); $('#dv_title').value = d.title || ''; $('#dv_sub').value = d.sub || '';
       $('#dv_before').innerHTML = dvBeforeOptions(d.before || ''); $('#dv_g1').value = d.g1 || '#0c2a2f'; $('#dv_g2').value = d.g2 || '#0b1c24';
-      $('#dv_img').value = d.img || ''; const pv = $('#dv_prev'); pv.src = d.img || ''; pv.style.display = d.img ? '' : 'none';
-      $('#dv_imgdel').style.display = d.img ? '' : 'none'; $('#dv_active').checked = d.active !== false;
+      $('#dv_tc').value = d.titleColor || '#eef7f5'; $('#dv_ts').value = d.titleSize || 'md'; $('#dv_radius').value = (d.radius != null ? d.radius : 20);
+      dvArts = dvArtsOf(d); renderDvArts();
+      $('#dv_active').checked = d.active !== false;
       $('#dvReset').style.display = ''; $('#dvSave').innerHTML = '<i class="fas fa-floppy-disk"></i> حفظ التعديل';
     }
     function resetDividerForm() {
       $('#dv_edit').value = ''; $('#dv_title').value = ''; $('#dv_sub').value = '';
       $('#dv_before').innerHTML = dvBeforeOptions(''); $('#dv_g1').value = '#0c2a2f'; $('#dv_g2').value = '#0b1c24';
-      $('#dv_img').value = ''; const pv = $('#dv_prev'); pv.src = ''; pv.style.display = 'none'; $('#dv_imgdel').style.display = 'none';
+      $('#dv_tc').value = '#eef7f5'; $('#dv_ts').value = 'md'; $('#dv_radius').value = 20;
+      dvArts = []; renderDvArts();
       $('#dv_active').checked = true; $('#dvReset').style.display = 'none'; $('#dvSave').innerHTML = '<i class="fas fa-plus"></i> حفظ الفاصل';
     }
     async function saveDividers() {
@@ -1426,21 +1454,26 @@
     }
     $('#dv_file') && $('#dv_file').addEventListener('change', e => {
       const f = e.target.files[0]; if (!f) return;
-      const lbl = e.target.closest('label'); const old = lbl.innerHTML; lbl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الرفع...';
-      uploadImage(f, 'dividers', 560, url => {
-        $('#dv_img').value = url; const pv = $('#dv_prev'); pv.src = url; pv.style.display = ''; $('#dv_imgdel').style.display = ''; lbl.innerHTML = old;
-      });
+      const add = $('#dvArtAdd'); const old = add ? add.innerHTML : ''; if (add) add.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+      uploadImage(f, 'dividers', 560, url => { dvArts.push({ img: url, size: 'lg' }); renderDvArts(); });
+      e.target.value = '';
     });
-    $('#dv_imgdel') && $('#dv_imgdel').addEventListener('click', () => { $('#dv_img').value = ''; const pv = $('#dv_prev'); pv.src = ''; pv.style.display = 'none'; $('#dv_imgdel').style.display = 'none'; });
     $('#dvReset') && $('#dvReset').addEventListener('click', resetDividerForm);
     $('#dvSave') && $('#dvSave').addEventListener('click', async () => {
       const title = $('#dv_title').value.trim();
       if (!title) { toast('اكتب عنوان الفاصل'); return; }
-      const obj = { title, sub: $('#dv_sub').value.trim(), before: $('#dv_before').value, g1: $('#dv_g1').value, g2: $('#dv_g2').value, img: $('#dv_img').value, active: $('#dv_active').checked };
+      const obj = {
+        title, sub: $('#dv_sub').value.trim(), before: $('#dv_before').value,
+        g1: $('#dv_g1').value, g2: $('#dv_g2').value,
+        titleColor: $('#dv_tc').value, titleSize: $('#dv_ts').value, radius: parseInt($('#dv_radius').value, 10) || 20,
+        arts: dvArts.filter(a => a && a.img).map(a => ({ img: a.img, size: a.size || 'lg' })),
+        active: $('#dv_active').checked
+      };
       const editing = $('#dv_edit').value;
       if (editing !== '' && dividers[+editing]) dividers[+editing] = obj; else dividers.push(obj);
       if (await saveDividers()) resetDividerForm();
     });
+    renderDvArts();
 
     async function loadConfig() {
       try {

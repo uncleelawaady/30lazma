@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Elwaset — منصة الخدمات الرقمية الفاخرة</title>
     <meta name="description" content="Elwaset | الوسيط — منصة رقمية فاخرة لكل الخدمات: سوشيال ميديا، توثيق، حسابات جاهزة، وساطة آمنة، ذكاء اصطناعي، برمجة، تصميم، واشتراكات رقمية.">
-    <link rel="stylesheet" href="style.css?v=15">
+    <link rel="stylesheet" href="style.css?v=16">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -540,11 +540,25 @@
           const divs = (window.getDividers && window.getDividers()) || [];
           const byBefore = {};
           divs.filter(d => d && d.active !== false).forEach(d => { const k = d.before || '__top'; (byBefore[k] = byBefore[k] || []).push(d); });
-          const dividerHtml = d =>
-            '<div class="cat-divider' + (d.img ? '' : ' no-art') + '" style="--dg1:' + esc(d.g1 || '#0c2a2f') + ';--dg2:' + esc(d.g2 || '#0b1c24') + '">' +
-            '<div class="cd-text"><h3>' + esc(d.title || '') + '</h3>' + (d.sub ? '<span>' + esc(d.sub) + '</span>' : '') + '</div>' +
-            (d.img ? '<div class="cd-art"><img src="' + esc(d.img) + '" alt=""></div>' : '') +
-            '<span class="cd-tab"></span></div>';
+          const artSizeMap = { sm: '96px', md: '140px', lg: '190px', xl: '240px' };
+          const titleSizeMap = {
+            sm: 'clamp(1.1rem,4vw,1.6rem)', md: 'clamp(1.35rem,5.4vw,2.5rem)',
+            lg: 'clamp(1.6rem,6.5vw,3rem)', xl: 'clamp(1.9rem,8vw,3.6rem)'
+          };
+          const dividerHtml = d => {
+            const arts = (d.arts && d.arts.length) ? d.arts : (d.img ? [{ img: d.img, size: d.size || 'lg' }] : []);
+            const artHtml = arts.filter(a => a && a.img).map(a =>
+              '<img class="cd-el" style="height:' + (artSizeMap[a.size] || artSizeMap.lg) + '" src="' + esc(a.img) + '" alt="">').join('');
+            let st = '--dg1:' + esc(d.g1 || '#0c2a2f') + ';--dg2:' + esc(d.g2 || '#0b1c24');
+            st += ';--dvr:' + (d.radius != null ? parseInt(d.radius, 10) : 20) + 'px';
+            if (d.titleColor) st += ';--dvtc:' + esc(d.titleColor);
+            if (d.subColor) st += ';--dvsc:' + esc(d.subColor);
+            st += ';--dvts:' + (titleSizeMap[d.titleSize] || titleSizeMap.md);
+            return '<div class="cat-divider' + (artHtml ? '' : ' no-art') + '" style="' + st + '">' +
+              '<div class="cd-text"><h3>' + esc(d.title || '') + '</h3>' + (d.sub ? '<span>' + esc(d.sub) + '</span>' : '') + '</div>' +
+              (artHtml ? '<div class="cd-arts">' + artHtml + '</div>' : '') +
+              '<span class="cd-tab"></span></div>';
+          };
           const catHtml = id => {
             const c = cat[id];
             const items = (c.groups && c.groups[0] && c.groups[0].items) || [];
