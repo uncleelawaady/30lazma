@@ -109,6 +109,26 @@
     .se-fld .se-fld-label{flex:1 1 140px}
     .se-fld .se-fld-opts{flex:1 1 120px}
     .se-fld select,.se-fld input{background:#0c1712;border:1px solid var(--line);color:var(--text);border-radius:8px;padding:.4rem .55rem;font-family:inherit;font-size:.82rem}
+    /* dashboard */
+    .dash-bar{display:flex;align-items:center;gap:.8rem;margin-bottom:1rem}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.8rem;margin-bottom:1.2rem}
+    .dstat{display:flex;align-items:center;gap:.7rem;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:.9rem 1rem}
+    .dstat-ico{font-size:1.5rem;width:44px;height:44px;display:grid;place-items:center;border-radius:12px;background:rgba(255,255,255,.04);flex:0 0 auto}
+    .dstat-num{display:block;font-family:'Cairo';font-weight:900;font-size:1.5rem;line-height:1.1}
+    .dstat small{color:var(--muted);font-size:.8rem}
+    .dash-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem}
+    .dash-chart{display:flex;align-items:flex-end;gap:.4rem;height:170px;padding-top:.5rem}
+    .dbar{flex:1;display:flex;flex-direction:column;align-items:center;gap:.3rem;height:100%;justify-content:flex-end}
+    .dbar>span{width:100%;max-width:26px;min-height:3px;background:var(--grad);border-radius:6px 6px 0 0;transition:.3s}
+    .dbar small{font-size:.7rem;color:var(--muted)}
+    .drow{display:flex;align-items:center;gap:.6rem;margin-bottom:.55rem;font-size:.88rem}
+    .drow-t{flex:0 0 40%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .drow-bar{flex:1;height:8px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden}
+    .drow-bar>span{display:block;height:100%;background:var(--grad);border-radius:5px}
+    .drow2{display:flex;align-items:center;gap:.6rem;padding:.5rem 0;border-bottom:1px solid var(--line);font-size:.86rem}
+    .drow2 b{flex:0 0 35%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .drow2 span{flex:1;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .drow2 small{color:var(--dim);white-space:nowrap}
     .se-flag input{width:16px!important;height:16px!important;margin:0!important}
     .se-del{flex:0 0 auto}
     /* theme presets */
@@ -158,7 +178,8 @@
     <div id="ownerWarn" style="display:none;background:#3a1414;border:1px solid #c0392b;color:#ffb3a7;border-radius:12px;padding:.8rem 1rem;margin-bottom:14px;font-size:.9rem"></div>
 
     <div class="tabs">
-      <button class="tab active" data-tab="theme"><i class="fas fa-palette"></i> الثيم والألوان</button>
+      <button class="tab active" data-tab="dash"><i class="fas fa-chart-line"></i> لوحة الإحصائيات</button>
+      <button class="tab" data-tab="theme"><i class="fas fa-palette"></i> الثيم والألوان</button>
       <button class="tab" data-tab="texts"><i class="fas fa-font"></i> النصوص</button>
       <button class="tab" data-tab="catalog"><i class="fas fa-boxes-stacked"></i> الأقسام والخدمات</button>
       <button class="tab" data-tab="sections"><i class="fas fa-eye"></i> إظهار الأقسام</button>
@@ -173,7 +194,23 @@
     </div>
 
     <!-- Theme -->
-    <div class="panel active" id="tab-theme">
+    <!-- Dashboard / stats -->
+    <div class="panel active" id="tab-dash">
+      <div class="dash-bar"><button class="btn btn-ghost btn-sm" id="dashRefresh"><i class="fas fa-rotate"></i> تحديث</button><span class="hint" id="dashUpdated"></span></div>
+      <div class="stat-grid" id="dashStats"><p class="muted">جاري حساب الإحصائيات…</p></div>
+      <div class="card"><h3>📈 مخطط الطلبات (آخر ١٤ يوم)</h3><div id="dashChart" class="dash-chart"></div></div>
+      <div class="dash-cols">
+        <div class="card"><h3>🔥 أفضل الخدمات مبيعًا</h3><div id="dashTopSvc"><p class="muted">—</p></div></div>
+        <div class="card"><h3>🗂️ أفضل الأقسام</h3><div id="dashTopCat"><p class="muted">—</p></div></div>
+        <div class="card"><h3>👑 أفضل العملاء</h3><div id="dashTopCust"><p class="muted">—</p></div></div>
+      </div>
+      <div class="dash-cols">
+        <div class="card"><h3>🛒 أحدث الطلبات</h3><div id="dashRecentOrders"><p class="muted">—</p></div></div>
+        <div class="card"><h3>🆕 أحدث التسجيلات</h3><div id="dashRecentUsers"><p class="muted">—</p></div></div>
+      </div>
+    </div>
+
+    <div class="panel" id="tab-theme">
       <div class="card"><h3>🎨 ثيمات جاهزة — Theme Presets</h3>
         <p class="hint">اختر ثيم بروفيشنال جاهز: «معاينة» بيملأ الحقول عشان تعدّل قبل الحفظ، و«تطبيق» بيملأ ويحفظ على الموقع فورًا.</p>
         <div id="themePresets"></div>
@@ -566,7 +603,8 @@
       $('#adminsTabBtn').style.display = isOwner ? '' : 'none';
       $('#ownerWarn').style.display = 'none';
       if (isOwner) renderAdmins();
-      loadReviews(); loadAnnouncements(); loadUsers(); loadOrders(); loadCatalog(); loadChatbot();
+      loadReviews(); loadAnnouncements(); loadUsers(); loadOrders(); loadChatbot();
+      loadCatalog().then(loadDashboard).catch(loadDashboard);
     });
 
     // ===== Admins management (owner only) =====
@@ -983,6 +1021,89 @@
       } catch (e) { permDenied(e); }
       finally { resetBtn(); }
     });
+
+    // ===== Dashboard / stats (computed from Firestore) =====
+    const dashFmt = n => (Math.round(n) || 0).toLocaleString('ar-EG');
+    const orderTs = o => { const c = o && o.createdAt; if (!c) return 0; if (c.seconds) return c.seconds * 1000; const t = Date.parse(c); return isNaN(t) ? 0 : t; };
+    function svcPrice(name) {
+      for (const id in catalog) {
+        const det = catalog[id].details && catalog[id].details[name];
+        if (det && (det.price || det.p)) { const n = parseFloat(String(det.price || det.p).replace(/[^\d.]/g, '')); if (n) return n; }
+      }
+      return 0;
+    }
+    async function loadDashboard() {
+      const stats = document.getElementById('dashStats');
+      let orders = [], users = [];
+      try { const s = await getDocs(collection(db, 'orders')); s.forEach(d => orders.push(d.data())); } catch (e) {}
+      try { const s = await getDocs(collection(db, 'users')); s.forEach(d => users.push(d.data())); } catch (e) {}
+      document.getElementById('dashUpdated').textContent = 'آخر تحديث: ' + new Date().toLocaleTimeString('ar-EG');
+      const now = Date.now();
+      const startToday = new Date(); startToday.setHours(0, 0, 0, 0);
+      const isDone = o => o.status === 'done' || o.status === 'completed';
+      const isCancel = o => o.status === 'cancelled' || o.status === 'canceled' || o.status === 'ملغي' || o.status === 'ملغى';
+      const total = orders.length;
+      const today = orders.filter(o => orderTs(o) >= startToday.getTime()).length;
+      const done = orders.filter(isDone).length;
+      const cancel = orders.filter(isCancel).length;
+      const pending = orders.filter(o => !isDone(o) && !isCancel(o)).length;
+      const newUsers = users.filter(u => orderTs(u) >= now - 7 * 864e5).length;
+      let itemsSold = 0, salesEst = 0;
+      const svcCount = {}, catCount = {}, custCount = {};
+      orders.forEach(o => {
+        (o.items || []).forEach(it => {
+          const q = it.qty || 1; itemsSold += q;
+          salesEst += svcPrice(it.name);
+          if (it.name) svcCount[it.name] = (svcCount[it.name] || 0) + q;
+          if (it.category) catCount[it.category] = (catCount[it.category] || 0) + q;
+        });
+        const key = (o.name || 'عميل') + (o.phone ? ' — ' + o.phone : '');
+        custCount[key] = (custCount[key] || 0) + 1;
+      });
+      const cards = [
+        ['fa-bag-shopping', 'إجمالي الطلبات', dashFmt(total), 'var(--yellow)'],
+        ['fa-clock', 'الطلبات اليوم', dashFmt(today), '#38bdf8'],
+        ['fa-spinner', 'قيد التنفيذ', dashFmt(pending), '#f59e0b'],
+        ['fa-circle-check', 'مكتملة', dashFmt(done), '#22c55e'],
+        ['fa-circle-xmark', 'ملغاة', dashFmt(cancel), '#ef4444'],
+        ['fa-users', 'إجمالي المستخدمين', dashFmt(users.length), 'var(--green)'],
+        ['fa-user-plus', 'مستخدمون جدد (٧ أيام)', dashFmt(newUsers), '#a855f7'],
+        ['fa-cubes', 'الوحدات المباعة', dashFmt(itemsSold), '#14b8a6'],
+        ['fa-coins', 'مبيعات تقديرية', dashFmt(salesEst) + ' ج', '#eab308']
+      ];
+      stats.innerHTML = cards.map(c =>
+        '<div class="dstat"><div class="dstat-ico" style="color:' + c[3] + '"><i class="fas ' + c[0] + '"></i></div>' +
+        '<div><span class="dstat-num">' + c[2] + '</span><small>' + c[1] + '</small></div></div>').join('');
+      // top lists
+      const topList = (obj, empty) => {
+        const arr = Object.keys(obj).map(k => [k, obj[k]]).sort((a, b) => b[1] - a[1]).slice(0, 6);
+        if (!arr.length) return '<p class="muted">' + empty + '</p>';
+        const max = arr[0][1] || 1;
+        return arr.map(([k, v]) => '<div class="drow"><span class="drow-t">' + esc(k) + '</span>' +
+          '<span class="drow-bar"><span style="width:' + Math.round(v / max * 100) + '%"></span></span>' +
+          '<b>' + dashFmt(v) + '</b></div>').join('');
+      };
+      document.getElementById('dashTopSvc').innerHTML = topList(svcCount, 'لا توجد طلبات بعد');
+      document.getElementById('dashTopCat').innerHTML = topList(catCount, 'لا توجد طلبات بعد');
+      document.getElementById('dashTopCust').innerHTML = topList(custCount, 'لا يوجد عملاء بعد');
+      // recent
+      const recent = arr => arr.slice().sort((a, b) => orderTs(b) - orderTs(a)).slice(0, 8);
+      document.getElementById('dashRecentOrders').innerHTML = orders.length
+        ? recent(orders).map(o => '<div class="drow2"><b>' + esc(o.name || 'عميل') + '</b><span>' + esc((o.items && o.items[0] && o.items[0].name) || o.orderNo || '') + '</span><small>' + (orderTs(o) ? new Date(orderTs(o)).toLocaleDateString('ar-EG') : '') + '</small></div>').join('')
+        : '<p class="muted">لا توجد طلبات بعد</p>';
+      document.getElementById('dashRecentUsers').innerHTML = users.length
+        ? recent(users).map(u => '<div class="drow2"><b>' + esc(u.name || 'مستخدم') + '</b><span>' + esc(u.type === 'seller' ? 'تاجر' : 'مستخدم') + '</span><small>' + (orderTs(u) ? new Date(orderTs(u)).toLocaleDateString('ar-EG') : '') + '</small></div>').join('')
+        : '<p class="muted">لا يوجد مستخدمون بعد</p>';
+      // 14-day chart
+      const days = []; const base = new Date(); base.setHours(0, 0, 0, 0);
+      for (let i = 13; i >= 0; i--) { const d = new Date(base); d.setDate(d.getDate() - i); days.push({ d, n: 0 }); }
+      orders.forEach(o => { const t = orderTs(o); if (!t) return; const di = days.findIndex(x => t >= x.d.getTime() && t < x.d.getTime() + 864e5); if (di > -1) days[di].n++; });
+      const cmax = Math.max(1, ...days.map(x => x.n));
+      document.getElementById('dashChart').innerHTML = days.map(x =>
+        '<div class="dbar" title="' + x.d.toLocaleDateString('ar-EG') + ': ' + x.n + '"><span style="height:' + Math.round(x.n / cmax * 100) + '%"></span>' +
+        '<small>' + x.d.getDate() + '</small></div>').join('');
+    }
+    document.getElementById('dashRefresh').addEventListener('click', loadDashboard);
 
     async function loadOrders() {
       const box = document.getElementById('orderList');
