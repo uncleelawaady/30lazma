@@ -1003,6 +1003,8 @@
           groups.push({ h, items: gItems });
         });
         if (!groups.length) groups.push({ h: 'الخدمات', items: [] });
+        // flat item list (kept for back-compat with older readers) = all items across groups
+        const flatItems = groups.reduce((a, g) => a.concat(g.items || []), []);
         out[id] = {
           title: el.querySelector('.ce-title').value.trim(),
           intro: el.querySelector('.ce-intro').value.trim(),
@@ -1011,7 +1013,8 @@
           order: i,
           g1: (catalog[id] && catalog[id].g1) || '#17A85E', g2: (catalog[id] && catalog[id].g2) || '#0E7A45',
           img: el.querySelector('.ce-img').value || '',
-          groups: [{ h: 'الخدمات', items }],
+          groups: groups,
+          items: flatItems,
           details
         };
       });
@@ -1051,7 +1054,13 @@
       const btn = document.getElementById('saveCatalog'); const old = btn.innerHTML;
       const setBtn = t => { btn.disabled = true; btn.innerHTML = t; };
       const resetBtn = () => { btn.disabled = false; btn.innerHTML = old; };
-      catalog = collectCatalog();
+      // collect the form into the catalog object — never let a JS error swallow the save silently
+      try { catalog = collectCatalog(); }
+      catch (err) {
+        const w = document.getElementById('ownerWarn');
+        if (w) { w.style.display = 'block'; w.innerHTML = '⚠️ حصل خطأ أثناء قراءة البيانات قبل الحفظ:<br><small>' + esc(String(err && err.message || err)) + '</small>'; w.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+        toast('تعذّر الحفظ — راجع التنبيه فوق'); return;
+      }
       const ids = Object.keys(catalog);
       const failed = []; let saved = 0; let lastErr = null;
       setBtn('<i class="fas fa-floppy-disk"></i> جاري الحفظ... 0/' + ids.length);
