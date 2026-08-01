@@ -302,6 +302,8 @@
         <div class="save-bar"><button class="btn btn-ghost" id="dvReset" style="display:none"><i class="fas fa-xmark"></i> إلغاء التعديل</button><button class="btn" id="dvSave"><i class="fas fa-plus"></i> حفظ الفاصل</button></div>
       </div>
       <div class="card"><h3>الفواصل الحالية (<span id="dvCount">0</span>)</h3>
+        <div class="save-bar" style="margin:0 0 .8rem"><button class="btn btn-ghost" id="dvGen"><i class="fas fa-wand-magic-sparkles"></i> توليد فاصل لكل قسم تلقائيًا</button></div>
+        <p class="hint">«توليد فاصل لكل قسم» بيعملك بانر جاهز قبل كل قسم بعنوانه — وإنت بعدها تغيّر الألوان وتضيف العناصر وتدوس حفظ. (اللي مش عايزه احذفه.)</p>
         <div id="dvList"><p class="muted">جاري التحميل…</p></div>
       </div>
     </div>
@@ -1498,6 +1500,19 @@
       try { await setDoc(DV_REF, { list: dividers }, { merge: false }); renderDividers(); toast('اتحفظت الفواصل ✅'); return true; }
       catch (e) { toast('تعذّر الحفظ — صلاحيات المالك'); return false; }
     }
+    // Generate one divider before each category (owner then recolors + adds elements)
+    $('#dvGen') && $('#dvGen').addEventListener('click', () => {
+      const ids = Object.keys(catalog).sort((a, b) => (catalog[a].order || 0) - (catalog[b].order || 0));
+      if (!ids.length) { toast('استورد الأقسام واحفظها الأول'); return; }
+      if (dividers.length && !confirm('ده هيستبدل الفواصل الحالية بفاصل لكل قسم. تكمّل؟')) return;
+      dividers = ids.map(id => ({
+        title: catalog[id].title || id, sub: '', before: id,
+        g1: '#0c2a2f', g2: '#0b1c24', titleColor: '#eef7f5', titleSize: 'md', radius: 14,
+        arts: [], active: true
+      }));
+      renderDividers();
+      toast('اتولّدت الفواصل — غيّر الألوان والعناصر ودوس حفظ');
+    });
     $('#dv_file') && $('#dv_file').addEventListener('change', e => {
       const f = e.target.files[0]; if (!f) return;
       const add = $('#dvArtAdd'); const old = add ? add.innerHTML : ''; if (add) add.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';

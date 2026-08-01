@@ -1336,11 +1336,11 @@ body.lb-open { overflow: hidden; }
     grid-column: 1 / -1;
     position: relative; overflow: visible;      /* the free element floats OUT of the bar */
     display: flex; align-items: center; justify-content: flex-start; gap: .8rem;
-    min-height: 111px; padding: .6rem clamp(1rem, 3.5vw, 2rem);   /* uniform bar (+50% height) */
+    min-height: 56px; padding: .45rem clamp(1rem, 3.5vw, 2rem);   /* slim uniform bar */
     /* title sits at the RTL start (right); reserve room on the LEFT (inline-end) for the element */
-    padding-inline-end: clamp(118px, 30vw, 240px);
+    padding-inline-end: clamp(110px, 28vw, 220px);
     /* generous top gap so elements that pop OUT above the strip never crowd the section above */
-    margin: 4.2rem 0 1.1rem; border-radius: var(--dvr, 16px);
+    margin: 3.6rem 0 1rem; border-radius: var(--dvr, 14px);
     background: linear-gradient(115deg, var(--dg1, #0c2a2f) 0%, var(--dg2, #0b1c24) 60%, color-mix(in srgb, var(--dg2, #0b1c24) 80%, #000) 100%);
     border: 1px solid rgba(255, 255, 255, .06);
     box-shadow: 0 14px 40px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .05);
@@ -1380,7 +1380,7 @@ body.lb-open { overflow: hidden; }
 .cat-divider.no-art { padding-inline-end: clamp(1rem, 3.5vw, 2rem); }
 .cat-divider.no-art .cd-text { text-align: right; }
 @media (max-width: 560px) {
-    .cat-divider { min-height: 87px; margin-top: 3.2rem; gap: .5rem; padding-inline-start: clamp(96px, 33vw, 160px); }
+    .cat-divider { min-height: 46px; margin-top: 2.8rem; gap: .5rem; padding-inline-end: clamp(92px, 32vw, 150px); }
     .cat-divider .cd-el { max-width: 46vw; }
 }
 
