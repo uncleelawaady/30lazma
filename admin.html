@@ -179,6 +179,7 @@
 
     <div class="tabs">
       <button class="tab active" data-tab="dash"><i class="fas fa-chart-line"></i> لوحة الإحصائيات</button>
+      <button class="tab" data-tab="brand"><i class="fas fa-fingerprint"></i> الهوية واللوجو</button>
       <button class="tab" data-tab="theme"><i class="fas fa-palette"></i> الثيم والألوان</button>
       <button class="tab" data-tab="texts"><i class="fas fa-font"></i> النصوص</button>
       <button class="tab" data-tab="catalog"><i class="fas fa-boxes-stacked"></i> الأقسام والخدمات</button>
@@ -210,6 +211,38 @@
         <div class="card"><h3>🛒 أحدث الطلبات</h3><div id="dashRecentOrders"><p class="muted">—</p></div></div>
         <div class="card"><h3>🆕 أحدث التسجيلات</h3><div id="dashRecentUsers"><p class="muted">—</p></div></div>
       </div>
+    </div>
+
+    <!-- Brand identity (logo + store name) -->
+    <div class="panel" id="tab-brand">
+      <div class="card"><h3>🖼️ لوجو المتجر</h3>
+        <p class="hint">ارفع لوجو المتجر — هيظهر في النافبار في كل الصفحات. يُفضّل صورة مربّعة (PNG) بجودة عالية.</p>
+        <div class="ce-imgrow">
+          <img class="ce-preview" id="br_logoPrev" src="assets/logo.png" style="width:64px;height:64px;border-radius:14px;object-fit:cover">
+          <label class="btn btn-ghost btn-sm"><i class="fas fa-image"></i> تغيير اللوجو<input type="file" accept="image/*" id="br_logoFile" hidden></label>
+          <button class="btn btn-ghost btn-sm" id="br_logoReset">رجوع للّوجو الأساسي</button>
+          <input type="hidden" id="br_logo" value="">
+        </div>
+        <div class="field" style="max-width:220px"><label>حجم اللوجو (px)</label><input type="number" id="br_logoSize" placeholder="مثال: 40" min="20" max="120"></div>
+      </div>
+      <div class="card"><h3>✏️ اسم المتجر</h3>
+        <div class="row" style="gap:.6rem;flex-wrap:wrap">
+          <div class="field" style="flex:2;min-width:180px"><label>الاسم</label><input type="text" id="br_name" placeholder="NewlyNow"></div>
+          <div class="field" style="flex:1;min-width:120px"><label>اللاحقة (اختياري)</label><input type="text" id="br_suffix" placeholder=".com"></div>
+        </div>
+        <div class="row" style="gap:.6rem;flex-wrap:wrap">
+          <div class="field" style="flex:1;min-width:130px"><label>لون النص</label><input type="color" id="br_color" value="#ffffff"></div>
+          <div class="field" style="flex:1;min-width:130px"><label>حجم النص</label>
+            <select id="br_size"><option value="">افتراضي</option><option value=".95rem">صغير</option><option value="1.15rem">متوسط</option><option value="1.4rem">كبير</option><option value="1.7rem">ضخم</option></select></div>
+          <div class="field" style="flex:1;min-width:130px"><label>مكان اللوجو</label>
+            <select id="br_logoSide"><option value="start">قبل الاسم</option><option value="end">بعد الاسم</option></select></div>
+        </div>
+        <label class="se-flag" style="margin:.3rem 0"><input type="checkbox" id="br_hideName"> إخفاء نص الاسم (اللوجو بس)</label>
+        <div class="brand-live" id="br_preview" style="margin-top:.6rem;padding:.7rem 1rem;background:#0c1712;border:1px solid var(--line);border-radius:12px;display:flex;align-items:center;gap:.6rem">
+          <img id="br_pvLogo" src="assets/logo.png" style="height:40px;border-radius:10px"><span id="br_pvName" style="font-weight:900;font-size:1.2rem;color:#fff">NewlyNow<em style="opacity:.7;font-style:normal">.com</em></span>
+        </div>
+      </div>
+      <div class="save-bar"><button class="btn" id="saveBrand"><i class="fas fa-floppy-disk"></i> حفظ الهوية</button></div>
     </div>
 
     <div class="panel" id="tab-theme">
@@ -1497,6 +1530,14 @@
       $('#p_terms').value = po.terms || ''; $('#p_returns').value = po.returns || '';
       $('#p_refund').value = po.refund || ''; $('#p_service').value = po.service || '';
       $('#p_at_name').value = at.name || ''; $('#p_at_note').value = at.note || ''; $('#p_at_url').value = at.url || '';
+      // brand identity
+      const br = current.brand || {};
+      $('#br_logo').value = br.logo || ''; $('#br_logoPrev').src = br.logo || 'assets/logo.png';
+      $('#br_logoSize').value = br.logoSize || ''; $('#br_name').value = br.name || '';
+      $('#br_suffix').value = br.suffix || ''; $('#br_color').value = br.nameColor || '#ffffff';
+      $('#br_size').value = br.nameSize || ''; $('#br_logoSide').value = br.logoSide || 'start';
+      $('#br_hideName').checked = !!br.hideName;
+      if (typeof brandPreview === 'function') brandPreview();
     }
 
     // Diagnostic when a Firestore write fails — shows the REAL error so we fix the right thing.
@@ -1635,6 +1676,42 @@
         attach: { name: $('#p_at_name').value.trim(), note: $('#p_at_note').value.trim(), url: $('#p_at_url').value.trim() }
       };
       save({ policies }, 'اتحفظت السياسات ✅');
+    });
+
+    // ===== Brand identity (logo + store name) =====
+    function brandPreview() {
+      const logo = $('#br_logo').value || 'assets/logo.png';
+      $('#br_pvLogo').src = logo;
+      const size = $('#br_logoSize').value; $('#br_pvLogo').style.height = (size ? parseInt(size, 10) : 40) + 'px';
+      const name = $('#br_name').value || 'NewlyNow', suf = $('#br_suffix').value;
+      const nameEl = $('#br_pvName');
+      nameEl.style.display = $('#br_hideName').checked ? 'none' : '';
+      nameEl.innerHTML = esc(name) + (suf ? '<em style="opacity:.7;font-style:normal">' + esc(suf) + '</em>' : '');
+      if ($('#br_color').value) nameEl.style.color = $('#br_color').value;
+      nameEl.style.fontSize = $('#br_size').value || '1.2rem';
+      const box = $('#br_preview'); box.style.flexDirection = ($('#br_logoSide').value === 'end') ? 'row-reverse' : '';
+    }
+    ['br_name', 'br_suffix', 'br_color', 'br_size', 'br_logoSize', 'br_logoSide', 'br_hideName'].forEach(id => {
+      const el = $('#' + id); if (el) el.addEventListener('input', brandPreview);
+    });
+    $('#br_logoFile') && $('#br_logoFile').addEventListener('change', e => {
+      const f = e.target.files[0]; if (!f) return;
+      const lbl = e.target.closest('label'); const old = lbl.innerHTML; lbl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الرفع...';
+      uploadImage(f, 'brand', 300, url => { $('#br_logo').value = url; $('#br_logoPrev').src = url; brandPreview(); lbl.innerHTML = old; });
+    });
+    $('#br_logoReset') && $('#br_logoReset').addEventListener('click', () => { $('#br_logo').value = ''; $('#br_logoPrev').src = 'assets/logo.png'; brandPreview(); });
+    $('#saveBrand') && $('#saveBrand').addEventListener('click', () => {
+      const brand = {
+        logo: $('#br_logo').value || '',
+        logoSize: $('#br_logoSize').value || '',
+        name: $('#br_name').value.trim(),
+        suffix: $('#br_suffix').value.trim(),
+        nameColor: $('#br_color').value,
+        nameSize: $('#br_size').value,
+        logoSide: $('#br_logoSide').value,
+        hideName: $('#br_hideName').checked
+      };
+      save({ brand }, 'اتحفظت الهوية ✅');
     });
 
     // ===== Reviews moderation =====

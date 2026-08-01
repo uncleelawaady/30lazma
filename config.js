@@ -3,6 +3,23 @@
   const cfg = window.FIREBASE_CONFIG;
   const root = document.documentElement;
 
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]));
+  function applyBrand(b) {
+    if (!b) return;
+    document.querySelectorAll('.brand-logo-img').forEach(img => {
+      if (b.logo) img.src = b.logo;
+      if (b.logoSize) img.style.height = parseInt(b.logoSize, 10) + 'px';
+    });
+    document.querySelectorAll('.brand-name').forEach(el => {
+      if (b.hideName) { el.style.display = 'none'; return; }
+      el.style.display = '';
+      if (b.name) el.innerHTML = esc(b.name) + (b.suffix ? '<em>' + esc(b.suffix) + '</em>' : '');
+      if (b.nameColor) el.style.color = b.nameColor;
+      if (b.nameSize) el.style.fontSize = b.nameSize;
+    });
+    document.querySelectorAll('.brand').forEach(a => { a.style.flexDirection = (b.logoSide === 'end') ? 'row-reverse' : ''; });
+  }
+
   function apply(c) {
     if (!c) return;
     // expose full config (theme/texts/policies/contact...) for other pages
@@ -18,6 +35,8 @@
       if (v == null || v === '') continue;
       document.querySelectorAll('[data-k="' + k + '"]').forEach(el => { el.textContent = v; });
     }
+    // brand identity (logo + store name) -> navbar on every page
+    if (c.brand) applyBrand(c.brand);
     // show/hide sections by id
     const KNOWN = ['founder', 'categories', 'featured', 'portfolio', 'testimonials', 'proofs', 'payments', 'partners'];
     if (Array.isArray(c.hidden)) {
