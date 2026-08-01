@@ -1,4 +1,4 @@
-// ===== Elwaset — 3D coverflow carousel (categories/services showcase) =====
+// ===== NewlyNow — 3D coverflow carousel (categories/services showcase) =====
 // Renders from the LIVE dashboard catalog (Firestore) when available, so
 // category images/titles/colors stay in sync with the admin panel; falls back
 // to the static window.CATEGORIES from data.js to avoid an initial flash.

@@ -1,8 +1,8 @@
-// ===== Elwaset — shared UI widgets: top ticker + moving services marquee =====
+// ===== NewlyNow — shared UI widgets: top ticker + moving services marquee =====
 (function () {
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const toList = v => Array.isArray(v) ? v : String(v || '').split('|').map(s => s.trim()).filter(Boolean);
-  const tickerDefaults = ['متجر الوسيط — Elwaset.net', 'خدمات مميزة ⭐', 'دعم فني 24/7', 'جروب الوسيط الرسمي', 'أسعار تنافسية 🔥', 'تنفيذ فوري وآمن 🔒'];
+  const tickerDefaults = ['متجر NewlyNow — NewlyNow.com', 'خدمات مميزة ⭐', 'دعم فني 24/7', 'جروب NewlyNow الرسمي', 'أسعار تنافسية 🔥', 'تنفيذ فوري وآمن 🔒'];
 
   function buildTicker(items) {
     const track = document.getElementById('tickerTrack'); if (!track) return;

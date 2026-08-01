@@ -1,4 +1,4 @@
-// ===== Elwaset — auto kashida (tatweel ـ) for a nicer elongated Arabic look =====
+// ===== NewlyNow — auto kashida (tatweel ـ) for a nicer elongated Arabic look =====
 // Inserts the tatweel character between letters that actually JOIN (correct Arabic
 // joining rules), across all visible Arabic text — including content added later.
 // Display-only: it never touches inputs, code, numbers, or Latin text, and search

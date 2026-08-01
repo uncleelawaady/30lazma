@@ -1,4 +1,4 @@
-// ===== Elwaset — store catalog loader (categories/services from Firestore) =====
+// ===== NewlyNow — store catalog loader (categories/services from Firestore) =====
 // Exposes window.getCatalog() -> Promise<categoriesObject|null>
 // Shape matches data.js CATEGORIES: { id: { title, intro, icon, img, active, order, groups:[{h, items:[...]}] } }
 // Storage model: each category is its own small document at config/cat_<id>

@@ -1,4 +1,4 @@
-// ===== Elwaset — store chatbot (knowledge-base assistant) =====
+// ===== NewlyNow — store chatbot (knowledge-base assistant) =====
 // A floating assistant that answers from a keyword-matched knowledge base.
 // The knowledge base + bot name/welcome come from Firestore (config/chatbot,
 // editable in the dashboard) with a localStorage cache and this built-in seed
@@ -7,7 +7,7 @@
   if (window.__elwasetBot) return; window.__elwasetBot = true;
 
   // ---------- built-in seed knowledge base (shared with the dashboard via chatbot-seed.js) ----------
-  const SEED = window.CHATBOT_SEED || { botName: 'مساعد الوسيط', welcome: 'أهلًا! 👋 اسألني عن خدماتنا.', faqs: [] };
+  const SEED = window.CHATBOT_SEED || { botName: 'مساعد NewlyNow', welcome: 'أهلًا! 👋 اسألني عن خدماتنا.', faqs: [] };
 
   // categories shown as quick chips (order matters)
   const CHIP_ORDER = ['الخدمات', 'الوساطة', 'الدفع', 'الطلب', 'الاسترداد', 'التاجر', 'تواصل', 'عام'];
@@ -201,7 +201,7 @@
       }
       if (hit) { addMsg(fmt(hit.a), 'bot'); handled = true; }
       if (!handled) {
-        const wa = (window.ElwasetContact && window.ElwasetContact.cfg && window.ElwasetContact.cfg.wa) || '201055578777';
+        const wa = (window.NewlyNowContact && window.NewlyNowContact.cfg && window.NewlyNowContact.cfg.wa) || '201055578777';
         addMsg('معلش، مش لاقي ده بالظبط 🤔 جرّب تكتب اسم الخدمة (زي «متابعين فيسبوك») أو اختر فئة من تحت، أو تواصل مع الدعم:<br>' +
           '<a class="elbot-wa" href="https://wa.me/' + wa + '" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> تواصل مع الدعم</a>', 'bot');
       }

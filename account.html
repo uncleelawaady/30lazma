@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>حساب جديد | Elwaset.net</title>
-  <meta name="description" content="أنشئ حسابك على Elwaset — حساب مستخدم للشراء أو حساب بائع للموردين وأصحاب المتاجر.">
-  <link rel="stylesheet" href="style.css?v=18">
+  <title>حساب جديد | NewlyNow.com</title>
+  <meta name="description" content="أنشئ حسابك على NewlyNow — حساب مستخدم للشراء أو حساب بائع للموردين وأصحاب المتاجر.">
+  <link rel="stylesheet" href="style.css?v=19">
   <link rel="icon" href="assets/favicon.png" type="image/png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Cairo:wght@400;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -15,8 +15,8 @@
   <nav class="nav" id="nav">
     <div class="container nav-inner">
       <a href="index.html" class="brand">
-        <img src="assets/logo.png" alt="Elwaset" class="brand-logo-img">
-        <span class="brand-name">Elwaset<em>.net</em></span>
+        <img src="assets/logo.png" alt="NewlyNow" class="brand-logo-img">
+        <span class="brand-name">NewlyNow<em>.com</em></span>
       </a>
       <a href="index.html" class="btn btn-ghost btn-sm"><i class="fas fa-house"></i> الرئيسية</a>
     </div>
@@ -28,9 +28,9 @@
       <a href="index.html" class="back-link"><i class="fas fa-arrow-right"></i> رجوع للرئيسية</a>
       <div class="cat-hero-head">
         <div class="cat-hero-ico"><i class="fas fa-user-plus"></i></div>
-        <div><span class="eyebrow" id="acEyebrow">حساب جديد</span><h1 class="grad-text" id="acTitle">انضم إلى Elwaset</h1></div>
+        <div><span class="eyebrow" id="acEyebrow">حساب جديد</span><h1 class="grad-text" id="acTitle">انضم إلى NewlyNow</h1></div>
       </div>
-      <p class="cat-hero-intro" id="acIntro">اختر نوع الحساب المناسب لك، وانضم لمنصة Elwaset — لمتابعة خدماتك واستلام إشعارات العروض والخدمات الجديدة.</p>
+      <p class="cat-hero-intro" id="acIntro">اختر نوع الحساب المناسب لك، وانضم لمنصة NewlyNow — لمتابعة خدماتك واستلام إشعارات العروض والخدمات الجديدة.</p>
     </div>
   </header>
 
@@ -113,7 +113,7 @@
     </div>
   </section>
 
-  <footer class="footer"><div class="foot-bottom">© 2026 Elwaset.net — جميع الحقوق محفوظة | EXD | Elawaady XDigital</div></footer>
+  <footer class="footer"><div class="foot-bottom">© 2026 NewlyNow.com — جميع الحقوق محفوظة | كل ما هو جديد... الآن</div></footer>
 
   <script src="firebase-config.js"></script>
   <script type="module">
@@ -136,7 +136,7 @@
       ['g-name','g-phone','g-pass2','g-terms'].forEach(id => $(id).style.display = reg ? '' : 'none');
       $('forgotWrap').style.display = reg ? 'none' : '';
       $('submitBtn').innerHTML = reg ? '<i class="fas fa-user-plus"></i> إنشاء حساب' : '<i class="fas fa-right-to-bracket"></i> تسجيل الدخول';
-      $('acTitle').textContent = reg ? 'انضم إلى Elwaset' : 'تسجيل الدخول';
+      $('acTitle').textContent = reg ? 'انضم إلى NewlyNow' : 'تسجيل الدخول';
       $('acEyebrow').textContent = reg ? 'حساب جديد' : 'دخول';
       $('toLogin').parentElement.style.display = reg ? '' : 'none';
       $('toRegisterWrap').style.display = reg ? 'none' : '';
@@ -270,7 +270,7 @@
 
       function panelHTML(k) {
         const name = esc(curData.name || (curUser && curUser.displayName) || 'مستخدم');
-        if (k === 'home') return '<div class="pt-panel active"><h2>أهلًا ' + name + ' 👋</h2><p class="sub">ده حسابك على الوسيط — تابع طلباتك وخدماتك من هنا.</p>' +
+        if (k === 'home') return '<div class="pt-panel active"><h2>أهلًا ' + name + ' 👋</h2><p class="sub">ده حسابك على NewlyNow — تابع طلباتك وخدماتك من هنا.</p>' +
           '<div class="pt-stats"><div class="pt-stat"><strong>' + myOrders.length + '</strong><span>عدد الطلبات</span></div>' +
           '<div class="pt-stat"><strong>' + (curData.type === 'seller' ? 'بائع' : 'مستخدم') + '</strong><span>نوع الحساب</span></div>' +
           '<div class="pt-stat"><strong>موثّق</strong><span>الحالة</span></div></div>' +
@@ -289,7 +289,7 @@
         }
         if (k === 'wallet') return '<div class="pt-panel active"><h2>المحفظة والرصيد</h2><div class="pt-stats"><div class="pt-stat"><strong>0 ج.م</strong><span>الرصيد الحالي</span></div></div>' + soon('نظام المحفظة والشحن هيتفعّل قريبًا.') + '</div>';
         if (k === 'invoices') return '<div class="pt-panel active"><h2>المدفوعات والفواتير</h2>' + soon('سجل المدفوعات والفواتير هيظهر هنا.') + '</div>';
-        if (k === 'mediation') return '<div class="pt-panel active"><h2>الوساطة</h2><p class="sub">وساطة آمنة بإشراف فريق الوسيط لكل صفقة.</p><a href="category.html?id=escrow" class="btn btn-grad" style="justify-content:center"><i class="fas fa-handshake"></i> ابدأ وساطة</a></div>';
+        if (k === 'mediation') return '<div class="pt-panel active"><h2>الوساطة</h2><p class="sub">وساطة آمنة بإشراف فريق NewlyNow لكل صفقة.</p><a href="category.html?id=escrow" class="btn btn-grad" style="justify-content:center"><i class="fas fa-handshake"></i> ابدأ وساطة</a></div>';
         if (k === 'support') return '<div class="pt-panel active"><h2>الرسائل والدعم الفني</h2><p class="sub">فريق الدعم متاح 24/7.</p><a href="https://wa.me/' + WA + '" target="_blank" rel="noopener" class="btn btn-grad" style="justify-content:center"><i class="fab fa-whatsapp"></i> تواصل مع الدعم</a></div>';
         if (k === 'notif') return '<div class="pt-panel active"><h2>الإشعارات</h2><div id="ptNotif"><div class="pt-empty"><i class="fas fa-bell"></i><p>جاري التحميل…</p></div></div></div>';
         if (k === 'coupons') return '<div class="pt-panel active"><h2>أكواد الخصم والعروض</h2>' + soon('عروضك وأكواد الخصم هتظهر هنا.') + '</div>';

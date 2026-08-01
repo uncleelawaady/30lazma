@@ -1,4 +1,4 @@
-// ===== Elwaset.net — shopping cart (localStorage, static-safe) =====
+// ===== NewlyNow.com — shopping cart (localStorage, static-safe) =====
 (function () {
   const KEY = 'elwaset_cart';
   const read = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return []; } };

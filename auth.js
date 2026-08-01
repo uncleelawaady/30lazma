@@ -1,4 +1,4 @@
-// ===== Elwaset — navbar account link + notifications bell =====
+// ===== NewlyNow — navbar account link + notifications bell =====
 (function () {
   const nav = document.querySelector('.nav-inner');
   if (!nav) return;

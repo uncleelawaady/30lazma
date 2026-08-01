@@ -1,4 +1,4 @@
-// ===== Elwaset — live site config (theme + texts + sections) from Firestore =====
+// ===== NewlyNow — live site config (theme + texts + sections) from Firestore =====
 (function () {
   const cfg = window.FIREBASE_CONFIG;
   const root = document.documentElement;

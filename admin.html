@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex,nofollow">
-  <title>لوحة تحكم Elwaset</title>
+  <title>لوحة تحكم NewlyNow</title>
   <link rel="icon" href="assets/favicon.png" type="image/png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Cairo:wght@400;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -146,7 +146,7 @@
   <!-- Login gate -->
   <div id="gate" class="gate">
     <i class="fas fa-lock big"></i>
-    <h2>لوحة تحكم Elwaset</h2>
+    <h2>لوحة تحكم NewlyNow</h2>
     <p>سجّل دخولك لإدارة المتجر.</p>
     <div style="width:100%;text-align:right">
       <input type="email" id="liEmail" placeholder="البريد الإلكتروني (اليوزر)" autocomplete="username"
@@ -285,7 +285,7 @@
         <div class="field"><label>ماسنجر (username)</label><input type="text" id="c_mm" placeholder="official.elawaady"></div>
         <div class="field"><label>رقم الاتصال (بدون +)</label><input type="tel" id="c_tel" placeholder="201008002333"></div>
         <div class="field"><label>الشريط المتحرك أعلى الموقع (افصل بين العناصر بعلامة | )</label>
-          <textarea id="c_ticker" rows="2" placeholder="متجر الوسيط | خدمات مميزة ⭐ | دعم 24/7 | جروب الوسيط الرسمي"></textarea></div>
+          <textarea id="c_ticker" rows="2" placeholder="متجر NewlyNow | خدمات مميزة ⭐ | دعم 24/7 | جروب NewlyNow الرسمي"></textarea></div>
       </div>
       <div class="save-bar"><button class="btn" id="saveContact"><i class="fas fa-floppy-disk"></i> حفظ</button></div>
     </div>
@@ -369,7 +369,7 @@
     <!-- Chatbot knowledge base -->
     <div class="panel" id="tab-chatbot">
       <div class="card"><h3>🤖 إعدادات الشات بوت</h3>
-        <div class="field"><label>اسم البوت</label><input type="text" id="cb_name" placeholder="مثال: مساعد الوسيط"></div>
+        <div class="field"><label>اسم البوت</label><input type="text" id="cb_name" placeholder="مثال: مساعد NewlyNow"></div>
         <div class="field"><label>رسالة الترحيب</label><textarea id="cb_welcome" rows="3" placeholder="أهلًا! أنا مساعد المتجر..."></textarea></div>
         <div class="save-bar"><button class="btn btn-ghost" id="cbSeed"><i class="fas fa-file-import"></i> استيراد الأسئلة الافتراضية</button><button class="btn" id="cbSave"><i class="fas fa-floppy-disk"></i> حفظ الشات بوت</button></div>
         <p class="hint">قاعدة المعرفة اللي تحت بيرد بيها البوت. أضف/عدّل/احذف أي سؤال، وحدّد كلمات مفتاحية عشان يلاقيه بسهولة.</p>
@@ -499,9 +499,9 @@
       { g:'ثيمات رمادية / هيقسفيلد', n:'رمادي فاخر', e:'🩶', v:{ bg:'#1a1b1e', text:'#f2f3f5', pink:'#cbd5e1', yellow:'#ffffff', teal:'#94a3b8', 'grad-from':'#e2e8f0', 'grad-to':'#64748b' } },
       { g:'ثيمات رمادية / هيقسفيلد', n:'جرافيت بنفسجي', e:'🌫️', v:{ bg:'#141418', text:'#f0f1f3', pink:'#818cf8', yellow:'#c084fc', teal:'#6366f1', 'grad-from':'#818cf8', 'grad-to':'#7c3aed' } },
       { g:'ثيمات رمادية / هيقسفيلد', n:'فحمي دافئ', e:'🌘', v:{ bg:'#141211', text:'#f5f2ee', pink:'#fb923c', yellow:'#fbbf24', teal:'#f97316', 'grad-from':'#fbbf24', 'grad-to':'#ea580c' } },
-      { g:'ثيم Elawaady', n:'Elawaady', e:'🅰️', v:{ bg:'#052b2b', text:'#eafffb', pink:'#c6ff2e', yellow:'#ff2d9b', teal:'#17c8ac', 'grad-from':'#c6ff2e', 'grad-to':'#17c8ac' } }
+      { g:'ثيم مميّز', n:'Elawaady', e:'🅰️', v:{ bg:'#052b2b', text:'#eafffb', pink:'#c6ff2e', yellow:'#ff2d9b', teal:'#17c8ac', 'grad-from':'#c6ff2e', 'grad-to':'#17c8ac' } }
     ];
-    const THEME_GROUPS = ['الثيم الأساسي', 'ثيم Elawaady', 'ثيمات رمادية / هيقسفيلد', 'ثيمات داكنة', 'ثيمات ملونة', 'ثيمات ليلية متميزة', 'ثيمات دافئة', 'ثيمات افتتاحية'];
+    const THEME_GROUPS = ['الثيم الأساسي', 'ثيم مميّز', 'ثيمات رمادية / هيقسفيلد', 'ثيمات داكنة', 'ثيمات ملونة', 'ثيمات ليلية متميزة', 'ثيمات دافئة', 'ثيمات افتتاحية'];
     // color helpers to derive a FULL palette from the preset's core colors
     function _hx(h) { h = String(h).replace('#', ''); if (h.length === 3) h = h.split('').map(c => c + c).join(''); const n = parseInt(h, 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
     function _toHex(r, g, b) { return '#' + [r, g, b].map(x => Math.max(0, Math.min(255, Math.round(x))).toString(16).padStart(2, '0')).join(''); }
@@ -1218,7 +1218,7 @@
     const ORD_STCLASS = { new: 'st-new', processing: 'st-proc', done: 'st-done', cancelled: 'st-cancel' };
     function orderWaLink(phone, o) {
       const num = String(phone || '').replace(/\D/g, '').replace(/^0/, '20');
-      const t = 'مرحبًا ' + (o.name || '') + ' 👋\nبخصوص طلبك رقم ' + (o.orderNo || '') + ' من متجر الوسيط.';
+      const t = 'مرحبًا ' + (o.name || '') + ' 👋\nبخصوص طلبك رقم ' + (o.orderNo || '') + ' من متجر NewlyNow.';
       return 'https://wa.me/' + num + '?text=' + encodeURIComponent(t);
     }
     function orderEst(o) {

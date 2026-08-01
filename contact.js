@@ -1,4 +1,4 @@
-// ===== Elwaset — unified contact (WhatsApp + Messenger + Call) =====
+// ===== NewlyNow — unified contact (WhatsApp + Messenger + Call) =====
 (function () {
   const CFG = {
     wa: '201055578777',
@@ -85,7 +85,7 @@
     document.addEventListener('click', e => { if (!wrap.contains(e.target)) wrap.classList.remove('open'); });
   }
 
-  window.ElwasetContact = { open: openContact, cfg: CFG };
+  window.NewlyNowContact = { open: openContact, cfg: CFG };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', buildFabs);
   else buildFabs();
 })();

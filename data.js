@@ -1,4 +1,4 @@
-// Elwaset.net — categories data (used by category.html full pages)
+// NewlyNow.com — categories data (used by category.html full pages)
 // Returns the correct Font Awesome class for an icon slug (brand icons need `fab`).
 window.faIcon = function (ic) {
   ic = ic || 'fa-layer-group';
@@ -103,7 +103,7 @@ window.CATEGORIES = {
   "escrow": {
     icon: "fa-handshake", g1: "#FFD400", g2: "#17A85E",
     title: "الوساطة الآمنة",
-    intro: "نظام وساطة رسمي بإشراف فريق الوسيط — وسيط معتمد لكل صفقة، حماية أموالك حتى التسليم الكامل، وتوثيق كل خطوة لحفظ حقوق جميع الأطراف.",
+    intro: "نظام وساطة رسمي بإشراف فريق NewlyNow — وسيط معتمد لكل صفقة، حماية أموالك حتى التسليم الكامل، وتوثيق كل خطوة لحفظ حقوق جميع الأطراف.",
     groups: [
       { h: "أنواع الوساطة", items: ["وساطة حسابات","وساطة دومينات","وساطة مواقع","وساطة بوتات","وساطة تطبيقات","وساطة خدمات رقمية"] },
       { h: "كيف تتم", items: ["فتح طلب وساطة","موافقة الطرفين","تعيين وسيط","تأكيد الدفع","التنفيذ ونقل الملكية","تأكيد الاستلام","تحويل المستحقات"] }

@@ -1,4 +1,4 @@
-// Elwaset.net — interactions
+// NewlyNow.com — interactions
 
 // Proofs lightbox
 (function () {
