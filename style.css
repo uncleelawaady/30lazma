@@ -1384,6 +1384,23 @@ body.lb-open { overflow: hidden; }
     .cat-divider .cd-el { max-width: 46vw; }
 }
 
+/* ===== Treks-style sectioned home: divider banner + horizontal card row ===== */
+.cat-grid.home-sections { display: block; }
+.home-sec { margin-bottom: 1.2rem; }
+.home-sec .cat-divider { margin-bottom: .6rem; }
+.sec-slider {
+    display: flex; gap: 14px; overflow-x: auto; overflow-y: visible;
+    padding: .3rem .2rem 1rem; scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch; scrollbar-width: thin;
+}
+.sec-slider::-webkit-scrollbar { height: 6px; }
+.sec-slider::-webkit-scrollbar-track { background: transparent; }
+.sec-slider::-webkit-scrollbar-thumb { background: var(--glass-brd, rgba(255,255,255,.15)); border-radius: 6px; }
+.sec-slider > .cat {
+    flex: 0 0 auto; width: clamp(150px, 42vw, 215px); scroll-snap-align: start;
+}
+@media (min-width: 900px) { .sec-slider > .cat { width: 210px; } }
+
 /* ===== Divider manager (admin) ===== */
 .dv-row .dv-swatch { display: inline-block; width: 16px; height: 16px; border-radius: 5px; vertical-align: middle; margin-inline-end: 4px; border: 1px solid rgba(255,255,255,.2); }
 .dv-preview { height: 40px; border-radius: 8px; vertical-align: middle; background: #0c1712; border: 1px solid var(--glass-brd); }
