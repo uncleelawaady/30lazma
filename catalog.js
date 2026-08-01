@@ -11,8 +11,13 @@
     try { return JSON.parse(localStorage.getItem('elwasetCoupons') || '[]'); } catch (e) { return []; }
   };
   // Section dividers (banners between category groups) — config/dividers.
+  // Falls back to the built-in section headers (data.js DEFAULT_DIVIDERS) when none saved yet.
   window.getDividers = function () {
-    try { return JSON.parse(localStorage.getItem('elwasetDividers') || '[]'); } catch (e) { return []; }
+    try {
+      const stored = JSON.parse(localStorage.getItem('elwasetDividers') || '[]');
+      if (stored && stored.length) return stored;
+    } catch (e) {}
+    return (typeof window !== 'undefined' && window.DEFAULT_DIVIDERS) || [];
   };
   window.getCatalog = function () {
     if (promise) return promise;

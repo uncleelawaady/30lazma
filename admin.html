@@ -1078,6 +1078,8 @@
           active: el.querySelector('.ce-on').checked,
           order: i,
           g1: (catalog[id] && catalog[id].g1) || '#17A85E', g2: (catalog[id] && catalog[id].g2) || '#0E7A45',
+          section: (catalog[id] && catalog[id].section) || '',
+          sectionTitle: (catalog[id] && catalog[id].sectionTitle) || '',
           img: el.querySelector('.ce-img').value || '',
           groups: groups,
           items: flatItems,
@@ -1500,18 +1502,29 @@
       try { await setDoc(DV_REF, { list: dividers }, { merge: false }); renderDividers(); toast('اتحفظت الفواصل ✅'); return true; }
       catch (e) { toast('تعذّر الحفظ — صلاحيات المالك'); return false; }
     }
-    // Generate one divider before each category (owner then recolors + adds elements)
+    // Generate one divider per SECTION, placed before its first platform card
+    // (owner then recolors + adds the section's 3D element). Falls back to one
+    // divider per category if categories have no section metadata.
     $('#dvGen') && $('#dvGen').addEventListener('click', () => {
       const ids = Object.keys(catalog).sort((a, b) => (catalog[a].order || 0) - (catalog[b].order || 0));
       if (!ids.length) { toast('استورد الأقسام واحفظها الأول'); return; }
-      if (dividers.length && !confirm('ده هيستبدل الفواصل الحالية بفاصل لكل قسم. تكمّل؟')) return;
-      dividers = ids.map(id => ({
-        title: catalog[id].title || id, sub: '', before: id,
-        g1: '#0c2a2f', g2: '#0b1c24', titleColor: '#eef7f5', titleSize: 'md', radius: 14,
-        arts: [], active: true
-      }));
+      if (dividers.length && !confirm('ده هيستبدل الفواصل الحالية. تكمّل؟')) return;
+      const hasSections = ids.some(id => catalog[id].section);
+      const out = [];
+      if (hasSections) {
+        const seen = {};
+        ids.forEach(id => {
+          const s = catalog[id].section; if (!s || seen[s]) return; seen[s] = 1;
+          out.push({ title: catalog[id].sectionTitle || catalog[id].title || s, sub: '', before: id,
+            g1: catalog[id].g1 || '#0c2a2f', g2: catalog[id].g2 || '#0b1c24', titleColor: '#eef7f5', titleSize: 'md', radius: 14, arts: [], active: true });
+        });
+      } else {
+        ids.forEach(id => out.push({ title: catalog[id].title || id, sub: '', before: id,
+          g1: '#0c2a2f', g2: '#0b1c24', titleColor: '#eef7f5', titleSize: 'md', radius: 14, arts: [], active: true }));
+      }
+      dividers = out;
       renderDividers();
-      toast('اتولّدت الفواصل — غيّر الألوان والعناصر ودوس حفظ');
+      toast('اتولّدت الفواصل (' + out.length + ') — غيّر الألوان والعناصر ودوس حفظ');
     });
     $('#dv_file') && $('#dv_file').addEventListener('change', e => {
       const f = e.target.files[0]; if (!f) return;
