@@ -266,6 +266,7 @@
     <!-- Catalog (categories + services) -->
     <div class="panel" id="tab-catalog">
       <div class="card"><h3>الأقسام والخدمات</h3>
+        <div class="ord-toolbar"><input type="text" id="catSearch" class="ord-search" placeholder="بحث في الأقسام والخدمات بالاسم…"></div>
         <div id="catList"><p class="muted">جاري التحميل…</p></div>
         <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem">
           <button class="btn btn-ghost btn-sm" id="addCat"><i class="fas fa-plus"></i> إضافة قسم جديد</button>
@@ -1110,6 +1111,18 @@
         catalog[id] = { ...c, details, active: true, order: i++ };
       }
       renderCatalog(); toast('اتحمّلت — دوس حفظ');
+    });
+    // Catalog search — filter category editors by title or any service name
+    $('#catSearch') && $('#catSearch').addEventListener('input', e => {
+      const q = e.target.value.trim().toLowerCase().replace(/ـ/g, '');
+      document.querySelectorAll('#catList .cat-edit').forEach(el => {
+        if (!q) { el.style.display = ''; return; }
+        const title = (el.querySelector('.ce-title') || {}).value || '';
+        let hay = title;
+        el.querySelectorAll('.se-name').forEach(n => { hay += ' ' + (n.value || ''); });
+        el.querySelectorAll('.ce-grp-name').forEach(n => { hay += ' ' + (n.value || ''); });
+        el.style.display = hay.toLowerCase().replace(/ـ/g, '').indexOf(q) > -1 ? '' : 'none';
+      });
     });
     // Save the catalog as one small document PER CATEGORY (config/cat_<id>),
     // so no single document ever hits Firestore's 1 MiB limit.

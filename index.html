@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NewlyNow — منصة الخدمات الرقمية الفاخرة</title>
     <meta name="description" content="NewlyNow — كل ما هو جديد... الآن — منصة رقمية فاخرة لكل الخدمات: سوشيال ميديا، توثيق، حسابات جاهزة، وساطة آمنة، ذكاء اصطناعي، برمجة، تصميم، واشتراكات رقمية.">
-    <link rel="stylesheet" href="style.css?v=21">
+    <link rel="stylesheet" href="style.css?v=22">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -113,7 +113,7 @@
         <div class="container">
             <div class="head">
                 <span class="eyebrow" data-k="catsEyebrow">الأقسام الرئيسية</span>
-                <h2>استكشف <span class="grad-text">20+ قسم</span> احترافي</h2>
+                <h2>استكشف <span class="grad-text">30+ قسم</span> احترافي</h2>
                 <p data-k="catsDesc">كل ما تحتاجه من خدمات رقمية منظمة في أقسام واضحة وسهلة التصفح.</p>
             </div>
 
@@ -529,8 +529,9 @@
       // Render categories grid from the dashboard catalog (fallback: keep static cards)
       (async function () {
         try {
-          const cat = window.getCatalog && await window.getCatalog();
-          if (!cat) return;
+          // dashboard catalog if present; otherwise the full built-in structure (data.js)
+          const cat = (window.getCatalog && await window.getCatalog()) || window.CATEGORIES;
+          if (!cat || !Object.keys(cat).length) return;
           const grid = document.querySelector('.cat-grid');
           if (!grid) return;
           const esc = s => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
