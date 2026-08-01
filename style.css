@@ -1335,9 +1335,9 @@ body.lb-open { overflow: hidden; }
 .cat-divider {
     grid-column: 1 / -1;
     position: relative; overflow: visible;      /* elements pop OUT of the bar */
-    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-    min-height: 128px; padding: 0 clamp(1.1rem, 4vw, 2.4rem);
-    margin: 2.6rem 0 1rem; border-radius: var(--dvr, 20px);
+    display: flex; align-items: center; justify-content: space-between; gap: .8rem;
+    min-height: 74px; padding: .5rem clamp(1rem, 3.5vw, 2rem);   /* SLIM bar */
+    margin: 2.4rem 0 .9rem; border-radius: var(--dvr, 16px);
     background: linear-gradient(115deg, var(--dg1, #0c2a2f) 0%, var(--dg2, #0b1c24) 60%, color-mix(in srgb, var(--dg2, #0b1c24) 80%, #000) 100%);
     border: 1px solid rgba(255, 255, 255, .06);
     box-shadow: 0 14px 40px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .05);
@@ -1349,25 +1349,25 @@ body.lb-open { overflow: hidden; }
     border-radius: inherit; overflow: hidden;
     background: linear-gradient(115deg, transparent 45%, rgba(255, 255, 255, .05) 62%, transparent 70%);
 }
-.cat-divider .cd-text { position: relative; z-index: 2; text-align: right; }
+.cat-divider .cd-text { position: relative; z-index: 2; text-align: right; flex: 1 1 auto; min-width: 0; }
 .cat-divider .cd-text h3 {
     margin: 0; font-family: var(--font-head, 'Tajawal'), sans-serif; font-weight: 900;
-    font-size: var(--dvts, clamp(1.35rem, 5.4vw, 2.5rem)); line-height: 1.15; letter-spacing: .5px;
+    font-size: var(--dvts, clamp(1.1rem, 4vw, 1.6rem)); line-height: 1.2; letter-spacing: .3px;
     color: var(--dvtc, #eef7f5); text-shadow: 0 2px 18px rgba(0, 0, 0, .45);
 }
 .cat-divider .cd-text span {
-    display: block; margin-top: .35rem; color: var(--dvsc, var(--brand, #17c8ac));
-    font-weight: 700; font-size: clamp(.8rem, 2.6vw, 1rem);
+    display: block; margin-top: .2rem; color: var(--dvsc, var(--brand, #17c8ac));
+    font-weight: 700; font-size: clamp(.72rem, 2.2vw, .92rem);
 }
-/* elements sit at the bottom edge; taller ones stick OUT the top of the bar */
+/* elements sit at the bottom edge; taller ones stick OUT the top of the slim bar */
 .cat-divider .cd-arts { position: relative; z-index: 3; flex: 0 0 auto; align-self: flex-end;
-    display: flex; align-items: flex-end; gap: .6rem; }
+    display: flex; align-items: flex-end; gap: .5rem; }
 .cat-divider .cd-el {
-    width: auto; max-width: 42vw; object-fit: contain; align-self: flex-end;
+    width: auto; max-width: 40vw; object-fit: contain; align-self: flex-end;
     /* CLEAN cut-out — never feather/mask a divider element, keep transparency */
     -webkit-mask-image: none !important; mask-image: none !important;
-    filter: drop-shadow(0 16px 22px rgba(0, 0, 0, .55));
-    transform: translateY(10px);                /* let it dip slightly below the bar too */
+    filter: drop-shadow(0 14px 20px rgba(0, 0, 0, .5));
+    transform: translateY(8px);                 /* dip slightly below the slim bar too */
 }
 .cat-divider.no-art { justify-content: center; }
 .cat-divider.no-art .cd-text { text-align: center; }
@@ -1378,8 +1378,8 @@ body.lb-open { overflow: hidden; }
     background: linear-gradient(180deg, var(--brand, #17c8ac), color-mix(in srgb, var(--brand, #17c8ac) 60%, #000));
 }
 @media (max-width: 560px) {
-    .cat-divider { min-height: 100px; margin-top: 2rem; }
-    .cat-divider .cd-el { max-width: 46vw; }
+    .cat-divider { min-height: 58px; margin-top: 1.8rem; gap: .5rem; }
+    .cat-divider .cd-el { max-width: 44vw; }
 }
 
 /* ===== Divider manager (admin) ===== */
