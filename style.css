@@ -1337,8 +1337,8 @@ body.lb-open { overflow: hidden; }
     position: relative; overflow: visible;      /* the free element floats OUT of the bar */
     display: flex; align-items: center; justify-content: flex-start; gap: .8rem;
     min-height: 111px; padding: .6rem clamp(1rem, 3.5vw, 2rem);   /* uniform bar (+50% height) */
-    /* reserve room on the RTL-start (left) side for the free-floating element */
-    padding-inline-start: clamp(118px, 30vw, 240px);
+    /* title sits at the RTL start (right); reserve room on the LEFT (inline-end) for the element */
+    padding-inline-end: clamp(118px, 30vw, 240px);
     /* generous top gap so elements that pop OUT above the strip never crowd the section above */
     margin: 4.2rem 0 1.1rem; border-radius: var(--dvr, 16px);
     background: linear-gradient(115deg, var(--dg1, #0c2a2f) 0%, var(--dg2, #0b1c24) 60%, color-mix(in srgb, var(--dg2, #0b1c24) 80%, #000) 100%);
@@ -1364,8 +1364,9 @@ body.lb-open { overflow: hidden; }
 }
 /* the element is FREE: floats over the RTL-start (left) edge, detached from the bar,
    popping ABOVE it — the bar itself stays a clean, uniform strip */
+/* element floats on the LEFT (inline-end in RTL) — the opposite side from the title */
 .cat-divider .cd-arts {
-    position: absolute; inset-inline-start: clamp(.2rem, 1vw, .7rem); bottom: -6px;
+    position: absolute; inset-inline-end: clamp(.2rem, 1vw, .7rem); bottom: -6px;
     z-index: 6; display: flex; align-items: flex-end; gap: .5rem;
     pointer-events: none;                        /* purely decorative */
 }
@@ -1376,14 +1377,8 @@ body.lb-open { overflow: hidden; }
     filter: drop-shadow(0 16px 22px rgba(0, 0, 0, .55));
 }
 /* no element → no reserved space, but title STAYS on the right (RTL start) */
-.cat-divider.no-art { padding-inline-start: clamp(1rem, 3.5vw, 2rem); }
+.cat-divider.no-art { padding-inline-end: clamp(1rem, 3.5vw, 2rem); }
 .cat-divider.no-art .cd-text { text-align: right; }
-/* teal accent tab on the RTL start (right) edge */
-.cat-divider .cd-tab {
-    position: absolute; top: 50%; right: 0; transform: translateY(-50%); z-index: 2;
-    width: 7px; height: 52%; border-radius: 7px 0 0 7px;
-    background: linear-gradient(180deg, var(--brand, #17c8ac), color-mix(in srgb, var(--brand, #17c8ac) 60%, #000));
-}
 @media (max-width: 560px) {
     .cat-divider { min-height: 87px; margin-top: 3.2rem; gap: .5rem; padding-inline-start: clamp(96px, 33vw, 160px); }
     .cat-divider .cd-el { max-width: 46vw; }

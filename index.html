@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NewlyNow — منصة الخدمات الرقمية الفاخرة</title>
     <meta name="description" content="NewlyNow — كل ما هو جديد... الآن — منصة رقمية فاخرة لكل الخدمات: سوشيال ميديا، توثيق، حسابات جاهزة، وساطة آمنة، ذكاء اصطناعي، برمجة، تصميم، واشتراكات رقمية.">
-    <link rel="stylesheet" href="style.css?v=20">
+    <link rel="stylesheet" href="style.css?v=21">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -555,9 +555,9 @@
             if (d.subColor) st += ';--dvsc:' + esc(d.subColor);
             st += ';--dvts:' + (titleSizeMap[d.titleSize] || titleSizeMap.md);
             return '<div class="cat-divider' + (artHtml ? '' : ' no-art') + '" style="' + st + '">' +
-              '<div class="cd-text"><h3>' + esc(d.title || '') + '</h3>' + (d.sub ? '<span>' + esc(d.sub) + '</span>' : '') + '</div>' +
+              '<div class="cd-text no-kashida"><h3>' + esc(d.title || '') + '</h3>' + (d.sub ? '<span>' + esc(d.sub) + '</span>' : '') + '</div>' +
               (artHtml ? '<div class="cd-arts">' + artHtml + '</div>' : '') +
-              '<span class="cd-tab"></span></div>';
+              '</div>';
           };
           const catHtml = id => {
             const c = cat[id];
