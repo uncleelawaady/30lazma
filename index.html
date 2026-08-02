@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NewlyNow — منصة الخدمات الرقمية الفاخرة</title>
     <meta name="description" content="NewlyNow — كل ما هو جديد... الآن — منصة رقمية فاخرة لكل الخدمات: سوشيال ميديا، توثيق، حسابات جاهزة، وساطة آمنة، ذكاء اصطناعي، برمجة، تصميم، واشتراكات رقمية.">
-    <link rel="stylesheet" href="style.css?v=28">
+    <link rel="stylesheet" href="style.css?v=29">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -520,11 +520,11 @@
     <script src="chatbot-seed.js?v=1"></script>
     <script src="chatbot.js?v=3"></script>
     <script src="firebase-config.js"></script>
-    <script src="config.js?v=28"></script>
+    <script src="config.js?v=29"></script>
     <script src="auth.js"></script>
     <script src="cart.js"></script>
-    <script src="data.js?v=28"></script>
-    <script src="catalog.js?v=28"></script>
+    <script src="data.js?v=29"></script>
+    <script src="catalog.js?v=29"></script>
     <script>
       // Render categories grid from the dashboard catalog (fallback: keep static cards)
       (async function () {
@@ -599,13 +599,22 @@
           const grouped = sectionsOrder.some(s => bySection[s].length > 1); // real sections exist
           if (grouped) {
             grid.classList.add('home-sections');
+            // two auto-scrolling rows per section, moving in opposite directions
+            const track = (arr, cls) => {
+              if (!arr.length) return '';
+              const cards = arr.map(catHtml).join('');
+              const dur = Math.max(22, arr.length * 7);
+              return '<div class="mq-track ' + cls + '" style="animation-duration:' + dur + 's">' + cards + cards + '</div>';
+            };
             sectionsOrder.forEach(s => {
               const catIds = bySection[s]; const firstId = catIds[0];
               const d = divByBefore[firstId];
               const secTitle = cat[firstId].sectionTitle || '';
+              const rowA = [], rowB = [];
+              catIds.forEach((id, i) => (i % 2 === 0 ? rowA : rowB).push(id));
               html += '<div class="home-sec">';
               html += d ? dividerHtml(d) : (secTitle ? secTitleHtml(secTitle) : '');
-              html += '<div class="sec-slider">' + catIds.map(catHtml).join('') + '</div>';
+              html += '<div class="sec-marquee">' + track(rowA, 'mq-ltr') + track(rowB, 'mq-rtl') + '</div>';
               html += '</div>';
             });
           } else {
@@ -615,10 +624,17 @@
           grid.innerHTML = html;
           // re-apply reveal so new cards animate
           grid.querySelectorAll('.cat').forEach((el, i) => { el.classList.add('reveal', 'show'); });
+          // section banners "pop" when scrolled into view
+          try {
+            const dio = new IntersectionObserver(ents => {
+              ents.forEach(e => { if (e.isIntersecting) { e.target.classList.add('pop'); dio.unobserve(e.target); } });
+            }, { threshold: 0.25 });
+            grid.querySelectorAll('.cat-divider').forEach(el => dio.observe(el));
+          } catch (e) {}
         } catch (e) { /* keep static */ }
       })();
     </script>
-    <script src="widgets.js?v=28"></script>
+    <script src="widgets.js?v=29"></script>
     <script src="coverflow.js?v=2"></script>
     <script>
       // Unified card description under every category card (works on static + dynamic cards)

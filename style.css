@@ -1401,6 +1401,25 @@ body.lb-open { overflow: hidden; }
 }
 @media (min-width: 900px) { .sec-slider > .cat { width: 216px; } }
 
+/* ===== Two auto-scrolling rows per section (opposite directions) ===== */
+.sec-marquee { display: flex; flex-direction: column; gap: 14px; overflow: hidden; padding: .3rem 0 1rem; }
+.mq-track {
+    display: flex; gap: 14px; width: max-content; will-change: transform;
+    animation-timing-function: linear; animation-iteration-count: infinite;
+}
+.mq-ltr { animation-name: mqLeft; }
+.mq-rtl { animation-name: mqRight; }
+@keyframes mqLeft { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes mqRight { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+.sec-marquee:hover .mq-track { animation-play-state: paused; }
+.mq-track > .cat { flex: 0 0 auto; width: clamp(150px, 42vw, 200px); }
+@media (min-width: 900px) { .mq-track > .cat { width: 200px; } }
+@media (prefers-reduced-motion: reduce) { .mq-track { animation: none; } }
+
+/* section banner "pops" when it scrolls into view */
+@keyframes dvPop { 0% { transform: scale(.9); opacity: .25; } 55% { transform: scale(1.035); } 100% { transform: scale(1); opacity: 1; } }
+.cat-divider.pop { animation: dvPop .55s var(--pop, cubic-bezier(.34,1.56,.64,1)) both; }
+
 /* ===== Treks-style product card ===== */
 .pcard {
     position: relative; display: flex; flex-direction: column; padding: 0; overflow: hidden;
