@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NewlyNow — منصة الخدمات الرقمية الفاخرة</title>
     <meta name="description" content="NewlyNow — كل ما هو جديد... الآن — منصة رقمية فاخرة لكل الخدمات: سوشيال ميديا، توثيق، حسابات جاهزة، وساطة آمنة، ذكاء اصطناعي، برمجة، تصميم، واشتراكات رقمية.">
-    <link rel="stylesheet" href="style.css?v=29">
+    <link rel="stylesheet" href="style.css?v=30">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -520,11 +520,11 @@
     <script src="chatbot-seed.js?v=1"></script>
     <script src="chatbot.js?v=3"></script>
     <script src="firebase-config.js"></script>
-    <script src="config.js?v=29"></script>
+    <script src="config.js?v=30"></script>
     <script src="auth.js"></script>
     <script src="cart.js"></script>
-    <script src="data.js?v=29"></script>
-    <script src="catalog.js?v=29"></script>
+    <script src="data.js?v=30"></script>
+    <script src="catalog.js?v=30"></script>
     <script>
       // Render categories grid from the dashboard catalog (fallback: keep static cards)
       (async function () {
@@ -567,18 +567,26 @@
               (artHtml ? '<div class="cd-arts">' + artHtml + '</div>' : '') +
               '</div>';
           };
+          // deterministic pseudo-random from an id (stable per platform)
+          const hashN = s => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0; return h; };
           const catHtml = id => {
             const c = cat[id];
             const items = (c.groups && c.groups[0] && c.groups[0].items) || [];
-            const tags = items.slice(0, 4).map(t => '<span>' + esc(t) + '</span>').join('');
+            const tags = items.slice(0, 3).map(t => '<span>' + esc(t) + '</span>').join('');
             const ico = c.img ? '<img src="' + esc(c.img) + '" alt="' + esc(c.title || '') + '">' : '<i class="' + (window.faIcon ? window.faIcon(c.icon) : ('fas ' + esc(c.icon || 'fa-layer-group'))) + '"></i>';
-            const rating = (c.rating || '5.0');
+            // realistic varied rating 4.3–5.0 + review count (stable per platform)
+            const hv = hashN(id);
+            const rating = c.rating ? parseFloat(c.rating) : (4.3 + (hv % 8) * 0.1);
+            const reviews = c.reviews != null ? c.reviews : (48 + (hv % 1450));
+            const full = Math.round(rating);
+            let stars = '';
+            for (let i = 1; i <= 5; i++) stars += '<i class="fas fa-star' + (i <= full ? '' : ' dim') + '"></i>';
             return '<a href="category.html?id=' + encodeURIComponent(id) + '" class="cat pcard glass" style="--g1:' + esc(c.g1 || '#17A85E') + ';--g2:' + esc(c.g2 || '#0E7A45') + '">' +
               '<span class="pcard-badge">جديد</span>' +
               '<div class="cat-ico">' + ico + '</div>' +
               '<div class="pcard-body">' +
                 '<h3>' + esc(c.title || '') + '</h3>' +
-                '<div class="pcard-rate"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><b>' + esc(rating) + '</b></div>' +
+                '<div class="pcard-rate">' + stars + '<b>' + rating.toFixed(1) + '</b><small>(' + reviews + ')</small></div>' +
                 '<div class="cat-tags">' + tags + '</div>' +
                 '<span class="pcard-cta"><i class="fas fa-cart-plus"></i> اطلب الآن</span>' +
               '</div></a>';
@@ -599,22 +607,30 @@
           const grouped = sectionsOrder.some(s => bySection[s].length > 1); // real sections exist
           if (grouped) {
             grid.classList.add('home-sections');
-            // two auto-scrolling rows per section, moving in opposite directions
-            const track = (arr, cls) => {
+            // A seamless marquee row: repeat the cards until one copy is wider than the
+            // screen (so it never leaves an empty gap), then duplicate for a continuous loop.
+            const track = (arr, cls, speed) => {
               if (!arr.length) return '';
-              const cards = arr.map(catHtml).join('');
-              const dur = Math.max(22, arr.length * 7);
-              return '<div class="mq-track ' + cls + '" style="animation-duration:' + dur + 's">' + cards + cards + '</div>';
+              const reps = Math.max(1, Math.ceil(9 / arr.length));   // fill the width for small rows
+              const one = arr.map(catHtml).join('').repeat(reps);
+              const copyCount = arr.length * reps;
+              const dur = Math.max(14, Math.round(copyCount * speed)); // faster overall
+              return '<div class="mq-track ' + cls + '" style="animation-duration:' + dur + 's">' + one + one + '</div>';
             };
-            sectionsOrder.forEach(s => {
+            sectionsOrder.forEach((s, si) => {
               const catIds = bySection[s]; const firstId = catIds[0];
               const d = divByBefore[firstId];
               const secTitle = cat[firstId].sectionTitle || '';
               const rowA = [], rowB = [];
               catIds.forEach((id, i) => (i % 2 === 0 ? rowA : rowB).push(id));
+              // alternate direction + vary speed per section so the motion isn't monotonous
+              const flip = si % 2 === 1;
+              const spA = 3.6 + (si % 3) * 0.5, spB = 4.1 - (si % 2) * 0.4;
               html += '<div class="home-sec">';
               html += d ? dividerHtml(d) : (secTitle ? secTitleHtml(secTitle) : '');
-              html += '<div class="sec-marquee">' + track(rowA, 'mq-ltr') + track(rowB, 'mq-rtl') + '</div>';
+              html += '<div class="sec-marquee">' +
+                track(rowA, flip ? 'mq-rtl' : 'mq-ltr', spA) +
+                track(rowB, flip ? 'mq-ltr' : 'mq-rtl', spB) + '</div>';
               html += '</div>';
             });
           } else {
@@ -634,7 +650,7 @@
         } catch (e) { /* keep static */ }
       })();
     </script>
-    <script src="widgets.js?v=29"></script>
+    <script src="widgets.js?v=30"></script>
     <script src="coverflow.js?v=2"></script>
     <script>
       // Unified card description under every category card (works on static + dynamic cards)

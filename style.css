@@ -1401,10 +1401,11 @@ body.lb-open { overflow: hidden; }
 }
 @media (min-width: 900px) { .sec-slider > .cat { width: 216px; } }
 
-/* ===== Two auto-scrolling rows per section (opposite directions) ===== */
+/* ===== Two auto-scrolling rows per section (opposite directions, seamless loop) ===== */
 .sec-marquee { display: flex; flex-direction: column; gap: 14px; overflow: hidden; padding: .3rem 0 1rem; }
+/* gap via per-card margin (not flex gap) so translateX(-50%) loops with NO empty gap */
 .mq-track {
-    display: flex; gap: 14px; width: max-content; will-change: transform;
+    display: flex; gap: 0; width: max-content; will-change: transform;
     animation-timing-function: linear; animation-iteration-count: infinite;
 }
 .mq-ltr { animation-name: mqLeft; }
@@ -1412,7 +1413,7 @@ body.lb-open { overflow: hidden; }
 @keyframes mqLeft { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @keyframes mqRight { from { transform: translateX(-50%); } to { transform: translateX(0); } }
 .sec-marquee:hover .mq-track { animation-play-state: paused; }
-.mq-track > .cat { flex: 0 0 auto; width: clamp(150px, 42vw, 200px); }
+.mq-track > .cat { flex: 0 0 auto; width: clamp(150px, 42vw, 200px); margin-inline-end: 14px; }
 @media (min-width: 900px) { .mq-track > .cat { width: 200px; } }
 @media (prefers-reduced-motion: reduce) { .mq-track { animation: none; } }
 
@@ -1435,15 +1436,20 @@ body.lb-open { overflow: hidden; }
     font-size: .66rem; font-weight: 800; padding: .18rem .5rem; border-radius: 999px;
 }
 .pcard .cat-ico {
-    width: 100%; height: 128px; margin: 0; border-radius: 0; display: grid; place-items: center;
-    background: radial-gradient(120% 120% at 50% 0%, color-mix(in srgb, var(--g1) 32%, #0b0f17), #0b0f17);
-    font-size: 2.6rem; color: #fff; overflow: hidden;
+    width: 100%; aspect-ratio: 1 / 1; height: auto; margin: 0; border-radius: 0; display: grid; place-items: center;
+    background: radial-gradient(120% 120% at 50% 0%, color-mix(in srgb, var(--g1) 30%, #0b0f17), #0b0f17);
+    font-size: 2.8rem; color: #fff; overflow: hidden;
 }
-.pcard .cat-ico img { width: 100%; height: 100%; object-fit: cover; }
+/* 1:1 image area; `contain` shows transparent PNGs (logos) fully without a forced box */
+.pcard .cat-ico img { width: 100%; height: 100%; object-fit: contain; padding: 12px; }
 .pcard-body { padding: .7rem .7rem .8rem; display: flex; flex-direction: column; gap: .45rem; flex: 1; }
 .pcard-body h3 { font-size: .96rem; font-weight: 800; margin: 0; line-height: 1.3; color: #fff; }
 .pcard-rate { display: flex; align-items: center; justify-content: center; gap: 2px; color: #fbbf24; font-size: .72rem; }
-.pcard-rate b { color: var(--muted, #9aa4b2); font-weight: 700; margin-inline-start: 4px; }
+.pcard-rate .dim { color: color-mix(in srgb, var(--muted, #9aa4b2) 55%, transparent); }
+.pcard-rate b { color: #eef2f7; font-weight: 800; margin-inline-start: 4px; }
+.pcard-rate small { color: var(--muted, #9aa4b2); font-weight: 600; margin-inline-start: 2px; }
+:root.theme-light .pcard-rate b { color: #283d54; }
+:root.theme-light .pcard .cat-ico { background: radial-gradient(120% 120% at 50% 0%, color-mix(in srgb, var(--g1) 12%, #eef2f5), #f4f7f9); }
 .pcard .cat-tags { justify-content: center; gap: 4px; min-height: 0; }
 .pcard .cat-tags span {
     font-size: .62rem; padding: .1rem .4rem; border-radius: 999px;
