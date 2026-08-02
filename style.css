@@ -1446,7 +1446,14 @@ body.lb-open { overflow: hidden; }
 /* 1:1 image area; `contain` shows transparent PNGs (logos) fully without a forced box */
 .pcard .cat-ico img { width: 100%; height: 100%; object-fit: contain; padding: 12px; }
 .pcard-body { padding: .7rem .7rem .8rem; display: flex; flex-direction: column; gap: .45rem; flex: 1; }
-.pcard-body h3 { font-size: .96rem; font-weight: 800; margin: 0; line-height: 1.3; color: #fff; }
+/* title locked to EXACTLY 2 lines so every card is the same height.
+   h3 is a flex item, so Chromium blockifies `-webkit-box` to flow-root and
+   ignores -webkit-line-clamp — a fixed height + overflow clip works regardless. */
+.pcard-body h3 {
+    font-size: .92rem; font-weight: 800; margin: 0; line-height: 1.35; color: #fff;
+    height: calc(2 * 1.35em); overflow: hidden;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
 .pcard-rate { display: flex; align-items: center; justify-content: center; gap: 2px; color: #fbbf24; font-size: .72rem; }
 .pcard-rate .dim { color: color-mix(in srgb, var(--muted, #9aa4b2) 55%, transparent); }
 .pcard-rate b { color: #eef2f7; font-weight: 800; margin-inline-start: 4px; }
