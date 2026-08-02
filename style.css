@@ -1403,11 +1403,14 @@ body.lb-open { overflow: hidden; }
 
 /* ===== Two auto-scrolling rows per section (opposite directions, seamless loop) ===== */
 .sec-marquee { display: flex; flex-direction: column; gap: 14px; overflow: hidden; padding: .3rem 0 1rem; }
-/* gap via per-card margin (not flex gap) so translateX(-50%) loops with NO empty gap */
+/* Force the track to LTR so it's anchored from the left: a track wider than the
+   container always overflows to the right and NEVER leaves an empty gap in RTL.
+   The cards keep their own RTL content. gap via per-card margin so -50% loops seamlessly. */
 .mq-track {
-    display: flex; gap: 0; width: max-content; will-change: transform;
+    display: flex; gap: 0; width: max-content; will-change: transform; direction: ltr;
     animation-timing-function: linear; animation-iteration-count: infinite;
 }
+.mq-track > .cat { direction: rtl; }
 .mq-ltr { animation-name: mqLeft; }
 .mq-rtl { animation-name: mqRight; }
 @keyframes mqLeft { from { transform: translateX(0); } to { transform: translateX(-50%); } }
