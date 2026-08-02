@@ -27,6 +27,15 @@
     try { document.dispatchEvent(new CustomEvent('siteconfig', { detail: c })); } catch (e) {}
     // theme colors -> CSS variables
     if (c.theme) for (const k in c.theme) { if (c.theme[k]) root.style.setProperty('--' + k, c.theme[k]); }
+    // auto light/dark surface handling based on the background luminance
+    (function () {
+      const bg = (c.theme && c.theme.bg) || getComputedStyle(root).getPropertyValue('--bg') || '#0E0A1A';
+      const m = String(bg).trim().match(/^#?([0-9a-f]{6})$/i);
+      if (!m) return;
+      const n = parseInt(m[1], 16), r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+      const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+      root.classList.toggle('theme-light', lum > 0.6);
+    })();
     // unify category tile colors with the theme (optional)
     if (document.body) document.body.classList.toggle('unify-cats', !!c.unifyCats);
     // editable texts -> elements tagged with data-k
