@@ -1405,28 +1405,43 @@ body.lb-open { overflow: hidden; }
 /* LTR on the container so the wide track anchors from the LEFT and overflows to the
    right (filling the row). Without this, RTL right-anchors the track and pushes all
    cards off-screen to the left, leaving the row empty. Cards keep RTL content below. */
-.sec-marquee { display: flex; flex-direction: column; gap: 14px; overflow: hidden; padding: .3rem 0 1rem; direction: ltr; }
-/* Force the track to LTR so it's anchored from the left: a track wider than the
-   container always overflows to the right and NEVER leaves an empty gap in RTL.
-   The cards keep their own RTL content. gap via per-card margin so -50% loops seamlessly. */
-.mq-track {
-    display: flex; gap: 0; width: max-content; will-change: transform; direction: ltr;
-    animation-timing-function: linear; animation-iteration-count: infinite;
+.sec-marquee { display: block; padding: .3rem 0 1rem; direction: ltr; }
+/* Each row is a horizontal scroll container: JS auto-scrolls it AND the user can
+   grab/drag it. Block-level + width:100% so it clips to the screen (enabling scroll)
+   instead of growing to the full content width. */
+.mq-row {
+    display: flex; gap: 0; width: 100%; min-width: 0; margin-bottom: 14px;
+    overflow-x: auto; overflow-y: hidden; direction: ltr;
+    scrollbar-width: none; -ms-overflow-style: none; cursor: grab;
+    touch-action: pan-y; overscroll-behavior-x: contain;
 }
-.mq-track > .cat { direction: rtl; }
-.mq-ltr { animation-name: mqLeft; }
-.mq-rtl { animation-name: mqRight; }
-@keyframes mqLeft { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-@keyframes mqRight { from { transform: translateX(-50%); } to { transform: translateX(0); } }
-.sec-marquee:hover .mq-track { animation-play-state: paused; }
+.mq-row:last-child { margin-bottom: 0; }
+.mq-row::-webkit-scrollbar { display: none; }
+.mq-row.grabbing { cursor: grabbing; }
 /* Treks-size cards: ~2 per mobile screen, larger on desktop */
-.mq-track > .cat { flex: 0 0 auto; width: clamp(175px, 48vw, 220px); margin-inline-end: 16px; }
-@media (min-width: 700px) { .mq-track > .cat { width: 224px; } }
-@media (prefers-reduced-motion: reduce) { .mq-track { animation: none; } }
+.mq-row > .cat {
+    direction: rtl; flex: 0 0 auto; width: clamp(175px, 48vw, 220px); margin-inline-end: 16px;
+    user-select: none; -webkit-user-drag: none;
+}
+.mq-row > .cat img { -webkit-user-drag: none; pointer-events: none; }
+@media (min-width: 700px) { .mq-row > .cat { width: 224px; } }
 
 /* section banner "pops" when it scrolls into view */
 @keyframes dvPop { 0% { transform: scale(.9); opacity: .25; } 55% { transform: scale(1.035); } 100% { transform: scale(1); opacity: 1; } }
 .cat-divider.pop { animation: dvPop .55s var(--pop, cubic-bezier(.34,1.56,.64,1)) both; }
+
+/* ===== varied entrance animations per section (cycled: up / zoom / from-right / from-left) ===== */
+.home-sec { transition: opacity .55s ease, transform .7s cubic-bezier(.22, 1, .36, 1); }
+.home-sec.pre { opacity: 0; }
+.home-sec.enter-0.pre { transform: translateY(48px); }
+.home-sec.enter-1.pre { transform: scale(.9); }
+.home-sec.enter-2.pre { transform: translateX(80px); }
+.home-sec.enter-3.pre { transform: translateX(-80px); }
+.home-sec.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+    .home-sec { transition: none; }
+    .home-sec.pre { opacity: 1; transform: none; }
+}
 
 /* ===== Treks-style product card ===== */
 .pcard {

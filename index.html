@@ -9,7 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <title>NewlyNow — منصة الخدمات الرقمية الفاخرة</title>
     <meta name="description" content="NewlyNow — كل ما هو جديد... الآن — منصة رقمية فاخرة لكل الخدمات: سوشيال ميديا، توثيق، حسابات جاهزة، وساطة آمنة، ذكاء اصطناعي، برمجة، تصميم، واشتراكات رقمية.">
-    <link rel="stylesheet" href="style.css?v=39">
+    <link rel="stylesheet" href="style.css?v=40">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -524,11 +524,11 @@
     <script src="chatbot-seed.js?v=1"></script>
     <script src="chatbot.js?v=3"></script>
     <script src="firebase-config.js"></script>
-    <script src="config.js?v=39"></script>
+    <script src="config.js?v=40"></script>
     <script src="auth.js"></script>
     <script src="cart.js"></script>
-    <script src="data.js?v=39"></script>
-    <script src="catalog.js?v=39"></script>
+    <script src="data.js?v=40"></script>
+    <script src="catalog.js?v=40"></script>
     <script>
       // Render categories grid from the dashboard catalog (fallback: keep static cards)
       (async function () {
@@ -625,17 +625,15 @@
             // A seamless marquee row: repeat the cards until one copy is wider than the
             // screen (so it never leaves an empty gap), then duplicate for a continuous loop.
             // one card's footprint (width + margin) at the current viewport, matching the CSS
-            const cardW = (window.innerWidth >= 900 ? 200 : Math.min(200, Math.max(150, window.innerWidth * 0.42))) + 14;
+            const cardW = (window.innerWidth >= 700 ? 224 : Math.min(220, Math.max(175, window.innerWidth * 0.48))) + 16;
             // ONE copy must be wider than the screen so that one+one (translated -50%)
             // always fills the row with no empty gap — even for a section with 1–2 cards.
             const minCards = Math.ceil((window.innerWidth * 1.2) / cardW);
-            const track = (arr, cls, speed) => {
+            const track = (arr, dir, speed) => {
               if (!arr.length) return '';
               const reps = Math.max(1, Math.ceil(minCards / arr.length)); // fill the width for small rows
               const one = arr.map(catHtml).join('').repeat(reps);
-              const copyCount = arr.length * reps;
-              const dur = Math.max(14, Math.round(copyCount * speed)); // faster overall
-              return '<div class="mq-track ' + cls + '" style="animation-duration:' + dur + 's">' + one + one + '</div>';
+              return '<div class="mq-row" data-dir="' + dir + '" data-speed="' + speed + '">' + one + one + '</div>';
             };
             sectionsOrder.forEach((s, si) => {
               const catIds = bySection[s]; const firstId = catIds[0];
@@ -643,14 +641,14 @@
               const secTitle = cat[firstId].sectionTitle || '';
               const rowA = [], rowB = [];
               catIds.forEach((id, i) => (i % 2 === 0 ? rowA : rowB).push(id));
-              // alternate direction + vary speed per section so the motion isn't monotonous
+              // opposite directions + varied speed per row (px per frame) so motion isn't monotonous
               const flip = si % 2 === 1;
-              const spA = 2.3 + (si % 3) * 0.35, spB = 2.7 - (si % 2) * 0.3;
-              html += '<div class="home-sec">';
+              const spA = (0.5 + (si % 3) * 0.12).toFixed(2), spB = (0.62 - (si % 2) * 0.16).toFixed(2);
+              html += '<div class="home-sec enter-' + (si % 4) + ' pre">';
               html += d ? dividerHtml(d) : (secTitle ? secTitleHtml(secTitle) : '');
               html += '<div class="sec-marquee">' +
-                track(rowA, flip ? 'mq-rtl' : 'mq-ltr', spA) +
-                track(rowB, flip ? 'mq-ltr' : 'mq-rtl', spB) + '</div>';
+                track(rowA, flip ? 'rtl' : 'ltr', spA) +
+                track(rowB, flip ? 'ltr' : 'rtl', spB) + '</div>';
               html += '</div>';
             });
           } else {
@@ -658,10 +656,57 @@
             ids.forEach(id => { if (divByBefore[id]) html += dividerHtml(divByBefore[id]); html += catHtml(id); });
           }
           grid.innerHTML = html;
-          // re-apply reveal so new cards animate
-          grid.querySelectorAll('.cat').forEach((el, i) => { el.classList.add('reveal', 'show'); });
-          // section banners "pop" when scrolled into view
+          grid.querySelectorAll('.cat').forEach(el => el.classList.add('reveal', 'show'));
+
+          // ===== draggable + auto-scrolling seamless rows =====
+          grid.querySelectorAll('.mq-row').forEach(row => {
+            const dir = row.dataset.dir === 'rtl' ? -1 : 1;
+            const speed = parseFloat(row.dataset.speed) || 0.5;
+            const half = () => (row.scrollWidth / 2) || 1;
+            // float accumulator — scrollLeft is integer-rounded, so a sub-pixel speed
+            // would never accumulate; we track the exact position ourselves.
+            let pos = 0, paused = false, down = false, sx = 0, ss = 0, moved = false, pid = null;
+            requestAnimationFrame(() => { pos = dir < 0 ? half() : 0; row.scrollLeft = pos; });
+            const tick = () => {
+              if (paused || down) { pos = row.scrollLeft; }
+              else {
+                pos += dir * speed;
+                const h = half(); if (pos >= h) pos -= h; else if (pos < 0) pos += h;
+                row.scrollLeft = pos;
+              }
+              requestAnimationFrame(tick);
+            };
+            requestAnimationFrame(tick);
+            row.addEventListener('mouseenter', () => paused = true);
+            row.addEventListener('mouseleave', () => { if (!down) paused = false; });
+            // grab & drag the row (mouse + touch) — touch-action:pan-y keeps vertical page scroll
+            row.addEventListener('pointerdown', e => {
+              down = true; moved = false; sx = e.clientX; ss = row.scrollLeft; pid = e.pointerId;
+              try { row.setPointerCapture(pid); } catch (_) {}
+              row.classList.add('grabbing');
+            });
+            row.addEventListener('pointermove', e => {
+              if (!down) return;
+              const dx = e.clientX - sx; if (Math.abs(dx) > 6) moved = true;
+              let np = ss - dx; const h = half(); if (np >= h) np -= h; else if (np < 0) np += h;
+              row.scrollLeft = np;
+            });
+            const release = () => { if (!down) return; down = false; paused = false; row.classList.remove('grabbing'); };
+            row.addEventListener('pointerup', release);
+            row.addEventListener('pointercancel', release);
+            // if the user dragged, swallow the click so it doesn't open the card
+            row.addEventListener('click', e => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
+          });
+
+          // ===== varied entrance animation per section + divider pop on scroll-in =====
           try {
+            const reveal = el => { el.classList.remove('pre'); el.classList.add('in'); };
+            const io = new IntersectionObserver((ents, obs) => {
+              ents.forEach(e => { if (e.isIntersecting) { reveal(e.target); obs.unobserve(e.target); } });
+            }, { threshold: 0.01, rootMargin: '300px 0px 300px 0px' }); // start entrance well before it's on screen
+            grid.querySelectorAll('.home-sec').forEach(el => io.observe(el));
+            // safety: never leave a section hidden even if its observer never fires
+            setTimeout(() => grid.querySelectorAll('.home-sec.pre').forEach(reveal), 2500);
             const dio = new IntersectionObserver(ents => {
               ents.forEach(e => { if (e.isIntersecting) { e.target.classList.add('pop'); dio.unobserve(e.target); } });
             }, { threshold: 0.25 });
@@ -670,7 +715,7 @@
         } catch (e) { /* keep static */ }
       })();
     </script>
-    <script src="widgets.js?v=39"></script>
+    <script src="widgets.js?v=40"></script>
     <script src="coverflow.js?v=3"></script>
     <script>
       // Unified card description under every category card (works on static + dynamic cards)
