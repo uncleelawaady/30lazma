@@ -1402,7 +1402,10 @@ body.lb-open { overflow: hidden; }
 @media (min-width: 900px) { .sec-slider > .cat { width: 216px; } }
 
 /* ===== Two auto-scrolling rows per section (opposite directions, seamless loop) ===== */
-.sec-marquee { display: flex; flex-direction: column; gap: 14px; overflow: hidden; padding: .3rem 0 1rem; }
+/* LTR on the container so the wide track anchors from the LEFT and overflows to the
+   right (filling the row). Without this, RTL right-anchors the track and pushes all
+   cards off-screen to the left, leaving the row empty. Cards keep RTL content below. */
+.sec-marquee { display: flex; flex-direction: column; gap: 14px; overflow: hidden; padding: .3rem 0 1rem; direction: ltr; }
 /* Force the track to LTR so it's anchored from the left: a track wider than the
    container always overflows to the right and NEVER leaves an empty gap in RTL.
    The cards keep their own RTL content. gap via per-card margin so -50% loops seamlessly. */
