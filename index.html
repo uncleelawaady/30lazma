@@ -9,7 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <title>NewlyNow — منصة الخدمات الرقمية الفاخرة</title>
     <meta name="description" content="NewlyNow — كل ما هو جديد... الآن — منصة رقمية فاخرة لكل الخدمات: سوشيال ميديا، توثيق، حسابات جاهزة، وساطة آمنة، ذكاء اصطناعي، برمجة، تصميم، واشتراكات رقمية.">
-    <link rel="stylesheet" href="style.css?v=40">
+    <link rel="stylesheet" href="style.css?v=41">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -524,11 +524,11 @@
     <script src="chatbot-seed.js?v=1"></script>
     <script src="chatbot.js?v=3"></script>
     <script src="firebase-config.js"></script>
-    <script src="config.js?v=40"></script>
+    <script src="config.js?v=41"></script>
     <script src="auth.js"></script>
     <script src="cart.js"></script>
-    <script src="data.js?v=40"></script>
-    <script src="catalog.js?v=40"></script>
+    <script src="data.js?v=41"></script>
+    <script src="catalog.js?v=41"></script>
     <script>
       // Render categories grid from the dashboard catalog (fallback: keep static cards)
       (async function () {
@@ -586,25 +586,14 @@
           const hashN = s => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0; return h; };
           const catHtml = id => {
             const c = cat[id];
-            const svcCount = (c.groups || []).reduce((a, g) => a + ((g.items || []).length), 0);
             const ico = c.img ? '<img src="' + esc(c.img) + '" alt="' + esc(c.title || '') + '">' : '<i class="' + (window.faIcon ? window.faIcon(c.icon) : ('fas ' + esc(c.icon || 'fa-layer-group'))) + '"></i>';
-            // realistic varied rating 4.3–5.0 + review count (stable per platform)
-            const hv = hashN(id);
-            const rating = c.rating ? parseFloat(c.rating) : (4.3 + (hv % 8) * 0.1);
-            const reviews = c.reviews != null ? c.reviews : (48 + (hv % 1450));
-            const full = Math.round(rating);
-            let stars = '';
-            for (let i = 1; i <= 5; i++) stars += '<i class="fas fa-star' + (i <= full ? '' : ' dim') + '"></i>';
-            return '<a href="category.html?id=' + encodeURIComponent(id) + '" class="cat pcard glass" style="--g1:' + esc(c.g1 || '#17A85E') + ';--g2:' + esc(c.g2 || '#0E7A45') + '">' +
-              '<span class="pcard-badge">جديد</span>' +
+            const desc = window.catDesc ? window.catDesc(c.title || 'الخدمات') : '';
+            // same clean glassy card as the homepage (icon glow + title + description)
+            return '<a href="category.html?id=' + encodeURIComponent(id) + '" class="cat glass" style="--g1:' + esc(c.g1 || '#17A85E') + ';--g2:' + esc(c.g2 || '#0E7A45') + '">' +
               '<div class="cat-ico">' + ico + '</div>' +
-              '<div class="pcard-body">' +
-                '<h3>' + esc(c.title || '') + '</h3>' +
-                '<div class="pcard-sub">' + svcCount + ' خدمة متاحة</div>' +
-                '<div class="pcard-rate">' + stars + '<b>' + rating.toFixed(1) + '</b><small>(' + reviews + ')</small></div>' +
-                '<div class="pcard-price">' + (c.price ? esc(c.price) : '') + '</div>' +
-                '<span class="pcard-cta"><i class="fas fa-cart-plus"></i> اطلب الآن</span>' +
-              '</div></a>';
+              '<h3>' + esc(c.title || '') + '</h3>' +
+              '<p>' + esc(desc) + '</p>' +
+              '</a>';
           };
           // ===== Treks-style layout: each SECTION = a divider banner + a horizontal row of its cards =====
           const divByBefore = {};
@@ -715,7 +704,7 @@
         } catch (e) { /* keep static */ }
       })();
     </script>
-    <script src="widgets.js?v=40"></script>
+    <script src="widgets.js?v=41"></script>
     <script src="coverflow.js?v=3"></script>
     <script>
       // Unified card description under every category card (works on static + dynamic cards)

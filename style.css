@@ -1418,13 +1418,23 @@ body.lb-open { overflow: hidden; }
 .mq-row:last-child { margin-bottom: 0; }
 .mq-row::-webkit-scrollbar { display: none; }
 .mq-row.grabbing { cursor: grabbing; }
-/* Treks-size cards: ~2 per mobile screen, larger on desktop */
+/* same clean card size as the homepage grid (~3 per row on mobile) */
 .mq-row > .cat {
-    direction: rtl; flex: 0 0 auto; width: clamp(175px, 48vw, 220px); margin-inline-end: 16px;
-    user-select: none; -webkit-user-drag: none;
+    direction: rtl; flex: 0 0 auto; width: clamp(140px, 33vw, 185px); margin-inline-end: 14px;
+    user-select: none; -webkit-user-drag: none; margin-bottom: 0;
 }
 .mq-row > .cat img { -webkit-user-drag: none; pointer-events: none; }
-@media (min-width: 700px) { .mq-row > .cat { width: 224px; } }
+@media (min-width: 700px) { .mq-row > .cat { width: 200px; } }
+/* lock title (2 lines) + description (2 lines) so every card is the SAME height */
+.mq-row > .cat h3 {
+    height: calc(2 * 1.4em); overflow: hidden;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
+.mq-row > .cat > p {
+    height: calc(3 * 1.6em); min-height: 0; overflow: hidden;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+}
+.mq-row > .cat .cat-ico { flex: 0 0 auto; }
 
 /* section banner "pops" when it scrolls into view */
 @keyframes dvPop { 0% { transform: scale(.9); opacity: .25; } 55% { transform: scale(1.035); } 100% { transform: scale(1); opacity: 1; } }
