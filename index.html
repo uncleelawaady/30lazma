@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NewlyNow — منصة الخدمات الرقمية الفاخرة</title>
     <meta name="description" content="NewlyNow — كل ما هو جديد... الآن — منصة رقمية فاخرة لكل الخدمات: سوشيال ميديا، توثيق، حسابات جاهزة، وساطة آمنة، ذكاء اصطناعي، برمجة، تصميم، واشتراكات رقمية.">
-    <link rel="stylesheet" href="style.css?v=33">
+    <link rel="stylesheet" href="style.css?v=34">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -520,11 +520,11 @@
     <script src="chatbot-seed.js?v=1"></script>
     <script src="chatbot.js?v=3"></script>
     <script src="firebase-config.js"></script>
-    <script src="config.js?v=33"></script>
+    <script src="config.js?v=34"></script>
     <script src="auth.js"></script>
     <script src="cart.js"></script>
-    <script src="data.js?v=33"></script>
-    <script src="catalog.js?v=33"></script>
+    <script src="data.js?v=34"></script>
+    <script src="catalog.js?v=34"></script>
     <script>
       // Render categories grid from the dashboard catalog (fallback: keep static cards)
       (async function () {
@@ -608,9 +608,14 @@
             grid.classList.add('home-sections');
             // A seamless marquee row: repeat the cards until one copy is wider than the
             // screen (so it never leaves an empty gap), then duplicate for a continuous loop.
+            // one card's footprint (width + margin) at the current viewport, matching the CSS
+            const cardW = (window.innerWidth >= 900 ? 200 : Math.min(200, Math.max(150, window.innerWidth * 0.42))) + 14;
+            // ONE copy must be wider than the screen so that one+one (translated -50%)
+            // always fills the row with no empty gap — even for a section with 1–2 cards.
+            const minCards = Math.ceil((window.innerWidth * 1.2) / cardW);
             const track = (arr, cls, speed) => {
               if (!arr.length) return '';
-              const reps = Math.max(1, Math.ceil(9 / arr.length));   // fill the width for small rows
+              const reps = Math.max(1, Math.ceil(minCards / arr.length)); // fill the width for small rows
               const one = arr.map(catHtml).join('').repeat(reps);
               const copyCount = arr.length * reps;
               const dur = Math.max(14, Math.round(copyCount * speed)); // faster overall
@@ -649,7 +654,7 @@
         } catch (e) { /* keep static */ }
       })();
     </script>
-    <script src="widgets.js?v=33"></script>
+    <script src="widgets.js?v=34"></script>
     <script src="coverflow.js?v=2"></script>
     <script>
       // Unified card description under every category card (works on static + dynamic cards)
