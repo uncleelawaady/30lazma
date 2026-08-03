@@ -1416,8 +1416,9 @@ body.lb-open { overflow: hidden; }
 @keyframes mqLeft { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @keyframes mqRight { from { transform: translateX(-50%); } to { transform: translateX(0); } }
 .sec-marquee:hover .mq-track { animation-play-state: paused; }
-.mq-track > .cat { flex: 0 0 auto; width: clamp(150px, 42vw, 200px); margin-inline-end: 14px; }
-@media (min-width: 900px) { .mq-track > .cat { width: 200px; } }
+/* Treks-size cards: ~2 per mobile screen, larger on desktop */
+.mq-track > .cat { flex: 0 0 auto; width: clamp(175px, 48vw, 220px); margin-inline-end: 16px; }
+@media (min-width: 700px) { .mq-track > .cat { width: 224px; } }
 @media (prefers-reduced-motion: reduce) { .mq-track { animation: none; } }
 
 /* section banner "pops" when it scrolls into view */
@@ -1454,6 +1455,10 @@ body.lb-open { overflow: hidden; }
     height: calc(2 * 1.35em); overflow: hidden;
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
 }
+/* subtitle + price lines (fixed heights keep every card the same total height) */
+.pcard-sub { font-size: .74rem; font-weight: 600; color: var(--muted, #9aa4b2); text-align: center; height: 1.1em; overflow: hidden; }
+.pcard-price { font-size: .95rem; font-weight: 900; color: var(--g1, #17d1c6); text-align: center; height: 1.2em; overflow: hidden; }
+.pcard-price:empty::before { content: ''; }
 .pcard-rate { display: flex; align-items: center; justify-content: center; gap: 2px; color: #fbbf24; font-size: .72rem; }
 .pcard-rate .dim { color: color-mix(in srgb, var(--muted, #9aa4b2) 55%, transparent); }
 .pcard-rate b { color: #eef2f7; font-weight: 800; margin-inline-start: 4px; }

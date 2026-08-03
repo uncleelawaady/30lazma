@@ -9,7 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <title>NewlyNow — منصة الخدمات الرقمية الفاخرة</title>
     <meta name="description" content="NewlyNow — كل ما هو جديد... الآن — منصة رقمية فاخرة لكل الخدمات: سوشيال ميديا، توثيق، حسابات جاهزة، وساطة آمنة، ذكاء اصطناعي، برمجة، تصميم، واشتراكات رقمية.">
-    <link rel="stylesheet" href="style.css?v=37">
+    <link rel="stylesheet" href="style.css?v=38">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -524,11 +524,11 @@
     <script src="chatbot-seed.js?v=1"></script>
     <script src="chatbot.js?v=3"></script>
     <script src="firebase-config.js"></script>
-    <script src="config.js?v=37"></script>
+    <script src="config.js?v=38"></script>
     <script src="auth.js"></script>
     <script src="cart.js"></script>
-    <script src="data.js?v=37"></script>
-    <script src="catalog.js?v=37"></script>
+    <script src="data.js?v=38"></script>
+    <script src="catalog.js?v=38"></script>
     <script>
       // Render categories grid from the dashboard catalog (fallback: keep static cards)
       (async function () {
@@ -549,6 +549,7 @@
               g1: f.g1 || b.g1, g2: f.g2 || b.g2,
               rating: f.rating != null ? f.rating : b.rating,
               reviews: f.reviews != null ? f.reviews : b.reviews,
+              price: f.price != null ? f.price : b.price,
               groups: (f.groups && f.groups.length) ? f.groups : b.groups
             }) : b;
           }
@@ -585,8 +586,7 @@
           const hashN = s => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0; return h; };
           const catHtml = id => {
             const c = cat[id];
-            const items = (c.groups && c.groups[0] && c.groups[0].items) || [];
-            const tags = items.slice(0, 3).map(t => '<span>' + esc(t) + '</span>').join('');
+            const svcCount = (c.groups || []).reduce((a, g) => a + ((g.items || []).length), 0);
             const ico = c.img ? '<img src="' + esc(c.img) + '" alt="' + esc(c.title || '') + '">' : '<i class="' + (window.faIcon ? window.faIcon(c.icon) : ('fas ' + esc(c.icon || 'fa-layer-group'))) + '"></i>';
             // realistic varied rating 4.3–5.0 + review count (stable per platform)
             const hv = hashN(id);
@@ -600,7 +600,9 @@
               '<div class="cat-ico">' + ico + '</div>' +
               '<div class="pcard-body">' +
                 '<h3>' + esc(c.title || '') + '</h3>' +
+                '<div class="pcard-sub">' + svcCount + ' خدمة متاحة</div>' +
                 '<div class="pcard-rate">' + stars + '<b>' + rating.toFixed(1) + '</b><small>(' + reviews + ')</small></div>' +
+                '<div class="pcard-price">' + (c.price ? esc(c.price) : '') + '</div>' +
                 '<span class="pcard-cta"><i class="fas fa-cart-plus"></i> اطلب الآن</span>' +
               '</div></a>';
           };
@@ -668,7 +670,7 @@
         } catch (e) { /* keep static */ }
       })();
     </script>
-    <script src="widgets.js?v=37"></script>
+    <script src="widgets.js?v=38"></script>
     <script src="coverflow.js?v=3"></script>
     <script>
       // Unified card description under every category card (works on static + dynamic cards)
