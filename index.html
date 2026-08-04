@@ -25,7 +25,7 @@
     </script>
     <title>NewlyNow — منصة الخدمات الرقمية الفاخرة</title>
     <meta name="description" content="NewlyNow — كل ما هو جديد... الآن — منصة رقمية فاخرة لكل الخدمات: سوشيال ميديا، توثيق، حسابات جاهزة، وساطة آمنة، ذكاء اصطناعي، برمجة، تصميم، واشتراكات رقمية.">
-    <link rel="stylesheet" href="style.css?v=49">
+    <link rel="stylesheet" href="style.css?v=50">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -543,11 +543,11 @@
     <script src="chatbot-seed.js?v=1"></script>
     <script src="chatbot.js?v=3"></script>
     <script src="firebase-config.js"></script>
-    <script src="config.js?v=49"></script>
+    <script src="config.js?v=50"></script>
     <script src="auth.js"></script>
     <script src="cart.js"></script>
-    <script src="data.js?v=49"></script>
-    <script src="catalog.js?v=49"></script>
+    <script src="data.js?v=50"></script>
+    <script src="catalog.js?v=50"></script>
     <script>
       // Render categories grid from the dashboard catalog (fallback: keep static cards)
       (async function () {
@@ -719,14 +719,13 @@
             row.addEventListener('click', e => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
           });
 
-          // ===== varied entrance animation per section + fade IN/OUT on scroll + divider pop =====
+          // ===== varied entrance animation per section (reveal ONCE, then stays put) =====
           try {
             const reveal = el => { el.classList.remove('pre'); el.classList.add('in'); };
-            const hide = el => { el.classList.add('pre'); el.classList.remove('in'); };
-            // fade a section IN as it enters the viewport and OUT (dim) as it leaves,
-            // so scrolling feels alive — each section transitions in and out, not static.
+            // reveal each section the first time it enters the viewport, then stop watching it
+            // so it stays visible — no flashing/fading out when it scrolls back off-screen.
             const io = new IntersectionObserver(ents => {
-              ents.forEach(e => { if (e.isIntersecting) reveal(e.target); else hide(e.target); });
+              ents.forEach(e => { if (e.isIntersecting) { reveal(e.target); io.unobserve(e.target); } });
             }, { threshold: 0.14 });
             grid.querySelectorAll('.home-sec').forEach(el => io.observe(el));
             // safety: if IntersectionObserver is unavailable, never leave content hidden
@@ -736,16 +735,16 @@
               const r = el.getBoundingClientRect();
               if (r.top < innerHeight && r.bottom > 0) reveal(el); // reveal whatever is on screen now
             }), 2500);
-            // section banner "pops" every time it scrolls back into view
+            // section banner "pops" ONCE the first time it's seen, then stays put
             const dio = new IntersectionObserver(ents => {
-              ents.forEach(e => e.target.classList.toggle('pop', e.isIntersecting));
+              ents.forEach(e => { if (e.isIntersecting) { e.target.classList.add('pop'); dio.unobserve(e.target); } });
             }, { threshold: 0.25 });
             grid.querySelectorAll('.cat-divider').forEach(el => dio.observe(el));
           } catch (e) {}
         } catch (e) { /* keep static */ }
       })();
     </script>
-    <script src="widgets.js?v=49"></script>
+    <script src="widgets.js?v=50"></script>
     <script src="coverflow.js?v=3"></script>
     <script>
       // Unified card description under every category card (works on static + dynamic cards)
