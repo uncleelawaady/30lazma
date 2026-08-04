@@ -1385,7 +1385,12 @@ body.lb-open { overflow: hidden; }
 }
 
 /* ===== Treks-style sectioned home: divider banner + horizontal card row ===== */
-.cat-grid.home-sections { display: block; }
+/* full-bleed: break out of the centered container so the sections fill the whole
+   screen width edge-to-edge (no big empty margins on wide desktops) */
+.cat-grid.home-sections {
+    display: block; width: 100vw; margin-inline: calc(50% - 50vw);
+    padding-inline: clamp(10px, 2.5vw, 40px);
+}
 .home-sec { margin-bottom: 1.2rem; }
 .home-sec .cat-divider { margin-bottom: .6rem; }
 .sec-slider {
