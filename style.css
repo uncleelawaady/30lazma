@@ -1413,7 +1413,7 @@ body.lb-open { overflow: hidden; }
     display: flex; gap: 0; width: 100%; min-width: 0; margin-bottom: 14px;
     overflow-x: auto; overflow-y: hidden; direction: ltr;
     scrollbar-width: none; -ms-overflow-style: none; cursor: grab;
-    touch-action: pan-y; overscroll-behavior-x: contain;
+    touch-action: pan-x; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain;
 }
 .mq-row:last-child { margin-bottom: 0; }
 .mq-row::-webkit-scrollbar { display: none; }

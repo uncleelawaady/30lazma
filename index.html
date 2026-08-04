@@ -9,7 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <title>NewlyNow — منصة الخدمات الرقمية الفاخرة</title>
     <meta name="description" content="NewlyNow — كل ما هو جديد... الآن — منصة رقمية فاخرة لكل الخدمات: سوشيال ميديا، توثيق، حسابات جاهزة، وساطة آمنة، ذكاء اصطناعي، برمجة، تصميم، واشتراكات رقمية.">
-    <link rel="stylesheet" href="style.css?v=41">
+    <link rel="stylesheet" href="style.css?v=42">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -524,11 +524,11 @@
     <script src="chatbot-seed.js?v=1"></script>
     <script src="chatbot.js?v=3"></script>
     <script src="firebase-config.js"></script>
-    <script src="config.js?v=41"></script>
+    <script src="config.js?v=42"></script>
     <script src="auth.js"></script>
     <script src="cart.js"></script>
-    <script src="data.js?v=41"></script>
-    <script src="catalog.js?v=41"></script>
+    <script src="data.js?v=42"></script>
+    <script src="catalog.js?v=42"></script>
     <script>
       // Render categories grid from the dashboard catalog (fallback: keep static cards)
       (async function () {
@@ -654,10 +654,10 @@
             const half = () => (row.scrollWidth / 2) || 1;
             // float accumulator — scrollLeft is integer-rounded, so a sub-pixel speed
             // would never accumulate; we track the exact position ourselves.
-            let pos = 0, paused = false, down = false, sx = 0, ss = 0, moved = false, pid = null;
+            let pos = 0, paused = false, down = false, sx = 0, ss = 0, moved = false, idleTimer = null;
             requestAnimationFrame(() => { pos = dir < 0 ? half() : 0; row.scrollLeft = pos; });
             const tick = () => {
-              if (paused || down) { pos = row.scrollLeft; }
+              if (paused || down) { pos = row.scrollLeft; } // follow the user / momentum
               else {
                 pos += dir * speed;
                 const h = half(); if (pos >= h) pos -= h; else if (pos < 0) pos += h;
@@ -666,13 +666,18 @@
               requestAnimationFrame(tick);
             };
             requestAnimationFrame(tick);
+            // resume auto-scroll only after all scrolling/momentum has settled
+            const scheduleResume = () => { clearTimeout(idleTimer); idleTimer = setTimeout(() => { if (!down) paused = false; }, 550); };
             row.addEventListener('mouseenter', () => paused = true);
-            row.addEventListener('mouseleave', () => { if (!down) paused = false; });
-            // grab & drag the row (mouse + touch) — touch-action:pan-y keeps vertical page scroll
+            row.addEventListener('mouseleave', () => { if (!down) scheduleResume(); });
+            // ANY touch/click pauses auto-scroll immediately (pointerdown fires for touch on iOS too)
             row.addEventListener('pointerdown', e => {
-              down = true; moved = false; sx = e.clientX; ss = row.scrollLeft; pid = e.pointerId;
-              try { row.setPointerCapture(pid); } catch (_) {}
-              row.classList.add('grabbing');
+              paused = true; clearTimeout(idleTimer);
+              if (e.pointerType === 'mouse') {  // desktop: manual grab-drag
+                down = true; moved = false; sx = e.clientX; ss = row.scrollLeft;
+                try { row.setPointerCapture(e.pointerId); } catch (_) {}
+                row.classList.add('grabbing');
+              }
             });
             row.addEventListener('pointermove', e => {
               if (!down) return;
@@ -680,9 +685,11 @@
               let np = ss - dx; const h = half(); if (np >= h) np -= h; else if (np < 0) np += h;
               row.scrollLeft = np;
             });
-            const release = () => { if (!down) return; down = false; paused = false; row.classList.remove('grabbing'); };
+            const release = () => { down = false; row.classList.remove('grabbing'); scheduleResume(); };
             row.addEventListener('pointerup', release);
             row.addEventListener('pointercancel', release);
+            // native touch scrolling fires 'scroll'; keep auto-scroll paused until it fully stops
+            row.addEventListener('scroll', () => { if (paused) scheduleResume(); }, { passive: true });
             // if the user dragged, swallow the click so it doesn't open the card
             row.addEventListener('click', e => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
           });
@@ -704,7 +711,7 @@
         } catch (e) { /* keep static */ }
       })();
     </script>
-    <script src="widgets.js?v=41"></script>
+    <script src="widgets.js?v=42"></script>
     <script src="coverflow.js?v=3"></script>
     <script>
       // Unified card description under every category card (works on static + dynamic cards)
