@@ -9,7 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <title>NewlyNow — منصة الخدمات الرقمية الفاخرة</title>
     <meta name="description" content="NewlyNow — كل ما هو جديد... الآن — منصة رقمية فاخرة لكل الخدمات: سوشيال ميديا، توثيق، حسابات جاهزة، وساطة آمنة، ذكاء اصطناعي، برمجة، تصميم، واشتراكات رقمية.">
-    <link rel="stylesheet" href="style.css?v=43">
+    <link rel="stylesheet" href="style.css?v=44">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -524,11 +524,11 @@
     <script src="chatbot-seed.js?v=1"></script>
     <script src="chatbot.js?v=3"></script>
     <script src="firebase-config.js"></script>
-    <script src="config.js?v=43"></script>
+    <script src="config.js?v=44"></script>
     <script src="auth.js"></script>
     <script src="cart.js"></script>
-    <script src="data.js?v=43"></script>
-    <script src="catalog.js?v=43"></script>
+    <script src="data.js?v=44"></script>
+    <script src="catalog.js?v=44"></script>
     <script>
       // Render categories grid from the dashboard catalog (fallback: keep static cards)
       (async function () {
@@ -614,10 +614,10 @@
             // A seamless marquee row: repeat the cards until one copy is wider than the
             // screen (so it never leaves an empty gap), then duplicate for a continuous loop.
             // one card's footprint (width + margin) at the current viewport, matching the CSS
-            const cardW = (window.innerWidth >= 700 ? 224 : Math.min(220, Math.max(175, window.innerWidth * 0.48))) + 16;
+            const cardW = (window.innerWidth >= 700 ? 200 : Math.min(185, Math.max(140, window.innerWidth * 0.33))) + 14;
             // ONE copy must be wider than the screen so that one+one (translated -50%)
             // always fills the row with no empty gap — even for a section with 1–2 cards.
-            const minCards = Math.ceil((window.innerWidth * 1.2) / cardW);
+            const minCards = Math.ceil((window.innerWidth * 1.6) / cardW); // extra buffer so a row never shows a gap
             const track = (arr, dir, speed) => {
               if (!arr.length) return '';
               const reps = Math.max(1, Math.ceil(minCards / arr.length)); // fill the width for small rows
@@ -710,7 +710,7 @@
         } catch (e) { /* keep static */ }
       })();
     </script>
-    <script src="widgets.js?v=43"></script>
+    <script src="widgets.js?v=44"></script>
     <script src="coverflow.js?v=3"></script>
     <script>
       // Unified card description under every category card (works on static + dynamic cards)

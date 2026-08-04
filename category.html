@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تفاصيل القسم | NewlyNow.com</title>
-    <link rel="stylesheet" href="style.css?v=43">
+    <link rel="stylesheet" href="style.css?v=44">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -94,9 +94,9 @@
 
     <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="fab-wa" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
 
-    <script src="catalog.js?v=43"></script>
+    <script src="catalog.js?v=44"></script>
     <script src="firebase-config.js"></script>
-    <script src="data.js?v=43"></script>
+    <script src="data.js?v=44"></script>
     <script>
     (async function () {
         // merge dashboard-managed catalog over the built-in defaults
@@ -105,7 +105,22 @@
                 (window.getCatalog && window.getCatalog()) || Promise.resolve(null),
                 new Promise(r => setTimeout(() => r(null), 1800))
             ]);
-            if (cat) window.CATEGORIES = Object.assign({}, window.CATEGORIES, cat);
+            if (cat) {
+                // built-in stays authoritative; overlay dashboard edits (image/title/price),
+                // but never let a malformed import wipe a platform's services.
+                const merged = Object.assign({}, window.CATEGORIES);
+                for (const k in cat) {
+                    const f = cat[k], base = window.CATEGORIES[k];
+                    if (!base) { merged[k] = f; continue; }
+                    const hasGroups = f.groups && f.groups.length && f.groups.some(g => g.items && g.items.length);
+                    merged[k] = Object.assign({}, base, {
+                        img: f.img || base.img, title: f.title || base.title, intro: f.intro || base.intro,
+                        g1: f.g1 || base.g1, g2: f.g2 || base.g2, details: f.details || base.details,
+                        groups: hasGroups ? f.groups : base.groups
+                    });
+                }
+                window.CATEGORIES = merged;
+            }
         } catch (e) {}
         const id = new URLSearchParams(location.search).get('id');
         const c = (window.CATEGORIES || {})[id];
@@ -189,8 +204,8 @@
     <script src="contact.js"></script>
     <script src="chatbot-seed.js?v=1"></script>
     <script src="chatbot.js?v=3"></script>
-    <script src="config.js?v=43"></script>
-    <script src="widgets.js?v=43"></script>
+    <script src="config.js?v=44"></script>
+    <script src="widgets.js?v=44"></script>
     <script src="kashida.js?v=1"></script>
 </body>
 </html>
