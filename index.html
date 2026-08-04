@@ -25,7 +25,7 @@
     </script>
     <title>NewlyNow — منصة الخدمات الرقمية الفاخرة</title>
     <meta name="description" content="NewlyNow — كل ما هو جديد... الآن — منصة رقمية فاخرة لكل الخدمات: سوشيال ميديا، توثيق، حسابات جاهزة، وساطة آمنة، ذكاء اصطناعي، برمجة، تصميم، واشتراكات رقمية.">
-    <link rel="stylesheet" href="style.css?v=48">
+    <link rel="stylesheet" href="style.css?v=49">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -441,7 +441,10 @@
                 <p>نوفر كل وسائل الدفع المحلية والعالمية — والمبالغ الكبيرة عبر الوساطة الآمنة.</p>
             </div>
             <div class="pay-strip glass">
-                <img src="assets/payments.png" alt="وسائل الدفع: InstaPay، Fawry، PayPal، OPay، فودافون كاش، اتصالات كاش، stc pay، WE Pay، Mastercard، mada، VISA، أمان، Google Pay" loading="lazy">
+                <div class="pay-track">
+                    <img src="assets/fx/payments-strip.webp" alt="وسائل الدفع: InstaPay، Fawry، PayPal، OPay، فودافون كاش، اتصالات كاش، stc pay، WE Pay، Mastercard، mada، VISA، أمان، Google Pay" loading="lazy">
+                    <img src="assets/fx/payments-strip.webp" alt="" aria-hidden="true" loading="lazy">
+                </div>
             </div>
             <p class="pay-note"><i class="fas fa-shield-halved"></i> جميع المدفوعات آمنة — والمبالغ الكبيرة تتم عبر الوساطة الآمنة لحفظ حقوقك.</p>
         </div>
@@ -540,11 +543,11 @@
     <script src="chatbot-seed.js?v=1"></script>
     <script src="chatbot.js?v=3"></script>
     <script src="firebase-config.js"></script>
-    <script src="config.js?v=48"></script>
+    <script src="config.js?v=49"></script>
     <script src="auth.js"></script>
     <script src="cart.js"></script>
-    <script src="data.js?v=48"></script>
-    <script src="catalog.js?v=48"></script>
+    <script src="data.js?v=49"></script>
+    <script src="catalog.js?v=49"></script>
     <script>
       // Render categories grid from the dashboard catalog (fallback: keep static cards)
       (async function () {
@@ -587,13 +590,18 @@
           const dividerHtml = d => {
             const arts = (d.arts && d.arts.length) ? d.arts : (d.img ? [{ img: d.img, size: d.size || 'lg' }] : []);
             const artHtml = arts.filter(a => a && a.img).map(a =>
-              '<img class="cd-el" style="height:' + (artSizeMap[a.size] || artSizeMap.lg) + '" src="' + esc(a.img) + '" alt="">').join('');
+              '<img class="cd-el" style="height:' + (artSizeMap[a.size] || artSizeMap.lg) + '" src="' + esc(a.img) + '" alt="" loading="lazy">').join('');
             let st = '--dg1:' + esc(d.g1 || '#0c2a2f') + ';--dg2:' + esc(d.g2 || '#0b1c24');
             st += ';--dvr:' + (d.radius != null ? parseInt(d.radius, 10) : 20) + 'px';
             if (d.titleColor) st += ';--dvtc:' + esc(d.titleColor);
             if (d.subColor) st += ';--dvsc:' + esc(d.subColor);
             st += ';--dvts:' + (titleSizeMap[d.titleSize] || titleSizeMap.md);
-            return '<div class="cat-divider' + (artHtml ? '' : ' no-art') + '" style="' + st + '">' +
+            if (d.wave) st += ";--wave:url('" + esc(d.wave) + "')";
+            const cls = 'cat-divider' + (artHtml ? '' : ' no-art') + (d.wave ? ' wave' : '');
+            // the animated wave banner sits UNDER the bar content (drifts + shimmers)
+            const waveHtml = d.wave ? '<div class="cd-wave" aria-hidden="true"></div>' : '';
+            return '<div class="' + cls + '" style="' + st + '">' +
+              waveHtml +
               '<div class="cd-text no-kashida"><h3>' + esc(d.title || '') + '</h3>' + (d.sub ? '<span>' + esc(d.sub) + '</span>' : '') + '</div>' +
               (artHtml ? '<div class="cd-arts">' + artHtml + '</div>' : '') +
               '</div>';
@@ -651,7 +659,7 @@
               // opposite directions + varied speed per row (px per frame) so motion isn't monotonous
               const flip = si % 2 === 1;
               const spA = (0.5 + (si % 3) * 0.12).toFixed(2), spB = (0.62 - (si % 2) * 0.16).toFixed(2);
-              html += '<div class="home-sec enter-' + (si % 4) + ' pre">';
+              html += '<div class="home-sec enter-' + (si % 8) + ' pre">';
               html += d ? dividerHtml(d) : (secTitle ? secTitleHtml(secTitle) : '');
               html += '<div class="sec-marquee">' +
                 track(rowA, flip ? 'rtl' : 'ltr', spA) +
@@ -711,24 +719,33 @@
             row.addEventListener('click', e => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
           });
 
-          // ===== varied entrance animation per section + divider pop on scroll-in =====
+          // ===== varied entrance animation per section + fade IN/OUT on scroll + divider pop =====
           try {
             const reveal = el => { el.classList.remove('pre'); el.classList.add('in'); };
-            const io = new IntersectionObserver((ents, obs) => {
-              ents.forEach(e => { if (e.isIntersecting) { reveal(e.target); obs.unobserve(e.target); } });
-            }, { threshold: 0.01, rootMargin: '300px 0px 300px 0px' }); // start entrance well before it's on screen
+            const hide = el => { el.classList.add('pre'); el.classList.remove('in'); };
+            // fade a section IN as it enters the viewport and OUT (dim) as it leaves,
+            // so scrolling feels alive — each section transitions in and out, not static.
+            const io = new IntersectionObserver(ents => {
+              ents.forEach(e => { if (e.isIntersecting) reveal(e.target); else hide(e.target); });
+            }, { threshold: 0.14 });
             grid.querySelectorAll('.home-sec').forEach(el => io.observe(el));
-            // safety: never leave a section hidden even if its observer never fires
-            setTimeout(() => grid.querySelectorAll('.home-sec.pre').forEach(reveal), 2500);
+            // safety: if IntersectionObserver is unavailable, never leave content hidden
+            if (!('IntersectionObserver' in window))
+              grid.querySelectorAll('.home-sec.pre').forEach(reveal);
+            setTimeout(() => grid.querySelectorAll('.home-sec').forEach(el => {
+              const r = el.getBoundingClientRect();
+              if (r.top < innerHeight && r.bottom > 0) reveal(el); // reveal whatever is on screen now
+            }), 2500);
+            // section banner "pops" every time it scrolls back into view
             const dio = new IntersectionObserver(ents => {
-              ents.forEach(e => { if (e.isIntersecting) { e.target.classList.add('pop'); dio.unobserve(e.target); } });
+              ents.forEach(e => e.target.classList.toggle('pop', e.isIntersecting));
             }, { threshold: 0.25 });
             grid.querySelectorAll('.cat-divider').forEach(el => dio.observe(el));
           } catch (e) {}
         } catch (e) { /* keep static */ }
       })();
     </script>
-    <script src="widgets.js?v=48"></script>
+    <script src="widgets.js?v=49"></script>
     <script src="coverflow.js?v=3"></script>
     <script>
       // Unified card description under every category card (works on static + dynamic cards)

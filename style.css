@@ -502,8 +502,13 @@ body.lb-open { overflow: hidden; }
 .rev-user-note i { color: var(--yellow); }
 
 /* ===== Payment strip ===== */
-.pay-strip { padding: 1.6rem 2rem; border-radius: 22px; }
-.pay-strip img { width: 100%; height: auto; display: block; }
+.pay-strip { padding: 1.6rem 1rem; border-radius: 22px; overflow: hidden; }
+/* payment logos (background removed) scroll in a seamless, gently-glowing loop */
+.pay-track { display: flex; width: max-content; gap: 3rem; align-items: center; animation: payScroll 26s linear infinite; }
+.pay-strip:hover .pay-track { animation-play-state: paused; }
+.pay-track img { height: clamp(30px, 6vw, 46px); width: auto; display: block; flex: 0 0 auto; filter: drop-shadow(0 3px 8px rgba(0,0,0,.18)); }
+@keyframes payScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .pay-track { animation: none; flex-wrap: wrap; justify-content: center; } }
 .pay-note { text-align: center; color: var(--muted); margin-top: 1.4rem; font-weight: 600; font-size: .95rem; }
 .pay-note i { color: #25D366; margin-inline-end: .4rem; }
 
@@ -1346,12 +1351,16 @@ body.lb-open { overflow: hidden; }
     box-shadow: 0 14px 40px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .05);
     isolation: isolate;
 }
-/* faint diagonal sheen — clipped to the rounded bar via its own layer */
+/* diagonal sheen that continuously SWEEPS across the bar — never static */
 .cat-divider::after {
-    content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
-    border-radius: inherit; overflow: hidden;
-    background: linear-gradient(115deg, transparent 45%, rgba(255, 255, 255, .05) 62%, transparent 70%);
+    content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(115deg, transparent 38%, rgba(255, 255, 255, .16) 50%, transparent 62%);
+    background-size: 250% 100%; background-repeat: no-repeat;
+    animation: fxSheen 4.8s linear infinite;
 }
+@keyframes fxSheen { 0% { background-position: 180% 0; } 100% { background-position: -80% 0; } }
+@media (prefers-reduced-motion: reduce) { .cat-divider::after { animation: none; } }
 .cat-divider .cd-text { position: relative; z-index: 2; text-align: right; flex: 1 1 auto; min-width: 0; }
 .cat-divider .cd-text h3 {
     margin: 0; font-family: var(--font-head, 'Tajawal'), sans-serif; font-weight: 900;
@@ -1375,13 +1384,57 @@ body.lb-open { overflow: hidden; }
     /* CLEAN cut-out — never feather/mask a divider element, keep transparency */
     -webkit-mask-image: none !important; mask-image: none !important;
     filter: drop-shadow(0 16px 22px rgba(0, 0, 0, .55));
+    /* the subscription "capsule" gently floats + tilts — a live 3D effect */
+    animation: fxFloat 5.6s ease-in-out infinite; will-change: transform;
+}
+.cat-divider .cd-el:nth-child(2) { animation-duration: 6.4s; animation-delay: -1.2s; }
+.cat-divider .cd-el:nth-child(3) { animation-duration: 7.1s; animation-delay: -2.4s; }
+@keyframes fxFloat {
+    0%,100% { transform: translateY(0) rotate(-2.2deg); }
+    50%     { transform: translateY(-14px) rotate(2.6deg); }
 }
 /* no element → no reserved space, but title STAYS on the right (RTL start) */
 .cat-divider.no-art { padding-inline-end: clamp(1rem, 3.5vw, 2rem); }
 .cat-divider.no-art .cd-text { text-align: right; }
+
+/* ===== ANIMATED wave-banner divider (built from the attached app-icon banners) ===== */
+.cat-divider.wave {
+    min-height: clamp(96px, 15vw, 128px);
+    padding-block: 0;
+    /* darker base so the drifting banner + title read clearly */
+    background: linear-gradient(100deg, var(--dg1) 0%, var(--dg2) 55%, color-mix(in srgb, var(--dg2) 78%, #000) 100%);
+    box-shadow: 0 18px 46px rgba(0, 0, 0, .42), inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+.cat-divider.wave .cd-wave {
+    content: ''; position: absolute; inset: 0; z-index: 0; border-radius: inherit;
+    background-image: var(--wave); background-repeat: no-repeat;
+    background-position: center; background-size: cover;
+    opacity: .42;                              /* subtle textured backdrop — the section title stays the hero */
+    animation: fxWaveDrift 16s ease-in-out infinite; will-change: transform;
+}
+/* veil so the RTL-start title stays legible and the banner's own text recedes */
+.cat-divider.wave::before {
+    content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; border-radius: inherit;
+    background:
+        linear-gradient(270deg, transparent 32%, color-mix(in srgb, var(--dg2) 82%, transparent) 74%, var(--dg2) 100%),
+        linear-gradient(0deg, color-mix(in srgb, var(--dg2) 55%, transparent), color-mix(in srgb, var(--dg1) 30%, transparent));
+}
+.cat-divider.wave .cd-text { z-index: 4; }
+.cat-divider.wave .cd-arts { z-index: 6; }
+@keyframes fxWaveDrift {
+    0%,100% { transform: scale(1.06) translateX(0); }
+    50%     { transform: scale(1.12) translateX(-2.5%); }
+}
+@media (prefers-reduced-motion: reduce) { .cat-divider.wave .cd-wave { animation: none; } }
+@media (max-width: 560px) { .cat-divider.wave { min-height: 78px; } }
 @media (max-width: 560px) {
-    .cat-divider { min-height: 46px; margin-top: 2.8rem; gap: .5rem; padding-inline-end: clamp(92px, 32vw, 150px); }
-    .cat-divider .cd-el { max-width: 46vw; }
+    .cat-divider { min-height: 46px; margin-top: 3.2rem; gap: .5rem; padding-inline-end: clamp(92px, 32vw, 150px); }
+    /* cap the floating capsule so it never overlaps the heading above (max-height overrides the inline height) */
+    .cat-divider .cd-el { max-width: 40vw; max-height: clamp(66px, 22vw, 96px); width: auto; }
+}
+/* keep the capsule from towering over neighbouring content on tablets too */
+@media (min-width: 561px) and (max-width: 900px) {
+    .cat-divider .cd-el { max-height: 140px; width: auto; }
 }
 
 /* ===== Treks-style sectioned home: divider banner + horizontal card row ===== */
@@ -1445,17 +1498,23 @@ body.lb-open { overflow: hidden; }
 @keyframes dvPop { 0% { transform: scale(.9); opacity: .25; } 55% { transform: scale(1.035); } 100% { transform: scale(1); opacity: 1; } }
 .cat-divider.pop { animation: dvPop .55s var(--pop, cubic-bezier(.34,1.56,.64,1)) both; }
 
-/* ===== varied entrance animations per section (cycled: up / zoom / from-right / from-left) ===== */
-.home-sec { transition: opacity .55s ease, transform .7s cubic-bezier(.22, 1, .36, 1); }
+/* ===== varied entrance animations per section — 8 distinct effects, cycled =====
+   Each section fades IN with its own motion when it enters the viewport, and
+   fades OUT (reverses) as it leaves — so the page feels alive, never static. */
+.home-sec { transition: opacity .6s ease, transform .8s cubic-bezier(.22, 1, .36, 1), filter .6s ease; will-change: opacity, transform; }
 .home-sec.pre { opacity: 0; }
-.home-sec.enter-0.pre { transform: translateY(48px); }
-.home-sec.enter-1.pre { transform: scale(.9); }
-.home-sec.enter-2.pre { transform: translateX(80px); }
-.home-sec.enter-3.pre { transform: translateX(-80px); }
-.home-sec.in { opacity: 1; transform: none; }
+.home-sec.enter-0.pre { transform: translateY(54px); }                         /* rise up      */
+.home-sec.enter-1.pre { transform: scale(.86); }                               /* zoom in      */
+.home-sec.enter-2.pre { transform: translateX(90px); }                         /* slide ← from right */
+.home-sec.enter-3.pre { transform: translateX(-90px); }                        /* slide → from left  */
+.home-sec.enter-4.pre { transform: perspective(1000px) rotateX(14deg) translateY(40px); transform-origin: top; } /* tilt/flip up */
+.home-sec.enter-5.pre { transform: translateY(40px) scale(.92); filter: blur(8px); }                             /* blur rise   */
+.home-sec.enter-6.pre { transform: skewY(3deg) translateY(46px); }             /* skew rise    */
+.home-sec.enter-7.pre { transform: perspective(1000px) rotateY(12deg) translateX(60px); transform-origin: right; } /* swing in  */
+.home-sec.in { opacity: 1; transform: none; filter: none; }
 @media (prefers-reduced-motion: reduce) {
-    .home-sec { transition: none; }
-    .home-sec.pre { opacity: 1; transform: none; }
+    .home-sec { transition: opacity .3s ease; }
+    .home-sec.pre { opacity: 1; transform: none; filter: none; }
 }
 
 /* ===== Treks-style product card ===== */
