@@ -7,6 +7,22 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    <script>
+    /* auto-update: if the server has a newer build than this cached page, reload once to it */
+    (function () {
+      try {
+        var link = document.querySelector('link[href*="style.css?v="]');
+        var cur = link ? ((link.getAttribute('href').match(/v=(\d+)/) || [])[1] || '') : '';
+        fetch('ver.txt?_=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.text(); }).then(function (t) {
+          t = (t || '').trim();
+          if (t && cur && t !== cur && !sessionStorage.getItem('vr_' + t)) {
+            sessionStorage.setItem('vr_' + t, '1');
+            location.replace(location.pathname + '?v=' + t);
+          }
+        }).catch(function () {});
+      } catch (e) {}
+    })();
+    </script>
     <title>NewlyNow — منصة الخدمات الرقمية الفاخرة</title>
     <meta name="description" content="NewlyNow — كل ما هو جديد... الآن — منصة رقمية فاخرة لكل الخدمات: سوشيال ميديا، توثيق، حسابات جاهزة، وساطة آمنة، ذكاء اصطناعي، برمجة، تصميم، واشتراكات رقمية.">
     <link rel="stylesheet" href="style.css?v=46">
