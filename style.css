@@ -1437,6 +1437,37 @@ body.lb-open { overflow: hidden; }
     .cat-divider .cd-el { max-height: 140px; width: auto; }
 }
 
+/* ===== Premium full-image section banner (title baked into the artwork) ===== */
+.cat-divider.imgbanner {
+    display: block; position: relative; overflow: hidden;
+    min-height: 0; padding: 0; gap: 0;
+    background: #08222c;                 /* matches the unified banner tone; shows while loading */
+    border: 1px solid rgba(32, 214, 227, .16);
+    box-shadow: 0 20px 54px -26px rgba(0, 10, 20, .8);
+}
+.cat-divider.imgbanner::after { display: none; }   /* no base shimmer — the sweep handles it */
+.cat-divider.imgbanner .cd-bg {
+    display: block; width: 100%; height: auto;       /* keep each banner's native aspect ratio */
+    transform: scale(1.02); transform-origin: 60% 50%;
+    animation: bnBreathe 16s ease-in-out infinite; will-change: transform;
+}
+@keyframes bnBreathe { 0%, 100% { transform: scale(1.02); } 50% { transform: scale(1.04); } }
+/* 45° diagonal light gliding left -> right, soft & continuous (no pulse) */
+.cat-divider.imgbanner .cd-sweep {
+    position: absolute; inset: -40% -55%; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(45deg, transparent 43%,
+        rgba(160, 235, 245, .11) 49%, rgba(255, 255, 255, .20) 50%,
+        rgba(160, 235, 245, .11) 51%, transparent 57%);
+    transform: translateX(-130%);
+    animation: bnSweep 9s ease-in-out infinite;
+}
+@keyframes bnSweep { 0% { transform: translateX(-130%); } 58%, 100% { transform: translateX(130%); } }
+.cat-divider.imgbanner .cd-sweep:nth-of-type(1) { animation-delay: -1.7s; }
+@media (prefers-reduced-motion: reduce) {
+    .cat-divider.imgbanner .cd-bg { animation: none; transform: scale(1.02); }
+    .cat-divider.imgbanner .cd-sweep { display: none; }
+}
+
 /* ===== Treks-style sectioned home: divider banner + horizontal card row ===== */
 /* full-bleed: break out of the centered container so the sections fill the whole
    screen width edge-to-edge (no big empty margins on wide desktops) */

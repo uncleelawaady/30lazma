@@ -588,6 +588,15 @@
             lg: 'clamp(1.3rem,5vw,2rem)', xl: 'clamp(1.55rem,6vw,2.6rem)'
           };
           const dividerHtml = d => {
+            // Premium full-image section banner (title baked into the artwork).
+            // Renders the banner + a 45° light sweep; the breathing zoom is CSS-driven.
+            if (d.banner) {
+              const rb = 'border-radius:' + (d.radius != null ? parseInt(d.radius, 10) : 18) + 'px';
+              return '<div class="cat-divider imgbanner" style="' + rb + '">' +
+                '<img class="cd-bg" src="' + esc(d.banner) + '" alt="' + esc(d.title || '') + '" loading="lazy" decoding="async">' +
+                '<span class="cd-sweep" aria-hidden="true"></span>' +
+                '</div>';
+            }
             const arts = (d.arts && d.arts.length) ? d.arts : (d.img ? [{ img: d.img, size: d.size || 'lg' }] : []);
             const artHtml = arts.filter(a => a && a.img).map(a =>
               '<img class="cd-el" style="height:' + (artSizeMap[a.size] || artSizeMap.lg) + '" src="' + esc(a.img) + '" alt="" loading="lazy">').join('');
