@@ -1493,6 +1493,20 @@ body.lb-open { overflow: hidden; }
     display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
 }
 .mq-row > .cat .cat-ico { flex: 0 0 auto; }
+/* Fill the image tile with the card's own gradient so a card is NEVER an empty
+   square with a hairline splitting its middle — it reads as a clean product card
+   (image tile on top, text below). A real product image covers this edge-to-edge. */
+.mq-row > .cat .cat-ico {
+    position: relative;
+    background: linear-gradient(150deg, var(--g1, #17A85E), var(--g2, #0E7A45));
+}
+.mq-row > .cat .cat-ico i { color: #fff; opacity: .95; text-shadow: 0 2px 10px rgba(0,0,0,.28); }
+/* soft join between the gradient tile and the glassy text area (no hard line) */
+.mq-row > .cat .cat-ico::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 34%;
+    background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--glass) 82%, transparent));
+    pointer-events: none;
+}
 
 /* section banner "pops" when it scrolls into view */
 @keyframes dvPop { 0% { transform: scale(.9); opacity: .25; } 55% { transform: scale(1.035); } 100% { transform: scale(1); opacity: 1; } }
