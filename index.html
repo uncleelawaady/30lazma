@@ -101,6 +101,107 @@
         </div>
     </header>
 
+    <!-- ===== Promo hero carousel (NewlyNow offers) ===== -->
+    <section class="promo-hero" aria-label="عروض NewlyNow">
+        <div class="promo-wrap">
+            <div class="promo-stage" id="promoStage">
+                <a class="promo-slide active" href="#categories">
+                    <img src="assets/banners/newlynow-premium.jpg" alt="NewlyNow Premium — أفضل الخدمات الرقمية في مكان واحد" loading="eager" decoding="async">
+                    <canvas class="ph-parts" aria-hidden="true"></canvas>
+                    <span class="ph-sweep" aria-hidden="true"></span>
+                </a>
+                <a class="promo-slide" href="#categories">
+                    <img src="assets/banners/offers-discounts.jpg" alt="خصومات خاصة على خدمات ومنصات التواصل الاجتماعي" loading="lazy" decoding="async">
+                    <canvas class="ph-parts" aria-hidden="true"></canvas>
+                    <span class="ph-sweep" aria-hidden="true"></span>
+                </a>
+                <a class="promo-slide" href="#payments">
+                    <img src="assets/banners/payment-methods.jpg" alt="وسائل الدفع — حلول دفع آمنة ومتعددة" loading="lazy" decoding="async">
+                    <canvas class="ph-parts" aria-hidden="true"></canvas>
+                    <span class="ph-sweep" aria-hidden="true"></span>
+                </a>
+                <button class="promo-arrow promo-prev" type="button" aria-label="السابق"><i class="fas fa-chevron-right"></i></button>
+                <button class="promo-arrow promo-next" type="button" aria-label="التالي"><i class="fas fa-chevron-left"></i></button>
+                <div class="promo-dots" id="promoDots" role="tablist"></div>
+            </div>
+        </div>
+    </section>
+    <script>
+      // ===== Promo hero carousel: auto-rotate + dots + arrows + swipe + ambient motes =====
+      (function () {
+        const stage = document.getElementById('promoStage');
+        if (!stage) return;
+        const slides = [].slice.call(stage.querySelectorAll('.promo-slide'));
+        const dotsBox = document.getElementById('promoDots');
+        const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+        let idx = 0, timer = null, hovered = false;
+        // dots
+        slides.forEach((s, i) => {
+          const d = document.createElement('button');
+          d.className = 'promo-dot' + (i === 0 ? ' active' : '');
+          d.type = 'button'; d.setAttribute('role', 'tab'); d.setAttribute('aria-label', 'شريحة ' + (i + 1));
+          d.addEventListener('click', e => { e.preventDefault(); go(i); rearm(); });
+          dotsBox.appendChild(d);
+        });
+        const dots = [].slice.call(dotsBox.children);
+        function go(n) {
+          idx = (n + slides.length) % slides.length;
+          slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+          dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+        }
+        function next() { go(idx + 1); }
+        function rearm() { if (timer) clearInterval(timer); timer = setInterval(() => { if (!hovered) next(); }, 5200); }
+        stage.querySelector('.promo-next').addEventListener('click', e => { e.preventDefault(); next(); rearm(); });
+        stage.querySelector('.promo-prev').addEventListener('click', e => { e.preventDefault(); go(idx - 1); rearm(); });
+        stage.addEventListener('mouseenter', () => hovered = true);
+        stage.addEventListener('mouseleave', () => hovered = false);
+        // swipe (RTL-aware: swipe left -> next)
+        let sx = 0, dragging = false;
+        stage.addEventListener('pointerdown', e => { dragging = true; sx = e.clientX; });
+        addEventListener('pointerup', e => {
+          if (!dragging) return; dragging = false;
+          const dx = e.clientX - sx;
+          if (Math.abs(dx) > 45) { dx < 0 ? next() : go(idx - 1); rearm(); }
+        });
+        rearm();
+        // ambient motes per slide (perf-gated to the promo being on-screen)
+        if (!reduce) {
+          const CY = [32, 214, 227], AQ = [93, 231, 242], OR = [247, 147, 30];
+          const engines = slides.map(sl => {
+            const cv = sl.querySelector('canvas.ph-parts'); const bg = sl.querySelector('img');
+            const ctx = cv.getContext('2d');
+            let dpr = Math.min(devicePixelRatio || 1, 2), W = 0, H = 0, ps = [], raf = 0, t0 = 0;
+            function size() {
+              W = sl.clientWidth; H = sl.clientHeight; if (!W || !H) { ps = []; return; }
+              cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+              const n = Math.max(9, Math.round(W / 64)); ps = [];
+              for (let i = 0; i < n; i++) { const c = [CY, CY, AQ, OR][Math.floor(Math.random() * 4)];
+                ps.push({ x: Math.random() * W, y: Math.random() * H, r: 1.1 + Math.random() * 2.2, sp: 6 + Math.random() * 13,
+                  sw: 6 + Math.random() * 14, ph: Math.random() * 6.28, a: .2 + Math.random() * .38, c: c }); }
+            }
+            if (bg && !bg.complete) bg.addEventListener('load', size, { once: true });
+            if (window.ResizeObserver) { try { new ResizeObserver(() => { if (W !== sl.clientWidth || H !== sl.clientHeight) size(); }).observe(sl); } catch (e) {} }
+            function loop(now) {
+              const t = (now - t0) / 1000; ctx.clearRect(0, 0, W, H);
+              for (let i = 0; i < ps.length; i++) { const p = ps[i]; let y = (p.y - p.sp * t) % H; if (y < 0) y += H;
+                const x = p.x + p.sw * Math.sin(t * .6 + p.ph); const tw = p.a * (.6 + .4 * Math.sin(t * 1.6 + p.ph));
+                const g = ctx.createRadialGradient(x, y, 0, x, y, p.r * 4);
+                g.addColorStop(0, 'rgba(' + p.c[0] + ',' + p.c[1] + ',' + p.c[2] + ',' + tw + ')');
+                g.addColorStop(1, 'rgba(' + p.c[0] + ',' + p.c[1] + ',' + p.c[2] + ',0)');
+                ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, p.r * 4, 0, 6.2832); ctx.fill(); }
+              raf = requestAnimationFrame(loop);
+            }
+            return { start() { if (raf) return; if (!W) size(); t0 = performance.now(); raf = requestAnimationFrame(loop); },
+                     stop() { if (raf) { cancelAnimationFrame(raf); raf = 0; } } };
+          });
+          const io = new IntersectionObserver(es => es.forEach(e => {
+            e.isIntersecting ? engines.forEach(en => en.start()) : engines.forEach(en => en.stop());
+          }), { rootMargin: '200px' });
+          io.observe(stage);
+        }
+      })();
+    </script>
+
     <!-- ===== 3D Coverflow showcase ===== -->
     <section class="coverflow-sec">
         <div class="container">
