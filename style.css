@@ -17,26 +17,49 @@
     --font-body: 'The Year of Handicrafts', 'Tajawal', 'Cairo', sans-serif;
     /* bouncy easing for the "bubble/3D pop" hover motion */
     --pop: cubic-bezier(.34, 1.56, .64, 1);
-    /* Default = elawaady.com-inspired: deep purple bg + orange→magenta→purple gradient */
-    --bg: #0E0A1A;
-    --bg-2: #1A1030;
-    --yellow: #F5A623;
-    --orange: #F5A623;
-    --pink: #A24BFF;
-    --purple: #7C3AED;
-    --violet: #E0208F;
-    --teal: #E0208F;
-    --text: #F3EEFF;
-    --muted: #b3a6cf;
-    --dim: #7d6ea3;
-    --glass: rgba(162, 75, 255, 0.06);
-    --glass-brd: #3a2560;
-    --grad-from: #F5A623;
-    --grad-mid: #E0208F;
-    --grad-to: #7C3AED;
-    --ticker-bg: #7C3AED;
-    --grad: linear-gradient(90deg, var(--grad-from), var(--grad-mid) 52%, var(--grad-to));
-    --grad-btn: linear-gradient(90deg, var(--grad-from) 0%, var(--grad-mid) 45%, var(--grad-to) 100%);
+
+    /* =====================================================================
+       Elawaady XDigital (EXD) — unified identity tokens
+       Deep Petrol / Dark Teal grounds · Metallic Silver · Cyan/Turquoise
+       lighting · Orange Neon accent · White for contrast.
+       (single source of truth — legacy names kept and remapped so every
+        existing rule cascades to the EXD palette automatically.)
+       ===================================================================== */
+    --petrol:   #0B2A34;   /* brand petrol (cards / surfaces) */
+    --petrol-2: #0E3A47;
+    --petrol-3: #123C4A;
+    --cyan:   #20D6E3;     /* turquoise lighting */
+    --aqua:   #5DE7F2;
+    --silver: #C7D2D8;     /* metallic silver */
+    --silver-hi: #EAF1F4;
+    --silver-lo: #95A9B2;
+    --neon:   #F7931E;     /* orange neon accent */
+
+    /* --- backgrounds --- */
+    --bg:   #06202A;       /* deep petrol page ground */
+    --bg-2: #0B2A34;
+    /* --- legacy aliases remapped to EXD (do NOT reintroduce purple/pink) --- */
+    --yellow: #F7931E;
+    --orange: #F7931E;
+    --pink:   #20D6E3;     /* was the pink glow accent → now cyan glow */
+    --purple: #0E3A47;
+    --violet: #20D6E3;
+    --teal:   #20D6E3;
+    --text:  #EAF6F8;
+    --muted: #9FB6BF;
+    --dim:   #6E8A94;
+    --glass: rgba(18, 60, 74, 0.42);
+    --glass-brd: rgba(140, 196, 208, 0.16);
+    /* --- brand gradient: orange neon → cyan/turquoise --- */
+    --grad-from: #F7931E;
+    --grad-mid:  #20D6E3;
+    --grad-to:   #5DE7F2;
+    --ticker-bg: #0B2A34;
+    --grad: linear-gradient(90deg, var(--grad-from), var(--grad-mid) 55%, var(--grad-to));
+    --grad-btn: linear-gradient(100deg, var(--grad-from) 0%, var(--grad-mid) 58%, var(--grad-to) 100%);
+    --ring: rgba(32, 214, 227, 0.22);
+    --glow-cyan:   0 0 34px -8px rgba(32,214,227,.55);
+    --glow-orange: 0 0 32px -6px rgba(247,147,30,.55);
     --radius: 24px;
     --tr: all .35s cubic-bezier(.22,1,.36,1);
 }
@@ -116,9 +139,12 @@ h1,h2,h3,h4 { font-family: var(--font-head); line-height: 1.35; font-weight: 800
 /* ===== Navbar ===== */
 .nav {
     position: fixed; inset-inline: 0; top: 0; z-index: 1000;
-    background: rgba(5,5,5,.7); backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--glass-brd); transition: var(--tr);
+    background: linear-gradient(180deg, rgba(6,30,40,.92), rgba(6,30,40,.72));
+    backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+    border-bottom: 1px solid rgba(140,196,208,.14); transition: var(--tr);
+    box-shadow: 0 8px 30px -18px rgba(0,10,16,.9);
 }
+.nav.scrolled { background: linear-gradient(180deg, rgba(5,26,34,.97), rgba(5,26,34,.9)); border-bottom-color: rgba(32,214,227,.22); }
 
 /* ===== Top scrolling ticker ===== */
 .top-ticker {
@@ -160,12 +186,27 @@ h1,h2,h3,h4 { font-family: var(--font-head); line-height: 1.35; font-weight: 800
     box-shadow: 0 0 20px rgba(255,138,0,.4);
 }
 .brand-logo-img {
-    height: 40px; width: auto; display: block;
-    filter: drop-shadow(0 0 12px rgba(255,138,0,.45));
+    height: 42px; width: auto; display: block;
+    filter: drop-shadow(0 0 14px rgba(32,214,227,.45));
 }
 .footer .brand-logo-img { height: 46px; }
-.brand-name { font-family: var(--font-body); font-weight: 800; font-size: 1.1rem; direction: ltr; }
-.brand-name em { font-style: normal; color: var(--yellow); }
+/* EXD wordmark: metallic-silver "Elawaady", cyan "XDigital" + small EXD chip */
+.brand-name {
+    font-family: var(--font-body); font-weight: 800; font-size: 1.12rem; direction: ltr;
+    letter-spacing: .3px; color: var(--silver-hi);
+    line-height: 1.05; display: inline-flex; align-items: baseline; gap: .34rem;
+}
+.brand-name em {
+    font-style: normal; font-weight: 900;
+    background: linear-gradient(90deg, var(--cyan), var(--aqua));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.brand-name .exd-chip {
+    font-size: .62rem; font-weight: 900; letter-spacing: 1.5px; color: #05202A;
+    background: linear-gradient(100deg, var(--neon), var(--aqua));
+    padding: .12rem .38rem; border-radius: 6px; align-self: center;
+    box-shadow: 0 0 16px -4px rgba(32,214,227,.6);
+}
 .nav-links { display: flex; list-style: none; gap: 1.5rem; }
 .nav-links a { color: var(--muted); text-decoration: none; font-weight: 600; font-size: .96rem; transition: var(--tr); }
 .nav-links a:hover, .nav-links a.active { color: var(--text); }
@@ -207,7 +248,23 @@ h1,h2,h3,h4 { font-family: var(--font-head); line-height: 1.35; font-weight: 800
 
 .hero-cta { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-bottom: 2.4rem; }
 .hero-trust { display: flex; flex-wrap: wrap; gap: 1.6rem; justify-content: center; color: var(--dim); font-weight: 600; font-size: .95rem; }
-.hero-trust i { color: var(--yellow); margin-inline-end: .4rem; }
+.hero-trust i { color: var(--cyan); margin-inline-end: .4rem; }
+
+/* EXD hero eyebrow pill (petrol glass + cyan hairline) */
+.hero-pill {
+    display: inline-flex; align-items: center; gap: .55rem; margin-bottom: 1.6rem;
+    font-family: var(--font-body); font-weight: 800; font-size: .9rem; letter-spacing: .3px;
+    color: var(--silver-hi);
+    background: linear-gradient(180deg, rgba(18,60,74,.6), rgba(11,42,52,.5));
+    border: 1px solid rgba(32,214,227,.28); border-radius: 999px; padding: .5rem 1.15rem;
+    box-shadow: var(--glow-cyan), inset 0 1px 0 rgba(234,241,244,.06);
+}
+.hero-pill i { color: var(--neon); }
+
+/* subtle EXD ambiance behind the hero — cyan glow one side, orange the other */
+.hero::before, .hero::after { content: ''; position: absolute; z-index: 0; pointer-events: none; border-radius: 50%; filter: blur(60px); }
+.hero::before { width: 46vw; height: 46vw; top: -14%; inset-inline-start: -10%; background: radial-gradient(circle, rgba(32,214,227,.16), transparent 66%); }
+.hero::after  { width: 40vw; height: 40vw; bottom: -18%; inset-inline-end: -8%; background: radial-gradient(circle, rgba(247,147,30,.12), transparent 66%); }
 
 /* ===== Stats ===== */
 .stats-strip { padding: 1rem 0 3rem; }
@@ -770,15 +827,16 @@ body.lb-open { overflow: hidden; }
 
 /* hero top word — "الوساطة" in Kufam */
 /* small decorative brand word on the right side (no overlap with hero text) */
+/* faint EXD monogram watermark, top-right of the hero (tech / futuristic feel) */
 .hero-word {
-    position: absolute; top: clamp(80px, 12vh, 132px); right: clamp(18px, 4vw, 64px); left: auto; inset-inline: auto; z-index: 1;
+    position: absolute; top: clamp(74px, 11vh, 128px); right: clamp(14px, 4vw, 60px); left: auto; inset-inline: auto; z-index: 1;
     text-align: right; pointer-events: none; white-space: nowrap;
-    font-family: var(--font-body); font-weight: 800;
-    font-size: clamp(1rem, 2.2vw, 1.6rem); line-height: 1; letter-spacing: .5px;
-    background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent;
-    opacity: .85;
+    font-family: var(--font-body); font-weight: 900; direction: ltr;
+    font-size: clamp(2.4rem, 8vw, 6rem); line-height: 1; letter-spacing: 4px;
+    color: transparent; -webkit-text-stroke: 1.5px rgba(32,214,227,.30);
+    opacity: .5;
 }
-@media (max-width: 768px){ .hero-word { top: clamp(64px, 9vh, 92px); right: 16px; font-size: clamp(.9rem, 4vw, 1.15rem); opacity: .75; } }
+@media (max-width: 768px){ .hero-word { top: clamp(60px, 9vh, 88px); right: 12px; font-size: clamp(2rem, 13vw, 3.4rem); opacity: .38; } }
 
 /* small platform brand-mark on chips */
 .chip .plat-ic { font-size: 1.02rem !important; opacity: 1 !important; }

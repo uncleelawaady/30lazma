@@ -2,7 +2,7 @@
 (function () {
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const toList = v => Array.isArray(v) ? v : String(v || '').split('|').map(s => s.trim()).filter(Boolean);
-  const tickerDefaults = ['متجر NewlyNow — NewlyNow.com', 'خدمات مميزة ⭐', 'دعم فني 24/7', 'جروب NewlyNow الرسمي', 'أسعار تنافسية 🔥', 'تنفيذ فوري وآمن 🔒'];
+  const tickerDefaults = ['Elawaady XDigital — elawaady.com', 'خدمات مميزة ⭐', 'دعم فني 24/7', 'قناة EXD الرسمية', 'أسعار تنافسية 🔥', 'تنفيذ فوري وآمن 🔒'];
 
   function buildTicker(items) {
     const track = document.getElementById('tickerTrack'); if (!track) return;

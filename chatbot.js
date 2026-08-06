@@ -7,7 +7,7 @@
   if (window.__elwasetBot) return; window.__elwasetBot = true;
 
   // ---------- built-in seed knowledge base (shared with the dashboard via chatbot-seed.js) ----------
-  const SEED = window.CHATBOT_SEED || { botName: 'مساعد NewlyNow', welcome: 'أهلًا! 👋 اسألني عن خدماتنا.', faqs: [] };
+  const SEED = window.CHATBOT_SEED || { botName: 'مساعد Elawaady XDigital', welcome: 'أهلًا! 👋 اسألني عن خدماتنا.', faqs: [] };
 
   // categories shown as quick chips (order matters)
   const CHIP_ORDER = ['الخدمات', 'الوساطة', 'الدفع', 'الطلب', 'الاسترداد', 'التاجر', 'تواصل', 'عام'];
