@@ -1,0 +1,4 @@
+# Deployment archives built by portfolio/make-archive.sh
+portfolio_*.zip
+
+.DS_Store

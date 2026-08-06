@@ -4,6 +4,48 @@
 
 ---
 
+## ⭐ الطريقة الأسرع: من اللابتوب عبر Claude Code
+
+سيرفرات Hostinger MCP متظبطة في `.claude/settings.json` بتاع الريبو ده، وفيها أداة اسمها
+`hosting_deployStaticWebsite` بتاخد الدومين + ملف ZIP وترفعه على الاستضافة مباشرة — من غير
+File Manager ولا FTP.
+
+**الخطوات على اللابتوب:**
+
+```bash
+git clone https://github.com/uncleelawaady/30lazma.git
+cd 30lazma
+git checkout claude/elawaady-portfolio-j2wpbn
+claude
+```
+
+وبعدين اكتب لـ Claude:
+
+> شغّل `portfolio/make-archive.sh` وبعدين ارفع الـ ZIP الناتج على `elawaady.com`
+> باستخدام أداة `hosting_deployStaticWebsite`.
+
+هو هيبني الأرشيف بالاسم المطلوب (`portfolio_YYYYMMDD_HHMMSS.zip`) وينده الأداة بالباراميترات دي:
+
+| الباراميتر | القيمة |
+|---|---|
+| `domain` | `elawaady.com` |
+| `archivePath` | مسار الـ ZIP اللي طلع من السكربت |
+| `removeArchive` | `true` |
+
+**على ويندوز** استخدم `portfolio\make-archive.ps1` بدل `.sh`.
+
+### حاجتين تتأكد منهم قبل ما تبدأ
+
+1. **نظام التشغيل.** الإعداد الحالي في `.claude/settings.json` مكتوب `npx.cmd` — ده ويندوز.
+   لو اللابتوب ماك أو لينكس، غيّر كل `npx.cmd` لـ `npx` في الملف.
+2. **التوكن.** التوكن الموجود في `.claude/settings.json` مكشوف في تاريخ الجيت — أي حد يشوف
+   الريبو يقدر يستخدمه. اعمله revoke من hPanel → **API**، وحطّ التوكن الجديد في متغير بيئة
+   `HOSTINGER_API_TOKEN` بدل ما يتكتب في الملف.
+
+لو الأداة رجّعت خطأ، الطرق اليدوية تحت شغالة كـ backup.
+
+---
+
 ## الملفات اللي بترفعها
 
 من مجلد `portfolio/` ارفع دول **بمحتوياتهم مباشرة** (مش المجلد نفسه):
