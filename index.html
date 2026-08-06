@@ -594,6 +594,7 @@
               const rb = 'border-radius:' + (d.radius != null ? parseInt(d.radius, 10) : 18) + 'px';
               return '<div class="cat-divider imgbanner" style="' + rb + '">' +
                 '<img class="cd-bg" src="' + esc(d.banner) + '" alt="' + esc(d.title || '') + '" loading="lazy" decoding="async">' +
+                '<canvas class="cd-parts" aria-hidden="true"></canvas>' +
                 '<span class="cd-sweep" aria-hidden="true"></span>' +
                 '</div>';
             }
@@ -749,6 +750,56 @@
               ents.forEach(e => { if (e.isIntersecting) { e.target.classList.add('pop'); dio.unobserve(e.target); } });
             }, { threshold: 0.25 });
             grid.querySelectorAll('.cat-divider').forEach(el => dio.observe(el));
+
+            // ===== ambient floating motes on the image banners (perf-gated canvas) =====
+            // Runs only while a banner is near the viewport; calm & continuous — no pulse.
+            (function () {
+              const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+              if (reduce) return;
+              const CY = [32, 214, 227], AQ = [93, 231, 242], OR = [247, 147, 30];
+              const banners = [].slice.call(grid.querySelectorAll('.cat-divider.imgbanner'));
+              banners.forEach(function (bn) {
+                const cv = bn.querySelector('canvas.cd-parts'); if (!cv) return;
+                const ctx = cv.getContext('2d');
+                const bg = bn.querySelector('img.cd-bg');
+                let dpr = Math.min(devicePixelRatio || 1, 2), W = 0, H = 0, ps = [], raf = 0, t0 = 0;
+                function size() {
+                  W = bn.clientWidth; H = bn.clientHeight; if (!W || !H) { ps = []; return; }
+                  cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                  const n = Math.max(8, Math.round(W / 64)); ps = [];
+                  for (let i = 0; i < n; i++) {
+                    const c = [CY, CY, AQ, OR][Math.floor(Math.random() * 4)];
+                    ps.push({ x: Math.random() * W, y: Math.random() * H, r: 1.1 + Math.random() * 2.2,
+                      sp: 6 + Math.random() * 13, sw: 6 + Math.random() * 14, ph: Math.random() * 6.28,
+                      a: .2 + Math.random() * .38, c: c });
+                  }
+                }
+                // the banner is height:auto, so its real height only exists once the image
+                // decodes — re-measure on load and whenever the box resizes.
+                if (bg && !bg.complete) bg.addEventListener('load', size, { once: true });
+                if (window.ResizeObserver) { try { new ResizeObserver(function () { if (W !== bn.clientWidth || H !== bn.clientHeight) size(); }).observe(bn); } catch (e) {} }
+                function loop(now) {
+                  const t = (now - t0) / 1000; ctx.clearRect(0, 0, W, H);
+                  for (let i = 0; i < ps.length; i++) {
+                    const p = ps[i]; let y = (p.y - p.sp * t) % H; if (y < 0) y += H;
+                    const x = p.x + p.sw * Math.sin(t * .6 + p.ph);
+                    const tw = p.a * (.6 + .4 * Math.sin(t * 1.6 + p.ph));
+                    const g = ctx.createRadialGradient(x, y, 0, x, y, p.r * 4);
+                    g.addColorStop(0, 'rgba(' + p.c[0] + ',' + p.c[1] + ',' + p.c[2] + ',' + tw + ')');
+                    g.addColorStop(1, 'rgba(' + p.c[0] + ',' + p.c[1] + ',' + p.c[2] + ',0)');
+                    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, p.r * 4, 0, 6.2832); ctx.fill();
+                  }
+                  raf = requestAnimationFrame(loop);
+                }
+                bn._start = function () { if (raf) return; if (!W) size(); t0 = performance.now(); raf = requestAnimationFrame(loop); };
+                bn._stop = function () { if (raf) { cancelAnimationFrame(raf); raf = 0; } }; // pause only, keep last frame (no flash)
+                addEventListener('resize', function () { if (raf) size(); });
+              });
+              const pio = new IntersectionObserver(function (es) {
+                es.forEach(function (e) { e.isIntersecting ? (e.target._start && e.target._start()) : (e.target._stop && e.target._stop()); });
+              }, { rootMargin: '300px' });
+              banners.forEach(function (b) { pio.observe(b); });
+            })();
           } catch (e) {}
         } catch (e) { /* keep static */ }
       })();
