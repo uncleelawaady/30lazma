@@ -979,7 +979,7 @@ window.DEFAULT_DIVIDERS = [
   {"title": "📰 خدمات الأخبار والإعلام", "sub": "", "before": "news__item", "g1": "#0891B2", "g2": "#0E7490", "titleSize": "md", "radius": 14, "arts": [], "active": true},
   {"title": "🌐 المواقع والمتاجر", "sub": "", "before": "web__item", "g1": "#14B8A6", "g2": "#0D9488", "titleSize": "md", "radius": 14, "arts": [], "active": true},
   {"title": "☁️ الاستضافة والسيرفرات", "sub": "", "before": "hosting__vps", "banner": "assets/banners/hosting-cloud.jpg", "g1": "#38BDF8", "g2": "#0284C7", "titleSize": "md", "radius": 14, "arts": [], "active": true},
-  {"title": "📧 البريد الإلكتروني", "sub": "", "before": "email__gmail", "g1": "#F59E0B", "g2": "#D97706", "titleSize": "md", "radius": 14, "arts": [], "active": true},
+  {"title": "📧 البريد الإلكتروني", "sub": "", "before": "email__gmail", "banner": "assets/banners/email.jpg", "g1": "#F59E0B", "g2": "#D97706", "titleSize": "md", "radius": 14, "arts": [], "active": true},
   {"title": "☁️ التخزين السحابي", "sub": "", "before": "cloud__google-drive", "g1": "#38BDF8", "g2": "#0284C7", "titleSize": "md", "radius": 14, "arts": [], "active": true},
   {"title": "🔐 الأمن السيبراني", "sub": "", "before": "cyber__item", "banner": "assets/banners/security.jpg", "g1": "#DC2626", "g2": "#991B1B", "titleSize": "md", "radius": 14, "arts": [], "active": true},
   {"title": "📱 الأرقام الافتراضية", "sub": "", "before": "vnumbers__sms", "banner": "assets/banners/numbers-telecom.jpg", "g1": "#8B5CF6", "g2": "#6D28D9", "titleSize": "md", "radius": 14, "arts": [], "active": true},
