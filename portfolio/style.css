@@ -38,6 +38,12 @@ ul{list-style:none}
 
 .container{width:min(100% - 36px,var(--container));margin-inline:auto}
 
+/* ===== Inline SVG icons ===== */
+.ic{
+  width:1.05em;height:1.05em;flex:0 0 auto;display:inline-block;vertical-align:-.16em;
+  fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+}
+
 /* ===== Buttons ===== */
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:9px;
@@ -88,6 +94,7 @@ ul{list-style:none}
   font:700 .82rem/1 'Sora',sans-serif;letter-spacing:.5px;transition:.22s;
 }
 .lang-btn:hover{border-color:var(--primary);color:#fff;background:rgba(108,92,231,.16)}
+.nav-toggle .ic{width:1.25rem;height:1.25rem}
 .nav-toggle{
   display:none;width:42px;height:38px;border-radius:12px;cursor:pointer;
   background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--text);font-size:1.05rem;
@@ -121,7 +128,7 @@ ul{list-style:none}
   background:rgba(108,92,231,.14);border:1px solid rgba(108,92,231,.35);
   color:#C9C2FF;font-weight:700;font-size:.83rem;
 }
-.eyebrow .fa-circle-check{color:#25D366}
+.eyebrow .ic{color:#25D366}
 
 .hero-title{font-size:clamp(2.3rem,5.6vw,4.1rem);line-height:1.2;font-weight:900;letter-spacing:-.5px}
 .grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -153,6 +160,7 @@ ul{list-style:none}
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 
+.scroll-hint .ic{width:1.15rem;height:1.15rem}
 .scroll-hint{
   position:absolute;inset-block-end:24px;inset-inline-start:50%;transform:translateX(-50%);
   z-index:3;width:42px;height:42px;display:grid;place-items:center;border-radius:50%;
@@ -172,7 +180,7 @@ ul{list-style:none}
   display:inline-flex;align-items:center;gap:10px;
   color:var(--muted);font-weight:700;font-size:.95rem;white-space:nowrap;
 }
-.marquee-track i{color:var(--primary)}
+.marquee-track .ic{color:var(--primary)}
 @keyframes slide{to{transform:translateX(-50%)}}
 html[dir="rtl"] .marquee-track{animation-name:slideR}
 @keyframes slideR{to{transform:translateX(50%)}}
@@ -193,8 +201,8 @@ html[dir="rtl"] .marquee-track{animation-name:slideR}
 .about-text strong{color:var(--text)}
 .about-list{display:grid;gap:11px;margin-block:22px 26px}
 .about-list li{display:flex;align-items:center;gap:11px;font-weight:600}
-.about-list i{
-  width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;border-radius:10px;
+.about-list .ic{
+  width:34px;height:34px;padding:7px;box-sizing:border-box;border-radius:10px;
   background:rgba(108,92,231,.14);color:var(--primary);
 }
 .about-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
@@ -203,7 +211,7 @@ html[dir="rtl"] .marquee-track{animation-name:slideR}
   background:var(--surface);border:1px solid var(--line);transition:.28s;
 }
 .mini-card:hover{transform:translateY(-5px);border-color:var(--primary);box-shadow:var(--shadow)}
-.mini-card i{font-size:1.35rem;color:var(--primary);margin-block-end:10px;display:block}
+.mini-card .ic{width:1.6rem;height:1.6rem;color:var(--primary);margin:0 auto 10px;display:block}
 .mini-card h4{font-size:.82rem;color:var(--muted);font-weight:700;margin-block-end:4px}
 .mini-card p{font-size:.92rem;font-weight:700}
 
@@ -223,6 +231,7 @@ html[dir="rtl"] .marquee-track{animation-name:slideR}
   width:52px;height:52px;display:grid;place-items:center;border-radius:15px;margin-block-end:16px;
   background:var(--grad);color:#fff;font-size:1.25rem;box-shadow:0 8px 20px rgba(108,92,231,.32);
 }
+.card-icon .ic{width:1.55rem;height:1.55rem;stroke-width:1.6}
 .card h3{font-size:1.1rem;margin-block-end:8px;font-weight:800}
 .card p{color:var(--muted);font-size:.93rem}
 
@@ -239,6 +248,7 @@ html[dir="rtl"] .marquee-track{animation-name:slideR}
   width:46px;height:46px;flex:0 0 46px;display:grid;place-items:center;border-radius:13px;
   background:rgba(108,92,231,.16);color:var(--primary);font-size:1.15rem;
 }
+.work-badge .ic{width:1.4rem;height:1.4rem}
 .work-card h3{font-size:1.15rem;font-weight:800}
 .work-card .role{font-size:.8rem;color:var(--muted);font-weight:700}
 .work-card p{color:var(--muted);font-size:.93rem;flex:1}
@@ -257,7 +267,7 @@ html[dir="rtl"] .marquee-track{animation-name:slideR}
   background:var(--surface);border:1px solid var(--line);transition:.28s;
 }
 .domain-card:hover{transform:translateY(-5px) scale(1.02);border-color:var(--gold);box-shadow:0 16px 36px rgba(255,176,32,.14)}
-.domain-card i{font-size:1.2rem;color:var(--gold);margin-block-end:9px;display:block}
+.domain-card .ic{width:1.5rem;height:1.5rem;color:var(--gold);margin:0 auto 9px;display:block}
 .domain-card h4{font-size:1rem;font-weight:800;margin-block-end:5px}
 .domain-card p{font-size:.83rem;color:var(--muted)}
 .center-cta{text-align:center;margin-block-start:34px}
@@ -300,12 +310,12 @@ html[dir="rtl"] .marquee-track{animation-name:slideR}
 }
 .contact-card:hover{transform:translateX(-6px);border-color:var(--primary);box-shadow:var(--shadow)}
 html[dir="ltr"] .contact-card:hover{transform:translateX(6px)}
-.contact-card i{width:44px;height:44px;flex:0 0 44px;display:grid;place-items:center;border-radius:13px;font-size:1.2rem;color:#fff}
-.contact-card.wa i{background:#25D366}
-.contact-card.tg i{background:#229ED9}
-.contact-card.ml i{background:linear-gradient(135deg,#EA4335,#FBBC05)}
-.contact-card.ln i{background:#0A66C2}
-.contact-card.st i{background:var(--grad)}
+.contact-card .ic{width:44px;height:44px;padding:11px;box-sizing:border-box;border-radius:13px;color:#fff;stroke-width:1.9}
+.contact-card.wa .ic{background:#25D366}
+.contact-card.tg .ic{background:#229ED9}
+.contact-card.ml .ic{background:linear-gradient(135deg,#EA4335,#FBBC05)}
+.contact-card.ln .ic{background:#0A66C2}
+.contact-card.st .ic{background:var(--grad)}
 .contact-card strong{display:block;font-size:.98rem}
 .contact-card span{font-size:.85rem;color:var(--muted)}
 
@@ -337,6 +347,7 @@ html[dir="ltr"] .contact-card:hover{transform:translateX(6px)}
   background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--muted);transition:.24s;
 }
 .footer-social a:hover{color:#fff;background:var(--grad);transform:translateY(-4px);border-color:transparent}
+.footer-social .ic{width:1.25rem;height:1.25rem}
 .copy{color:var(--muted);font-size:.82rem}
 
 /* ===== Floating WhatsApp ===== */
@@ -346,6 +357,7 @@ html[dir="ltr"] .contact-card:hover{transform:translateX(6px)}
   background:#25D366;color:#fff;font-size:1.5rem;box-shadow:0 12px 30px rgba(37,211,102,.4);
   transition:transform .25s;
 }
+.fab-wa .ic{width:1.7rem;height:1.7rem;stroke-width:1.9}
 .fab-wa:hover{transform:scale(1.1)}
 
 /* ===== Responsive ===== */

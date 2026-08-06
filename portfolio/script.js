@@ -19,49 +19,49 @@ const DATA = {
   },
 
   services: [
-    { icon:'fa-solid fa-handshake',      ar:['وساطة آمنة','وسيط موثوق بين البائع والمشتري — الفلوس محفوظة لحد ما الطرفين ياخدوا حقهم بالكامل.'], en:['Secure escrow','A trusted middleman between buyer and seller — funds stay protected until both sides are fully satisfied.'] },
-    { icon:'fa-solid fa-bullhorn',       ar:['تسويق ونمو','حملات سوشيال ميديا وإدارة صفحات وزيادة حقيقية في الوصول والمبيعات.'], en:['Marketing & growth','Social campaigns, page management and real growth in reach and sales.'] },
-    { icon:'fa-solid fa-cart-shopping',  ar:['متاجر ومنصات','بناء متجر أو منصة كاملة بلوحة تحكم — جاهزة تستقبل طلبات من أول يوم.'], en:['Stores & platforms','A complete store or platform with an admin dashboard — ready to take orders on day one.'] },
-    { icon:'fa-solid fa-palette',        ar:['هوية بصرية وتصميم','لوجو، ألوان، وهوية متكاملة تخلي براندك متميز وسط المنافسين.'], en:['Branding & design','Logo, colors and a full identity that sets your brand apart.'] },
-    { icon:'fa-solid fa-robot',          ar:['بوتات وأتمتة','بوتات تليجرام وواتساب وأنظمة أتمتة توفر عليك وقت وشغل يدوي.'], en:['Bots & automation','Telegram and WhatsApp bots plus automation that saves you hours of manual work.'] },
-    { icon:'fa-solid fa-brain',          ar:['حلول ذكاء اصطناعي','دمج الـ AI في شغلك: محتوى، دعم عملاء، وتحليل بيانات.'], en:['AI solutions','AI woven into your workflow: content, customer support and data analysis.'] },
-    { icon:'fa-solid fa-circle-check',   ar:['توثيق حسابات','توثيق رسمي للحسابات والصفحات بخطوات واضحة وآمنة.'], en:['Account verification','Official verification for accounts and pages, done safely and transparently.'] },
-    { icon:'fa-solid fa-globe',          ar:['دومينات واستثمار','شراء وبيع وتقييم الدومينات المميزة — واستشارات استثمار رقمي.'], en:['Domains & investing','Buying, selling and valuing premium domains — plus digital investment advice.'] }
+    { icon:'i-swap',      ar:['وساطة آمنة','وسيط موثوق بين البائع والمشتري — الفلوس محفوظة لحد ما الطرفين ياخدوا حقهم بالكامل.'], en:['Secure escrow','A trusted middleman between buyer and seller — funds stay protected until both sides are fully satisfied.'] },
+    { icon:'i-megaphone',       ar:['تسويق ونمو','حملات سوشيال ميديا وإدارة صفحات وزيادة حقيقية في الوصول والمبيعات.'], en:['Marketing & growth','Social campaigns, page management and real growth in reach and sales.'] },
+    { icon:'i-cart',  ar:['متاجر ومنصات','بناء متجر أو منصة كاملة بلوحة تحكم — جاهزة تستقبل طلبات من أول يوم.'], en:['Stores & platforms','A complete store or platform with an admin dashboard — ready to take orders on day one.'] },
+    { icon:'i-palette',        ar:['هوية بصرية وتصميم','لوجو، ألوان، وهوية متكاملة تخلي براندك متميز وسط المنافسين.'], en:['Branding & design','Logo, colors and a full identity that sets your brand apart.'] },
+    { icon:'i-robot',          ar:['بوتات وأتمتة','بوتات تليجرام وواتساب وأنظمة أتمتة توفر عليك وقت وشغل يدوي.'], en:['Bots & automation','Telegram and WhatsApp bots plus automation that saves you hours of manual work.'] },
+    { icon:'i-sparkles',          ar:['حلول ذكاء اصطناعي','دمج الـ AI في شغلك: محتوى، دعم عملاء، وتحليل بيانات.'], en:['AI solutions','AI woven into your workflow: content, customer support and data analysis.'] },
+    { icon:'i-badge',   ar:['توثيق حسابات','توثيق رسمي للحسابات والصفحات بخطوات واضحة وآمنة.'], en:['Account verification','Official verification for accounts and pages, done safely and transparently.'] },
+    { icon:'i-globe',          ar:['دومينات واستثمار','شراء وبيع وتقييم الدومينات المميزة — واستشارات استثمار رقمي.'], en:['Domains & investing','Buying, selling and valuing premium domains — plus digital investment advice.'] }
   ],
 
   work: [
     {
-      icon:'fa-solid fa-store', url:'https://elwaset.net',
+      icon:'i-store', url:'https://elwaset.net',
       ar:['Elwaset.net','المؤسس والمطور','منصة عربية متكاملة للخدمات الرقمية والوساطة الآمنة: متجر، لوحة تحكم، حسابات عملاء، وإثبات تعاملات موثق.'],
       en:['Elwaset.net','Founder & Developer','A full Arabic platform for digital services and secure escrow: storefront, admin dashboard, client accounts and documented proof of deals.'],
       tags:['Platform','Firebase','E-commerce','Escrow']
     },
     {
-      icon:'fa-solid fa-layer-group', url:'',
+      icon:'i-layers', url:'',
       ar:['EXD | Elawaady XDigital','المؤسس','الشركة الأم لكل مشاريعي الرقمية — خدمات تسويق وبرمجة وتصميم وإدارة حضور رقمي للعلامات التجارية.'],
       en:['EXD | Elawaady XDigital','Founder','The parent brand behind all my digital work — marketing, development, design and digital presence management for brands.'],
       tags:['Agency','Branding','Growth']
     },
     {
-      icon:'fa-solid fa-users', url:'https://t.me/elawaadyofficial',
+      icon:'i-users', url:'https://t.me/elawaadyofficial',
       ar:['مجتمعات رقمية','المدير والمشرف','قنوات ومجموعات بآلاف الأعضاء في مجالات الربح والخدمات الرقمية والتجارة الإلكترونية.'],
       en:['Digital communities','Manager & Admin','Channels and groups with thousands of members around online income, digital services and e-commerce.'],
       tags:['Telegram','Community','Content']
     },
     {
-      icon:'fa-solid fa-globe', url:'',
+      icon:'i-globe', url:'',
       ar:['محفظة الدومينات','المستثمر','محفظة أسماء نطاقات مميزة عربية وإنجليزية، مبنية على بحث في السوق والطلب الحقيقي.'],
       en:['Domain portfolio','Investor','A portfolio of premium Arabic and English domain names, built on real market research and demand.'],
       tags:['Domains','Investment']
     },
     {
-      icon:'fa-solid fa-robot', url:'',
+      icon:'i-robot', url:'',
       ar:['بوتات وأنظمة أتمتة','المطور','بوتات تليجرام لإدارة الطلبات والدفع والدعم، متوصلة مباشرة بلوحات التحكم.'],
       en:['Bots & automation systems','Developer','Telegram bots for order management, payments and support, wired straight into admin dashboards.'],
       tags:['Bots','Automation','APIs']
     },
     {
-      icon:'fa-solid fa-chart-line', url:'',
+      icon:'i-chart', url:'',
       ar:['استشارات نمو','المستشار','خطط نمو عملية لأصحاب المشاريع: تسعير، عروض، قنوات تسويق، وتحسين التحويل.'],
       en:['Growth consulting','Consultant','Practical growth plans for business owners: pricing, offers, marketing channels and conversion.'],
       tags:['Strategy','Consulting']
@@ -69,12 +69,12 @@ const DATA = {
   ],
 
   domains: [
-    { icon:'fa-solid fa-crown',        ar:['دومينات مميزة','أسماء قصيرة وسهلة الحفظ'],       en:['Premium names','Short and memorable'] },
-    { icon:'fa-solid fa-language',     ar:['دومينات عربية','كلمات عربية عالية الطلب'],       en:['Arabic domains','High-demand Arabic keywords'] },
-    { icon:'fa-solid fa-cart-shopping',ar:['تجارة إلكترونية','مناسبة للمتاجر والمنصات'],     en:['E-commerce','Built for stores and platforms'] },
-    { icon:'fa-solid fa-briefcase',    ar:['خدمات وأعمال','لشركات الخدمات والوكالات'],       en:['Services & business','For agencies and service brands'] },
-    { icon:'fa-solid fa-microchip',    ar:['تقنية وذكاء اصطناعي','لمشاريع التكنولوجيا'],     en:['Tech & AI','For technology ventures'] },
-    { icon:'fa-solid fa-coins',        ar:['مالية واستثمار','لمشاريع المال والاستثمار'],     en:['Finance & investing','For fintech and investment projects'] }
+    { icon:'i-crown',        ar:['دومينات مميزة','أسماء قصيرة وسهلة الحفظ'],       en:['Premium names','Short and memorable'] },
+    { icon:'i-globe',     ar:['دومينات عربية','كلمات عربية عالية الطلب'],       en:['Arabic domains','High-demand Arabic keywords'] },
+    { icon:'i-cart',ar:['تجارة إلكترونية','مناسبة للمتاجر والمنصات'],     en:['E-commerce','Built for stores and platforms'] },
+    { icon:'i-briefcase',    ar:['خدمات وأعمال','لشركات الخدمات والوكالات'],       en:['Services & business','For agencies and service brands'] },
+    { icon:'i-chip',    ar:['تقنية وذكاء اصطناعي','لمشاريع التكنولوجيا'],     en:['Tech & AI','For technology ventures'] },
+    { icon:'i-coins',        ar:['مالية واستثمار','لمشاريع المال والاستثمار'],     en:['Finance & investing','For fintech and investment projects'] }
   ],
 
   skills: [
@@ -124,13 +124,13 @@ function buildSections() {
   // Marquee (duplicated so the loop is seamless)
   const items = DATA.marquee[lang];
   document.getElementById('marqueeTrack').innerHTML = [...items, ...items]
-    .map(s => `<span><i class="fas fa-star"></i>${s}</span>`).join('');
+    .map(s => `<span><svg class="ic"><use href="#i-star"/></svg>${s}</span>`).join('');
 
   // Services
   document.getElementById('servicesGrid').innerHTML = DATA.services.map(s => {
     const [title, desc] = t(s);
     return `<article class="card reveal">
-      <div class="card-icon"><i class="${s.icon}"></i></div>
+      <div class="card-icon"><svg class="ic"><use href="#${s.icon}"/></svg></div>
       <h3>${title}</h3><p>${desc}</p>
     </article>`;
   }).join('');
@@ -140,11 +140,11 @@ function buildSections() {
     const [title, role, desc] = t(w);
     const link = w.url
       ? `<a class="work-link" href="${w.url}" target="_blank" rel="noopener">
-           ${lang === 'ar' ? 'زيارة المشروع' : 'Visit project'} <i class="fas fa-arrow-up-right-from-square"></i>
+           ${lang === 'ar' ? 'زيارة المشروع' : 'Visit project'} <svg class="ic"><use href="#i-external"/></svg>
          </a>` : '';
     return `<article class="work-card reveal">
       <div class="work-top">
-        <div class="work-badge"><i class="${w.icon}"></i></div>
+        <div class="work-badge"><svg class="ic"><use href="#${w.icon}"/></svg></div>
         <div><h3>${title}</h3><span class="role">${role}</span></div>
       </div>
       <p>${desc}</p>
@@ -157,7 +157,7 @@ function buildSections() {
   document.getElementById('domainsGrid').innerHTML = DATA.domains.map(d => {
     const [title, desc] = t(d);
     return `<article class="domain-card reveal">
-      <i class="${d.icon}"></i><h4>${title}</h4><p>${desc}</p>
+      <svg class="ic"><use href="#${d.icon}"/></svg><h4>${title}</h4><p>${desc}</p>
     </article>`;
   }).join('');
 
