@@ -1,4 +1,5 @@
 {
+  "//": "التوكن بيتقرا من متغير بيئة اسمه HOSTINGER_API_TOKEN. متكتبوش هنا — الملف ده متتبَّع في الجيت.",
   "mcpServers": {
     "hostinger-hosting": {
       "command": "npx.cmd",
