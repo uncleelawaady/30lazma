@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تك آي نيوز | TechAI News — بوابتك العربية لأخبار التقنية والذكاء الاصطناعي</title>
+  <meta name="description" content="موقع إخباري تقني عربي شامل: أخبار الذكاء الاصطناعي والهواتف والكمبيوتر والبرمجة والأمن السيبراني والألعاب والعملات الرقمية — مقالات ومراجعات وفيديو ومسابقات بجوائز.">
+  <meta name="keywords" content="أخبار تقنية, ذكاء اصطناعي, هواتف, برمجة, أمن سيبراني, ألعاب, عملات رقمية, ChatGPT, مراجعات">
+  <link rel="canonical" href="https://techai.news/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="تك آي نيوز — بوابتك العربية لأخبار التقنية والذكاء الاصطناعي">
+  <meta property="og:description" content="أخبار ومقالات ومراجعات وفيديو ومسابقات تقنية بجوائز — كل التقنية بالعربي في مكان واحد.">
+  <meta property="og:url" content="https://techai.news/">
+  <meta property="og:site_name" content="TechAI News">
+  <meta property="og:locale" content="ar_AR">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="تك آي نيوز — أخبار التقنية والذكاء الاصطناعي">
+  <meta name="theme-color" content="#0a1352">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="alternate" type="application/rss+xml" title="TechAI News RSS" href="rss.xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"NewsMediaOrganization","name":"TechAI News","alternateName":"تك آي نيوز","url":"https://techai.news/","description":"بوابة عربية لأخبار التقنية والذكاء الاصطناعي"}
+  </script>
+</head>
+<body data-page="home">
+  <div class="bg-scene"></div>
+  <div id="app-header"></div>
+
+  <!-- الهيرو + الخبر المميز -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <span class="hero-kicker"><i class="fa-solid fa-satellite-dish"></i> تغطية تقنية على مدار الساعة</span>
+        <h1>أخبار التقنية <span class="grad">والذكاء الاصطناعي</span><br>بلغة عربية تفهمك</h1>
+        <p class="lead">
+          نغطي لك <span class="hl">آخر الأخبار</span> ونكتب <span class="hl">مقالات معمّقة</span>
+          ونختبر الأجهزة في <span class="hl">مراجعات ميدانية</span> — وكل أسبوع
+          <span class="hl">مسابقات بجوائز</span> حقيقية.
+        </p>
+        <div class="hero-cta">
+          <a href="#latest" class="btn btn-primary"><i class="fa-solid fa-newspaper"></i> تصفح الأخبار</a>
+          <a href="quiz.html" class="btn btn-ghost"><i class="fa-solid fa-trophy"></i> المسابقات والجوائز</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><b>9</b><span>أقسام رئيسية</span></div>
+          <div class="stat"><b>+60</b><span>تصنيفاً فرعياً</span></div>
+          <div class="stat"><b>+120</b><span>خبر شهرياً</span></div>
+          <div class="stat"><b>24/7</b><span>تغطية مستمرة</span></div>
+        </div>
+      </div>
+      <div class="hero-feature reveal" id="hero-feature"></div>
+    </div>
+  </section>
+
+  <!-- سؤال اليوم -->
+  <section class="section" style="padding-block:10px 40px">
+    <div class="container">
+      <div class="panel-box glow reveal" id="daily-q-box"></div>
+    </div>
+  </section>
+
+  <!-- آخر الأخبار -->
+  <section class="section" id="latest" style="padding-block:20px 50px">
+    <div class="container">
+      <div class="section-head">
+        <div class="titles">
+          <span class="kicker"><i class="fa-solid fa-bolt"></i> آخر المستجدات</span>
+          <h2>آخر <span class="grad">الأخبار</span></h2>
+        </div>
+        <a class="section-link" href="special.html?view=latest">عرض الكل <i class="fa-solid fa-angle-left"></i></a>
+      </div>
+      <div class="cards-grid" id="latest-grid"></div>
+    </div>
+  </section>
+
+  <!-- الأكثر قراءة -->
+  <section class="section" style="padding-block:20px 50px">
+    <div class="container">
+      <div class="section-head">
+        <div class="titles">
+          <span class="kicker"><i class="fa-solid fa-fire"></i> الترند الآن</span>
+          <h2>الأكثر <span class="grad">قراءة</span></h2>
+        </div>
+        <a class="section-link" href="special.html?view=most-read">القائمة الكاملة <i class="fa-solid fa-angle-left"></i></a>
+      </div>
+      <div class="trending-list" id="trending-list"></div>
+      <div class="ad-slot"><span><i class="fa-solid fa-rectangle-ad"></i> مساحة إعلانية — Banner 970×250</span></div>
+    </div>
+  </section>
+
+  <!-- أخبار حسب التصنيف -->
+  <section class="section" style="padding-block:10px 40px">
+    <div class="container">
+      <div class="section-head">
+        <div class="titles">
+          <span class="kicker"><i class="fa-solid fa-layer-group"></i> تصفح حسب اهتمامك</span>
+          <h2>أخبار <span class="grad">الأقسام</span></h2>
+        </div>
+      </div>
+      <div id="cat-blocks"></div>
+    </div>
+  </section>
+
+  <!-- الفيديو -->
+  <section class="section" id="videos" style="padding-block:20px 50px">
+    <div class="container">
+      <div class="section-head">
+        <div class="titles">
+          <span class="kicker"><i class="fa-solid fa-circle-play"></i> شاهد بالفيديو</span>
+          <h2>أخبار <span class="grad">فيديو</span> مختارة بعناية</h2>
+        </div>
+      </div>
+      <div class="videos-grid" id="videos-grid"></div>
+    </div>
+  </section>
+
+  <!-- المراجعات -->
+  <section class="section" style="padding-block:20px 50px">
+    <div class="container">
+      <div class="section-head">
+        <div class="titles">
+          <span class="kicker"><i class="fa-solid fa-star-half-stroke"></i> جربناها لك</span>
+          <h2>مراجعات <span class="grad">ومقارنات</span></h2>
+        </div>
+        <a class="section-link" href="special.html?view=reviews">كل المراجعات <i class="fa-solid fa-angle-left"></i></a>
+      </div>
+      <div class="cards-grid" id="reviews-grid"></div>
+    </div>
+  </section>
+
+  <!-- مقالات الرأي -->
+  <section class="section" id="articles" style="padding-block:20px 50px">
+    <div class="container">
+      <div class="section-head">
+        <div class="titles">
+          <span class="kicker"><i class="fa-solid fa-pen-nib"></i> قراءات معمّقة</span>
+          <h2>مقالات <span class="grad">وتحليلات</span></h2>
+        </div>
+        <a class="section-link" href="special.html?view=opinions">كل المقالات <i class="fa-solid fa-angle-left"></i></a>
+      </div>
+      <div class="articles-grid" id="opinions-grid"></div>
+    </div>
+  </section>
+
+  <!-- الوسوم -->
+  <section class="section" style="padding-block:10px 40px">
+    <div class="container">
+      <div class="section-head">
+        <div class="titles">
+          <span class="kicker"><i class="fa-solid fa-hashtag"></i> استكشف</span>
+          <h2>الوسوم <span class="grad">الأكثر تداولاً</span></h2>
+        </div>
+      </div>
+      <div class="tags-row" id="tags-cloud"></div>
+    </div>
+  </section>
+
+  <!-- النشرة البريدية -->
+  <section class="section" id="newsletter" style="padding-block:20px 40px">
+    <div class="container">
+      <div class="newsletter reveal">
+        <div>
+          <h2>خلاصة الأسبوع التقني <span class="hl">في بريدك</span></h2>
+          <p>ملخص ذكي لأهم ما حدث في عالم التقنية والذكاء الاصطناعي — مرة واحدة أسبوعياً، بدون إزعاج، وإلغاء الاشتراك بضغطة واحدة.</p>
+        </div>
+        <div>
+          <form class="newsletter-form" id="newsletter-form">
+            <input type="email" placeholder="بريدك الإلكتروني" required>
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> اشترك الآن</button>
+          </form>
+          <p class="newsletter-note" id="newsletter-note">نحترم خصوصيتك — لن نشارك بريدك مع أي جهة.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="app-footer"></div>
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

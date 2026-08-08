@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>البحث المتقدم | تك آي نيوز</title>
+  <meta name="description" content="ابحث في أخبار ومقالات تك آي نيوز — فلترة حسب القسم والكاتب والتاريخ والوسوم.">
+  <meta property="og:site_name" content="TechAI News">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0a1352">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="search">
+  <div class="bg-scene"></div>
+  <div id="app-header"></div>
+  <main class="section"><div class="container">
+    <div class="section-head">
+      <div class="titles">
+        <span class="kicker"><i class="fa-solid fa-magnifying-glass"></i> ابحث في كل المحتوى</span>
+        <h2>البحث <span class="grad">المتقدم</span></h2>
+      </div>
+    </div>
+    <form class="panel-box glow admin-form" id="search-form" style="margin-bottom:30px">
+      <div><label>كلمات البحث</label><input type="search" id="s-q" placeholder="ابحث في العناوين والمحتوى والوسوم…"></div>
+      <div class="row2">
+        <div><label>القسم</label><select id="s-cat"></select></div>
+        <div><label>الكاتب</label><select id="s-author"></select></div>
+      </div>
+      <div class="row2">
+        <div><label>من تاريخ</label><input type="date" id="s-from"></div>
+        <div><label>إلى تاريخ</label><input type="date" id="s-to"></div>
+      </div>
+    </form>
+    <div id="search-results"></div>
+  </div></main>
+  <div id="app-footer"></div>
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
