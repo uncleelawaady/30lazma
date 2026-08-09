@@ -9,31 +9,40 @@
   // NewlyNow dark-neon design system. Kept here as a single source of truth
   // so legacy Elwaset/EXD theme values cannot leak back into the storefront.
   const THEME = {
-    bg: '#0D0E12',
-    'bg-2': '#1A1C23',
-    yellow: '#00E5FF',
-    orange: '#00C2FF',
-    pink: '#FF2A85',
-    purple: '#FF007A',
-    violet: '#00C2FF',
-    teal: '#00E5FF',
+    bg: '#07090D',
+    'bg-2': '#111720',
+    yellow: '#26D9FF',
+    orange: '#00A8FF',
+    pink: '#FF3D8F',
+    purple: '#FF3D8F',
+    violet: '#00A8FF',
+    teal: '#26D9FF',
     text: '#FFFFFF',
-    muted: '#A0A5B5',
-    dim: '#707686',
-    glass: 'rgba(26,28,35,.72)',
-    'glass-brd': 'rgba(255,255,255,.08)',
-    'grad-from': '#00E5FF',
-    'grad-mid': '#00C2FF',
-    'grad-to': '#FF2A85',
-    'ticker-bg': '#11131A',
-    radius: '18px'
+    muted: '#9CA6B7',
+    dim: '#707B8B',
+    glass: 'rgba(17,23,32,.82)',
+    'glass-brd': 'rgba(255,255,255,.12)',
+    'grad-from': '#FFFFFF',
+    'grad-mid': '#26D9FF',
+    'grad-to': '#FF3D8F',
+    'ticker-bg': '#080B10',
+    radius: '24px'
   };
 
   function enforceTheme() {
     Object.entries(THEME).forEach(([key, value]) => root.style.setProperty('--' + key, value));
-    root.style.setProperty('--grad', 'linear-gradient(100deg,#00E5FF 0%,#00C2FF 46%,#FF2A85 100%)');
-    root.style.setProperty('--grad-btn', 'linear-gradient(100deg,#00E5FF 0%,#00C2FF 100%)');
+    root.style.setProperty('--grad', 'linear-gradient(90deg,#FFFFFF 0%,#26D9FF 48%,#FF3D8F 120%)');
+    root.style.setProperty('--grad-btn', 'linear-gradient(90deg,#FFFFFF 0%,#FFFFFF 100%)');
     root.dataset.brand = 'newlynow';
+  }
+
+  function injectStylesheet() {
+    if (document.querySelector('link[data-newlynow-theme]')) return;
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'newlynow-theme.css?v=1';
+    link.dataset.newlynowTheme = 'true';
+    document.head.appendChild(link);
   }
 
   function injectThemeLayer() {
@@ -41,22 +50,11 @@
     const style = document.createElement('style');
     style.id = 'newlynow-theme-layer';
     style.textContent = `
-      body{background:#0D0E12!important;color:#fff;font-family:'Cairo','Inter',sans-serif!important}
-      body::before{background:radial-gradient(55% 32% at 50% 2%,rgba(0,229,255,.11),transparent 70%),radial-gradient(38% 24% at 82% 20%,rgba(255,42,133,.07),transparent 72%)!important;filter:none!important}
-      body::after{opacity:.22!important;background-size:52px 52px!important}
-      .nav{background:rgba(13,14,18,.82)!important;border-bottom:1px solid rgba(255,255,255,.08)!important;backdrop-filter:blur(18px)!important}
-      .glass,.card,.service-card,.product-card{background:linear-gradient(145deg,rgba(26,28,35,.92),rgba(17,19,26,.88))!important;border-color:rgba(255,255,255,.08)!important;box-shadow:0 18px 60px rgba(0,0,0,.22)!important}
-      .cat:hover,.card:hover,.service-card:hover,.product-card:hover{border-color:rgba(0,229,255,.55)!important;box-shadow:0 18px 55px rgba(0,229,255,.10)!important}
-      .btn-grad,.btn-primary{background:#00E5FF!important;color:#061014!important;border-color:#00E5FF!important;text-shadow:none!important;box-shadow:0 10px 32px rgba(0,229,255,.20)!important}
-      .btn-grad:hover,.btn-primary:hover{background:#21e9ff!important;box-shadow:0 14px 38px rgba(0,229,255,.34)!important}
-      .btn-ghost{background:rgba(255,255,255,.035)!important;border-color:rgba(255,255,255,.11)!important}
-      .btn-ghost:hover{border-color:#00E5FF!important;box-shadow:0 0 24px rgba(0,229,255,.12)!important}
-      .grad-text{background:linear-gradient(100deg,#00E5FF 0%,#00C2FF 48%,#FF2A85 100%)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
-      .search-bar{background:rgba(26,28,35,.76)!important;border-color:rgba(255,255,255,.10)!important;box-shadow:0 18px 55px rgba(0,0,0,.30)!important}
-      .eyebrow,.pill i,.hero-trust i{color:#00E5FF!important}
-      .top-ticker{background:#11131A!important;border-bottom:1px solid rgba(0,229,255,.16)!important}
-      ::selection{background:#00E5FF;color:#071014}
-      :focus-visible{outline:2px solid #00E5FF!important;outline-offset:3px}
+      body{background:#07090D!important;color:#fff;font-family:'Cairo','Inter',sans-serif!important}
+      .grad-text{background:linear-gradient(90deg,#fff 0%,#26D9FF 48%,#FF3D8F 120%)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+      .eyebrow,.pill i,.hero-trust i{color:#26D9FF!important}
+      ::selection{background:#26D9FF;color:#071014}
+      :focus-visible{outline:2px solid #26D9FF!important;outline-offset:3px}
       @media (prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
     `;
     document.head.appendChild(style);
@@ -91,8 +89,6 @@
     window.SITE_CONFIG = c;
     try { document.dispatchEvent(new CustomEvent('siteconfig', { detail: c })); } catch (_) {}
 
-    // Keep content controls from the dashboard, but the NewlyNow visual identity
-    // remains authoritative during this migration.
     if (c.texts) for (const k in c.texts) {
       const v = c.texts[k];
       if (v == null || v === '') continue;
@@ -106,12 +102,14 @@
     }
 
     enforceTheme();
+    injectStylesheet();
     injectThemeLayer();
     replaceLegacyBranding();
   }
 
   // Apply immediately to avoid a flash of the old identity.
   enforceTheme();
+  injectStylesheet();
   injectThemeLayer();
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', replaceLegacyBranding, { once:true });
   else replaceLegacyBranding();
