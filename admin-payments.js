@@ -17,16 +17,17 @@
   panel.innerHTML = `
     <div class="card">
       <h3><i class="fas fa-wallet"></i> وسائل الدفع</h3>
-      <p class="muted" style="margin-bottom:12px">أضف الطرق الظاهرة في الـCheckout. مفاتيح API وSecrets لا تُحفظ هنا نهائيًا.</p>
+      <p class="muted" style="margin-bottom:12px">إعداد البوابات وEndpoints للمالك فقط. مفاتيح API وSecrets لا تُحفظ هنا نهائيًا.</p>
       <div id="nnPayMethods"></div>
       <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.8rem">
         <button class="btn btn-ghost btn-sm" id="nnPayAdd"><i class="fas fa-plus"></i> إضافة طريقة</button>
         <button class="btn btn-sm" id="nnPaySave"><i class="fas fa-floppy-disk"></i> حفظ وسائل الدفع</button>
+        <span class="pill wait" id="nnPayOwnerNote" style="display:none">عرض فقط — إعداد البوابات للمالك</span>
       </div>
     </div>
     <div class="card">
       <h3><i class="fas fa-shield-halved"></i> مراجعة المدفوعات اليدوية</h3>
-      <p class="muted" style="margin-bottom:12px">اعتماد الدفع يغيّر حالة الدفع فقط بعد مراجعتك. الدفع التلقائي يجب أن يتأكد من السيرفر/Webhook.</p>
+      <p class="muted" style="margin-bottom:12px">اعتماد الدفع يغيّر حالة الدفع فقط بعد المراجعة ويسجل العملية في Audit Log.</p>
       <div id="nnPayAttempts"><p class="muted">جاري التحميل...</p></div>
     </div>`;
   appEl.appendChild(panel);
@@ -43,6 +44,7 @@
     .nn-pay-row{border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px;background:rgba(255,255,255,.025)}
     .nn-pay-grid{display:grid;grid-template-columns:1fr 1.4fr .85fr .6fr;gap:8px;align-items:end}.nn-pay-grid .field{margin:0}
     .nn-pay-row select,.nn-pay-row input,.nn-pay-row textarea{width:100%;background:#0d1016;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:.58rem .7rem;font-family:inherit}
+    .nn-pay-row input:disabled,.nn-pay-row select:disabled,.nn-pay-row textarea:disabled{opacity:.62;cursor:not-allowed}
     .nn-pay-extra{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.nn-pay-extra textarea{min-height:64px}
     .nn-pay-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px}.nn-pay-enabled{display:flex;align-items:center;gap:6px;font-size:.82rem}
     .nn-attempt{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:8px;background:rgba(255,255,255,.025)}.nn-attempt-top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.nn-attempt small{color:var(--muted)}
@@ -61,16 +63,30 @@
   const auth = authMod.getAuth(fbApp);
   const db = fs.getFirestore(fbApp);
   const cfgRef = fs.doc(db, 'config', 'site');
+  const OWNERS = ['elawaady.official@gmail.com', 'elawadi.store4@gmail.com'];
   let methods = [];
   let currentPayments = {};
 
   const esc = s => String(s == null ? '' : s).replace(/[&<>\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]));
   const cleanId = v => String(v || '').trim().replace(/[^a-zA-Z0-9_-]/g, '-').slice(0,80);
   const actor = () => (auth.currentUser && auth.currentUser.email) || 'unknown-admin';
+  const ownerAccess = () => OWNERS.includes(String(actor()).toLowerCase());
   const toast = m => {
     const t = document.getElementById('toast');
     if (t) { t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200); }
   };
+
+  function applyOwnerConfigUi() {
+    const owner = ownerAccess();
+    const add = document.getElementById('nnPayAdd');
+    const save = document.getElementById('nnPaySave');
+    const note = document.getElementById('nnPayOwnerNote');
+    if (add) add.style.display = owner ? '' : 'none';
+    if (save) save.style.display = owner ? '' : 'none';
+    if (note) note.style.display = owner ? 'none' : 'inline-block';
+    document.querySelectorAll('.nn-pay-row input,.nn-pay-row select,.nn-pay-row textarea').forEach(el => { el.disabled = !owner; });
+    document.querySelectorAll('.nn-pay-del').forEach(el => { el.style.display = owner ? '' : 'none'; });
+  }
 
   function row(m, i) {
     return `<div class="nn-pay-row" data-i="${i}">
@@ -93,8 +109,10 @@
     const box = document.getElementById('nnPayMethods');
     box.innerHTML = methods.length ? methods.map(row).join('') : '<p class="muted">مفيش وسائل دفع مضافة لسه.</p>';
     box.querySelectorAll('.nn-pay-del').forEach(b => b.addEventListener('click', () => {
+      if (!ownerAccess()) return toast('إعداد البوابات للمالك فقط');
       const el = b.closest('.nn-pay-row'); methods.splice(+el.dataset.i, 1); renderMethods();
     }));
+    applyOwnerConfigUi();
   }
 
   function collectMethods() {
@@ -118,19 +136,20 @@
   }
 
   document.getElementById('nnPayAdd').addEventListener('click', () => {
+    if (!ownerAccess()) return toast('إعداد البوابات للمالك فقط');
     methods = collectMethods();
     methods.push({ id: 'payment-' + Date.now().toString(36), name: 'طريقة دفع جديدة', type: 'manual', enabled: true, account: '', endpoint: '', instructions: '' });
     renderMethods();
   });
 
   document.getElementById('nnPaySave').addEventListener('click', async () => {
+    if (!ownerAccess()) return toast('إعداد البوابات للمالك فقط');
     try {
       methods = collectMethods();
       const payments = Object.assign({}, currentPayments, { methods });
       const batch = fs.writeBatch(db);
       batch.set(cfgRef, { payments }, { merge: true });
-      const logRef = fs.doc(fs.collection(db, 'auditLogs'));
-      batch.set(logRef, {
+      batch.set(fs.doc(fs.collection(db, 'auditLogs')), {
         action: 'payments.methods.updated', actor: actor(), targetType: 'config', targetId: 'site',
         details: { methodCount: methods.length }, createdAt: fs.serverTimestamp()
       });
@@ -172,8 +191,7 @@
         paymentStatus: orderPaymentStatus, paymentAttemptId: attemptId, paymentUpdatedAt: fs.serverTimestamp()
       });
     }
-    const logRef = fs.doc(fs.collection(db, 'auditLogs'));
-    batch.set(logRef, {
+    batch.set(fs.doc(fs.collection(db, 'auditLogs')), {
       action, actor: actor(), targetType: 'paymentAttempt', targetId: attemptId,
       details: { orderId, orderNo, paymentStatus: orderPaymentStatus }, createdAt: fs.serverTimestamp()
     });
@@ -208,5 +226,6 @@
     } catch (_) { box.innerHTML = '<p class="muted">تعذّر تحميل محاولات الدفع.</p>'; }
   }
 
+  authMod.onAuthStateChanged(auth, () => applyOwnerConfigUi());
   await loadConfig();
 })();
