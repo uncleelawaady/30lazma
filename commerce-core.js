@@ -85,7 +85,6 @@
       return { id: '', orderNo, persisted: false, payload: payloadBase };
     }
 
-    // Customer lead capture is secondary and must never block the order.
     try {
       await fs.addDoc(fs.collection(db, 'customers'), {
         name, phone, source: 'order', createdAt: fs.serverTimestamp()
@@ -144,14 +143,27 @@
     if (!endpoint) throw new Error('PAYMENT_ENDPOINT_NOT_CONFIGURED');
     if (!order || !order.persisted || !attempt || !attempt.persisted) throw new Error('ORDER_NOT_PERSISTED');
 
+    const appCheck = window.NewlyNowAppCheck;
+    if (!appCheck || !appCheck.configured()) throw new Error('APP_CHECK_NOT_CONFIGURED');
+    const appCheckToken = await appCheck.getToken(false);
+    if (!appCheckToken) throw new Error('APP_CHECK_TOKEN_FAILED');
+
     const response = await fetch(endpoint, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Firebase-AppCheck': appCheckToken
+      },
       credentials: 'omit',
       cache: 'no-store',
+      referrerPolicy: 'strict-origin-when-cross-origin',
       body: JSON.stringify({ orderId: order.id, orderNo: order.orderNo, paymentAttemptId: attempt.id, methodId: method.id })
     });
-    if (!response.ok) throw new Error('PAYMENT_INIT_FAILED');
+    if (!response.ok) {
+      let code = 'PAYMENT_INIT_FAILED';
+      try { const data = await response.json(); if (data && data.error) code = data.error; } catch (_) {}
+      throw new Error(code);
+    }
     const data = await response.json();
     const checkoutUrl = safeHttpsUrl(data && data.checkoutUrl);
     if (!checkoutUrl) throw new Error('INVALID_CHECKOUT_URL');
