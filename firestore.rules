@@ -30,6 +30,13 @@ service cloud.firestore {
       return owner() || (verifiedEmail() && request.auth.token.email in adminList());
     }
 
+    function secureCommerceOnly() {
+      return exists(/databases/$(database)/documents/config/site)
+        && get(/databases/$(database)/documents/config/site).data
+          .get('security', {})
+          .get('secureCommerceOnly', false) == true;
+    }
+
     function shortString(v, max) {
       return v is string && v.size() <= max;
     }
@@ -50,7 +57,7 @@ service cloud.firestore {
         && shortString(d.get('provider', ''), 40)
         && d.rating >= 1 && d.rating <= 5
         && shortString(d.text, 5000)
-        && d.approved == false
+        && d.apved == false
         && d.createdAt == request.time;
     }
 
@@ -188,14 +195,14 @@ service cloud.firestore {
     }
 
     match /orders/{id} {
-      allow create: if validOrder();
+      allow create: if !secureCommerceOnly() && validOrder();
       allow read: if isAdmin();
       allow update: if isAdmin() && validOrderAdminUpdate();
       allow delete: if owner();
     }
 
     match /paymentAttempts/{id} {
-      allow create: if validPaymentAttempt();
+      allow create: if !secureCommerceOnly() && validPaymentAttempt();
       allow read: if isAdmin();
       allow update: if isAdmin() && validPaymentAdminUpdate();
       allow delete: if owner();
