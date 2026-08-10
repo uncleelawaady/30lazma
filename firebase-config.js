@@ -52,13 +52,16 @@ window.FIREBASE_CONFIG = {
       const nodes = []; while (w.nextNode()) nodes.push(w.currentNode);
       nodes.forEach(n => { const v = rep(n.nodeValue); if (v !== n.nodeValue) n.nodeValue = v; });
 
-      if (!document.querySelector('script[data-newlynow-payments]')) {
+      const loadAdminScript = (src, key) => {
+        if (document.querySelector(`script[data-newlynow-${key}]`)) return;
         const s = document.createElement('script');
-        s.src = 'admin-payments.js?v=1';
-        s.dataset.newlynowPayments = '1';
+        s.src = src;
+        s.dataset[`newlynow${key[0].toUpperCase()}${key.slice(1)}`] = '1';
         s.defer = true;
         document.body.appendChild(s);
-      }
+      };
+      loadAdminScript('admin-payments.js?v=2', 'payments');
+      loadAdminScript('admin-audit.js?v=1', 'audit');
     }, { once: true });
   }
 })();
