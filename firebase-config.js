@@ -1,5 +1,6 @@
 // ===== NewlyNow Firebase web config =====
-// Firebase web config is a public client identifier; authorization is enforced by Auth + Security Rules.
+// Firebase web config and App Check site keys are public client identifiers.
+// Private gateway/API secrets must remain server-side only.
 window.FIREBASE_CONFIG = {
   apiKey: "AIzaSyD2yPbgNPppQc1wxhFvbYojY8XCwSnm9JQ",
   authDomain: "elwaset-store.firebaseapp.com",
@@ -7,6 +8,11 @@ window.FIREBASE_CONFIG = {
   storageBucket: "elwaset-store.firebasestorage.app",
   messagingSenderId: "528440617091",
   appId: "1:528440617091:web:004cac53d438f279ce53b6"
+};
+
+// Fill this PUBLIC reCAPTCHA Enterprise site key after registering newlynow.com in Firebase App Check.
+window.NEWLYNOW_SECURITY_CONFIG = window.NEWLYNOW_SECURITY_CONFIG || {
+  appCheckSiteKey: ''
 };
 
 (function () {
@@ -29,6 +35,14 @@ window.FIREBASE_CONFIG = {
     link.rel = 'stylesheet'; link.href = href; link.dataset.newlynowUi = String(i + 1);
     document.head.appendChild(link);
   });
+
+  if (!isAdmin && !document.querySelector('script[data-newlynow-app-check]')) {
+    const s = document.createElement('script');
+    s.src = 'app-check.js?v=1';
+    s.dataset.newlynowAppCheck = '1';
+    s.defer = true;
+    document.head.appendChild(s);
+  }
 
   if (isHome) {
     document.addEventListener('DOMContentLoaded', () => {
