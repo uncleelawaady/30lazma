@@ -1,0 +1,14 @@
+{
+  "name": "newlynow-store",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "validate": "node scripts/validate-newlynow.mjs",
+    "test:rules": "firebase emulators:exec --only firestore --project demo-newlynow \"node --test tests/firestore.rules.test.mjs\""
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^4.0.1",
+    "firebase": "^11.10.0",
+    "firebase-tools": "^14.11.0"
+  }
+}
