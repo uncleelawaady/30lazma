@@ -1,88 +1,29 @@
-# Ahmed Elawaady - Portfolio Website
+# NewlyNow Storefront
 
-موقع بورتفوليو احترافي لأحمد العوضي - مؤسس EXD | Elawaady XDigital
+This repository contains the storefront currently being migrated to the **NewlyNow** identity.
 
-## 🎯 الميزات الرئيسية
+## Active migration
 
-✨ **تصميم حديث واحترافي**
-- تصميم متجاوب يعمل على جميع الأجهزة
-- ألوان وتدرجات احترافية
-- رسوم متحركة سلسة وجميلة
-- واجهة مستخدم سهلة وبديهية
+Development is being performed on a review branch before production merge:
 
-🌍 **ثنائي اللغة**
-- دعم كامل للعربية والإنجليزية
-- تبديل سلس بين اللغات
-- تخزين تفضيل اللغة المستخدم
+`newlynow-theme-moburst-inspired`
 
-📱 **التكامل الكامل**
-- روابط تواصل رسمية (WhatsApp, Telegram, LinkedIn, إلخ)
-- عرض شامل للخدمات والمشاريع
-- عرض الدومينات الاستثمارية المميزة
-- روابط لجميع المجتمعات الرقمية
+The current migration includes:
 
-## 📋 الأقسام الرئيسية
+- NewlyNow dark editorial / neon storefront theme
+- Homepage, category, service, checkout and account styling layers
+- NewlyNow admin dashboard styling layer
+- Removal/migration of legacy Elwaset / Elawaady XDigital presentation
+- Cart storage migration to `newlynow_cart`
+- Firestore public-write validation and user document protections
+- Firebase Storage upload type/size validation
+- Safer announcement links and local notification-state migration
+- Git ignore rules for secrets, service-account keys and local databases
 
-1. **الصفحة الرئيسية (Hero)** - ترحيب احترافي مع دعوة للتواصل
-2. **عني** - معلومات شاملة عن أحمد العوضي
-3. **الخدمات** - عرض 8 خدمات رئيسية مع أيقونات
-4. **المشاريع** - المشاريع الرئيسية (EXD, NewlyNow, المجتمعات)
-5. **الدومينات** - تصنيفات الدومينات الاستثمارية المميزة
-6. **المهارات** - عرض شامل للمهارات والتخصصات
-7. **التواصل** - جميع وسائل التواصل والمجتمعات
+## Important
 
-## 🛠️ التكنولوجيا
+The Firebase project identifier may still use its historical project ID internally. Do not rename or replace Firebase project identifiers merely for branding. Public-facing branding is NewlyNow; infrastructure identifiers should only be changed through a planned migration.
 
-- **HTML5** - بنية صحيحة ودلالية
-- **CSS3** - تصاميم حديثة مع Flexbox و Grid
-- **JavaScript** - تفاعلات سلسة وتجربة مستخدم محسنة
-- **Font Awesome** - مكتبة أيقونات جميلة
+## Production safety
 
-## 🚀 المميزات التقنية
-
-- ✅ تصميم متجاوب (Responsive Design)
-- ✅ تحميل سريع وأداء عالي
-- ✅ رسوم متحركة Smooth
-- ✅ Intersection Observer للتحريكات المتقدمة
-- ✅ Smooth Scroll للملاحة السلسة
-- ✅ Dark Mode Support (Ready)
-- ✅ PWA Ready (يمكن تطويره لاحقاً)
-
-## 📖 الاستخدام
-
-```bash
-# الفتح المباشر في المتصفح
-open index.html
-
-# أو استخدام خادم محلي
-python -m http.server 8000
-# ثم افتح http://localhost:8000
-```
-
-## 🎨 التخصيص
-
-يمكنك تخصيص الألوان بسهولة من خلال متغيرات CSS في `style.css`:
-
-```css
-:root {
-    --primary: #6366f1;
-    --secondary: #8b5cf6;
-    --accent: #ec4899;
-    /* ... */
-}
-```
-
-## 📞 المعلومات الإضافية
-
-**الموقع الرسمي:** https://elawaady.com  
-**Telegram:** https://t.me/elawaadyofficial  
-**WhatsApp:** https://wa.me/201055578777  
-**LinkedIn:** https://linkedin.com/in/elawaadyofficial
-
-## 📜 الترخيص
-
-جميع الحقوق محفوظة © 2026 أحمد العوضي - EXD | Elawaady XDigital
-
----
-
-تم إنشاء هذا الموقع بعناية لتقديم هوية احترافية واحترافية لمشاريع وخدمات أحمد العوضي الرقمية.
+Do not merge security-rule changes or payment changes to production without testing the complete order, account, review, admin and upload flows in a staging environment or Firebase Emulator Suite first.
