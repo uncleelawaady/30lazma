@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إتمام الطلب | Elwaset.net</title>
+    <title>إتمام الطلب | NewlyNow.com</title>
     <link rel="stylesheet" href="style.css?v=4">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -13,12 +13,11 @@
 </head>
 <body>
     <div class="top-ticker" id="topTicker"><div class="ticker-track" id="tickerTrack"></div></div>
-    <!-- Navbar -->
     <nav class="nav" id="nav">
         <div class="container nav-inner">
             <a href="index.html" class="brand">
-                <img src="assets/logo.png" alt="Elwaset" class="brand-logo-img">
-                <span class="brand-name">Elwaset<em>.net</em></span>
+                <img src="assets/logo.png" alt="NewlyNow" class="brand-logo-img">
+                <span class="brand-name">NewlyNow<em>.com</em></span>
             </a>
             <a href="index.html#categories" class="btn btn-ghost btn-sm"><i class="fas fa-grip"></i> الأقسام</a>
         </div>
@@ -42,7 +41,6 @@
 
     <section class="section">
         <div class="container checkout-wrap">
-            <!-- order summary -->
             <div class="checkout-summary glass">
                 <h3 class="co-title"><i class="fas fa-list-check"></i> ملخص الطلب</h3>
                 <div id="coItems"></div>
@@ -50,7 +48,6 @@
                 <p class="co-price-note"><i class="fas fa-circle-info"></i> السعر النهائي يتحدد بعد التأكيد حسب مواصفات كل خدمة.</p>
             </div>
 
-            <!-- customer form -->
             <div class="checkout-form glass">
                 <h3 class="co-title"><i class="fas fa-user-check"></i> بيانات العميل</h3>
                 <form id="coForm">
@@ -71,7 +68,7 @@
     </section>
 
     <footer class="footer">
-        <div class="foot-bottom">© 2026 Elwaset.net — جميع الحقوق محفوظة | EXD | Elawaady XDigital</div>
+        <div class="foot-bottom">© 2026 NewlyNow.com — جميع الحقوق محفوظة</div>
     </footer>
 
     <script src="cart.js"></script>
@@ -102,10 +99,10 @@
         return items;
       }
 
-      function orderNumber() { return 'EL-' + (10000 + Math.floor(Math.random() * 89999)); }
+      function orderNumber() { return 'NN-' + (10000 + Math.floor(Math.random() * 89999)); }
       function buildOrderText(name, phone, notes, items, orderNo) {
-        let t = 'مرحبًا فريق الوسيط 👋\n';
-        t += 'أنا أريد إتمام طلب من المتجر\n\n';
+        let t = 'مرحبًا فريق NewlyNow 👋\n';
+        t += 'أريد إتمام طلب من NewlyNow\n\n';
         t += 'اسم المستخدم: ' + name + '\n';
         t += 'رقم الهاتف: ' + phone + '\n';
         t += 'رقم الطلب: ' + orderNo + '\n\n';
@@ -118,7 +115,7 @@
         });
         t += '\nإجمالي السعر: حسب الطلب (يُحدد بعد التأكيد)\n';
         if (notes) t += '\nملاحظات المستخدم: ' + notes + '\n';
-        t += '\nبرجاء متابعة الطلب وإتمام الصفقة.';
+        t += '\nبرجاء متابعة الطلب وإتمامه.';
         return t;
       }
 
@@ -137,7 +134,6 @@
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التأكيد...';
         const orderNo = orderNumber();
 
-        // Save order + customer to Firebase (best effort — never blocks the order)
         try {
           const cfg = window.FIREBASE_CONFIG;
           if (cfg && cfg.apiKey) {
@@ -156,7 +152,6 @@
           }
         } catch (err) { console.warn('order save skipped', err); }
 
-        // Always send the order to WhatsApp to complete
         const text = buildOrderText(name, phone, notes, items, orderNo);
         window.Cart && window.Cart.clear();
         window.location.href = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(text);
