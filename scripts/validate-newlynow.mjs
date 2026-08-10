@@ -56,6 +56,8 @@ for (const file of browserCode) {
 if (exists('functions/index.js')) {
   const backend = read('functions/index.js');
   if (!/X-Firebase-AppCheck/.test(backend) || !/verifyToken\(/.test(backend)) fail.push('Payment backend must verify Firebase App Check tokens.');
+  if (!/exports\.createOrder\s*=\s*onRequest/.test(backend)) fail.push('Secure server-side createOrder endpoint is required.');
+  if (!/exports\.createPaymentAttempt\s*=\s*onRequest/.test(backend)) fail.push('Secure server-side createPaymentAttempt endpoint is required.');
   if (!/verifyWebhook\(/.test(backend)) fail.push('Payment backend must call provider webhook verification.');
   if (!/webhookEvents/.test(backend)) fail.push('Payment webhook must include an idempotency/event ledger.');
   if (!/calculateOrderPrice\(/.test(backend)) fail.push('Automatic payments must use server-authoritative structured pricing.');
@@ -67,6 +69,10 @@ if (exists('firestore.rules')) {
   if (!/email_verified\s*==\s*true/.test(rules)) fail.push('Owner/admin privileges must require a verified Firebase email.');
   if (!/function\s+verifiedEmail\s*\(/.test(rules) || !/function\s+owner[\s\S]{0,160}verifiedEmail\(\)/.test(rules)) fail.push('Owner authorization must be built on verifiedEmail().');
   if (!/function\s+isAdmin[\s\S]{0,220}verifiedEmail\(\)/.test(rules)) fail.push('Regular admin authorization must require verifiedEmail().');
+  if (!/function\s+secureCommerceOnly\s*\(/.test(rules)) fail.push('Firestore rules must expose secureCommerceOnly() migration gate.');
+  if (!/match \/orders\/\{id\}[\s\S]{0,100}allow create: if !secureCommerceOnly\(\)/.test(rules)) fail.push('Direct order creation must be disabled by secureCommerceOnly mode.');
+  if (!/match \/paymentAttempts\/\{id\}[\s\S]{0,110}allow create: if !secureCommerceOnly\(\)/.test(rules)) fail.push('Direct payment-attempt creation must be disabled by secureCommerceOnly mode.');
+  if (!/d\.approved\s*==\s*false/.test(rules)) fail.push('Review creation must force approved=false.');
   if (!/hasAny\(\['admins','payments','security'\]\)/.test(rules)) fail.push('Sensitive site config must remain owner-only.');
   if (!/match \/pricing\/\{id\}/.test(rules) || !/pricing[\s\S]{0,180}owner\(\)/.test(rules)) fail.push('Structured pricing collection must be owner-protected.');
   if (!/match \/auditLogs\/\{id\}/.test(rules) || !/allow update, delete: if false/.test(rules)) fail.push('Audit logs must remain append-only.');
@@ -76,6 +82,17 @@ if (exists('storage.rules')) {
   const rules = read('storage.rules');
   if (!/email_verified\s*==\s*true/.test(rules)) fail.push('Firebase Storage writes must require a verified owner email.');
   if (!/request\.resource\.size\s*<\s*10\s*\*\s*1024\s*\*\s*1024/.test(rules)) fail.push('Firebase Storage upload size limit is missing.');
+}
+
+if (exists('commerce-core.js')) {
+  const commerce = read('commerce-core.js');
+  if (!/securePost\('createOrder'/.test(commerce) || !/securePost\('createPaymentAttempt'/.test(commerce)) fail.push('Storefront must prefer secure server commerce endpoints when configured.');
+  if (!/SECURE_COMMERCE_REQUIRED/.test(commerce)) fail.push('Storefront must block insecure fallback when secureCommerceOnly is enabled.');
+}
+
+if (exists('admin-security.js')) {
+  const securityUi = read('admin-security.js');
+  if (!/apiBaseUrl/.test(securityUi) || !/secureCommerceOnly/.test(securityUi)) fail.push('Owner security dashboard must manage API base and secure-commerce-only mode.');
 }
 
 if (exists('firebase-config.js')) {
