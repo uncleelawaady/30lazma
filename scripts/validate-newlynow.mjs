@@ -64,15 +64,26 @@ if (exists('functions/index.js')) {
 
 if (exists('firestore.rules')) {
   const rules = read('firestore.rules');
+  if (!/email_verified\s*==\s*true/.test(rules)) fail.push('Owner/admin privileges must require a verified Firebase email.');
+  if (!/function\s+verifiedEmail\s*\(/.test(rules) || !/function\s+owner[\s\S]{0,160}verifiedEmail\(\)/.test(rules)) fail.push('Owner authorization must be built on verifiedEmail().');
+  if (!/function\s+isAdmin[\s\S]{0,220}verifiedEmail\(\)/.test(rules)) fail.push('Regular admin authorization must require verifiedEmail().');
   if (!/hasAny\(\['admins','payments','security'\]\)/.test(rules)) fail.push('Sensitive site config must remain owner-only.');
   if (!/match \/pricing\/\{id\}/.test(rules) || !/pricing[\s\S]{0,180}owner\(\)/.test(rules)) fail.push('Structured pricing collection must be owner-protected.');
   if (!/match \/auditLogs\/\{id\}/.test(rules) || !/allow update, delete: if false/.test(rules)) fail.push('Audit logs must remain append-only.');
 }
 
+if (exists('firebase-config.js')) {
+  const boot = read('firebase-config.js');
+  if (!/admin-auth-hardening\.js/.test(boot)) fail.push('Admin bootstrap must load verified-email hardening.');
+  if (!/admin-payments\.js/.test(boot) || !/admin-pricing\.js/.test(boot) || !/admin-audit\.js/.test(boot) || !/admin-security\.js/.test(boot)) {
+    fail.push('Admin commerce/security extensions are not fully wired.');
+  }
+}
+
 [
-  'commerce-core.js','app-check.js','firestore.rules','storage.rules','newlynow-theme.css',
+  'commerce-core.js','app-check.js','firestore.rules','storage.rules','firebase.json','newlynow-theme.css',
   'newlynow-home-theme.css','newlynow-inner-theme.css','newlynow-commerce.css',
-  'admin-payments.js','admin-pricing.js','admin-audit.js','admin-security.js',
+  'admin-auth-hardening.js','admin-payments.js','admin-pricing.js','admin-audit.js','admin-security.js',
   'functions/index.js','functions/payment-adapters.js','functions/pricing.js'
 ].forEach(f => { if (!exists(f)) fail.push(`Required NewlyNow file missing: ${f}`); });
 
