@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>إتمام الطلب | NewlyNow.com</title>
     <link rel="stylesheet" href="style.css?v=4">
+    <link rel="stylesheet" href="newlynow-commerce.css?v=1">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,7 +36,7 @@
                     <h1 class="grad-text">إتمام الطلب</h1>
                 </div>
             </div>
-            <p class="cat-hero-intro">راجع خدماتك، سجّل بياناتك، ونأكد طلبك — كل عميل بيتحفظ عندنا لمتابعة طلبه وخدمته بأمان.</p>
+            <p class="cat-hero-intro">راجع خدماتك، سجّل بياناتك، ثم أنشئ الطلب قبل الانتقال لخطوة الدفع.</p>
         </div>
     </header>
 
@@ -45,40 +46,59 @@
                 <h3 class="co-title"><i class="fas fa-list-check"></i> ملخص الطلب</h3>
                 <div id="coItems"></div>
                 <div class="co-count-row"><span>إجمالي عدد الخدمات</span><strong id="coCount">0</strong></div>
-                <p class="co-price-note"><i class="fas fa-circle-info"></i> السعر النهائي يتحدد بعد التأكيد حسب مواصفات كل خدمة.</p>
+                <p class="co-price-note"><i class="fas fa-circle-info"></i> السعر النهائي يُراجع حسب مواصفات كل خدمة قبل اعتماد الدفع.</p>
             </div>
 
             <div class="checkout-form glass">
                 <h3 class="co-title"><i class="fas fa-user-check"></i> بيانات العميل</h3>
                 <form id="coForm">
-                    <label>الاسم الكامل *</label>
-                    <input type="text" id="coName" required placeholder="اكتب اسمك">
-                    <label>رقم الواتساب *</label>
-                    <input type="tel" id="coPhone" required placeholder="01xxxxxxxxx" inputmode="tel">
-                    <label>ملاحظات الطلب (اختياري)</label>
-                    <textarea id="coNotes" rows="3" placeholder="أي تفاصيل إضافية تساعدنا نجهّز طلبك بشكل أفضل..."></textarea>
+                    <label for="coName">الاسم الكامل *</label>
+                    <input type="text" id="coName" maxlength="120" required autocomplete="name" placeholder="اكتب اسمك">
+                    <label for="coPhone">رقم الواتساب *</label>
+                    <input type="tel" id="coPhone" maxlength="40" required autocomplete="tel" placeholder="01xxxxxxxxx" inputmode="tel">
+                    <label for="coNotes">ملاحظات الطلب (اختياري)</label>
+                    <textarea id="coNotes" maxlength="3000" rows="3" placeholder="أي تفاصيل إضافية تساعدنا نجهّز طلبك بشكل أفضل..."></textarea>
+
+                    <div class="co-payments">
+                        <div class="co-pay-title">
+                            <label style="margin:0">طريقة الدفع</label>
+                            <small>الطلب يُنشأ أولًا</small>
+                        </div>
+                        <div class="co-pay-methods" id="coPaymentMethods"></div>
+                        <div class="co-pay-details" id="coPaymentDetails"></div>
+                        <div id="coRefWrap" style="display:none;margin-top:10px">
+                            <label for="coPayRef">رقم العملية / المرجع (اختياري)</label>
+                            <input type="text" id="coPayRef" maxlength="160" placeholder="اكتب رقم العملية إن تم التحويل">
+                        </div>
+                        <div class="co-payment-state" id="coPaymentState"></div>
+                    </div>
+
                     <button type="submit" class="btn btn-grad btn-lg co-submit" id="coSubmit">
-                        <i class="fab fa-whatsapp"></i> تأكيد الطلب
+                        <i class="fas fa-lock"></i> إنشاء الطلب والمتابعة
                     </button>
-                    <p class="co-secure"><i class="fas fa-lock"></i> بياناتك محفوظة بأمان وتُستخدم لمتابعة طلبك فقط.</p>
+                    <p class="co-secure"><i class="fas fa-shield-halved"></i> حالة الدفع لا يتم اعتمادها من المتصفح؛ الاعتماد يتم بعد التحقق.</p>
                     <p class="co-empty-msg" id="coEmptyMsg" style="display:none">سلتك فاضية — <a href="index.html#categories">تصفّح الخدمات</a> وأضف اللي عايزه.</p>
                 </form>
             </div>
         </div>
     </section>
 
-    <footer class="footer">
-        <div class="foot-bottom">© 2026 NewlyNow.com — جميع الحقوق محفوظة</div>
-    </footer>
+    <footer class="footer"><div class="foot-bottom">© 2026 NewlyNow.com — جميع الحقوق محفوظة</div></footer>
 
     <script src="cart.js"></script>
     <script src="firebase-config.js"></script>
+    <script src="config.js"></script>
+    <script src="commerce-core.js"></script>
     <script type="module">
-      const esc = s => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
       const WA = '201055578777';
+      const commerce = window.NewlyNowCommerce;
+      const esc = s => String(s || '').replace(/[&<>\"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '\"':'&quot;' }[c]));
+      let items = [];
+      let methods = [];
+      let selectedMethod = null;
 
       function renderSummary() {
-        const items = window.Cart ? window.Cart.read() : [];
+        items = window.Cart ? window.Cart.read() : [];
         const box = document.getElementById('coItems');
         const cnt = document.getElementById('coCount');
         const empty = document.getElementById('coEmptyMsg');
@@ -86,78 +106,110 @@
         cnt.textContent = window.Cart ? window.Cart.count() : 0;
         if (!items.length) {
           box.innerHTML = '<div class="cart-empty"><i class="fas fa-cart-shopping"></i><p>السلة فاضية</p></div>';
-          empty.style.display = 'block';
-          submit.style.display = 'none';
-          return items;
+          empty.style.display = 'block'; submit.style.display = 'none'; return;
         }
-        box.innerHTML = items.map(it =>
-          '<div class="co-item"><div><strong>' + esc(it.name) + '</strong>' +
+        empty.style.display = 'none'; submit.style.display = '';
+        box.innerHTML = items.map(it => '<div class="co-item"><div><strong>' + esc(it.name) + '</strong>' +
           (it.category ? '<small>' + esc(it.category) + '</small>' : '') +
-          (it.link ? '<small class="ci-link"><i class="fas fa-link"></i> ' + esc(it.link) + '</small>' : '') + '</div>' +
-          '<span class="co-qty">×' + (it.qty || 1) + '</span></div>'
-        ).join('');
-        return items;
+          (it.link ? '<small class="ci-link"><i class="fas fa-link"></i> ' + esc(it.link) + '</small>' : '') +
+          '</div><span class="co-qty">×' + (Number.parseInt(it.qty,10) || 1) + '</span></div>').join('');
       }
 
-      function orderNumber() { return 'NN-' + (10000 + Math.floor(Math.random() * 89999)); }
-      function buildOrderText(name, phone, notes, items, orderNo) {
-        let t = 'مرحبًا فريق NewlyNow 👋\n';
-        t += 'أريد إتمام طلب من NewlyNow\n\n';
-        t += 'اسم المستخدم: ' + name + '\n';
-        t += 'رقم الهاتف: ' + phone + '\n';
-        t += 'رقم الطلب: ' + orderNo + '\n\n';
-        t += 'الخدمات المطلوبة:\n';
-        items.forEach((it, i) => {
-          t += (i + 1) + ') ' + it.name + ' ×' + (it.qty || 1) + (it.category ? ' — ' + it.category : '') + '\n';
-          if (it.link) t += '   🔗 الرابط: ' + it.link + '\n';
-          if (it.coupon) t += '   🎟️ كوبون: ' + it.coupon + '\n';
-          if (it.notes) t += '   📝 ' + it.notes + '\n';
+      function setState(text, type) {
+        const box = document.getElementById('coPaymentState');
+        box.textContent = text || '';
+        box.className = 'co-payment-state' + (text ? ' show ' + (type || 'ok') : '');
+      }
+
+      function selectMethod(method) {
+        selectedMethod = method || null;
+        document.querySelectorAll('.co-pay-method').forEach(b => b.classList.toggle('active', selectedMethod && b.dataset.id === selectedMethod.id));
+        const details = document.getElementById('coPaymentDetails');
+        const refWrap = document.getElementById('coRefWrap');
+        details.textContent = '';
+        if (!selectedMethod) { details.classList.remove('show'); refWrap.style.display = 'none'; return; }
+        const chunks = [];
+        if (selectedMethod.account) chunks.push('بيانات الدفع: ' + selectedMethod.account);
+        if (selectedMethod.instructions) chunks.push(selectedMethod.instructions);
+        if (selectedMethod.type === 'automatic') chunks.push('سيتم تحويلك لصفحة الدفع الآمنة بعد إنشاء الطلب.');
+        details.textContent = chunks.join('\n');
+        details.style.whiteSpace = 'pre-line';
+        details.classList.toggle('show', !!chunks.length);
+        refWrap.style.display = selectedMethod.type === 'manual' ? '' : 'none';
+      }
+
+      function renderPaymentMethods() {
+        methods = commerce ? commerce.getPaymentMethods() : [];
+        const box = document.getElementById('coPaymentMethods');
+        box.textContent = '';
+        if (!methods.length) {
+          const empty = document.createElement('div');
+          empty.className = 'co-pay-empty';
+          empty.textContent = 'سيتم تأكيد وسيلة الدفع المناسبة مع فريق NewlyNow بعد إنشاء الطلب.';
+          box.appendChild(empty);
+          selectMethod(null);
+          return;
+        }
+        methods.forEach(method => {
+          const b = document.createElement('button');
+          b.type = 'button'; b.className = 'co-pay-method'; b.dataset.id = method.id;
+          const strong = document.createElement('strong'); strong.textContent = method.name;
+          const small = document.createElement('small'); small.textContent = method.type === 'automatic' ? 'دفع تلقائي' : 'دفع يدوي';
+          b.append(strong, small);
+          b.addEventListener('click', () => selectMethod(method));
+          box.appendChild(b);
         });
-        t += '\nإجمالي السعر: حسب الطلب (يُحدد بعد التأكيد)\n';
-        if (notes) t += '\nملاحظات المستخدم: ' + notes + '\n';
-        t += '\nبرجاء متابعة الطلب وإتمامه.';
-        return t;
+        const preferred = methods.find(m => m.type === 'manual') || methods[0];
+        selectMethod(preferred);
       }
 
-      let items = renderSummary();
+      renderSummary();
+      renderPaymentMethods();
+      document.addEventListener('siteconfig', renderPaymentMethods);
 
-      document.getElementById('coForm').addEventListener('submit', async (e) => {
+      document.getElementById('coForm').addEventListener('submit', async e => {
         e.preventDefault();
-        items = window.Cart ? window.Cart.read() : [];
-        if (!items.length) { alert('السلة فاضية'); return; }
+        renderSummary();
+        if (!items.length || !commerce) return;
         const name = document.getElementById('coName').value.trim();
         const phone = document.getElementById('coPhone').value.trim();
         const notes = document.getElementById('coNotes').value.trim();
-        if (!name || !phone) return;
+        const reference = document.getElementById('coPayRef').value.trim();
+        if (!name || phone.length < 4) return;
+
         const btn = document.getElementById('coSubmit');
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التأكيد...';
-        const orderNo = orderNumber();
+        btn.disabled = true; setState('جاري إنشاء الطلب...', 'ok');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري إنشاء الطلب...';
 
         try {
-          const cfg = window.FIREBASE_CONFIG;
-          if (cfg && cfg.apiKey) {
-            const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
-            const { getFirestore, collection, addDoc, serverTimestamp } =
-              await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
-            const db = getFirestore(initializeApp(cfg));
-            const payload = {
-              orderNo, name, phone, notes,
-              items: items.map(it => ({ name: it.name, category: it.category || '', qty: it.qty || 1, link: it.link || '', notes: it.notes || '', coupon: it.coupon || '', code: it.code || '' })),
-              count: items.reduce((s, x) => s + (x.qty || 1), 0),
-              status: 'new', source: 'store', createdAt: serverTimestamp()
-            };
-            try { await addDoc(collection(db, 'customers'), { name, phone, source: 'order', createdAt: serverTimestamp() }); } catch (e) {}
-            try { await addDoc(collection(db, 'orders'), payload); } catch (e) {}
-          }
-        } catch (err) { console.warn('order save skipped', err); }
+          const order = await commerce.createOrder({ name, phone, notes, items });
+          let attempt = null;
 
-        const text = buildOrderText(name, phone, notes, items, orderNo);
-        window.Cart && window.Cart.clear();
-        window.location.href = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(text);
+          if (selectedMethod && order.persisted) {
+            attempt = await commerce.createPaymentAttempt(order, selectedMethod, { reference });
+          }
+
+          if (selectedMethod && selectedMethod.type === 'automatic') {
+            if (!order.persisted || !attempt || !attempt.persisted) throw new Error('تعذّر تثبيت الطلب قبل الدفع التلقائي.');
+            setState('تم إنشاء الطلب. جاري فتح بوابة الدفع...', 'ok');
+            const checkoutUrl = await commerce.startAutomaticPayment(order, selectedMethod, attempt);
+            window.Cart && window.Cart.clear();
+            location.href = checkoutUrl;
+            return;
+          }
+
+          const text = commerce.buildOrderText({ orderNo: order.orderNo, name, phone, notes, items, method: selectedMethod });
+          setState(order.persisted ? 'تم إنشاء الطلب بنجاح. جاري تحويلك للمتابعة.' : 'تعذّر حفظ الطلب بقاعدة البيانات، سيتم تحويلك للمتابعة اليدوية.', order.persisted ? 'ok' : 'err');
+          window.Cart && window.Cart.clear();
+          setTimeout(() => { location.href = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(text); }, 350);
+        } catch (err) {
+          console.error(err);
+          setState(err && err.message ? err.message : 'تعذّر إنشاء الطلب. جرّب مرة أخرى.', 'err');
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-lock"></i> إنشاء الطلب والمتابعة';
+        }
       });
     </script>
-    <script src="config.js"></script>
     <script src="widgets.js"></script>
 </body>
 </html>
