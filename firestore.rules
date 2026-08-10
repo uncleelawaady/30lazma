@@ -76,6 +76,20 @@ service cloud.firestore {
         && d.createdAt == request.time;
     }
 
+    function validOrderAdminUpdate() {
+      let d = request.resource.data;
+      let changed = d.diff(resource.data).affectedKeys();
+      return changed.hasOnly([
+          'status','paymentStatus','paymentMethod','paymentAttemptId',
+          'paymentUpdatedAt','updatedAt','adminNotes'
+        ])
+        && d.status in ['new','pending','processing','done','cancelled','disputed']
+        && d.paymentStatus in ['unpaid','pending_verification','paid','failed','rejected','refunded','partially_refunded']
+        && shortString(d.get('paymentMethod', ''), 120)
+        && shortString(d.get('paymentAttemptId', ''), 128)
+        && shortString(d.get('adminNotes', ''), 3000);
+    }
+
     function validPaymentAttempt() {
       let d = request.resource.data;
       let orderPath = /databases/$(database)/documents/orders/$(d.orderId);
@@ -100,6 +114,14 @@ service cloud.firestore {
         && d.createdAt == request.time
         && exists(orderPath)
         && get(orderPath).data.orderNo == d.orderNo;
+    }
+
+    function validPaymentAdminUpdate() {
+      let d = request.resource.data;
+      let changed = d.diff(resource.data).affectedKeys();
+      return changed.hasOnly(['status','verifiedAt','verifiedBy'])
+        && d.status in ['paid','rejected','failed','refunded']
+        && shortString(d.get('verifiedBy', ''), 254);
     }
 
     function validCustomer() {
@@ -133,9 +155,26 @@ service cloud.firestore {
         && shortString(d.get('type', ''), 40);
     }
 
+    function validAuditLog() {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['action','actor','targetType','targetId','details','createdAt'])
+        && d.keys().hasAll(['action','actor','targetType','targetId','createdAt'])
+        && shortString(d.action, 120)
+        && shortString(d.actor, 254)
+        && shortString(d.targetType, 80)
+        && shortString(d.targetId, 160)
+        && d.createdAt == request.time;
+    }
+
     match /config/{docId} {
       allow read: if true;
-      allow write: if isAdmin();
+      // Only an owner can create the central site document or delete config documents.
+      allow create: if owner() || (docId != 'site' && isAdmin());
+      // Regular admins may edit normal site settings but can never grant/revoke admin access.
+      allow update: if owner()
+        || (isAdmin() && (docId != 'site'
+          || !request.resource.data.diff(resource.data).affectedKeys().hasAny(['admins'])));
+      allow delete: if owner();
     }
 
     match /reviews/{id} {
@@ -146,30 +185,44 @@ service cloud.firestore {
 
     match /orders/{id} {
       allow create: if validOrder();
-      allow read, update, delete: if isAdmin();
+      allow read: if isAdmin();
+      // Customer/order identity and line items become immutable after creation.
+      allow update: if isAdmin() && validOrderAdminUpdate();
+      allow delete: if owner();
     }
 
     match /paymentAttempts/{id} {
       allow create: if validPaymentAttempt();
-      allow read, update, delete: if isAdmin();
+      allow read: if isAdmin();
+      // Method/order/reference fields are immutable; only verification state may change.
+      allow update: if isAdmin() && validPaymentAdminUpdate();
+      allow delete: if owner();
+    }
+
+    // Append-only financial/administrative audit trail.
+    match /auditLogs/{id} {
+      allow read: if isAdmin();
+      allow create: if isAdmin() && validAuditLog();
+      allow update, delete: if false;
     }
 
     match /customers/{id} {
       allow create: if validCustomer();
       allow read: if isAdmin() || (signedIn() && request.auth.uid == id);
       allow update: if isAdmin() || (signedIn() && request.auth.uid == id && validCustomer());
-      allow delete: if isAdmin();
+      allow delete: if owner();
     }
 
     match /users/{id} {
       allow read: if isAdmin() || (signedIn() && request.auth.uid == id);
       allow create, update: if isAdmin() || (signedIn() && request.auth.uid == id && validUser(id));
-      allow delete: if isAdmin();
+      allow delete: if owner();
     }
 
     match /announcements/{id} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow create, update: if isAdmin();
+      allow delete: if owner();
     }
 
     match /{document=**} {
