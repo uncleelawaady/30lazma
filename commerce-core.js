@@ -94,9 +94,18 @@
     return { id: ref.id, orderNo, persisted: true, payload: payloadBase };
   }
 
+  function safeHttpsUrl(value) {
+    try {
+      const u = new URL(String(value || ''), location.origin);
+      return u.protocol === 'https:' ? u.href : '';
+    } catch (_) { return ''; }
+  }
+
   function paymentMethods() {
     const site = window.SITE_CONFIG || {};
     const payments = site.payments || {};
+    const security = site.security || {};
+    const appCheckConfigured = !!clean(security.appCheckSiteKey || (window.NEWLYNOW_SECURITY_CONFIG || {}).appCheckSiteKey, 300);
     const list = Array.isArray(payments.methods) ? payments.methods : [];
     return list.map((m, i) => ({
       id: clean(m && (m.id || ('method-' + i)), 80),
@@ -106,7 +115,11 @@
       instructions: clean(m && m.instructions, 2000),
       account: clean(m && m.account, 240),
       endpoint: clean(m && m.endpoint, 2000)
-    })).filter(m => m.enabled && m.id && m.name);
+    })).filter(m => {
+      if (!m.enabled || !m.id || !m.name) return false;
+      if (m.type === 'automatic') return appCheckConfigured && !!safeHttpsUrl(m.endpoint);
+      return true;
+    });
   }
 
   async function createPaymentAttempt(order, method, extra) {
@@ -129,13 +142,6 @@
     };
     const ref = await fs.addDoc(fs.collection(db, 'paymentAttempts'), doc);
     return { id: ref.id, persisted: true, status };
-  }
-
-  function safeHttpsUrl(value) {
-    try {
-      const u = new URL(String(value || ''), location.origin);
-      return u.protocol === 'https:' ? u.href : '';
-    } catch (_) { return ''; }
   }
 
   async function startAutomaticPayment(order, method, attempt) {
