@@ -29,11 +29,15 @@
         <input type="url" id="nnApiBase" autocomplete="off" placeholder="https://REGION-PROJECT.cloudfunctions.net" maxlength="500">
         <p class="hint">اكتب الـBase فقط بدون /createOrder أو /initPayment.</p>
       </div>
+      <label style="display:flex;align-items:flex-start;gap:.65rem;margin:12px 0;padding:12px;border:1px solid var(--line);border-radius:12px">
+        <input type="checkbox" id="nnSecureOnly" style="width:20px;height:20px;margin-top:3px">
+        <span><b>Secure Commerce Only</b><small class="muted" style="display:block">عند التفعيل: إنشاء الطلب ومحاولة الدفع من Firestore مباشرة يتقفل، والمسار الوحيد يبقى Functions + App Check.</small></span>
+      </label>
       <div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:center">
         <button class="btn" id="nnSecuritySave"><i class="fas fa-floppy-disk"></i> حفظ إعدادات الأمان</button>
         <span class="pill wait" id="nnSecurityState">غير جاهز</span>
       </div>
-      <p class="hint" style="margin-top:12px">المسار المالي الآمن يصبح جاهزًا فقط عند وجود App Check + HTTPS API Base. بعدها الواجهة تفضّل إنشاء الطلب ومحاولة الدفع على السيرفر.</p>
+      <p class="hint" style="margin-top:12px">فعّل Secure Commerce Only فقط بعد نشر Functions وتجربة createOrder/createPaymentAttempt/initPayment على Staging.</p>
     </div>`;
   appEl.appendChild(panel);
 
@@ -50,6 +54,7 @@
   const cfgRef = fs.doc(db, 'config', 'site');
   const keyInput = document.getElementById('nnAppCheckKey');
   const apiInput = document.getElementById('nnApiBase');
+  const secureOnlyInput = document.getElementById('nnSecureOnly');
   const state = document.getElementById('nnSecurityState');
 
   const toast = m => {
@@ -69,7 +74,8 @@
     const key = keyInput.value.trim();
     const api = safeBase(apiInput.value);
     const ready = !!key && !!api;
-    state.textContent = ready ? 'Secure Commerce جاهز' : (key || api ? 'الإعدادات ناقصة' : 'غير جاهز');
+    const locked = secureOnlyInput.checked;
+    state.textContent = locked && ready ? 'Secure Only مُفعّل' : (ready ? 'Secure API جاهز' : (key || api ? 'الإعدادات ناقصة' : 'غير جاهز'));
     state.className = 'pill ' + (ready ? 'ok' : 'wait');
   };
 
@@ -79,12 +85,14 @@
       const security = snap.exists() && snap.data().security || {};
       keyInput.value = String(security.appCheckSiteKey || '');
       apiInput.value = String(security.apiBaseUrl || '');
+      secureOnlyInput.checked = security.secureCommerceOnly === true;
       setState();
     } catch (e) { console.warn(e); }
   }
 
   keyInput.addEventListener('input', setState);
   apiInput.addEventListener('input', setState);
+  secureOnlyInput.addEventListener('change', setState);
 
   tab.addEventListener('click', () => {
     document.querySelectorAll('#app .tab').forEach(x => x.classList.remove('active'));
@@ -98,13 +106,15 @@
     const siteKey = keyInput.value.trim().slice(0, 300);
     const rawApi = apiInput.value.trim();
     const apiBaseUrl = safeBase(rawApi);
+    const secureCommerceOnly = secureOnlyInput.checked;
     if (rawApi && !apiBaseUrl) return toast('API Base لازم يكون HTTPS صالح');
+    if (secureCommerceOnly && (!siteKey || !apiBaseUrl)) return toast('لا يمكن تفعيل Secure Only قبل App Check + API Base');
     try {
       const batch = fs.writeBatch(db);
-      batch.set(cfgRef, { security: { appCheckSiteKey: siteKey, apiBaseUrl } }, { merge: true });
+      batch.set(cfgRef, { security: { appCheckSiteKey: siteKey, apiBaseUrl, secureCommerceOnly } }, { merge: true });
       batch.set(fs.doc(fs.collection(db, 'auditLogs')), {
         action: 'security.commerce.updated', actor: user.email || '', targetType: 'config', targetId: 'site',
-        details: { appCheckConfigured: !!siteKey, apiBaseConfigured: !!apiBaseUrl }, createdAt: fs.serverTimestamp()
+        details: { appCheckConfigured: !!siteKey, apiBaseConfigured: !!apiBaseUrl, secureCommerceOnly }, createdAt: fs.serverTimestamp()
       });
       await batch.commit();
       apiInput.value = apiBaseUrl; setState(); toast('اتحفظت إعدادات الأمان ✅');
