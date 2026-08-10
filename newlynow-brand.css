@@ -1,0 +1,2 @@
+/* NewlyNow wordmark layer — prevents legacy logo art from leaking into the new storefront */
+.brand-logo-img{display:none!important}.brand{gap:0!important}.brand-name{display:inline-flex!important;align-items:baseline!important;direction:ltr!important;font-family:'Inter','Cairo',sans-serif!important;font-weight:900!important;font-size:clamp(1.05rem,1.5vw,1.32rem)!important;letter-spacing:-.05em!important;color:#fff!important}.brand-name em{font-style:normal!important;color:#00e5ff!important;font-weight:900!important}.footer .brand-name{font-size:1.35rem!important}
