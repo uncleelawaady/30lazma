@@ -22,12 +22,12 @@
       <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.8rem">
         <button class="btn btn-ghost btn-sm" id="nnPayAdd"><i class="fas fa-plus"></i> إضافة طريقة</button>
         <button class="btn btn-sm" id="nnPaySave"><i class="fas fa-floppy-disk"></i> حفظ وسائل الدفع</button>
-        <span class="pill wait" id="nnPayOwnerNote" style="display:none">عرض فقط — إعداد البوابات للمالك</span>
+        <span class="pill wait" id="nnPayOwnerNote" style="display:none">عرض فقط — الإعداد والتحقق المالي للمالك</span>
       </div>
     </div>
     <div class="card">
       <h3><i class="fas fa-shield-halved"></i> مراجعة المدفوعات اليدوية</h3>
-      <p class="muted" style="margin-bottom:12px">اعتماد الدفع يغيّر حالة الدفع فقط بعد المراجعة ويسجل العملية في Audit Log.</p>
+      <p class="muted" style="margin-bottom:12px">اعتماد/رفض التحويل المالي متاح فقط لمالك موثّق، وكل قرار يُسجل في Audit Log.</p>
       <div id="nnPayAttempts"><p class="muted">جاري التحميل...</p></div>
     </div>`;
   appEl.appendChild(panel);
@@ -70,7 +70,7 @@
   const esc = s => String(s == null ? '' : s).replace(/[&<>\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]));
   const cleanId = v => String(v || '').trim().replace(/[^a-zA-Z0-9_-]/g, '-').slice(0,80);
   const actor = () => (auth.currentUser && auth.currentUser.email) || 'unknown-admin';
-  const ownerAccess = () => OWNERS.includes(String(actor()).toLowerCase());
+  const ownerAccess = () => !!auth.currentUser && auth.currentUser.emailVerified === true && OWNERS.includes(String(actor()).toLowerCase());
   const toast = m => {
     const t = document.getElementById('toast');
     if (t) { t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200); }
@@ -109,7 +109,7 @@
     const box = document.getElementById('nnPayMethods');
     box.innerHTML = methods.length ? methods.map(row).join('') : '<p class="muted">مفيش وسائل دفع مضافة لسه.</p>';
     box.querySelectorAll('.nn-pay-del').forEach(b => b.addEventListener('click', () => {
-      if (!ownerAccess()) return toast('إعداد البوابات للمالك فقط');
+      if (!ownerAccess()) return toast('إعداد البوابات للمالك الموثّق فقط');
       const el = b.closest('.nn-pay-row'); methods.splice(+el.dataset.i, 1); renderMethods();
     }));
     applyOwnerConfigUi();
@@ -136,14 +136,14 @@
   }
 
   document.getElementById('nnPayAdd').addEventListener('click', () => {
-    if (!ownerAccess()) return toast('إعداد البوابات للمالك فقط');
+    if (!ownerAccess()) return toast('إعداد البوابات للمالك الموثّق فقط');
     methods = collectMethods();
     methods.push({ id: 'payment-' + Date.now().toString(36), name: 'طريقة دفع جديدة', type: 'manual', enabled: true, account: '', endpoint: '', instructions: '' });
     renderMethods();
   });
 
   document.getElementById('nnPaySave').addEventListener('click', async () => {
-    if (!ownerAccess()) return toast('إعداد البوابات للمالك فقط');
+    if (!ownerAccess()) return toast('إعداد البوابات للمالك الموثّق فقط');
     try {
       methods = collectMethods();
       const payments = Object.assign({}, currentPayments, { methods });
@@ -171,14 +171,17 @@
   function attemptCard(a) {
     const manual = a.type === 'manual';
     const pending = a.status === 'pending_verification';
+    const actions = manual && pending && ownerAccess()
+      ? '<div class="acts" style="margin-top:8px"><button class="btn btn-sm nn-pay-approve"><i class="fas fa-check"></i> اعتماد الدفع</button><button class="btn btn-red btn-sm nn-pay-reject"><i class="fas fa-xmark"></i> رفض</button></div>'
+      : (manual && pending ? '<small style="display:block;margin-top:8px">بانتظار مراجعة المالك.</small>' : '');
     return `<div class="nn-attempt" data-id="${esc(a._id)}" data-order="${esc(a.orderId || '')}" data-order-no="${esc(a.orderNo || '')}">
       <div class="nn-attempt-top"><strong>${esc(a.orderNo || 'طلب')} — ${esc(a.methodName || a.methodId || '')}</strong><span class="pill ${a.status === 'paid' ? 'ok' : 'wait'}">${esc(a.status || '')}</span></div>
-      <small>${manual ? 'يدوي' : 'تلقائي'}${a.reference ? ' · المرجع: ' + esc(a.reference) : ''}</small>
-      ${manual && pending ? '<div class="acts" style="margin-top:8px"><button class="btn btn-sm nn-pay-approve"><i class="fas fa-check"></i> اعتماد الدفع</button><button class="btn btn-red btn-sm nn-pay-reject"><i class="fas fa-xmark"></i> رفض</button></div>' : ''}
+      <small>${manual ? 'يدوي' : 'تلقائي'}${a.reference ? ' · المرجع: ' + esc(a.reference) : ''}</small>${actions}
     </div>`;
   }
 
   async function commitManualDecision(el, nextStatus, orderPaymentStatus, action) {
+    if (!ownerAccess()) throw new Error('OWNER_REQUIRED');
     const attemptId = el.dataset.id;
     const orderId = el.dataset.order;
     const orderNo = el.dataset.orderNo || '';
@@ -226,6 +229,6 @@
     } catch (_) { box.innerHTML = '<p class="muted">تعذّر تحميل محاولات الدفع.</p>'; }
   }
 
-  authMod.onAuthStateChanged(auth, () => applyOwnerConfigUi());
+  authMod.onAuthStateChanged(auth, () => { applyOwnerConfigUi(); if (panel.classList.contains('active')) loadAttempts(); });
   await loadConfig();
 })();
