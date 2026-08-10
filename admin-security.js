@@ -18,17 +18,22 @@
   panel.id = 'tab-security-core';
   panel.innerHTML = `
     <div class="card">
-      <h3><i class="fas fa-shield-halved"></i> Firebase App Check</h3>
-      <p class="muted" style="margin-bottom:14px">مفتاح reCAPTCHA Enterprise Site Key عام وآمن للظهور في الواجهة. مفاتيح البوابات وSecrets ممنوع تخزينها هنا.</p>
+      <h3><i class="fas fa-shield-halved"></i> App Check + Secure Commerce API</h3>
+      <p class="muted" style="margin-bottom:14px">القيم هنا Public configuration فقط. مفاتيح البوابات وSecrets ممنوع تخزينها في Firestore أو الواجهة.</p>
       <div class="field">
         <label>reCAPTCHA Enterprise Site Key</label>
         <input type="text" id="nnAppCheckKey" autocomplete="off" placeholder="6Lc..." maxlength="300">
       </div>
+      <div class="field">
+        <label>Firebase Functions API Base URL</label>
+        <input type="url" id="nnApiBase" autocomplete="off" placeholder="https://REGION-PROJECT.cloudfunctions.net" maxlength="500">
+        <p class="hint">اكتب الـBase فقط بدون /createOrder أو /initPayment.</p>
+      </div>
       <div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:center">
         <button class="btn" id="nnSecuritySave"><i class="fas fa-floppy-disk"></i> حفظ إعدادات الأمان</button>
-        <span class="pill wait" id="nnSecurityState">غير مضبوط</span>
+        <span class="pill wait" id="nnSecurityState">غير جاهز</span>
       </div>
-      <p class="hint" style="margin-top:12px">بعد تسجيل newlynow.com في Firebase App Check ووضع الـSite Key هنا، طلبات الدفع التلقائي سترسل App Check Token للـBackend.</p>
+      <p class="hint" style="margin-top:12px">المسار المالي الآمن يصبح جاهزًا فقط عند وجود App Check + HTTPS API Base. بعدها الواجهة تفضّل إنشاء الطلب ومحاولة الدفع على السيرفر.</p>
     </div>`;
   appEl.appendChild(panel);
 
@@ -44,16 +49,28 @@
   const db = fs.getFirestore(fbApp);
   const cfgRef = fs.doc(db, 'config', 'site');
   const keyInput = document.getElementById('nnAppCheckKey');
+  const apiInput = document.getElementById('nnApiBase');
   const state = document.getElementById('nnSecurityState');
 
   const toast = m => {
     const t = document.getElementById('toast');
     if (t) { t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200); }
   };
-  const isOwner = user => !!user && OWNERS.includes(String(user.email || '').toLowerCase());
-  const setState = key => {
-    state.textContent = key ? 'App Check مضبوط' : 'غير مضبوط';
-    state.className = 'pill ' + (key ? 'ok' : 'wait');
+  const isOwner = user => !!user && user.emailVerified === true && OWNERS.includes(String(user.email || '').toLowerCase());
+  const safeBase = value => {
+    const raw = String(value || '').trim().replace(/\/+$/, '');
+    if (!raw) return '';
+    try {
+      const u = new URL(raw);
+      return u.protocol === 'https:' ? u.href.replace(/\/+$/, '') : '';
+    } catch (_) { return ''; }
+  };
+  const setState = () => {
+    const key = keyInput.value.trim();
+    const api = safeBase(apiInput.value);
+    const ready = !!key && !!api;
+    state.textContent = ready ? 'Secure Commerce جاهز' : (key || api ? 'الإعدادات ناقصة' : 'غير جاهز');
+    state.className = 'pill ' + (ready ? 'ok' : 'wait');
   };
 
   async function load() {
@@ -61,9 +78,13 @@
       const snap = await fs.getDoc(cfgRef);
       const security = snap.exists() && snap.data().security || {};
       keyInput.value = String(security.appCheckSiteKey || '');
-      setState(keyInput.value.trim());
+      apiInput.value = String(security.apiBaseUrl || '');
+      setState();
     } catch (e) { console.warn(e); }
   }
+
+  keyInput.addEventListener('input', setState);
+  apiInput.addEventListener('input', setState);
 
   tab.addEventListener('click', () => {
     document.querySelectorAll('#app .tab').forEach(x => x.classList.remove('active'));
@@ -73,17 +94,20 @@
 
   document.getElementById('nnSecuritySave').addEventListener('click', async () => {
     const user = auth.currentUser;
-    if (!isOwner(user)) return toast('إعدادات الأمان للمالك فقط');
+    if (!isOwner(user)) return toast('إعدادات الأمان لمالك موثّق فقط');
     const siteKey = keyInput.value.trim().slice(0, 300);
+    const rawApi = apiInput.value.trim();
+    const apiBaseUrl = safeBase(rawApi);
+    if (rawApi && !apiBaseUrl) return toast('API Base لازم يكون HTTPS صالح');
     try {
       const batch = fs.writeBatch(db);
-      batch.set(cfgRef, { security: { appCheckSiteKey: siteKey } }, { merge: true });
+      batch.set(cfgRef, { security: { appCheckSiteKey: siteKey, apiBaseUrl } }, { merge: true });
       batch.set(fs.doc(fs.collection(db, 'auditLogs')), {
-        action: 'security.appcheck.updated', actor: user.email || '', targetType: 'config', targetId: 'site',
-        details: { configured: !!siteKey }, createdAt: fs.serverTimestamp()
+        action: 'security.commerce.updated', actor: user.email || '', targetType: 'config', targetId: 'site',
+        details: { appCheckConfigured: !!siteKey, apiBaseConfigured: !!apiBaseUrl }, createdAt: fs.serverTimestamp()
       });
       await batch.commit();
-      setState(siteKey); toast('اتحفظت إعدادات الأمان ✅');
+      apiInput.value = apiBaseUrl; setState(); toast('اتحفظت إعدادات الأمان ✅');
     } catch (e) { console.warn(e); toast('تعذّر حفظ إعدادات الأمان'); }
   });
 
