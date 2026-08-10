@@ -51,9 +51,13 @@ service cloud.firestore {
     function validOrder() {
       let d = request.resource.data;
       return d.keys().hasOnly([
-          'orderNo','name','phone','notes','items','count','status','source','createdAt'
+          'orderNo','name','phone','notes','items','count','status',
+          'paymentStatus','paymentMethod','paymentAttemptId','source','createdAt'
         ])
-        && d.keys().hasAll(['orderNo','name','phone','items','count','status','source','createdAt'])
+        && d.keys().hasAll([
+          'orderNo','name','phone','items','count','status',
+          'paymentStatus','paymentMethod','paymentAttemptId','source','createdAt'
+        ])
         && shortString(d.orderNo, 48)
         && d.orderNo.size() >= 3
         && shortString(d.name, 120)
@@ -63,9 +67,35 @@ service cloud.firestore {
         && shortString(d.get('notes', ''), 3000)
         && d.items is list
         && d.items.size() > 0 && d.items.size() <= 50
-        && d.count >= 1 && d.count <= 1000000
+        && d.count >= 1 && d.count <= 5000000
         && d.status == 'new'
+        && d.paymentStatus == 'unpaid'
+        && d.paymentMethod == ''
+        && d.paymentAttemptId == ''
         && d.source == 'store'
+        && d.createdAt == request.time;
+    }
+
+    function validPaymentAttempt() {
+      let d = request.resource.data;
+      return d.keys().hasOnly([
+          'orderId','orderNo','methodId','methodName','type','status','reference','createdAt'
+        ])
+        && d.keys().hasAll([
+          'orderId','orderNo','methodId','methodName','type','status','reference','createdAt'
+        ])
+        && shortString(d.orderId, 128)
+        && d.orderId.size() >= 1
+        && shortString(d.orderNo, 48)
+        && d.orderNo.size() >= 3
+        && shortString(d.methodId, 80)
+        && d.methodId.size() >= 1
+        && shortString(d.methodName, 120)
+        && d.methodName.size() >= 1
+        && d.type in ['manual', 'automatic']
+        && ((d.type == 'manual' && d.status == 'pending_verification')
+          || (d.type == 'automatic' && d.status == 'initiated'))
+        && shortString(d.reference, 160)
         && d.createdAt == request.time;
     }
 
@@ -106,16 +136,23 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // Reviews can still be submitted by guests, but only in the expected shape.
     match /reviews/{id} {
       allow read: if true;
       allow create: if validReview();
       allow update, delete: if isAdmin();
     }
 
-    // Guest checkout remains supported, but clients cannot forge arbitrary order fields/statuses.
+    // The client may only create a brand-new, explicitly unpaid order.
+    // Any later status/payment transition is admin/server controlled.
     match /orders/{id} {
       allow create: if validOrder();
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Client can only create the first immutable payment-attempt state.
+    // Paid/refunded/failed transitions must come from admin/server-side verification.
+    match /paymentAttempts/{id} {
+      allow create: if validPaymentAttempt();
       allow read, update, delete: if isAdmin();
     }
 
@@ -137,7 +174,6 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // Deny everything not explicitly defined above.
     match /{document=**} {
       allow read, write: if false;
     }
