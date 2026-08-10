@@ -1,0 +1,45 @@
+# Dependencies / builds
+node_modules/
+dist/
+build/
+.cache/
+
+# Environment secrets
+.env
+.env.*
+!.env.example
+*.env.local
+
+# Private keys / certificates / service accounts
+*.pem
+*.key
+*.p12
+*.pfx
+serviceAccount*.json
+service-account*.json
+*-firebase-adminsdk-*.json
+credentials*.json
+secrets*.json
+
+# Firebase local/debug artifacts
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# Local databases and bot state
+*.sqlite
+*.sqlite3
+*.db
+bot_dev/*.db
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs / temp
+*.log
+*.tmp
+*.bak
