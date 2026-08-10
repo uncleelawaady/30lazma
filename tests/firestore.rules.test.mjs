@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import test from 'node:test';
 import { after, before, beforeEach } from 'node:test';
 import { initializeTestEnvironment, assertFails, assertSucceeds } from '@firebase/rules-unit-testing';
-import { addDoc, collection, doc, getDoc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDoc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
 
 let env;
 const OWNER = 'elawaady.official@gmail.com';
@@ -27,6 +27,7 @@ beforeEach(async () => {
       security: { appCheckSiteKey: '', apiBaseUrl: '', secureCommerceOnly: false }
     });
     await setDoc(doc(db, 'orders', 'seed-order'), validOrder('NN-SEED'));
+    await setDoc(doc(db, 'paymentAttempts', 'seed-attempt'), validAttempt('seed-order', 'NN-SEED'));
   });
 });
 
@@ -137,4 +138,10 @@ test('audit logs are append-only', async () => {
 test('regular admin cannot write structured pricing', async () => {
   const db = auth('admin-verified', ADMIN, true);
   await assertFails(setDoc(doc(db, 'pricing', 'p1'), { active:true }));
+});
+
+test('financial history cannot be deleted even by a verified owner', async () => {
+  const db = auth('owner-verified', OWNER, true);
+  await assertFails(deleteDoc(doc(db, 'orders', 'seed-order')));
+  await assertFails(deleteDoc(doc(db, 'paymentAttempts', 'seed-attempt')));
 });
