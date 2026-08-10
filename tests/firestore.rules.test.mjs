@@ -24,7 +24,7 @@ beforeEach(async () => {
     await setDoc(doc(db, 'config', 'site'), {
       admins: [ADMIN],
       payments: { methods: [] },
-      security: { appCheckSiteKey: '' }
+      security: { appCheckSiteKey: '', apiBaseUrl: '', secureCommerceOnly: false }
     });
     await setDoc(doc(db, 'orders', 'seed-order'), validOrder('NN-SEED'));
   });
@@ -64,7 +64,7 @@ function validAttempt(orderId, orderNo, status = 'pending_verification') {
   };
 }
 
-test('guest can create a valid explicitly unpaid order', async () => {
+test('guest can create a valid explicitly unpaid order while compatibility mode is enabled', async () => {
   const db = env.unauthenticatedContext().firestore();
   await assertSucceeds(addDoc(collection(db, 'orders'), validOrder()));
 });
@@ -81,6 +81,17 @@ test('payment attempt must start in the allowed initial state and match an exist
   await assertSucceeds(addDoc(collection(db, 'paymentAttempts'), validAttempt('seed-order', 'NN-SEED')));
   await assertFails(addDoc(collection(db, 'paymentAttempts'), validAttempt('seed-order', 'NN-SEED', 'paid')));
   await assertFails(addDoc(collection(db, 'paymentAttempts'), validAttempt('missing-order', 'NN-MISSING')));
+});
+
+test('secure commerce only disables all direct client order/payment-attempt creation', async () => {
+  const ownerDb = auth('owner-verified', OWNER, true);
+  await assertSucceeds(updateDoc(doc(ownerDb, 'config', 'site'), {
+    security: { appCheckSiteKey: 'public-site-key', apiBaseUrl: 'https://example.cloudfunctions.net', secureCommerceOnly: true }
+  }));
+
+  const guestDb = env.unauthenticatedContext().firestore();
+  await assertFails(addDoc(collection(guestDb, 'orders'), validOrder('NN-LOCKED')));
+  await assertFails(addDoc(collection(guestDb, 'paymentAttempts'), validAttempt('seed-order', 'NN-SEED')));
 });
 
 test('unverified owner email has no owner privileges', async () => {
