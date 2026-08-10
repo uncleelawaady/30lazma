@@ -66,6 +66,7 @@
 
   const esc = s => String(s == null ? '' : s).replace(/[&<>\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]));
   const cleanId = v => String(v || '').trim().replace(/[^a-zA-Z0-9_-]/g, '-').slice(0,80);
+  const actor = () => (auth.currentUser && auth.currentUser.email) || 'unknown-admin';
   const toast = m => {
     const t = document.getElementById('toast');
     if (t) { t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200); }
@@ -126,7 +127,14 @@
     try {
       methods = collectMethods();
       const payments = Object.assign({}, currentPayments, { methods });
-      await fs.setDoc(cfgRef, { payments }, { merge: true });
+      const batch = fs.writeBatch(db);
+      batch.set(cfgRef, { payments }, { merge: true });
+      const logRef = fs.doc(fs.collection(db, 'auditLogs'));
+      batch.set(logRef, {
+        action: 'payments.methods.updated', actor: actor(), targetType: 'config', targetId: 'site',
+        details: { methodCount: methods.length }, createdAt: fs.serverTimestamp()
+      });
+      await batch.commit();
       currentPayments = payments; toast('اتحفظت وسائل الدفع ✅'); renderMethods();
     } catch (e) { toast(e && e.message ? e.message : 'تعذّر حفظ وسائل الدفع'); }
   });
@@ -144,11 +152,32 @@
   function attemptCard(a) {
     const manual = a.type === 'manual';
     const pending = a.status === 'pending_verification';
-    return `<div class="nn-attempt" data-id="${esc(a._id)}" data-order="${esc(a.orderId || '')}">
+    return `<div class="nn-attempt" data-id="${esc(a._id)}" data-order="${esc(a.orderId || '')}" data-order-no="${esc(a.orderNo || '')}">
       <div class="nn-attempt-top"><strong>${esc(a.orderNo || 'طلب')} — ${esc(a.methodName || a.methodId || '')}</strong><span class="pill ${a.status === 'paid' ? 'ok' : 'wait'}">${esc(a.status || '')}</span></div>
       <small>${manual ? 'يدوي' : 'تلقائي'}${a.reference ? ' · المرجع: ' + esc(a.reference) : ''}</small>
       ${manual && pending ? '<div class="acts" style="margin-top:8px"><button class="btn btn-sm nn-pay-approve"><i class="fas fa-check"></i> اعتماد الدفع</button><button class="btn btn-red btn-sm nn-pay-reject"><i class="fas fa-xmark"></i> رفض</button></div>' : ''}
     </div>`;
+  }
+
+  async function commitManualDecision(el, nextStatus, orderPaymentStatus, action) {
+    const attemptId = el.dataset.id;
+    const orderId = el.dataset.order;
+    const orderNo = el.dataset.orderNo || '';
+    const batch = fs.writeBatch(db);
+    batch.update(fs.doc(db, 'paymentAttempts', attemptId), {
+      status: nextStatus, verifiedAt: fs.serverTimestamp(), verifiedBy: actor()
+    });
+    if (orderId) {
+      batch.update(fs.doc(db, 'orders', orderId), {
+        paymentStatus: orderPaymentStatus, paymentAttemptId: attemptId, paymentUpdatedAt: fs.serverTimestamp()
+      });
+    }
+    const logRef = fs.doc(fs.collection(db, 'auditLogs'));
+    batch.set(logRef, {
+      action, actor: actor(), targetType: 'paymentAttempt', targetId: attemptId,
+      details: { orderId, orderNo, paymentStatus: orderPaymentStatus }, createdAt: fs.serverTimestamp()
+    });
+    await batch.commit();
   }
 
   async function loadAttempts() {
@@ -160,25 +189,20 @@
       const list = []; snap.forEach(d => list.push(Object.assign({ _id:d.id }, d.data())));
       box.innerHTML = list.length ? list.map(attemptCard).join('') : '<p class="muted">مفيش محاولات دفع لسه.</p>';
       box.querySelectorAll('.nn-attempt').forEach(el => {
-        const attemptId = el.dataset.id, orderId = el.dataset.order;
         const approve = el.querySelector('.nn-pay-approve'), reject = el.querySelector('.nn-pay-reject');
         if (approve) approve.addEventListener('click', async () => {
           if (!confirm('تأكيد إنك راجعت التحويل وعايز تعتمد الدفع؟')) return;
           try {
-            const user = auth.currentUser;
-            await fs.updateDoc(fs.doc(db,'paymentAttempts',attemptId), { status:'paid', verifiedAt:fs.serverTimestamp(), verifiedBy:user && user.email || '' });
-            if (orderId) await fs.updateDoc(fs.doc(db,'orders',orderId), { paymentStatus:'paid', paymentAttemptId:attemptId, paymentUpdatedAt:fs.serverTimestamp() });
+            await commitManualDecision(el, 'paid', 'paid', 'payment.manual.approved');
             toast('تم اعتماد الدفع ✅'); loadAttempts();
-          } catch (e) { toast('تعذّر اعتماد الدفع'); }
+          } catch (e) { console.warn(e); toast('تعذّر اعتماد الدفع'); }
         });
         if (reject) reject.addEventListener('click', async () => {
           if (!confirm('رفض إثبات الدفع؟')) return;
           try {
-            const user = auth.currentUser;
-            await fs.updateDoc(fs.doc(db,'paymentAttempts',attemptId), { status:'rejected', verifiedAt:fs.serverTimestamp(), verifiedBy:user && user.email || '' });
-            if (orderId) await fs.updateDoc(fs.doc(db,'orders',orderId), { paymentStatus:'unpaid', paymentAttemptId:attemptId, paymentUpdatedAt:fs.serverTimestamp() });
+            await commitManualDecision(el, 'rejected', 'rejected', 'payment.manual.rejected');
             toast('تم رفض الدفع'); loadAttempts();
-          } catch (e) { toast('تعذّر رفض الدفع'); }
+          } catch (e) { console.warn(e); toast('تعذّر رفض الدفع'); }
         });
       });
     } catch (_) { box.innerHTML = '<p class="muted">تعذّر تحميل محاولات الدفع.</p>'; }
