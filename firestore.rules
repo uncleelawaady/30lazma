@@ -78,6 +78,7 @@ service cloud.firestore {
 
     function validPaymentAttempt() {
       let d = request.resource.data;
+      let orderPath = /databases/$(database)/documents/orders/$(d.orderId);
       return d.keys().hasOnly([
           'orderId','orderNo','methodId','methodName','type','status','reference','createdAt'
         ])
@@ -96,7 +97,9 @@ service cloud.firestore {
         && ((d.type == 'manual' && d.status == 'pending_verification')
           || (d.type == 'automatic' && d.status == 'initiated'))
         && shortString(d.reference, 160)
-        && d.createdAt == request.time;
+        && d.createdAt == request.time
+        && exists(orderPath)
+        && get(orderPath).data.orderNo == d.orderNo;
     }
 
     function validCustomer() {
@@ -130,7 +133,6 @@ service cloud.firestore {
         && shortString(d.get('type', ''), 40);
     }
 
-    // Public storefront configuration. Admin writes only.
     match /config/{docId} {
       allow read: if true;
       allow write: if isAdmin();
@@ -142,15 +144,11 @@ service cloud.firestore {
       allow update, delete: if isAdmin();
     }
 
-    // The client may only create a brand-new, explicitly unpaid order.
-    // Any later status/payment transition is admin/server controlled.
     match /orders/{id} {
       allow create: if validOrder();
       allow read, update, delete: if isAdmin();
     }
 
-    // Client can only create the first immutable payment-attempt state.
-    // Paid/refunded/failed transitions must come from admin/server-side verification.
     match /paymentAttempts/{id} {
       allow create: if validPaymentAttempt();
       allow read, update, delete: if isAdmin();
