@@ -23,9 +23,11 @@
     const appCheckSiteKey = clean(live.appCheckSiteKey || fallback.appCheckSiteKey, 300);
     const rawBase = clean(live.apiBaseUrl || fallback.apiBaseUrl, 500);
     const apiBaseUrl = safeHttpsUrl(rawBase).replace(/\/+$/, '');
+    const secureCommerceOnly = live.secureCommerceOnly === true || fallback.secureCommerceOnly === true;
     return {
       appCheckSiteKey,
       apiBaseUrl,
+      secureCommerceOnly,
       secureApiReady: !!appCheckSiteKey && !!apiBaseUrl
     };
   }
@@ -117,8 +119,8 @@
       if (!id || !orderNo || data.persisted !== true) throw new Error('INVALID_SECURE_ORDER_RESPONSE');
       return { id, orderNo, persisted: true, secure: true, payload: { name, phone, notes, items } };
     }
+    if (security.secureCommerceOnly) throw new Error('SECURE_COMMERCE_REQUIRED');
 
-    // Compatibility path until Secure Commerce API + App Check are deployed/configured.
     const orderNo = orderNumber();
     const payloadBase = {
       orderNo,
@@ -195,6 +197,7 @@
       if (!id || data.persisted !== true) throw new Error('INVALID_SECURE_PAYMENT_ATTEMPT_RESPONSE');
       return { id, persisted: true, secure: true, status: clean(data.status, 40), type: clean(data.type, 20), reused: !!data.reused };
     }
+    if (security.secureCommerceOnly) throw new Error('SECURE_COMMERCE_REQUIRED');
 
     const type = method.type === 'automatic' ? 'automatic' : 'manual';
     const status = type === 'automatic' ? 'initiated' : 'pending_verification';
