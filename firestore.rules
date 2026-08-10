@@ -57,7 +57,7 @@ service cloud.firestore {
         && shortString(d.get('provider', ''), 40)
         && d.rating >= 1 && d.rating <= 5
         && shortString(d.text, 5000)
-        && d.apved == false
+        && d.approved == false
         && d.createdAt == request.time;
     }
 
