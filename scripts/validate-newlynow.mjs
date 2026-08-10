@@ -73,7 +73,8 @@ if (exists('firestore.rules')) {
   if (!/match \/orders\/\{id\}[\s\S]{0,100}allow create: if !secureCommerceOnly\(\)/.test(rules)) fail.push('Direct order creation must be disabled by secureCommerceOnly mode.');
   if (!/match \/paymentAttempts\/\{id\}[\s\S]{0,110}allow create: if !secureCommerceOnly\(\)/.test(rules)) fail.push('Direct payment-attempt creation must be disabled by secureCommerceOnly mode.');
   if (!/match \/orders\/\{id\}[\s\S]{0,260}allow delete: if false/.test(rules)) fail.push('Orders must be non-deletable financial history.');
-  if (!/match \/paymentAttempts\/\{id\}[\s\S]{0,260}allow delete: if false/.test(rules)) fail.push('Payment attempts must be non-deletable financial history.');
+  if (!/match \/paymentAttempts\/\{id\}[\s\S]{0,260}allow update: if owner\(\) && validPaymentAdminUpdate\(\)/.test(rules)) fail.push('Manual payment verification must be restricted to a verified owner.');
+  if (!/match \/paymentAttempts\/\{id\}[\s\S]{0,300}allow delete: if false/.test(rules)) fail.push('Payment attempts must be non-deletable financial history.');
   if (!/d\.approved\s*==\s*false/.test(rules)) fail.push('Review creation must force approved=false.');
   if (!/hasAny\(\['admins','payments','security'\]\)/.test(rules)) fail.push('Sensitive site config must remain owner-only.');
   if (!/match \/pricing\/\{id\}/.test(rules) || !/pricing[\s\S]{0,180}owner\(\)/.test(rules)) fail.push('Structured pricing collection must be owner-protected.');
@@ -101,6 +102,12 @@ if (exists('admin-orders.js')) {
   const ordersUi = read('admin-orders.js');
   if (!/paymentStatus/.test(ordersUi) || !/order\.status\.updated/.test(ordersUi)) fail.push('Admin order manager must separate payment status and audit order status changes.');
   if (/deleteDoc\(/.test(ordersUi) || /nn-order-delete/.test(ordersUi)) fail.push('Admin order manager must cancel orders instead of deleting financial history.');
+}
+
+if (exists('admin-payments.js')) {
+  const paymentUi = read('admin-payments.js');
+  if (!/emailVerified\s*===\s*true/.test(paymentUi) || !/ownerAccess\(\)/.test(paymentUi)) fail.push('Payment administration must require a verified owner for financial actions.');
+  if (!/manual && pending && ownerAccess\(\)/.test(paymentUi)) fail.push('Manual payment approve/reject controls must be hidden from non-owner admins.');
 }
 
 if (exists('firebase-config.js')) {
