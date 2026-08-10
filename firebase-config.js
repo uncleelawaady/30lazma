@@ -74,6 +74,7 @@ window.NEWLYNOW_SECURITY_CONFIG = window.NEWLYNOW_SECURITY_CONFIG || {
         document.body.appendChild(s);
       };
       loadAdminScript('admin-payments.js?v=3', 'payments');
+      loadAdminScript('admin-pricing.js?v=1', 'pricing');
       loadAdminScript('admin-audit.js?v=1', 'audit');
       loadAdminScript('admin-security.js?v=1', 'security');
     }, { once: true });
