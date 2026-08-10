@@ -198,15 +198,14 @@ service cloud.firestore {
       allow create: if !secureCommerceOnly() && validOrder();
       allow read: if isAdmin();
       allow update: if isAdmin() && validOrderAdminUpdate();
-      // Financial/order history is immutable: cancel an order instead of deleting it.
       allow delete: if false;
     }
 
     match /paymentAttempts/{id} {
       allow create: if !secureCommerceOnly() && validPaymentAttempt();
       allow read: if isAdmin();
-      allow update: if isAdmin() && validPaymentAdminUpdate();
-      // Payment attempts form part of the financial audit trail and are never deleted.
+      // Manual financial verification is owner-only. Server webhooks use Admin SDK and bypass client rules.
+      allow update: if owner() && validPaymentAdminUpdate();
       allow delete: if false;
     }
 
