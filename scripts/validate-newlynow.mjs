@@ -15,13 +15,11 @@ const walk = (dir='.') => fs.readdirSync(path.join(root,dir), {withFileTypes:tru
 });
 const files = walk();
 
-// 1) Syntax-check project JavaScript (browser + Functions).
 for (const file of files.filter(f => /\.m?js$/i.test(f))) {
   try { execFileSync(process.execPath, ['--check', file], { cwd: root, stdio:'pipe' }); }
   catch (e) { fail.push(`JavaScript syntax error: ${file}\n${String(e.stderr || e.message)}`); }
 }
 
-// 2) Verify local CSS/JS references used by HTML actually exist.
 for (const file of files.filter(f => /\.html$/i.test(f))) {
   const html = read(file);
   const refs = [...html.matchAll(/(?:src|href)=["']([^"'#?]+)(?:\?[^"']*)?["']/gi)].map(m => m[1]);
@@ -32,7 +30,6 @@ for (const file of files.filter(f => /\.html$/i.test(f))) {
   }
 }
 
-// 3) Block common private-secret files and high-risk secret assignments.
 const forbiddenFiles = files.filter(f => /(^|\/)\.env$/i.test(f) || /service[-_]?account.*\.json$/i.test(f) || /firebase-adminsdk/i.test(f));
 forbiddenFiles.forEach(f => fail.push(`Private secret file must not be committed: ${f}`));
 
@@ -47,32 +44,38 @@ for (const file of files.filter(f => /\.(?:js|mjs|json|html|yml|yaml|md|txt)$/i.
   for (const re of secretPatterns) if (re.test(text)) fail.push(`Possible private secret in ${file}: ${re}`);
 }
 
-// 4) Commerce invariant: browser code may never assign a paid state.
 const browserCode = files.filter(f => /\.(?:js|html)$/i.test(f) && !f.startsWith('functions/'));
 for (const file of browserCode) {
   const text = read(file);
-  if (/admin-payments\.js$/.test(file)) continue; // authenticated admin verification UI
+  if (/admin-payments\.js$/.test(file)) continue;
   if (/paymentStatus\s*[:=]\s*["']paid["']/i.test(text) || /status\s*[:=]\s*["']paid["']/i.test(text)) {
     fail.push(`Client-side paid-state assignment is forbidden: ${file}`);
   }
 }
 
-// 5) Server payment core must require App Check and webhook verification hooks.
 if (exists('functions/index.js')) {
   const backend = read('functions/index.js');
   if (!/X-Firebase-AppCheck/.test(backend) || !/verifyToken\(/.test(backend)) fail.push('Payment backend must verify Firebase App Check tokens.');
   if (!/verifyWebhook\(/.test(backend)) fail.push('Payment backend must call provider webhook verification.');
   if (!/webhookEvents/.test(backend)) fail.push('Payment webhook must include an idempotency/event ledger.');
+  if (!/calculateOrderPrice\(/.test(backend)) fail.push('Automatic payments must use server-authoritative structured pricing.');
+  if (!/WEBHOOK_AMOUNT_MISMATCH/.test(backend)) fail.push('Paid webhooks must verify amount and currency.');
 }
 
-// 6) Required NewlyNow commerce/security files.
+if (exists('firestore.rules')) {
+  const rules = read('firestore.rules');
+  if (!/hasAny\(\['admins','payments','security'\]\)/.test(rules)) fail.push('Sensitive site config must remain owner-only.');
+  if (!/match \/pricing\/\{id\}/.test(rules) || !/pricing[\s\S]{0,180}owner\(\)/.test(rules)) fail.push('Structured pricing collection must be owner-protected.');
+  if (!/match \/auditLogs\/\{id\}/.test(rules) || !/allow update, delete: if false/.test(rules)) fail.push('Audit logs must remain append-only.');
+}
+
 [
-  'commerce-core.js','firestore.rules','storage.rules','newlynow-theme.css',
+  'commerce-core.js','app-check.js','firestore.rules','storage.rules','newlynow-theme.css',
   'newlynow-home-theme.css','newlynow-inner-theme.css','newlynow-commerce.css',
-  'functions/index.js','functions/payment-adapters.js'
+  'admin-payments.js','admin-pricing.js','admin-audit.js','admin-security.js',
+  'functions/index.js','functions/payment-adapters.js','functions/pricing.js'
 ].forEach(f => { if (!exists(f)) fail.push(`Required NewlyNow file missing: ${f}`); });
 
-// Legacy branding remains tolerated only in old source until source-level migration is complete.
 for (const f of ['index.html','category.html','service.html','account.html','admin.html']) {
   if (exists(f) && /Elwaset|Elawaady XDigital|\bEXD\b/i.test(read(f))) warn.push(`Legacy source branding still present in ${f}`);
 }
