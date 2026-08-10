@@ -23,13 +23,14 @@
       if (!section) return;
       section.classList.add('nn-section');
       section.dataset.accent = accent;
-      if (!section.querySelector(':scope > .nn-section-number')) {
-        const n = document.createElement('span');
+      let n = section.querySelector(':scope > .nn-section-number');
+      if (!n) {
+        n = document.createElement('span');
         n.className = 'nn-section-number';
-        n.textContent = number;
         n.setAttribute('aria-hidden', 'true');
         section.prepend(n);
       }
+      n.textContent = number;
     });
 
     const rails = [
