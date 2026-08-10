@@ -168,12 +168,12 @@ service cloud.firestore {
 
     match /config/{docId} {
       allow read: if true;
-      // Only an owner can create the central site document or delete config documents.
       allow create: if owner() || (docId != 'site' && isAdmin());
-      // Regular admins may edit normal site settings but can never grant/revoke admin access.
+      // Owner-only keys: admins, payments and security. This prevents privilege
+      // escalation and malicious gateway/endpoint replacement by a regular admin.
       allow update: if owner()
         || (isAdmin() && (docId != 'site'
-          || !request.resource.data.diff(resource.data).affectedKeys().hasAny(['admins'])));
+          || !request.resource.data.diff(resource.data).affectedKeys().hasAny(['admins','payments','security'])));
       allow delete: if owner();
     }
 
@@ -186,7 +186,6 @@ service cloud.firestore {
     match /orders/{id} {
       allow create: if validOrder();
       allow read: if isAdmin();
-      // Customer/order identity and line items become immutable after creation.
       allow update: if isAdmin() && validOrderAdminUpdate();
       allow delete: if owner();
     }
@@ -194,12 +193,10 @@ service cloud.firestore {
     match /paymentAttempts/{id} {
       allow create: if validPaymentAttempt();
       allow read: if isAdmin();
-      // Method/order/reference fields are immutable; only verification state may change.
       allow update: if isAdmin() && validPaymentAdminUpdate();
       allow delete: if owner();
     }
 
-    // Append-only financial/administrative audit trail.
     match /auditLogs/{id} {
       allow read: if isAdmin();
       allow create: if isAdmin() && validAuditLog();
