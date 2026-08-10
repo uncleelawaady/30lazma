@@ -72,6 +72,12 @@ if (exists('firestore.rules')) {
   if (!/match \/auditLogs\/\{id\}/.test(rules) || !/allow update, delete: if false/.test(rules)) fail.push('Audit logs must remain append-only.');
 }
 
+if (exists('storage.rules')) {
+  const rules = read('storage.rules');
+  if (!/email_verified\s*==\s*true/.test(rules)) fail.push('Firebase Storage writes must require a verified owner email.');
+  if (!/request\.resource\.size\s*<\s*10\s*\*\s*1024\s*\*\s*1024/.test(rules)) fail.push('Firebase Storage upload size limit is missing.');
+}
+
 if (exists('firebase-config.js')) {
   const boot = read('firebase-config.js');
   if (!/admin-auth-hardening\.js/.test(boot)) fail.push('Admin bootstrap must load verified-email hardening.');
