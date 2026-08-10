@@ -6,8 +6,14 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    function owner() {
+    function verifiedEmail() {
       return signedIn()
+        && request.auth.token.email is string
+        && request.auth.token.email_verified == true;
+    }
+
+    function owner() {
+      return verifiedEmail()
         && request.auth.token.email in [
           'elawaady.official@gmail.com',
           'elawadi.store4@gmail.com'
@@ -21,7 +27,7 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return owner() || (signedIn() && request.auth.token.email in adminList());
+      return owner() || (verifiedEmail() && request.auth.token.email in adminList());
     }
 
     function shortString(v, max) {
@@ -195,7 +201,6 @@ service cloud.firestore {
       allow delete: if owner();
     }
 
-    // Structured financial pricing used by the server payment engine.
     match /pricing/{id} {
       allow read, create, update, delete: if owner();
     }
