@@ -14,11 +14,13 @@ window.FIREBASE_CONFIG = {
   const isAdmin = /(?:^|\/)(?:admin|admin\.html)\/?$/.test(path);
   const isAccount = /(?:^|\/)(?:account|account\.html)\/?$/.test(path);
   const isHome = path === '/' || /(?:^|\/)index\.html\/?$/.test(path);
+  const isInner = /(?:^|\/)(?:category|service)(?:\.html)?\/?$/.test(path);
 
   const files = isAdmin
     ? ['newlynow-admin-theme.css?v=1']
     : ['newlynow-theme.css?v=1','newlynow-brand.css?v=1']
         .concat(isHome ? ['newlynow-home-theme.css?v=1'] : [])
+        .concat(isInner ? ['newlynow-inner-theme.css?v=1'] : [])
         .concat(isAccount ? ['newlynow-account-theme.css?v=1'] : []);
 
   files.forEach((href, i) => {
