@@ -15,7 +15,7 @@ const walk = (dir='.') => fs.readdirSync(path.join(root,dir), {withFileTypes:tru
 });
 const files = walk();
 
-// 1) Syntax-check project JavaScript (browser modules included).
+// 1) Syntax-check project JavaScript (browser + Functions).
 for (const file of files.filter(f => /\.m?js$/i.test(f))) {
   try { execFileSync(process.execPath, ['--check', file], { cwd: root, stdio:'pipe' }); }
   catch (e) { fail.push(`JavaScript syntax error: ${file}\n${String(e.stderr || e.message)}`); }
@@ -47,19 +47,29 @@ for (const file of files.filter(f => /\.(?:js|mjs|json|html|yml|yaml|md|txt)$/i.
   for (const re of secretPatterns) if (re.test(text)) fail.push(`Possible private secret in ${file}: ${re}`);
 }
 
-// 4) Commerce invariants: only admin/server code may assign a paid state.
-for (const file of files.filter(f => /\.(?:js|html)$/i.test(f))) {
+// 4) Commerce invariant: browser code may never assign a paid state.
+const browserCode = files.filter(f => /\.(?:js|html)$/i.test(f) && !f.startsWith('functions/'));
+for (const file of browserCode) {
   const text = read(file);
-  if (/admin-payments\.js$/.test(file)) continue;
+  if (/admin-payments\.js$/.test(file)) continue; // authenticated admin verification UI
   if (/paymentStatus\s*[:=]\s*["']paid["']/i.test(text) || /status\s*[:=]\s*["']paid["']/i.test(text)) {
     fail.push(`Client-side paid-state assignment is forbidden: ${file}`);
   }
 }
 
-// 5) Required NewlyNow commerce/security files.
+// 5) Server payment core must require App Check and webhook verification hooks.
+if (exists('functions/index.js')) {
+  const backend = read('functions/index.js');
+  if (!/X-Firebase-AppCheck/.test(backend) || !/verifyToken\(/.test(backend)) fail.push('Payment backend must verify Firebase App Check tokens.');
+  if (!/verifyWebhook\(/.test(backend)) fail.push('Payment backend must call provider webhook verification.');
+  if (!/webhookEvents/.test(backend)) fail.push('Payment webhook must include an idempotency/event ledger.');
+}
+
+// 6) Required NewlyNow commerce/security files.
 [
   'commerce-core.js','firestore.rules','storage.rules','newlynow-theme.css',
-  'newlynow-home-theme.css','newlynow-inner-theme.css','newlynow-commerce.css'
+  'newlynow-home-theme.css','newlynow-inner-theme.css','newlynow-commerce.css',
+  'functions/index.js','functions/payment-adapters.js'
 ].forEach(f => { if (!exists(f)) fail.push(`Required NewlyNow file missing: ${f}`); });
 
 // Legacy branding remains tolerated only in old source until source-level migration is complete.
