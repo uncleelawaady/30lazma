@@ -32,40 +32,68 @@
       }
     });
 
-    // Turn dense storefront groups into reference-like horizontal showcases.
     const rails = [
       ['#categories .cat-grid', 'nn-rail nn-categories-rail'],
       ['#featured .svc-grid', 'nn-rail nn-services-rail'],
       ['#portfolio .port-grid', 'nn-rail nn-portfolio-rail'],
       ['#testimonials .rev-grid', 'nn-rail nn-reviews-rail']
     ];
-    rails.forEach(([selector, classes]) => {
-      const el = document.querySelector(selector);
-      if (!el) return;
-      classes.split(' ').forEach(c => el.classList.add(c));
-    });
 
-    // Reuse existing service/category cards but give every card a framed showcase rhythm.
-    document.querySelectorAll('#categories .cat, #featured .svc, #portfolio .port').forEach((card, i) => {
-      card.classList.add('nn-editorial-card');
-      card.style.setProperty('--nn-card-index', String(i + 1));
-    });
+    function ensureRails() {
+      rails.forEach(([selector, classes]) => {
+        const el = document.querySelector(selector);
+        if (!el) return;
+        classes.split(' ').forEach(c => el.classList.add(c));
+      });
+    }
 
-    // Subtle scroll reveal. No dependency and disabled automatically for reduced motion.
-    if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
-      const targets = document.querySelectorAll('.nn-section .head, .nn-editorial-card, .proof-cta, .pay-strip, .cta-box');
-      targets.forEach(el => el.classList.add('nn-reveal'));
-      const io = new IntersectionObserver(entries => {
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let io = null;
+    if (!reduceMotion && 'IntersectionObserver' in window) {
+      io = new IntersectionObserver(entries => {
         entries.forEach(entry => {
           if (!entry.isIntersecting) return;
           entry.target.classList.add('is-visible');
           io.unobserve(entry.target);
         });
       }, { threshold:.08, rootMargin:'0px 0px -5% 0px' });
-      targets.forEach(el => io.observe(el));
     }
 
-    // Hero gets an editorial viewport cue similar to the reference without copying its assets.
+    function reveal(el) {
+      if (!el || el.dataset.nnRevealBound === '1') return;
+      el.dataset.nnRevealBound = '1';
+      if (!io) { el.classList.add('is-visible'); return; }
+      el.classList.add('nn-reveal');
+      io.observe(el);
+    }
+
+    function decorateDynamicContent() {
+      ensureRails();
+      document.querySelectorAll('#categories .cat, #featured .svc, #portfolio .port').forEach(card => {
+        if (!card.classList.contains('nn-editorial-card')) card.classList.add('nn-editorial-card');
+        reveal(card);
+      });
+      document.querySelectorAll('#testimonials .review-card, #testimonials .rev-card').forEach(reveal);
+      document.querySelectorAll('.nn-section .head, .proof-cta, .pay-strip, .cta-box').forEach(reveal);
+    }
+
+    decorateDynamicContent();
+
+    // Catalog and reviews can arrive after page load from Firestore.
+    let queued = false;
+    const mo = new MutationObserver(() => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => {
+        queued = false;
+        decorateDynamicContent();
+      });
+    });
+    ['categories','featured','portfolio','testimonials'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) mo.observe(el, { childList:true, subtree:true });
+    });
+
     const hero = document.querySelector('.hero');
     if (hero && !hero.querySelector('.nn-scroll-cue')) {
       const cue = document.createElement('a');
