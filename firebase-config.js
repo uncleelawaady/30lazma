@@ -73,6 +73,9 @@ window.NEWLYNOW_SECURITY_CONFIG = window.NEWLYNOW_SECURITY_CONFIG || {
         s.defer = true;
         document.body.appendChild(s);
       };
+      // Auth hardening is loaded first so legacy dashboard controls are replaced
+      // before the owner uses provisioning/payment/security extensions.
+      loadAdminScript('admin-auth-hardening.js?v=1', 'auth');
       loadAdminScript('admin-payments.js?v=3', 'payments');
       loadAdminScript('admin-pricing.js?v=1', 'pricing');
       loadAdminScript('admin-audit.js?v=1', 'audit');
