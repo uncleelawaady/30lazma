@@ -10,7 +10,6 @@ window.FIREBASE_CONFIG = {
   appId: "1:528440617091:web:004cac53d438f279ce53b6"
 };
 
-// Fill this PUBLIC reCAPTCHA Enterprise site key after registering newlynow.com in Firebase App Check.
 window.NEWLYNOW_SECURITY_CONFIG = window.NEWLYNOW_SECURITY_CONFIG || {
   appCheckSiteKey: ''
 };
@@ -38,7 +37,7 @@ window.NEWLYNOW_SECURITY_CONFIG = window.NEWLYNOW_SECURITY_CONFIG || {
 
   if (!isAdmin && !document.querySelector('script[data-newlynow-app-check]')) {
     const s = document.createElement('script');
-    s.src = 'app-check.js?v=1';
+    s.src = 'app-check.js?v=2';
     s.dataset.newlynowAppCheck = '1';
     s.defer = true;
     document.head.appendChild(s);
@@ -74,8 +73,9 @@ window.NEWLYNOW_SECURITY_CONFIG = window.NEWLYNOW_SECURITY_CONFIG || {
         s.defer = true;
         document.body.appendChild(s);
       };
-      loadAdminScript('admin-payments.js?v=2', 'payments');
+      loadAdminScript('admin-payments.js?v=3', 'payments');
       loadAdminScript('admin-audit.js?v=1', 'audit');
+      loadAdminScript('admin-security.js?v=1', 'security');
     }, { once: true });
   }
 })();
