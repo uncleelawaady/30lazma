@@ -1,9 +1,25 @@
-// ===== Elwaset.net — shopping cart (localStorage, static-safe) =====
+// ===== NewlyNow — shopping cart (localStorage, static-safe) =====
 (function () {
-  const KEY = 'elwaset_cart';
-  const read = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return []; } };
-  const write = (a) => { localStorage.setItem(KEY, JSON.stringify(a)); render(); };
-  const count = () => read().reduce((s, x) => s + (x.qty || 1), 0);
+  'use strict';
+  const KEY = 'newlynow_cart';
+  const LEGACY_KEY = 'elwaset_cart';
+
+  // One-time migration so existing visitors do not lose their cart.
+  try {
+    if (!localStorage.getItem(KEY) && localStorage.getItem(LEGACY_KEY)) {
+      localStorage.setItem(KEY, localStorage.getItem(LEGACY_KEY));
+      localStorage.removeItem(LEGACY_KEY);
+    }
+  } catch (_) {}
+
+  const read = () => {
+    try {
+      const value = JSON.parse(localStorage.getItem(KEY));
+      return Array.isArray(value) ? value : [];
+    } catch (_) { return []; }
+  };
+  const write = a => { localStorage.setItem(KEY, JSON.stringify(Array.isArray(a) ? a.slice(0, 50) : [])); render(); };
+  const count = () => read().reduce((s, x) => s + Math.max(1, Number(x.qty) || 1), 0);
   const esc = s => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
   function add(item) {
@@ -15,20 +31,25 @@
       category: item.category || '', link: item.link || '', notes: item.notes || '',
       coupon: item.coupon || '', price: item.price || '', code: item.code || ''
     };
-    if (ex) { ex.qty = (ex.qty || 1) + (item.qty || 1); Object.assign(ex, extra); }
-    else a.push(Object.assign({ id, name: item.name, qty: item.qty || 1 }, extra));
+    const qty = Math.max(1, Math.min(1000000, Number(item.qty) || 1));
+    if (ex) { ex.qty = Math.min(1000000, (Number(ex.qty) || 1) + qty); Object.assign(ex, extra); }
+    else if (a.length < 50) a.push(Object.assign({ id, name: item.name, qty }, extra));
     write(a);
     toast('تم إضافة «' + item.name + '» للسلة');
     openDrawer();
   }
-  function setQty(id, q) { const a = read(); const it = a.find(x => x.id === id); if (it) it.qty = Math.max(1, q); write(a); }
+
+  function setQty(id, q) {
+    const a = read();
+    const it = a.find(x => x.id === id);
+    if (it) it.qty = Math.max(1, Math.min(1000000, Number(q) || 1));
+    write(a);
+  }
   function remove(id) { write(read().filter(x => x.id !== id)); }
   function clear() { write([]); }
 
-  // ===== DOM =====
   let fab, badge, drawer, backdrop, listEl, toastEl;
   function build() {
-    // floating cart button
     fab = document.createElement('button');
     fab.className = 'cart-fab';
     fab.setAttribute('aria-label', 'السلة');
@@ -37,7 +58,6 @@
     document.body.appendChild(fab);
     badge = fab.querySelector('#cartBadge');
 
-    // backdrop + drawer
     backdrop = document.createElement('div');
     backdrop.className = 'cart-backdrop';
     backdrop.addEventListener('click', closeDrawer);
@@ -100,13 +120,13 @@
     listEl.querySelectorAll('.cart-item').forEach(row => {
       const id = row.dataset.id;
       const it = read().find(x => String(x.id) === id);
+      if (!it) return;
       row.querySelector('.qm').addEventListener('click', () => setQty(id, (it.qty || 1) - 1));
       row.querySelector('.qp').addEventListener('click', () => setQty(id, (it.qty || 1) + 1));
       row.querySelector('.ci-del').addEventListener('click', () => remove(id));
     });
   }
 
-  // public API
   window.Cart = { add, remove, setQty, clear, read, count, open: openDrawer, close: closeDrawer };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => { build(); render(); });
