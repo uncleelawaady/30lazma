@@ -6,6 +6,7 @@ const { initializeApp, getApps } = require('firebase-admin/app');
 const { getFirestore, FieldValue } = require('firebase-admin/firestore');
 const { getAppCheck } = require('firebase-admin/app-check');
 const { getPaymentAdapter } = require('./payment-adapters');
+const { calculateOrderPrice } = require('./pricing');
 
 if (!getApps().length) initializeApp();
 const db = getFirestore();
@@ -43,14 +44,21 @@ async function loadAutomaticMethod(methodId) {
   return method;
 }
 
-function authoritativeAmount(order) {
-  const amountMinor = Number(order && order.amountMinor);
-  const currency = id(order && order.currency, 12).toUpperCase();
-  const locked = order && order.pricingLocked === true;
-  if (!locked || !Number.isSafeInteger(amountMinor) || amountMinor <= 0 || !/^[A-Z]{3}$/.test(currency)) {
-    throw Object.assign(new Error('ORDER_PRICE_NOT_LOCKED'), { status: 409 });
+async function authoritativeAmount(order) {
+  const lockedAmount = Number(order && order.amountMinor);
+  const lockedCurrency = id(order && order.currency, 12).toUpperCase();
+  if (order && order.pricingLocked === true
+      && Number.isSafeInteger(lockedAmount) && lockedAmount > 0
+      && /^[A-Z]{3}$/.test(lockedCurrency)) {
+    return {
+      amountMinor: lockedAmount,
+      currency: lockedCurrency,
+      pricingHash: id(order.pricingHash, 128),
+      lines: Array.isArray(order.pricingLines) ? order.pricingLines : [],
+      reused: true
+    };
   }
-  return { amountMinor, currency };
+  return calculateOrderPrice(db, order);
 }
 
 exports.initPayment = onRequest({ cors: CORS, timeoutSeconds: 30 }, async (req, res) => {
@@ -84,11 +92,11 @@ exports.initPayment = onRequest({ cors: CORS, timeoutSeconds: 30 }, async (req, 
       return send(res, 409, { error: 'PAYMENT_ATTEMPT_NOT_STARTABLE' });
     }
 
-    const pricing = authoritativeAmount(order);
+    // Never trust browser prices. This reads structured server pricing for every line item.
+    const pricing = await authoritativeAmount(order);
     const adapter = getPaymentAdapter(methodId);
     if (!adapter) return send(res, 501, { error: 'PAYMENT_ADAPTER_NOT_INSTALLED' });
 
-    // The adapter must pass attemptId as its provider idempotency key.
     const session = await adapter.createCheckout({
       orderId, attemptId, methodId, order, attempt, method,
       amountMinor: pricing.amountMinor, currency: pricing.currency,
@@ -109,16 +117,25 @@ exports.initPayment = onRequest({ cors: CORS, timeoutSeconds: 30 }, async (req, 
         checkoutUrl,
         providerSessionId: id(session && session.providerSessionId, 240),
         providerReference: id(session && session.providerReference, 240),
+        amountMinor: pricing.amountMinor,
+        currency: pricing.currency,
         updatedAt: FieldValue.serverTimestamp()
       });
       tx.update(orderRef, {
         paymentMethod: methodId,
         paymentAttemptId: attemptId,
+        amountMinor: pricing.amountMinor,
+        currency: pricing.currency,
+        pricingLocked: true,
+        pricingHash: pricing.pricingHash || '',
+        pricingLines: pricing.lines || [],
+        pricedAt: FieldValue.serverTimestamp(),
         paymentUpdatedAt: FieldValue.serverTimestamp()
       });
       tx.set(db.collection('auditLogs').doc(), {
         action: 'payment.automatic.started', actor: 'server', targetType: 'paymentAttempt', targetId: attemptId,
-        details: { orderId, orderNo: order.orderNo, methodId }, createdAt: FieldValue.serverTimestamp()
+        details: { orderId, orderNo: order.orderNo, methodId, amountMinor: pricing.amountMinor, currency: pricing.currency },
+        createdAt: FieldValue.serverTimestamp()
       });
     });
 
@@ -136,7 +153,7 @@ exports.paymentWebhook = onRequest({ cors: false, timeoutSeconds: 30 }, async (r
     const adapter = getPaymentAdapter(adapterId);
     if (!adapter) return send(res, 404, { error: 'UNKNOWN_PAYMENT_ADAPTER' });
 
-    // Provider-specific signature verification MUST happen inside the adapter using req.rawBody.
+    // Adapter must verify provider signature against req.rawBody before returning an event.
     const event = await adapter.verifyWebhook(req);
     const eventId = id(event && event.eventId, 240);
     const attemptId = id(event && event.paymentAttemptId, 128);
@@ -161,6 +178,16 @@ exports.paymentWebhook = onRequest({ cors: false, timeoutSeconds: 30 }, async (r
       const orderRef = db.doc(`orders/${attempt.orderId}`);
       const orderSnap = await tx.get(orderRef);
       if (!orderSnap.exists) throw Object.assign(new Error('ORDER_NOT_FOUND'), { status: 404 });
+      const order = orderSnap.data();
+
+      if (status === 'paid') {
+        const webhookAmount = Number(event && event.amountMinor);
+        const webhookCurrency = id(event && event.currency, 12).toUpperCase();
+        if (!Number.isSafeInteger(webhookAmount) || webhookAmount !== Number(order.amountMinor)
+            || webhookCurrency !== id(order.currency, 12).toUpperCase()) {
+          throw Object.assign(new Error('WEBHOOK_AMOUNT_MISMATCH'), { status: 409 });
+        }
+      }
 
       const orderPaymentStatus = status === 'paid' ? 'paid' : (status === 'refunded' ? 'refunded' : 'failed');
       tx.set(eventRef, {
