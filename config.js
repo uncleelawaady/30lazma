@@ -73,12 +73,45 @@
     }
   }
 
-  function cleanLegacyBranding() {
-    document.title = brandReplace(document.title || 'NewlyNow') || 'NewlyNow';
-    if (/Elwaset|Elawaady|EXD|الوسيط/i.test(document.title)) document.title = 'NewlyNow — كل خدماتك الرقمية في منصة واحدة';
-    const desc = document.querySelector('meta[name="description"]');
-    if (desc) desc.content = brandReplace(desc.content);
+  function upsertMeta(selector, attr, value) {
+    let el = document.head.querySelector(selector);
+    if (!el) {
+      el = document.createElement(selector.startsWith('link') ? 'link' : 'meta');
+      if (selector.includes('property=')) el.setAttribute('property', selector.match(/property="([^"]+)"/)[1]);
+      else if (selector.includes('name=')) el.setAttribute('name', selector.match(/name="([^"]+)"/)[1]);
+      else if (selector.startsWith('link')) el.setAttribute('rel', 'canonical');
+      document.head.appendChild(el);
+    }
+    el.setAttribute(attr, value);
+  }
 
+  function cleanMetadata() {
+    const fallbackTitle = 'NewlyNow — كل خدماتك الرقمية في منصة واحدة';
+    let title = brandReplace(document.title || fallbackTitle);
+    if (/Elwaset|Elawaady|EXD|الوسيط/i.test(title)) title = fallbackTitle;
+    document.title = title || fallbackTitle;
+
+    const oldDesc = document.querySelector('meta[name="description"]');
+    const fallbackDesc = 'NewlyNow منصة رقمية للخدمات والمنتجات الرقمية، السوشيال ميديا، الذكاء الاصطناعي، الاشتراكات والحلول التقنية.';
+    const description = brandReplace(oldDesc && oldDesc.content || fallbackDesc) || fallbackDesc;
+    upsertMeta('meta[name="description"]', 'content', description);
+    upsertMeta('meta[property="og:title"]', 'content', document.title);
+    upsertMeta('meta[property="og:description"]', 'content', description);
+    upsertMeta('meta[property="og:site_name"]', 'content', 'NewlyNow');
+    upsertMeta('meta[property="og:type"]', 'content', 'website');
+    upsertMeta('meta[name="twitter:title"]', 'content', document.title);
+    upsertMeta('meta[name="twitter:description"]', 'content', description);
+
+    try {
+      const canonical = new URL(location.pathname + location.search, 'https://newlynow.com');
+      canonical.hash = '';
+      upsertMeta('link[rel="canonical"]', 'href', canonical.href);
+      upsertMeta('meta[property="og:url"]', 'content', canonical.href);
+    } catch (_) {}
+  }
+
+  function cleanLegacyBranding() {
+    cleanMetadata();
     document.querySelectorAll('.brand-name').forEach(el => {
       el.innerHTML = 'NewlyNow<em>.com</em>'; el.setAttribute('aria-label', 'NewlyNow.com');
     });
