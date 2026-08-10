@@ -28,6 +28,16 @@ window.FIREBASE_CONFIG = {
     document.head.appendChild(link);
   });
 
+  if (isHome) {
+    document.addEventListener('DOMContentLoaded', () => {
+      if (document.querySelector('script[data-newlynow-layout]')) return;
+      const s = document.createElement('script');
+      s.src = 'newlynow-layout.js?v=1';
+      s.dataset.newlynowLayout = '1';
+      document.body.appendChild(s);
+    }, { once:true });
+  }
+
   if (isAdmin) {
     document.title = 'لوحة تحكم NewlyNow';
     document.addEventListener('DOMContentLoaded', () => {
