@@ -72,6 +72,8 @@ if (exists('firestore.rules')) {
   if (!/function\s+secureCommerceOnly\s*\(/.test(rules)) fail.push('Firestore rules must expose secureCommerceOnly() migration gate.');
   if (!/match \/orders\/\{id\}[\s\S]{0,100}allow create: if !secureCommerceOnly\(\)/.test(rules)) fail.push('Direct order creation must be disabled by secureCommerceOnly mode.');
   if (!/match \/paymentAttempts\/\{id\}[\s\S]{0,110}allow create: if !secureCommerceOnly\(\)/.test(rules)) fail.push('Direct payment-attempt creation must be disabled by secureCommerceOnly mode.');
+  if (!/match \/orders\/\{id\}[\s\S]{0,260}allow delete: if false/.test(rules)) fail.push('Orders must be non-deletable financial history.');
+  if (!/match \/paymentAttempts\/\{id\}[\s\S]{0,260}allow delete: if false/.test(rules)) fail.push('Payment attempts must be non-deletable financial history.');
   if (!/d\.approved\s*==\s*false/.test(rules)) fail.push('Review creation must force approved=false.');
   if (!/hasAny\(\['admins','payments','security'\]\)/.test(rules)) fail.push('Sensitive site config must remain owner-only.');
   if (!/match \/pricing\/\{id\}/.test(rules) || !/pricing[\s\S]{0,180}owner\(\)/.test(rules)) fail.push('Structured pricing collection must be owner-protected.');
@@ -95,10 +97,16 @@ if (exists('admin-security.js')) {
   if (!/apiBaseUrl/.test(securityUi) || !/secureCommerceOnly/.test(securityUi)) fail.push('Owner security dashboard must manage API base and secure-commerce-only mode.');
 }
 
+if (exists('admin-orders.js')) {
+  const ordersUi = read('admin-orders.js');
+  if (!/paymentStatus/.test(ordersUi) || !/order\.status\.updated/.test(ordersUi)) fail.push('Admin order manager must separate payment status and audit order status changes.');
+  if (/deleteDoc\(/.test(ordersUi) || /nn-order-delete/.test(ordersUi)) fail.push('Admin order manager must cancel orders instead of deleting financial history.');
+}
+
 if (exists('firebase-config.js')) {
   const boot = read('firebase-config.js');
   if (!/admin-auth-hardening\.js/.test(boot)) fail.push('Admin bootstrap must load verified-email hardening.');
-  if (!/admin-payments\.js/.test(boot) || !/admin-pricing\.js/.test(boot) || !/admin-audit\.js/.test(boot) || !/admin-security\.js/.test(boot)) {
+  if (!/admin-orders\.js/.test(boot) || !/admin-payments\.js/.test(boot) || !/admin-pricing\.js/.test(boot) || !/admin-audit\.js/.test(boot) || !/admin-security\.js/.test(boot)) {
     fail.push('Admin commerce/security extensions are not fully wired.');
   }
 }
@@ -106,8 +114,8 @@ if (exists('firebase-config.js')) {
 [
   'commerce-core.js','app-check.js','firestore.rules','storage.rules','firebase.json','newlynow-theme.css',
   'newlynow-home-theme.css','newlynow-inner-theme.css','newlynow-commerce.css',
-  'admin-auth-hardening.js','admin-payments.js','admin-pricing.js','admin-audit.js','admin-security.js',
-  'functions/index.js','functions/payment-adapters.js','functions/pricing.js'
+  'admin-auth-hardening.js','admin-orders.js','admin-payments.js','admin-pricing.js','admin-audit.js','admin-security.js',
+  'functions/index.js','functions/payment-adapters.js','functions/pricing.js','tests/pricing.test.cjs'
 ].forEach(f => { if (!exists(f)) fail.push(`Required NewlyNow file missing: ${f}`); });
 
 for (const f of ['index.html','category.html','service.html','account.html','admin.html']) {
