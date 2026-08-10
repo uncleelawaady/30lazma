@@ -3,6 +3,8 @@ service firebase.storage {
   match /b/{bucket}/o {
     function owner() {
       return request.auth != null
+        && request.auth.token.email is string
+        && request.auth.token.email_verified == true
         && request.auth.token.email in [
           'elawaady.official@gmail.com',
           'elawadi.store4@gmail.com'
@@ -10,7 +12,6 @@ service firebase.storage {
     }
 
     match /{allPaths=**} {
-      // Store media is public; uploads are owner-controlled and validated.
       allow read: if true;
       allow create, update: if owner()
         && request.resource.size < 10 * 1024 * 1024
