@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "validate": "node scripts/validate-newlynow.mjs",
+    "test:pricing": "node --test tests/pricing.test.cjs",
     "test:rules": "firebase emulators:exec --only firestore --project demo-newlynow \"node --test tests/firestore.rules.test.mjs\""
   },
   "devDependencies": {
