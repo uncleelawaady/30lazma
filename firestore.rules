@@ -2,65 +2,144 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Permanent owners (full control, can manage admins).
+    function signedIn() {
+      return request.auth != null;
+    }
+
     function owner() {
-      return request.auth != null
+      return signedIn()
         && request.auth.token.email in [
           'elawaady.official@gmail.com',
           'elawadi.store4@gmail.com'
         ];
     }
 
-    // Safe read of the admins list (never errors if the field/doc is missing).
     function adminList() {
       return exists(/databases/$(database)/documents/config/site)
         ? get(/databases/$(database)/documents/config/site).data.get('admins', [])
         : [];
     }
 
-    // Owner OR any email listed in config/site.admins can manage the store.
     function isAdmin() {
-      return owner() || (request.auth != null && request.auth.token.email in adminList());
+      return owner() || (signedIn() && request.auth.token.email in adminList());
     }
 
-    // Site config: theme, texts, catalog, policies, admins, ticker...
-    // Public read (the storefront needs it). Admins can write.
+    function shortString(v, max) {
+      return v is string && v.size() <= max;
+    }
+
+    function validReview() {
+      let d = request.resource.data;
+      return d.keys().hasOnly([
+          'name','email','phone','uid','photo','source','provider',
+          'rating','text','approved','createdAt'
+        ])
+        && d.keys().hasAll(['name','rating','text','approved','createdAt'])
+        && shortString(d.name, 120)
+        && shortString(d.get('email', ''), 254)
+        && shortString(d.get('phone', ''), 40)
+        && shortString(d.get('uid', ''), 128)
+        && shortString(d.get('photo', ''), 2000)
+        && shortString(d.get('source', ''), 40)
+        && shortString(d.get('provider', ''), 40)
+        && d.rating >= 1 && d.rating <= 5
+        && shortString(d.text, 5000)
+        && d.approved == false
+        && d.createdAt == request.time;
+    }
+
+    function validOrder() {
+      let d = request.resource.data;
+      return d.keys().hasOnly([
+          'orderNo','name','phone','notes','items','count','status','source','createdAt'
+        ])
+        && d.keys().hasAll(['orderNo','name','phone','items','count','status','source','createdAt'])
+        && shortString(d.orderNo, 48)
+        && d.orderNo.size() >= 3
+        && shortString(d.name, 120)
+        && d.name.size() >= 1
+        && shortString(d.phone, 40)
+        && d.phone.size() >= 4
+        && shortString(d.get('notes', ''), 3000)
+        && d.items is list
+        && d.items.size() > 0 && d.items.size() <= 50
+        && d.count >= 1 && d.count <= 1000000
+        && d.status == 'new'
+        && d.source == 'store'
+        && d.createdAt == request.time;
+    }
+
+    function validCustomer() {
+      let d = request.resource.data;
+      return d.keys().hasOnly([
+          'name','email','phone','uid','photo','source','provider','type',
+          'createdAt','updatedAt','lastSeen'
+        ])
+        && shortString(d.get('name', ''), 120)
+        && shortString(d.get('email', ''), 254)
+        && shortString(d.get('phone', ''), 40)
+        && shortString(d.get('uid', ''), 128)
+        && shortString(d.get('photo', ''), 2000)
+        && shortString(d.get('source', ''), 40)
+        && shortString(d.get('provider', ''), 40)
+        && shortString(d.get('type', ''), 40);
+    }
+
+    function validUser(id) {
+      let d = request.resource.data;
+      return d.keys().hasOnly([
+          'name','email','phone','uid','photo','provider','type',
+          'createdAt','lastSeen'
+        ])
+        && d.get('uid', id) == id
+        && shortString(d.get('name', ''), 120)
+        && shortString(d.get('email', ''), 254)
+        && shortString(d.get('phone', ''), 40)
+        && shortString(d.get('photo', ''), 2000)
+        && shortString(d.get('provider', ''), 40)
+        && shortString(d.get('type', ''), 40);
+    }
+
+    // Public storefront configuration. Admin writes only.
     match /config/{docId} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
-    // Reviews: visitors submit (pending), admins moderate.
+    // Reviews can still be submitted by guests, but only in the expected shape.
     match /reviews/{id} {
       allow read: if true;
-      allow create: if true;
+      allow create: if validReview();
       allow update, delete: if isAdmin();
     }
 
-    // Orders: visitors create at checkout, admins read/manage.
+    // Guest checkout remains supported, but clients cannot forge arbitrary order fields/statuses.
     match /orders/{id} {
-      allow create: if true;
+      allow create: if validOrder();
       allow read, update, delete: if isAdmin();
     }
 
-    // Customers: created at checkout/registration; admins read/manage;
-    // a signed-in user can write their own doc.
     match /customers/{id} {
-      allow create: if true;
-      allow read, update, delete: if isAdmin();
-      allow write: if request.auth != null && request.auth.uid == id;
+      allow create: if validCustomer();
+      allow read: if isAdmin() || (signedIn() && request.auth.uid == id);
+      allow update: if isAdmin() || (signedIn() && request.auth.uid == id && validCustomer());
+      allow delete: if isAdmin();
     }
 
-    // Users (accounts): the user manages their own doc, admins can read.
     match /users/{id} {
-      allow read: if isAdmin();
-      allow write: if request.auth != null && (request.auth.uid == id || isAdmin());
+      allow read: if isAdmin() || (signedIn() && request.auth.uid == id);
+      allow create, update: if isAdmin() || (signedIn() && request.auth.uid == id && validUser(id));
+      allow delete: if isAdmin();
     }
 
-    // Announcements (notifications): public read, admins write.
     match /announcements/{id} {
       allow read: if true;
       allow write: if isAdmin();
+    }
+
+    // Deny everything not explicitly defined above.
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }
