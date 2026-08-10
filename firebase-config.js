@@ -39,6 +39,14 @@ window.FIREBASE_CONFIG = {
       const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
       const nodes = []; while (w.nextNode()) nodes.push(w.currentNode);
       nodes.forEach(n => { const v = rep(n.nodeValue); if (v !== n.nodeValue) n.nodeValue = v; });
+
+      if (!document.querySelector('script[data-newlynow-payments]')) {
+        const s = document.createElement('script');
+        s.src = 'admin-payments.js?v=1';
+        s.dataset.newlynowPayments = '1';
+        s.defer = true;
+        document.body.appendChild(s);
+      }
     }, { once: true });
   }
 })();
