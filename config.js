@@ -7,11 +7,11 @@
   const CACHE_KEY = 'newlynowConfig';
 
   const THEME = {
-    bg: '#0D0E12', 'bg-2': '#1A1C23', yellow: '#00E5FF', orange: '#00C2FF',
-    pink: '#FF2A85', purple: '#FF007A', violet: '#00C2FF', teal: '#00E5FF',
-    text: '#FFFFFF', muted: '#A0A5B5', dim: '#707686', glass: 'rgba(26,28,35,.72)',
-    'glass-brd': 'rgba(255,255,255,.08)', 'grad-from': '#00E5FF', 'grad-mid': '#00C2FF',
-    'grad-to': '#FF2A85', 'ticker-bg': '#11131A', radius: '24px'
+    bg: '#070104', 'bg-2': '#16020A', yellow: '#FF2F7D', orange: '#F20F62',
+    pink: '#F20F62', purple: '#FF2F7D', violet: '#7C103B', teal: '#FF8DB7',
+    text: '#FFF8FB', muted: '#BEA7B2', dim: '#8E7580', glass: 'rgba(255,255,255,.055)',
+    'glass-brd': 'rgba(255,83,145,.22)', 'grad-from': '#7C103B', 'grad-mid': '#F20F62',
+    'grad-to': '#FF2F7D', 'ticker-bg': '#16020A', radius: '20px'
   };
 
   const brandReplace = s => String(s || '')
@@ -32,8 +32,8 @@
 
   function enforceTheme() {
     Object.entries(THEME).forEach(([key, value]) => root.style.setProperty('--' + key, value));
-    root.style.setProperty('--grad', 'linear-gradient(100deg,#00E5FF 0%,#00C2FF 46%,#FF2A85 100%)');
-    root.style.setProperty('--grad-btn', 'linear-gradient(100deg,#00E5FF 0%,#00C2FF 100%)');
+    root.style.setProperty('--grad', 'linear-gradient(100deg,#F20F62 0%,#FF2F7D 55%,#FF8DB7 100%)');
+    root.style.setProperty('--grad-btn', 'linear-gradient(120deg,#7C103B 0%,#F20F62 48%,#FF2F7D 100%)');
     root.dataset.brand = 'newlynow';
   }
 
@@ -124,7 +124,7 @@
   }
 
   function decorateSections() {
-    const accents = ['cyan', 'pink', 'lime', 'gold'];
+    const accents = ['pink', 'wine', 'rose', 'magenta'];
     const sections = Array.from(document.querySelectorAll('body > section, main > section'))
       .filter(s => !s.classList.contains('hero') && !s.classList.contains('stats-strip'));
     sections.forEach((section, index) => {
