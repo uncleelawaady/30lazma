@@ -37,9 +37,10 @@ test('non-owner cannot upload',async()=>{
   await assertFails(uploadBytes(ref(s,'tests/user.png'),smallImage(),{contentType:'image/png'}));
 });
 
-test('verified owner cannot upload executable or arbitrary content types',async()=>{
+test('verified owner cannot upload executable, SVG, or arbitrary content types',async()=>{
   const s=storage('owner',OWNER,true);
   await assertFails(uploadBytes(ref(s,'tests/file.html'),new TextEncoder().encode('<script>alert(1)</script>'),{contentType:'text/html'}));
+  await assertFails(uploadBytes(ref(s,'tests/file.svg'),new TextEncoder().encode('<svg onload="alert(1)"></svg>'),{contentType:'image/svg+xml'}));
   await assertFails(uploadBytes(ref(s,'tests/file.bin'),new Uint8Array([1,2,3]),{contentType:'application/octet-stream'}));
 });
 
