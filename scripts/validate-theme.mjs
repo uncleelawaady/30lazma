@@ -3,7 +3,8 @@ import fs from 'node:fs';
 const must = [
   'newlynow-theme.css','newlynow-burgundy-overrides.css','newlynow-font.css',
   'newlynow-home-theme.css','newlynow-inner-theme.css','newlynow-account-theme.css',
-  'newlynow-admin-theme.css','newlynow-interactions.js','newlynow-layout.js','newlynow-payments-display.js','firebase-config.js'
+  'newlynow-admin-theme.css','newlynow-interactions.js','newlynow-layout.js',
+  'newlynow-payments-display.js','newlynow-link-safety.js','newlynow-inner-polish.js','firebase-config.js'
 ];
 const fail=[];
 for(const f of must) if(!fs.existsSync(f)) fail.push(`Missing theme asset: ${f}`);
@@ -20,11 +21,17 @@ if(fs.existsSync('newlynow-interactions.js')){
   if(!/__NEWLYNOW_INTERACTIONS_LOADED__/.test(js)) fail.push('Interactions duplicate-load guard missing.');
   if(!/pointermove/.test(js)||!/IntersectionObserver/.test(js)) fail.push('Expected lightweight interaction primitives missing.');
 }
+if(fs.existsSync('newlynow-link-safety.js')){
+  const links=read('newlynow-link-safety.js');
+  if(!/__NEWLYNOW_LINK_SAFETY__/.test(links)||!/noopener/.test(links)||!/noreferrer/.test(links)) fail.push('Dynamic link safety guard is incomplete.');
+}
 if(fs.existsSync('firebase-config.js')){
   const boot=read('firebase-config.js');
   if(!/newlynow-font\.css/.test(boot)) fail.push('Font layer is not bootstrapped.');
   if(!/newlynow-burgundy-overrides\.css/.test(boot)) fail.push('Burgundy override is not bootstrapped.');
   if(!/newlynow-payments-display\.js/.test(boot)) fail.push('Live payment display is not bootstrapped.');
+  if(!/newlynow-link-safety\.js/.test(boot)) fail.push('Link safety guard is not bootstrapped.');
+  if(!/newlynow-inner-polish\.js/.test(boot)) fail.push('Inner-page identity polish is not bootstrapped.');
 }
 if(fail.length){console.error('\nTheme validation failed:');fail.forEach(x=>console.error(' -',x));process.exit(1);}
 console.log('NewlyNow theme validation passed.');
