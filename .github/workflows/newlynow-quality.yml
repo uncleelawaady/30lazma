@@ -35,6 +35,9 @@ jobs:
       - name: Validate repository invariants
         run: npm run validate
 
+      - name: Validate premium theme system
+        run: node scripts/validate-theme.mjs
+
       - name: Test server pricing engine
         run: npm run test:pricing
 
