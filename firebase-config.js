@@ -27,7 +27,7 @@ window.NEWLYNOW_SECURITY_CONFIG = window.NEWLYNOW_SECURITY_CONFIG || { appCheckS
   if(!scheme){scheme=document.createElement('meta');scheme.name='color-scheme';document.head.appendChild(scheme);}
   scheme.content='dark';
 
-  const pageFiles = isAdmin ? ['newlynow-admin-theme.css?v=2'] : ['newlynow-theme.css?v=2','newlynow-brand.css?v=1']
+  const pageFiles = isAdmin ? ['newlynow-admin-theme.css?v=2'] : ['newlynow-theme.css?v=2','newlynow-brand.css?v=1','newlynow-contact-theme.css?v=1']
     .concat(isHome ? ['newlynow-home-theme.css?v=2'] : [])
     .concat(isInner ? ['newlynow-inner-theme.css?v=2'] : [])
     .concat(isAccount ? ['newlynow-account-theme.css?v=2'] : []);
