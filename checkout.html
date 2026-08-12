@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex,nofollow,noarchive">
     <title>إتمام الطلب | NewlyNow.com</title>
     <link rel="stylesheet" href="style.css?v=4">
-    <link rel="stylesheet" href="newlynow-theme.css?v=1">
+    <link rel="stylesheet" href="newlynow-theme.css?v=2">
     <link rel="stylesheet" href="newlynow-commerce.css?v=1">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -71,7 +72,7 @@
                             <label for="coPayRef">رقم العملية / المرجع (اختياري)</label>
                             <input type="text" id="coPayRef" maxlength="160" placeholder="اكتب رقم العملية إن تم التحويل">
                         </div>
-                        <div class="co-payment-state" id="coPaymentState"></div>
+                        <div class="co-payment-state" id="coPaymentState" aria-live="polite"></div>
                     </div>
 
                     <button type="submit" class="btn btn-grad btn-lg co-submit" id="coSubmit">
@@ -91,7 +92,6 @@
     <script src="config.js"></script>
     <script src="commerce-core.js"></script>
     <script type="module">
-      const WA = '201055578777';
       const commerce = window.NewlyNowCommerce;
       const esc = s => String(s || '').replace(/[&<>\"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '\"':'&quot;' }[c]));
       let items = [];
@@ -164,6 +164,12 @@
         selectMethod(preferred);
       }
 
+      function successUrl(orderNo, paymentState) {
+        const p = new URLSearchParams({ order: String(orderNo || '') });
+        if (paymentState) p.set('payment', paymentState);
+        return 'order-success.html?' + p.toString();
+      }
+
       renderSummary();
       renderPaymentMethods();
       document.addEventListener('siteconfig', renderPaymentMethods);
@@ -182,27 +188,34 @@
         btn.disabled = true; setState('جاري إنشاء الطلب...', 'ok');
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري إنشاء الطلب...';
 
+        let order = null;
         try {
-          const order = await commerce.createOrder({ name, phone, notes, items });
-          let attempt = null;
+          order = await commerce.createOrder({ name, phone, notes, items });
+          if (!order || !order.persisted || !order.orderNo) throw new Error('تعذّر تثبيت الطلب. لم يتم إنشاء طلب جديد؛ جرّب مرة أخرى.');
 
-          if (selectedMethod && order.persisted) {
-            attempt = await commerce.createPaymentAttempt(order, selectedMethod, { reference });
+          let attempt = null;
+          if (selectedMethod) {
+            try {
+              attempt = await commerce.createPaymentAttempt(order, selectedMethod, { reference });
+            } catch (attemptErr) {
+              if (selectedMethod.type === 'automatic') throw attemptErr;
+              console.warn('Manual payment attempt could not be created', attemptErr);
+            }
           }
 
           if (selectedMethod && selectedMethod.type === 'automatic') {
-            if (!order.persisted || !attempt || !attempt.persisted) throw new Error('تعذّر تثبيت الطلب قبل الدفع التلقائي.');
-            setState('تم إنشاء الطلب. جاري فتح بوابة الدفع...', 'ok');
+            if (!attempt || !attempt.persisted) throw new Error('تعذّر تثبيت محاولة الدفع التلقائي.');
+            setState('تم إنشاء الطلب. جاري فتح بوابة الدفع الآمنة...', 'ok');
             const checkoutUrl = await commerce.startAutomaticPayment(order, selectedMethod, attempt);
             window.Cart && window.Cart.clear();
             location.href = checkoutUrl;
             return;
           }
 
-          const text = commerce.buildOrderText({ orderNo: order.orderNo, name, phone, notes, items, method: selectedMethod });
-          setState(order.persisted ? 'تم إنشاء الطلب بنجاح. جاري تحويلك للمتابعة.' : 'تعذّر حفظ الطلب بقاعدة البيانات، سيتم تحويلك للمتابعة اليدوية.', order.persisted ? 'ok' : 'err');
+          const paymentState = selectedMethod ? (attempt && attempt.persisted ? 'pending' : 'followup') : 'followup';
+          setState('تم إنشاء الطلب بنجاح. جاري فتح صفحة التأكيد...', 'ok');
           window.Cart && window.Cart.clear();
-          setTimeout(() => { location.href = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(text); }, 350);
+          setTimeout(() => { location.href = successUrl(order.orderNo, paymentState); }, 250);
         } catch (err) {
           console.error(err);
           setState(err && err.message ? err.message : 'تعذّر إنشاء الطلب. جرّب مرة أخرى.', 'err');
@@ -212,6 +225,6 @@
       });
     </script>
     <script src="widgets.js"></script>
-    <script src="newlynow-interactions.js"></script>
+    <script src="newlynow-interactions.js?v=2"></script>
 </body>
 </html>
