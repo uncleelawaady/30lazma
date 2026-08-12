@@ -63,5 +63,14 @@ if(fs.existsSync('vercel.json')){
     if(!text.includes('must-revalidate')) fail.push('Bootstrap cache revalidation is missing.');
   }
 }
+// Regression guard: an @font-face url() must never point at a bundled font file
+// that is not committed — that ships a 404 on every page load. Until the licensed
+// webfont is added, the font-face may only use local() sources.
+for(const cssFile of fs.readdirSync('.').filter(f=>f.endsWith('.css'))){
+  const css=read(cssFile).replace(/\/\*[\s\S]*?\*\//g,''); // strip comments so commented-out slots are ignored
+  for(const m of css.matchAll(/url\(\s*['"]?(assets\/fonts\/[^'")?#]+)/g)){
+    if(!fs.existsSync(m[1])) fail.push(`@font-face references missing font file (404 risk): ${m[1]} in ${cssFile}`);
+  }
+}
 if(fail.length){console.error('\nTheme validation failed:');fail.forEach(x=>console.error(' -',x));process.exit(1);}
 console.log('NewlyNow theme validation passed.');

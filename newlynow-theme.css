@@ -9,14 +9,19 @@
      Banner (nn-banner) : 1200 x 400 px · 3:1  · JPEG / WebP
    ========================================================= */
 
-/* ===== Arabic display font =====
-   Drop the font file at: assets/fonts/handicrafts-sembd.woff2
-   (and optional .ttf). Until it exists, Cairo is used as fallback. */
+/* ===== Site font: The Year of Handicrafts SemBd =====
+   The licensed webfont file is NOT bundled. Until it is added we only match a
+   locally installed copy; visitors without it fall back to Cairo — this avoids
+   shipping a fake/untrusted file and avoids 404 requests for a missing asset.
+   To enable the webfont: drop assets/fonts/handicrafts-sembd.woff2 (and optional
+   .ttf) into the repo, then uncomment the url() lines below. */
 @font-face {
   font-family: 'Handicrafts SemBd';
-  src: url('assets/fonts/handicrafts-sembd.woff2') format('woff2'),
-       url('assets/fonts/handicrafts-sembd.ttf') format('truetype');
-  font-weight: 400 800;
+  src: local('The Year of Handicrafts SemBd'), local('The Year of Handicrafts SemiBold');
+  /* src: local('The Year of Handicrafts SemBd'),
+          url('assets/fonts/handicrafts-sembd.woff2') format('woff2'),
+          url('assets/fonts/handicrafts-sembd.ttf') format('truetype'); */
+  font-weight: 400 900;
   font-style: normal;
   font-display: swap;
 }
@@ -78,7 +83,9 @@
    2) Background — burgundy base + fuchsia glows + soft grid
    ========================================================= */
 body {
-  font-family: 'IBM Plex Sans Arabic', 'Cairo', sans-serif;
+  /* Whole-site font per brief: Handicrafts SemBd, Cairo fallback until the
+     licensed webfont file is added. Dynamic/mono data is kept plain below. */
+  font-family: 'Handicrafts SemBd', 'Cairo', 'IBM Plex Sans Arabic', sans-serif;
   color: var(--text-primary);
   background:
     radial-gradient(circle at 10% 30%, rgba(242, 15, 98, .28), transparent 32%),
@@ -112,6 +119,12 @@ h1, h2, h3, h4,
   letter-spacing: 0;
 }
 .hero-title { line-height: 1.28; }
+/* form controls inherit the site font (browsers default them to system UI) */
+button, input, select, textarea { font-family: inherit; }
+/* order numbers / codes stay readable in a plain mono-ish stack */
+[data-mono], .nn-order-number, .order-no, .svc-code, code, pre {
+  font-family: 'IBM Plex Sans Arabic', 'Inter', monospace;
+}
 .grad-text {
   background: var(--grad);
   -webkit-background-clip: text; background-clip: text; color: transparent;
