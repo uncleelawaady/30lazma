@@ -24,7 +24,10 @@ window.NEWLYNOW_SECURITY_CONFIG = window.NEWLYNOW_SECURITY_CONFIG || { appCheckS
   files.forEach((href,i)=>{ if(document.querySelector('link[href^="'+href.split('?')[0]+'"]'))return; const l=document.createElement('link');l.rel='stylesheet';l.href=href;l.dataset.newlynowUi=String(i+1);document.head.appendChild(l); });
   const load=(src,key)=>{ if(document.querySelector(`script[data-newlynow-${key}]`))return; const s=document.createElement('script');s.src=src;s.dataset[`newlynow${key[0].toUpperCase()}${key.slice(1)}`]='1';s.defer=true;document.body.appendChild(s); };
   document.addEventListener('DOMContentLoaded',()=>{
-    if(!isAdmin) load('newlynow-interactions.js?v=1','interactions');
+    if(!isAdmin){
+      load('newlynow-runtime-brand.js?v=1','brand');
+      load('newlynow-interactions.js?v=1','interactions');
+    }
     if(isHome) load('newlynow-layout.js?v=1','layout');
   },{once:true});
   if (!isAdmin && !document.querySelector('script[data-newlynow-app-check]')) { const s=document.createElement('script');s.src='app-check.js?v=2';s.dataset.newlynowAppCheck='1';s.defer=true;document.head.appendChild(s); }
