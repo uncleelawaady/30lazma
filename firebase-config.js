@@ -33,7 +33,10 @@ window.NEWLYNOW_SECURITY_CONFIG = window.NEWLYNOW_SECURITY_CONFIG || { appCheckS
   });
   const load=(src,key)=>{ if(document.querySelector(`script[data-newlynow-${key}]`))return; const s=document.createElement('script');s.src=src;s.dataset[`newlynow${key[0].toUpperCase()}${key.slice(1)}`]='1';s.defer=true;document.body.appendChild(s); };
   document.addEventListener('DOMContentLoaded',()=>{
-    if(!isAdmin) load('newlynow-interactions.js?v=2','interactions');
+    if(!isAdmin){
+      load('newlynow-interactions.js?v=2','interactions');
+      load('newlynow-link-safety.js?v=1','linksafety');
+    }
     if(isHome){
       load('newlynow-layout.js?v=2','layout');
       load('newlynow-payments-display.js?v=1','paymentsdisplay');
