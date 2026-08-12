@@ -1,0 +1,16 @@
+{
+  "name": "NewlyNow",
+  "short_name": "NewlyNow",
+  "description": "منصة عربية للخدمات والمنتجات الرقمية.",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#070104",
+  "theme_color": "#F20F62",
+  "icons": [
+    { "src": "/assets/favicon.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/assets/favicon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
