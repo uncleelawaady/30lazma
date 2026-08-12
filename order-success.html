@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>تم إنشاء الطلب | NewlyNow.com</title>
+  <meta name="description" content="تأكيد إنشاء طلب NewlyNow.">
+  <link rel="icon" href="assets/favicon.png" type="image/png">
+  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="stylesheet" href="newlynow-theme.css?v=2">
+  <link rel="stylesheet" href="newlynow-commerce.css?v=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <nav class="nav" id="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="brand"><img src="assets/logo.png" alt="NewlyNow" class="brand-logo-img"><span class="brand-name">NewlyNow<em>.com</em></span></a>
+      <a href="index.html" class="btn btn-ghost btn-sm"><i class="fas fa-house"></i> الرئيسية</a>
+    </div>
+  </nav>
+  <main class="nn-order-success-wrap">
+    <section class="nn-order-success glass" aria-labelledby="successTitle">
+      <div class="nn-success-icon"><i class="fas fa-circle-check" aria-hidden="true"></i></div>
+      <span class="eyebrow">تم استلام طلبك</span>
+      <h1 id="successTitle">الطلـب اتسجـل بنجـاح</h1>
+      <p>احتفظ برقم الطلب. تقدر تستخدمه في أي متابعة مع فريق NewlyNow.</p>
+      <div class="nn-order-number" id="orderNumber" data-mono>—</div>
+      <div class="nn-success-actions">
+        <a id="followWa" class="btn btn-grad btn-lg" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> متابعة الطلب على واتساب</a>
+        <a href="index.html#categories" class="btn btn-ghost btn-lg"><i class="fas fa-grip"></i> متابعة التسوق</a>
+      </div>
+      <div class="nn-success-note"><i class="fas fa-shield-halved"></i><span>لا تعتبر أي عملية دفع مكتملة إلا بعد ظهور حالة الدفع المعتمدة داخل النظام أو تأكيدها رسميًا.</span></div>
+    </section>
+  </main>
+  <script src="firebase-config.js"></script>
+  <script src="config.js"></script>
+  <script src="newlynow-link-safety.js?v=1"></script>
+  <script>
+    (()=>{
+      const p=new URLSearchParams(location.search);
+      const raw=(p.get('order')||'').trim().toUpperCase();
+      const order=/^NN-[A-Z0-9-]{5,48}$/.test(raw)?raw:'غير متاح';
+      document.getElementById('orderNumber').textContent=order;
+      const msg=order==='غير متاح'?'مرحبًا NewlyNow، أريد متابعة طلبي.':'مرحبًا NewlyNow، أريد متابعة الطلب رقم: '+order;
+      document.getElementById('followWa').href='https://wa.me/201055578777?text='+encodeURIComponent(msg);
+    })();
+  </script>
+</body>
+</html>
