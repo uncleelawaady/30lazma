@@ -1,0 +1,14 @@
+/* NewlyNow local Arabic typography */
+@font-face{
+  font-family:'Handicrafts SemBd';
+  src:local('The Year of Handicrafts SemBd'),local('The Year of Handicrafts SemiBold'),
+      url('assets/fonts/handicrafts-sembd.woff2') format('woff2'),
+      url('assets/fonts/handicrafts-sembd.ttf') format('truetype');
+  font-style:normal;
+  font-weight:600 900;
+  font-display:swap;
+}
+:root{--nn-font-ar:'Handicrafts SemBd','Cairo','IBM Plex Sans Arabic',sans-serif}
+body,button,input,select,textarea{font-family:var(--nn-font-ar)!important}
+/* Preserve neutral UI typography for machine-like IDs/numbers when useful. */
+[data-mono],code,pre,.order-no,.svc-code{font-family:'Inter','IBM Plex Sans Arabic',sans-serif!important}
