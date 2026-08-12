@@ -16,11 +16,11 @@ window.NEWLYNOW_SECURITY_CONFIG = window.NEWLYNOW_SECURITY_CONFIG || { appCheckS
   const isAccount = /(?:^|\/)(?:account|account\.html)\/?$/.test(path);
   const isHome = path === '/' || /(?:^|\/)index\.html\/?$/.test(path);
   const isInner = /(?:^|\/)(?:category|service)(?:\.html)?\/?$/.test(path);
-  const files = (isAdmin ? ['newlynow-admin-theme.css?v=2'] : ['newlynow-theme.css?v=2','newlynow-brand.css?v=1']
+  const pageFiles = isAdmin ? ['newlynow-admin-theme.css?v=2'] : ['newlynow-theme.css?v=2','newlynow-brand.css?v=1']
     .concat(isHome ? ['newlynow-home-theme.css?v=2'] : [])
     .concat(isInner ? ['newlynow-inner-theme.css?v=2'] : [])
-    .concat(isAccount ? ['newlynow-account-theme.css?v=2'] : []))
-    .concat(['newlynow-burgundy-overrides.css?v=1']);
+    .concat(isAccount ? ['newlynow-account-theme.css?v=2'] : []);
+  const files = ['newlynow-font.css?v=1'].concat(pageFiles).concat(['newlynow-burgundy-overrides.css?v=1']);
   files.forEach((href,i)=>{ if(document.querySelector('link[href^="'+href.split('?')[0]+'"]'))return; const l=document.createElement('link');l.rel='stylesheet';l.href=href;l.dataset.newlynowUi=String(i+1);document.head.appendChild(l); });
   const load=(src,key)=>{ if(document.querySelector(`script[data-newlynow-${key}]`))return; const s=document.createElement('script');s.src=src;s.dataset[`newlynow${key[0].toUpperCase()}${key.slice(1)}`]='1';s.defer=true;document.body.appendChild(s); };
   document.addEventListener('DOMContentLoaded',()=>{
