@@ -1,6 +1,8 @@
 // NewlyNow — editorial storefront layout inspired by the supplied reference
 (function () {
   'use strict';
+  if (window.__NEWLYNOW_LAYOUT_LOADED__) return;
+  window.__NEWLYNOW_LAYOUT_LOADED__ = true;
 
   function onReady(fn) {
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn, { once:true });
@@ -9,13 +11,13 @@
 
   onReady(() => {
     const specs = [
-      ['.coverflow-sec', '01', 'cyan'],
+      ['.coverflow-sec', '01', 'pink'],
       ['#categories', '02', 'pink'],
-      ['#featured', '03', 'lime'],
-      ['#portfolio', '04', 'gold'],
-      ['#testimonials', '05', 'cyan'],
+      ['#featured', '03', 'pink'],
+      ['#portfolio', '04', 'pink'],
+      ['#testimonials', '05', 'pink'],
       ['#payments', '06', 'pink'],
-      ['#partners', '07', 'lime']
+      ['#partners', '07', 'pink']
     ];
 
     specs.forEach(([selector, number, accent]) => {
@@ -71,7 +73,7 @@
     function decorateDynamicContent() {
       ensureRails();
       document.querySelectorAll('#categories .cat, #featured .svc, #portfolio .port').forEach(card => {
-        if (!card.classList.contains('nn-editorial-card')) card.classList.add('nn-editorial-card');
+        card.classList.add('nn-editorial-card');
         reveal(card);
       });
       document.querySelectorAll('#testimonials .review-card, #testimonials .rev-card').forEach(reveal);
@@ -79,16 +81,11 @@
     }
 
     decorateDynamicContent();
-
-    // Catalog and reviews can arrive after page load from Firestore.
     let queued = false;
     const mo = new MutationObserver(() => {
       if (queued) return;
       queued = true;
-      requestAnimationFrame(() => {
-        queued = false;
-        decorateDynamicContent();
-      });
+      requestAnimationFrame(() => { queued = false; decorateDynamicContent(); });
     });
     ['categories','featured','portfolio','testimonials'].forEach(id => {
       const el = document.getElementById(id);
@@ -100,7 +97,8 @@
       const cue = document.createElement('a');
       cue.className = 'nn-scroll-cue';
       cue.href = '#categories';
-      cue.innerHTML = '<span>Explore</span><i class="fas fa-arrow-down"></i>';
+      cue.setAttribute('aria-label','الانتقال إلى الأقسام');
+      cue.innerHTML = '<span>استكشف</span><i class="fas fa-arrow-down" aria-hidden="true"></i>';
       hero.appendChild(cue);
     }
   });
