@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تفاصيل الخدمة | NewlyNow.com</title>
+    <title>تفاصيـل الخدمـة | NewlyNow.com</title>
     <link rel="stylesheet" href="style.css?v=4">
-    <link rel="stylesheet" href="newlynow-theme.css?v=3">
+    <link rel="stylesheet" href="newlynow-theme.css?v=4">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,16 +20,16 @@
     <nav class="nav" id="nav">
         <div class="container nav-inner">
             <a href="index.html" class="brand">
-                <img src="assets/logo.png" alt="Elwaset" class="brand-logo-img">
-                <span class="brand-name">Elwaset<em>.net</em></span>
+                <img src="assets/logo.png" alt="NewlyNow" class="brand-logo-img">
+                <span class="brand-name">NewlyNow<em>.com</em></span>
             </a>
             <ul class="nav-links" id="navLinks">
-                <li><a href="index.html#categories">الأقسام</a></li>
-                <li><a href="index.html#featured">المميزة</a></li>
-                <li><a href="index.html#testimonials">آراء العملاء</a></li>
-                <li><a href="index.html#payments">الدفع</a></li>
+                <li><a href="index.html#categories">الأقسـام</a></li>
+                <li><a href="index.html#featured">المميـزة</a></li>
+                <li><a href="index.html#testimonials">آراء العمـلاء</a></li>
+                <li><a href="index.html#payments">الدفـع</a></li>
             </ul>
-            <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="btn btn-grad btn-sm"><i class="fab fa-whatsapp"></i> تواصل الآن</a>
+            <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="btn btn-grad btn-sm"><i class="fab fa-whatsapp"></i> تواصـل الآن</a>
             <button class="nav-toggle" id="navToggle" aria-label="القائمة"><i class="fas fa-bars"></i></button>
         </div>
     </nav>
@@ -37,8 +37,8 @@
     <main class="svc-page">
         <div class="container">
             <nav class="svc-crumbs" id="crumbs">
-                <a href="index.html">الرئيسية</a><span class="sep">/</span>
-                <a href="index.html#categories">الأقسام</a>
+                <a href="index.html">الرئيسيـة</a><span class="sep">/</span>
+                <a href="index.html#categories">الأقسـام</a>
             </nav>
 
             <div class="svc-layout">
@@ -89,8 +89,8 @@
                             <textarea id="notesIn" placeholder="أي تفاصيل تخص طلبك: الدولة المستهدفة، السرعة، مواعيد..."></textarea>
                         </div>
                         <div class="svc-actions">
-                            <button class="btn btn-grad btn-lg" id="btnCart"><i class="fas fa-cart-plus"></i> شراء الآن</button>
-                            <a href="#" target="_blank" rel="noopener" class="btn btn-ghost btn-lg" id="btnWa"><i class="fab fa-whatsapp"></i> تواصل معنا</a>
+                            <button class="btn btn-grad btn-lg" id="btnCart"><i class="fas fa-cart-plus"></i> شـراء الآن</button>
+                            <a href="#" target="_blank" rel="noopener" class="btn btn-ghost btn-lg" id="btnWa"><i class="fab fa-whatsapp"></i> تواصـل معنـا</a>
                         </div>
                         <p class="svc-note">اضغط «شراء الآن» لإضافة الخدمة للسلة وإتمام الطلب، أو تواصل مباشرة معنا.</p>
                     </div>
@@ -118,7 +118,7 @@
     </main>
 
     <footer class="footer">
-        <div class="foot-bottom">© 2026 Elwaset.net — جميع الحقوق محفوظة | EXD | Elawaady XDigital</div>
+        <div class="foot-bottom">© 2026 NewlyNow.com — جميع الحقوق محفوظة</div>
     </footer>
 
     <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="fab-wa" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
@@ -169,13 +169,13 @@
         const rich = (c.details && c.details[svcName]) || {};   // dashboard per-service (future)
         const d = Object.assign({}, D, rich);
 
-        document.title = svcName + ' — ' + c.title + ' | Elwaset.net';
+        document.title = svcName + ' — ' + c.title + ' | NewlyNow.com';
 
         // crumbs + category tag
         const crumbs = document.getElementById('crumbs');
         crumbs.innerHTML =
-            '<a href="index.html">الرئيسية</a><span class="sep">/</span>' +
-            '<a href="index.html#categories">الأقسام</a><span class="sep">/</span>' +
+            '<a href="index.html">الرئيسيـة</a><span class="sep">/</span>' +
+            '<a href="index.html#categories">الأقسـام</a><span class="sep">/</span>' +
             '<a href="category.html?id=' + encodeURIComponent(catId) + '">' + esc(c.title) + '</a><span class="sep">/</span>' +
             '<span>' + esc(svcName) + '</span>';
         const catTag = document.getElementById('catTag');

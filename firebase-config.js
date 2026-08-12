@@ -27,11 +27,11 @@ window.NEWLYNOW_SECURITY_CONFIG = window.NEWLYNOW_SECURITY_CONFIG || { appCheckS
   if(!scheme){scheme=document.createElement('meta');scheme.name='color-scheme';document.head.appendChild(scheme);}
   scheme.content='dark';
 
-  const pageFiles = isAdmin ? ['newlynow-admin-theme.css?v=2'] : ['newlynow-theme.css?v=3','newlynow-brand.css?v=1','newlynow-contact-theme.css?v=1']
+  const pageFiles = isAdmin ? ['newlynow-admin-theme.css?v=2'] : ['newlynow-theme.css?v=4','newlynow-brand.css?v=1','newlynow-contact-theme.css?v=1']
     .concat(isHome ? ['newlynow-home-theme.css?v=2'] : [])
     .concat(isInner ? ['newlynow-inner-theme.css?v=2'] : [])
     .concat(isAccount ? ['newlynow-account-theme.css?v=2'] : []);
-  const files = ['newlynow-font.css?v=1'].concat(pageFiles).concat(['newlynow-burgundy-overrides.css?v=2']);
+  const files = ['newlynow-font.css?v=2'].concat(pageFiles).concat(['newlynow-burgundy-overrides.css?v=2']);
   files.forEach((href,i)=>{
     const base=href.split('?')[0];
     const existing=document.querySelector('link[href^="'+base+'"]');

@@ -5,7 +5,7 @@
   window.__NEWLYNOW_WIDGETS__=true;
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const toList = v => Array.isArray(v) ? v : String(v || '').split('|').map(s => s.trim()).filter(Boolean);
-  const tickerDefaults = ['NewlyNow.com — كل ما هو جديد الآن', 'خدمات رقمية مميزة ⭐', 'دعم ومتابعة', 'تنفيذ منظم وآمن 🔒', 'أقسام وخدمات متعددة', 'تجربة شراء احترافية'];
+  const tickerDefaults = ['NewlyNow.com — كل ما هو جديـد الآن', 'خدمـات رقميـة مميـزة ⭐', 'دعـم ومتابعـة', 'تنفيـذ منظـم وآمـن 🔒', 'أقسـام وخدمـات متعـددة', 'تجربـة شـراء احترافيـة'];
 
   function buildTicker(items) {
     const track = document.getElementById('tickerTrack'); if (!track) return;

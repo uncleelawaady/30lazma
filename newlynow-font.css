@@ -1,11 +1,29 @@
-/* NewlyNow Arabic typography.
-   The requested Handicrafts font is used when installed locally.
-   Once the licensed webfont file is added to assets/fonts, wire that file here. */
+/* NewlyNow Arabic typography — The Year of Handicrafts SemBd.
+   Licensed webfont bundled in assets/fonts (woff2). local() is tried first so a
+   system-installed copy is reused, then the bundled file loads. Arabic-only
+   family, so Latin/brand text falls through to Cairo. */
 @font-face{
   font-family:'Handicrafts SemBd';
-  src:local('The Year of Handicrafts SemBd'),local('The Year of Handicrafts SemiBold');
+  src:local('The Year of Handicrafts SemBd'),local('The Year of Handicrafts SemiBold'),
+      url('assets/fonts/handicrafts-sembd.woff2') format('woff2');
   font-style:normal;
-  font-weight:600 900;
+  font-weight:400 600;
+  font-display:swap;
+}
+@font-face{
+  font-family:'Handicrafts SemBd';
+  src:local('The Year of Handicrafts Bold'),
+      url('assets/fonts/handicrafts-bold.woff2') format('woff2');
+  font-style:normal;
+  font-weight:700 800;
+  font-display:swap;
+}
+@font-face{
+  font-family:'Handicrafts SemBd';
+  src:local('The Year of Handicrafts Black'),
+      url('assets/fonts/handicrafts-black.woff2') format('woff2');
+  font-style:normal;
+  font-weight:900;
   font-display:swap;
 }
 :root{--nn-font-ar:'Handicrafts SemBd','Cairo','IBM Plex Sans Arabic',sans-serif}

@@ -1,10 +1,13 @@
-ضع هنا ملف الخط العربي "The Year of Handicrafts SemBd":
+The Year of Handicrafts — Arabic webfonts (NewlyNow site font)
+==============================================================
+Installed weights (woff2), wired in newlynow-font.css / newlynow-theme.css
+under the family name 'Handicrafts SemBd':
 
-  assets/fonts/handicrafts-sembd.woff2   (مفضّل — الأخف)
-  assets/fonts/handicrafts-sembd.ttf     (اختياري كاحتياطي)
+  handicrafts-regular.woff2   -> weight 400
+  handicrafts-medium.woff2    -> weight 500 (in 400–600 range)
+  handicrafts-sembd.woff2     -> weight 600  (SemiBold — the base site weight)
+  handicrafts-bold.woff2      -> weight 700–800
+  handicrafts-black.woff2     -> weight 900
 
-يتم استدعاؤه تلقائيًا عبر @font-face في newlynow-theme.css باسم:
-  font-family: 'Handicrafts SemBd'
-
-لحين رفع الملف، يعمل الموقع بخط Cairo كـ fallback بدون أي كسر.
-لتحويل TTF إلى WOFF2:  https://cloudconvert.com/ttf-to-woff2
+The family is Arabic-only; Latin/brand text falls back to Cairo automatically.
+Source: licensed "The Year of Handicrafts 2025" family, converted OTF -> woff2.

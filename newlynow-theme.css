@@ -10,18 +10,30 @@
    ========================================================= */
 
 /* ===== Site font: The Year of Handicrafts SemBd =====
-   The licensed webfont file is NOT bundled. Until it is added we only match a
-   locally installed copy; visitors without it fall back to Cairo — this avoids
-   shipping a fake/untrusted file and avoids 404 requests for a missing asset.
-   To enable the webfont: drop assets/fonts/handicrafts-sembd.woff2 (and optional
-   .ttf) into the repo, then uncomment the url() lines below. */
+   Licensed webfont, bundled locally in assets/fonts (woff2). local() is tried
+   first so a system-installed copy is reused, then the bundled file loads.
+   The family is Arabic-only, so Latin/brand text falls through to Cairo. */
 @font-face {
   font-family: 'Handicrafts SemBd';
-  src: local('The Year of Handicrafts SemBd'), local('The Year of Handicrafts SemiBold');
-  /* src: local('The Year of Handicrafts SemBd'),
-          url('assets/fonts/handicrafts-sembd.woff2') format('woff2'),
-          url('assets/fonts/handicrafts-sembd.ttf') format('truetype'); */
-  font-weight: 400 900;
+  src: local('The Year of Handicrafts SemBd'), local('The Year of Handicrafts SemiBold'),
+       url('assets/fonts/handicrafts-sembd.woff2') format('woff2');
+  font-weight: 400 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Handicrafts SemBd';
+  src: local('The Year of Handicrafts Bold'),
+       url('assets/fonts/handicrafts-bold.woff2') format('woff2');
+  font-weight: 700 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Handicrafts SemBd';
+  src: local('The Year of Handicrafts Black'),
+       url('assets/fonts/handicrafts-black.woff2') format('woff2');
+  font-weight: 900;
   font-style: normal;
   font-display: swap;
 }
