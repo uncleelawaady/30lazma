@@ -16,6 +16,17 @@ window.NEWLYNOW_SECURITY_CONFIG = window.NEWLYNOW_SECURITY_CONFIG || { appCheckS
   const isAccount = /(?:^|\/)(?:account|account\.html)\/?$/.test(path);
   const isHome = path === '/' || /(?:^|\/)index\.html\/?$/.test(path);
   const isInner = /(?:^|\/)(?:category|service)(?:\.html)?\/?$/.test(path);
+
+  if(!document.head.querySelector('link[rel="manifest"]')){
+    const manifest=document.createElement('link');manifest.rel='manifest';manifest.href='/manifest.webmanifest';document.head.appendChild(manifest);
+  }
+  let themeMeta=document.head.querySelector('meta[name="theme-color"]');
+  if(!themeMeta){themeMeta=document.createElement('meta');themeMeta.name='theme-color';document.head.appendChild(themeMeta);}
+  themeMeta.content='#070104';
+  let scheme=document.head.querySelector('meta[name="color-scheme"]');
+  if(!scheme){scheme=document.createElement('meta');scheme.name='color-scheme';document.head.appendChild(scheme);}
+  scheme.content='dark';
+
   const pageFiles = isAdmin ? ['newlynow-admin-theme.css?v=2'] : ['newlynow-theme.css?v=2','newlynow-brand.css?v=1']
     .concat(isHome ? ['newlynow-home-theme.css?v=2'] : [])
     .concat(isInner ? ['newlynow-inner-theme.css?v=2'] : [])
