@@ -11,11 +11,17 @@ service firebase.storage {
         ];
     }
 
+    function safeContentType() {
+      return request.resource.contentType.matches('image/(jpeg|png|webp|gif|avif)')
+        || request.resource.contentType == 'application/pdf';
+    }
+
     match /{allPaths=**} {
       allow read: if true;
       allow create, update: if owner()
+        && request.resource.size > 0
         && request.resource.size < 10 * 1024 * 1024
-        && request.resource.contentType.matches('image/.*|application/pdf');
+        && safeContentType();
       allow delete: if owner();
     }
   }
