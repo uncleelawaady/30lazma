@@ -4,7 +4,7 @@ const must = [
   'newlynow-theme.css','newlynow-burgundy-overrides.css','newlynow-font.css',
   'newlynow-home-theme.css','newlynow-inner-theme.css','newlynow-account-theme.css',
   'newlynow-admin-theme.css','newlynow-interactions.js','newlynow-layout.js',
-  'newlynow-payments-display.js','newlynow-link-safety.js','newlynow-inner-polish.js','firebase-config.js'
+  'newlynow-payments-display.js','newlynow-link-safety.js','newlynow-inner-polish.js','firebase-config.js','vercel.json'
 ];
 const fail=[];
 for(const f of must) if(!fs.existsSync(f)) fail.push(`Missing theme asset: ${f}`);
@@ -32,6 +32,17 @@ if(fs.existsSync('firebase-config.js')){
   if(!/newlynow-payments-display\.js/.test(boot)) fail.push('Live payment display is not bootstrapped.');
   if(!/newlynow-link-safety\.js/.test(boot)) fail.push('Link safety guard is not bootstrapped.');
   if(!/newlynow-inner-polish\.js/.test(boot)) fail.push('Inner-page identity polish is not bootstrapped.');
+}
+if(fs.existsSync('vercel.json')){
+  let v;
+  try{v=JSON.parse(read('vercel.json'));}catch(_){fail.push('vercel.json must be valid JSON.');}
+  if(v){
+    const text=JSON.stringify(v);
+    for(const h of ['X-Content-Type-Options','X-Frame-Options','Referrer-Policy','Permissions-Policy','Strict-Transport-Security']){
+      if(!text.includes(h)) fail.push(`Deployment security header missing: ${h}`);
+    }
+    if(!text.includes('no-store')) fail.push('Admin no-store cache policy is missing.');
+  }
 }
 if(fail.length){console.error('\nTheme validation failed:');fail.forEach(x=>console.error(' -',x));process.exit(1);}
 console.log('NewlyNow theme validation passed.');
