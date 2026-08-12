@@ -9,10 +9,12 @@
   const clean = (v, max) => String(v == null ? '' : v).trim().slice(0, max);
   const qty = v => Math.max(1, Math.min(MAX_QTY, Number.parseInt(v, 10) || 1));
   const MANUAL_DEFAULTS = [
-    { id:'vodafone-cash', name:'Vodafone Cash', type:'manual', enabled:true, icon:'fa-mobile-screen-button', account:'أضف رقم المحفظة من لوحة التحكم', instructions:'حوّل المبلغ ثم أرفق رقم العملية أو صورة الإيصال للمراجعة.' },
-    { id:'instapay', name:'InstaPay', type:'manual', enabled:true, icon:'fa-building-columns', account:'أضف InstaPay ID من لوحة التحكم', instructions:'حوّل المبلغ ثم أرفق رقم العملية أو صورة الإيصال للمراجعة.' },
-    { id:'bank-transfer', name:'تحويل بنكي', type:'manual', enabled:true, icon:'fa-building-columns', account:'أضف بيانات الحساب أو IBAN من لوحة التحكم', instructions:'استخدم رقم الطلب في وصف التحويل إن أمكن.' },
-    { id:'fawry-code', name:'فوري (كود دفع)', type:'manual', enabled:true, icon:'fa-receipt', account:'يتم إرسال كود الدفع بعد مراجعة الطلب', instructions:'لا تدفع لأي كود غير صادر من القناة الرسمية للطلب.' }
+    { id:'vodafone-cash-1', name:'Vodafone Cash', type:'manual', enabled:true, icon:'fa-mobile-screen-button', account:'01008002333', instructions:'حوّل المبلغ على الرقم ثم اكتب رقم العملية أو أرسل صورة الإيصال عند متابعة الطلب.' },
+    { id:'vodafone-cash-2', name:'Vodafone Cash — رقم إضافي', type:'manual', enabled:true, icon:'fa-mobile-screen-button', account:'01040898404', instructions:'حوّل المبلغ على الرقم ثم اكتب رقم العملية أو أرسل صورة الإيصال عند متابعة الطلب.' },
+    { id:'instapay', name:'InstaPay', type:'manual', enabled:true, icon:'fa-building-columns', account:'elawaady5@instapay', instructions:'حوّل المبلغ إلى عنوان InstaPay ثم اكتب رقم العملية للمراجعة.' },
+    { id:'usdt-trc20', name:'USDT (TRC20)', type:'manual', enabled:true, icon:'fa-coins', account:'TLhuL7PAYrdB93Vo66r17d4fM9epucxLfc', instructions:'الشبكة: TRC20 فقط. تأكد من الشبكة والعنوان قبل التحويل، ولا ترسل NFT أو أصولًا مختلفة إلى هذا العنوان.' },
+    { id:'bank-transfer', name:'تحويل بنكي', type:'manual', enabled:true, icon:'fa-building-columns', account:'IBAN: EG220002020602060333000068335', instructions:'حوّل على رقم الـIBAN الموضح، ويفضل كتابة رقم الطلب في وصف التحويل إن كان البنك يسمح بذلك.' },
+    { id:'fawry-code', name:'فوري (كود دفع)', type:'manual', enabled:true, icon:'fa-receipt', account:'يتم إرسال كود الدفع بعد مراجعة الطلب', instructions:'لا تدفع لأي كود غير صادر من القناة الرسمية الخاصة بطلبك.' }
   ];
 
   function safeHttpsUrl(value) {
