@@ -9,10 +9,14 @@ window.FIREBASE_CONFIG = {
   messagingSenderId: "528440617091",
   appId: "1:528440617091:web:004cac53d438f279ce53b6"
 };
-// App Check public site key (reCAPTCHA v3). Public by design — safe in client code.
-// The reCAPTCHA secret stays in the Firebase console. Provider defaults to v3 (see app-check.js);
-// set appCheckProvider:'enterprise' here only if switching to reCAPTCHA Enterprise.
-window.NEWLYNOW_SECURITY_CONFIG = window.NEWLYNOW_SECURITY_CONFIG || { appCheckSiteKey: '6LfiNoMtAAAAANhpYUrAXkElEnaCYBumDQd7e3kf' };
+// App Check is intentionally DISABLED here (empty site key) so the storefront never
+// attaches App Check tokens — this keeps Auth/Firestore working. Enabling it prematurely
+// with a reCAPTCHA key that is not registered for newlynow.com made Auth reject requests
+// (auth/firebase-app-check-token-is-invalid). To re-enable later: add newlynow.com +
+// www.newlynow.com to the reCAPTCHA key's allowed domains, then put the key back here
+// (public v3 key, e.g. '6LfiNoMtAAAAANhpYUrAXkElEnaCYBumDQd7e3kf'), and only THEN turn on
+// App Check enforcement in the Firebase console (watch "verified requests" first).
+window.NEWLYNOW_SECURITY_CONFIG = window.NEWLYNOW_SECURITY_CONFIG || { appCheckSiteKey: '' };
 (function () {
   const path = location.pathname.toLowerCase();
   const isAdmin = /(?:^|\/)(?:admin|admin\.html)\/?$/.test(path);
