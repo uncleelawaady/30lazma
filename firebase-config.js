@@ -9,7 +9,10 @@ window.FIREBASE_CONFIG = {
   messagingSenderId: "528440617091",
   appId: "1:528440617091:web:004cac53d438f279ce53b6"
 };
-window.NEWLYNOW_SECURITY_CONFIG = window.NEWLYNOW_SECURITY_CONFIG || { appCheckSiteKey: '' };
+// App Check public site key (reCAPTCHA v3). Public by design — safe in client code.
+// The reCAPTCHA secret stays in the Firebase console. Provider defaults to v3 (see app-check.js);
+// set appCheckProvider:'enterprise' here only if switching to reCAPTCHA Enterprise.
+window.NEWLYNOW_SECURITY_CONFIG = window.NEWLYNOW_SECURITY_CONFIG || { appCheckSiteKey: '6LfiNoMtAAAAANhpYUrAXkElEnaCYBumDQd7e3kf' };
 (function () {
   const path = location.pathname.toLowerCase();
   const isAdmin = /(?:^|\/)(?:admin|admin\.html)\/?$/.test(path);
