@@ -54,7 +54,7 @@ window.NEWLYNOW_SECURITY_CONFIG = window.NEWLYNOW_SECURITY_CONFIG || { appCheckS
     }
     if(isInner) load('newlynow-inner-polish.js?v=1','innerpolish');
   },{once:true});
-  if (!isAdmin && !document.querySelector('script[data-newlynow-app-check]')) { const s=document.createElement('script');s.src='app-check.js?v=2';s.dataset.newlynowAppCheck='1';s.defer=true;document.head.appendChild(s); }
+  if (!isAdmin && !document.querySelector('script[data-newlynow-app-check]')) { const s=document.createElement('script');s.src='app-check.js?v=3';s.dataset.newlynowAppCheck='1';s.defer=true;document.head.appendChild(s); }
   if (isAdmin) {
     document.title='لوحة تحكم NewlyNow';
     document.addEventListener('DOMContentLoaded',()=>{

@@ -8,6 +8,13 @@
     const local = window.NEWLYNOW_SECURITY_CONFIG || {};
     return String((live && live.appCheckSiteKey) || local.appCheckSiteKey || '').trim();
   }
+  // 'v3' = standard reCAPTCHA (the free option), 'enterprise' = reCAPTCHA Enterprise.
+  function providerKind() {
+    const live = window.SITE_CONFIG && window.SITE_CONFIG.security;
+    const local = window.NEWLYNOW_SECURITY_CONFIG || {};
+    const v = String((live && live.appCheckProvider) || local.appCheckProvider || 'v3').trim().toLowerCase();
+    return v === 'enterprise' ? 'enterprise' : 'v3';
+  }
 
   async function init() {
     const key = siteKey();
@@ -22,8 +29,11 @@
       ]);
       const existing = appMod.getApps().find(a => a.name === 'newlynowAppCheckClient');
       const app = existing || appMod.initializeApp(cfg, 'newlynowAppCheckClient');
+      const provider = providerKind() === 'enterprise'
+        ? new checkMod.ReCaptchaEnterpriseProvider(key)
+        : new checkMod.ReCaptchaV3Provider(key);
       const appCheck = checkMod.initializeAppCheck(app, {
-        provider: new checkMod.ReCaptchaEnterpriseProvider(key),
+        provider: provider,
         isTokenAutoRefreshEnabled: true
       });
       return { appCheck, checkMod };
