@@ -95,3 +95,49 @@ input:focus,textarea:focus,select:focus{border-color:#FFFFFF!important;outline:n
 .co-secure,.co-price-note{color:rgba(255,255,255,.7)!important;}
 
 a:focus-visible,button:focus-visible{outline:2px solid #000;outline-offset:2px;}
+
+/* ============ TRX layout: animated dividers + reveal + FAQ ============ */
+/* section header chevrons (TRX style) */
+.head h2{display:inline-flex;align-items:center;gap:.7rem;flex-wrap:wrap;justify-content:center;}
+.head h2::before{content:"‹";color:#111;opacity:.45;font-weight:900;}
+.head h2::after{content:"›";color:#111;opacity:.45;font-weight:900;}
+
+/* animated marquee divider band (black) */
+.trx-divider{overflow:hidden;background:#0A0B0D;border-block:1px solid rgba(0,0,0,.12);
+  padding:.7rem 0;margin:2.2rem 0;}
+.trx-mq{display:inline-block;white-space:nowrap;color:#fff;font-weight:800;letter-spacing:.01em;
+  will-change:transform;animation:trxmq 30s linear infinite;}
+.trx-divider:hover .trx-mq{animation-play-state:paused;}
+@keyframes trxmq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* animated shimmer line divider */
+.trx-line{height:2px;max-width:1080px;margin:2.6rem auto;position:relative;overflow:hidden;
+  background:linear-gradient(90deg,transparent,rgba(0,0,0,.16),transparent);}
+.trx-line::after{content:"";position:absolute;top:0;inset-inline-start:-40%;width:40%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(0,0,0,.85),transparent);animation:trxsheen 3.4s ease-in-out infinite;}
+@keyframes trxsheen{0%{inset-inline-start:-40%}100%{inset-inline-start:120%}}
+
+/* scroll reveal */
+.reveal{opacity:0;transform:translateY(24px);
+  transition:opacity .7s ease,transform .7s cubic-bezier(.22,1,.36,1);}
+.reveal.in{opacity:1;transform:none;}
+
+/* FAQ accordion (black cards) */
+.trx-faq{max-width:840px;margin:0 auto;display:flex;flex-direction:column;gap:.7rem;}
+.trx-q{background:#0A0B0D!important;border:1px solid rgba(0,0,0,.14);border-radius:14px;
+  color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.10);overflow:hidden;}
+.trx-q summary{cursor:pointer;padding:1rem 1.15rem;font-weight:800;color:#fff;list-style:none;
+  display:flex;justify-content:space-between;align-items:center;gap:1rem;}
+.trx-q summary::-webkit-details-marker{display:none;}
+.trx-q summary::after{content:"+";font-size:1.35rem;line-height:1;color:#fff;transition:transform .2s;}
+.trx-q[open] summary::after{content:"–";}
+.trx-q p{margin:0;padding:0 1.15rem 1.1rem;color:rgba(255,255,255,.72);line-height:1.8;}
+
+/* card hover lift polish */
+.pf-card{transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s;}
+.pf-card:hover{transform:translateY(-6px);box-shadow:0 18px 44px rgba(0,0,0,.22);}
+
+@media (prefers-reduced-motion:reduce){
+  .trx-mq{animation:none;} .trx-line::after{animation:none;}
+  .reveal{opacity:1;transform:none;}
+}
