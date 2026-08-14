@@ -1,0 +1,97 @@
+/* =========================================================
+   NewlyNow re-skin: WHITE background + BLACK cards (monochrome).
+   Loads AFTER style.css; overrides colours/surfaces only.
+   ========================================================= */
+:root{
+  --bg:#FFFFFF; --bg-2:#0A0B0D;
+  --text:#0C0E12; --muted:#586474; --dim:#8A94A0;
+  --yellow:#0C0E12; --orange:#0C0E12; --pink:#111318; --purple:#111318;
+  --violet:#111318; --teal:#111318;
+  --glass:#0A0B0D; --glass-brd:rgba(0,0,0,.12);
+  --grad-from:#1A1C22; --grad-mid:#101216; --grad-to:#000000;
+  --ticker-bg:#0A0B0D;
+}
+/* page: white ground, dark text, kill dark-theme glows/grid */
+body{background:#FFFFFF!important;color:#0C0E12!important;}
+body::before,body::after{display:none!important;}
+.section{background:transparent!important;}
+.section-alt{background:#F4F5F7!important;}
+.orb{display:none!important;}
+
+/* nav: white, dark links, black CTA */
+.nav,.nav.scrolled{background:rgba(255,255,255,.92)!important;
+  border-bottom:1px solid rgba(0,0,0,.08)!important;backdrop-filter:blur(12px);}
+.nav-links a{color:#2A2F37!important;}
+.nav-links a:hover,.nav-links a.active{color:#000!important;}
+.brand{color:#0C0E12!important;}
+.brand-name{color:#0C0E12!important;}
+.brand-name em{color:#000!important;-webkit-text-fill-color:#000!important;background:none!important;}
+.nav-toggle{color:#0C0E12!important;border-color:rgba(0,0,0,.2)!important;}
+
+/* hero on white */
+.hero-title{color:#0C0E12!important;}
+.hero-word{color:rgba(0,0,0,.045)!important;-webkit-text-fill-color:rgba(0,0,0,.045)!important;background:none!important;}
+.hero-sub{color:#495260!important;}
+.hero-trust span{color:#333!important;}
+
+/* headings on white → solid black (kill gradient) */
+.grad-text{color:#0A0C10!important;-webkit-text-fill-color:#0A0C10!important;background:none!important;}
+.eyebrow{color:#000!important;}
+.head p,.cat-hero-intro{color:#5A6472!important;}
+
+/* CARDS: black with white text */
+.glass,.cat,.stat,.mq-card,.co-item,.checkout-summary,.checkout-form,.cf-card,.search-bar,
+.svc,.svc-order-box,.svc-attach,.acc-card,.port,.step,.cta-box,.pay-strip,.proof-cta,.tcard,
+.partners-row span,.plat,.platform,.trx-social{
+  background:#0A0B0D!important;
+  border:1px solid rgba(0,0,0,.14)!important;
+  color:#FFFFFF!important;
+  box-shadow:0 12px 34px rgba(0,0,0,.13)!important;
+}
+.glass,.cat *,.stat *,.mq-card *,.co-item *,.checkout-summary *,.checkout-form *,.cf-card *,
+.svc *,.step *,.cta-box *,.proof-cta *,.tcard *,.port *{color:#FFFFFF;}
+.cat > p,.glass p,.stat p,.co-item small,.svc p,.step p,.tcard p{color:rgba(255,255,255,.68)!important;}
+.cat .grad-text,.stat .grad-text,.glass .grad-text,.stat-num,.svc .grad-text,.cta-box .grad-text{
+  color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;background:none!important;}
+.cat:hover,.mq-card:hover,.svc:hover{border-color:rgba(0,0,0,.35)!important;
+  box-shadow:0 18px 44px rgba(0,0,0,.22)!important;transform:translateY(-5px);}
+.svc-price-tag,.cat .svc-price-tag,.badge{color:#FFFFFF!important;}
+.badge{background:rgba(255,255,255,.14)!important;border:1px solid rgba(255,255,255,.25)!important;}
+
+/* buttons: black solid / black outline */
+.btn-grad{background:#0A0B0D!important;color:#FFFFFF!important;border:1px solid #000!important;
+  font-weight:800;text-shadow:none!important;box-shadow:0 8px 22px rgba(0,0,0,.22)!important;}
+.btn-grad:hover{background:#000!important;box-shadow:0 12px 30px rgba(0,0,0,.30)!important;}
+.btn-ghost{background:transparent!important;border:1px solid rgba(0,0,0,.32)!important;color:#0C0E12!important;}
+.btn-ghost:hover{background:#0A0B0D!important;color:#FFFFFF!important;border-color:#000!important;}
+.glass .btn-ghost,.cat .btn-ghost,.cf-card .btn-ghost,.checkout-form .btn-ghost,.cta-box .btn-ghost,.svc .btn-ghost{
+  border-color:rgba(255,255,255,.4)!important;color:#FFFFFF!important;}
+.glass .btn-ghost:hover,.cta-box .btn-ghost:hover{background:rgba(255,255,255,.1)!important;}
+
+/* inputs (mostly inside black cards) */
+input,textarea,select{background:#15171B!important;border:1px solid rgba(255,255,255,.16)!important;color:#FFFFFF!important;}
+input::placeholder,textarea::placeholder{color:rgba(255,255,255,.5)!important;}
+input:focus,textarea:focus,select:focus{border-color:#FFFFFF!important;outline:none;box-shadow:0 0 0 3px rgba(0,0,0,.08)!important;}
+.search-bar input{background:transparent!important;border:none!important;}
+.search-bar i{color:rgba(255,255,255,.7)!important;}
+
+/* top ticker: black */
+.top-ticker{background:#0A0B0D!important;border-bottom:1px solid rgba(0,0,0,.2)!important;}
+.top-ticker .ticker-track span{color:#FFFFFF!important;}
+.top-ticker .tk-dot{color:rgba(255,255,255,.5)!important;}
+
+/* stars keep a warm tone for readability */
+.stars i{color:#FFC53D!important;}
+
+/* footer: black */
+.footer{background:#0A0B0D!important;border-top:1px solid rgba(0,0,0,.15);color:#FFFFFF!important;}
+.footer *{color:#FFFFFF;}
+.footer a{color:rgba(255,255,255,.72)!important;}
+.footer a:hover{color:#FFFFFF!important;}
+
+/* category / checkout hero on white */
+.cat-hero-head h1{color:#0A0C10!important;}
+.back-link{color:#0C0E12!important;}
+.co-secure,.co-price-note{color:rgba(255,255,255,.7)!important;}
+
+a:focus-visible,button:focus-visible{outline:2px solid #000;outline-offset:2px;}
