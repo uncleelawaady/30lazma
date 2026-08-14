@@ -1,0 +1,72 @@
+/* =========================================================
+   TRX-inspired theme for the store — BLACK background + bright
+   turquoise accent (dark teal replaced with black per request).
+   Loads AFTER style.css and only re-skins colors/surfaces.
+   ========================================================= */
+:root{
+  /* grounds — dark teal → black */
+  --bg:#05070A;
+  --bg-2:#0B1013;
+  /* accent family — bright turquoise/cyan */
+  --yellow:#1FD6C6; --orange:#1FD6C6; --pink:#1FD6C6; --purple:#15B9AC;
+  --violet:#1FD6C6; --teal:#1FD6C6;
+  --text:#FFFFFF; --muted:#A9B7B7; --dim:#6E7C7C;
+  --glass:rgba(31,214,198,.05);
+  --glass-brd:rgba(31,214,198,.22);
+  --grad-from:#2FE0CF; --grad-mid:#1CC9B9; --grad-to:#0FB4A5;
+  --ticker-bg:#0A0F12;
+  --grad:linear-gradient(90deg,var(--grad-from),var(--grad-mid) 52%,var(--grad-to));
+  --grad-btn:linear-gradient(90deg,var(--grad-from) 0%,var(--grad-mid) 45%,var(--grad-to) 100%);
+}
+
+/* pure-black ground; swap the purple top glow for a turquoise one */
+body{background:#05070A!important;}
+body::before{background:radial-gradient(70% 40% at 50% -6%,rgba(31,214,198,.12),transparent 66%)!important;}
+body::after{opacity:.28!important;}
+
+/* nav + footer sit on near-black glass */
+.nav,.nav.scrolled{background:rgba(4,7,10,.82)!important;backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(31,214,198,.14)!important;}
+.footer{background:#04060A!important;border-top:1px solid rgba(31,214,198,.12);}
+
+/* cards / glass surfaces → dark charcoal with a faint turquoise edge */
+.glass,.cat,.stat,.mq-card,.co-item,.checkout-summary,.checkout-form,.cf-card{
+  background:linear-gradient(180deg,rgba(13,20,22,.92),rgba(6,9,11,.92))!important;
+  border:1px solid rgba(31,214,198,.14)!important;
+}
+.glass:hover,.cat:hover,.mq-card:hover{border-color:rgba(31,214,198,.42)!important;
+  box-shadow:0 14px 40px rgba(0,0,0,.55),0 0 0 1px rgba(31,214,198,.18)!important;}
+
+/* gradient text (headings, stats, brand em) → turquoise */
+.grad-text,.hero-word,.brand-name em{
+  background:linear-gradient(100deg,#8FF6EC 0%,#2FE0CF 45%,#0FB4A5 100%)!important;
+  -webkit-background-clip:text!important;background-clip:text!important;color:transparent!important;}
+
+/* eyebrows / small labels → turquoise */
+.eyebrow{color:#3FE3D2!important;}
+
+/* primary buttons: solid turquoise with dark text (like TRX) */
+.btn-grad{background:var(--grad-btn)!important;color:#04231F!important;
+  border:none!important;font-weight:800;box-shadow:0 10px 26px rgba(31,214,198,.30)!important;}
+.btn-grad:hover{filter:brightness(1.06);box-shadow:0 14px 34px rgba(31,214,198,.42)!important;}
+
+/* ghost/outline buttons → turquoise outline */
+.btn-ghost{border:1px solid rgba(31,214,198,.5)!important;color:#CFF7F1!important;background:transparent!important;}
+.btn-ghost:hover{background:rgba(31,214,198,.10)!important;border-color:#2FE0CF!important;color:#fff!important;}
+
+/* search bar + inputs on dark ground with turquoise focus */
+.search-bar{background:rgba(11,16,19,.92)!important;border:1px solid rgba(31,214,198,.20)!important;}
+input,textarea,select{background:rgba(8,12,14,.9)!important;border:1px solid rgba(31,214,198,.18)!important;color:#EAFBF9!important;}
+input:focus,textarea:focus,select:focus{border-color:#2FE0CF!important;outline:none;
+  box-shadow:0 0 0 3px rgba(31,214,198,.16)!important;}
+
+/* top ticker → near-black with turquoise text */
+.top-ticker{background:#0A0F12!important;border-bottom:1px solid rgba(31,214,198,.16)!important;}
+.top-ticker .ticker-track span{color:#BFF3EC!important;}
+.top-ticker .tk-dot{color:#1FD6C6!important;}
+
+/* category icon chips keep their own brand colors; just calm the ring */
+.cat-ico,.mq-ico{box-shadow:0 6px 18px rgba(0,0,0,.5)!important;}
+
+/* focus visibility for accessibility */
+a:focus-visible,button:focus-visible{outline:2px solid #2FE0CF;outline-offset:2px;}
