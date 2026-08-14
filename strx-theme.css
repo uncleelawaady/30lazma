@@ -1,72 +1,100 @@
 /* =========================================================
-   TRX-inspired theme for the store — BLACK background + bright
-   turquoise accent (dark teal replaced with black per request).
-   Loads AFTER style.css and only re-skins colors/surfaces.
+   Store re-skin: WHITE background + BLACK cards (monochrome).
+   Turquoise/teal accent replaced with black per request.
+   Loads AFTER style.css; overrides colours/surfaces only.
    ========================================================= */
 :root{
-  /* grounds — dark teal → black */
-  --bg:#05070A;
-  --bg-2:#0B1013;
-  /* accent family — bright turquoise/cyan */
-  --yellow:#1FD6C6; --orange:#1FD6C6; --pink:#1FD6C6; --purple:#15B9AC;
-  --violet:#1FD6C6; --teal:#1FD6C6;
-  --text:#FFFFFF; --muted:#A9B7B7; --dim:#6E7C7C;
-  --glass:rgba(31,214,198,.05);
-  --glass-brd:rgba(31,214,198,.22);
-  --grad-from:#2FE0CF; --grad-mid:#1CC9B9; --grad-to:#0FB4A5;
-  --ticker-bg:#0A0F12;
-  --grad:linear-gradient(90deg,var(--grad-from),var(--grad-mid) 52%,var(--grad-to));
-  --grad-btn:linear-gradient(90deg,var(--grad-from) 0%,var(--grad-mid) 45%,var(--grad-to) 100%);
+  --bg:#FFFFFF; --bg-2:#0A0B0D;
+  --text:#0C0E12; --muted:#586474; --dim:#8A94A0;
+  --yellow:#0C0E12; --orange:#0C0E12; --pink:#111318; --purple:#111318;
+  --violet:#111318; --teal:#111318;
+  --glass:#0A0B0D; --glass-brd:rgba(0,0,0,.12);
+  --grad-from:#1A1C22; --grad-mid:#101216; --grad-to:#000000;
+  --ticker-bg:#0A0B0D;
 }
+/* fix typo-safe muted */
+:root{--muted:#586474;}
 
-/* pure-black ground; swap the purple top glow for a turquoise one */
-body{background:#05070A!important;}
-body::before{background:radial-gradient(70% 40% at 50% -6%,rgba(31,214,198,.12),transparent 66%)!important;}
-body::after{opacity:.28!important;}
+/* ---- page: white ground, dark text, no dark-theme glows ---- */
+body{background:#FFFFFF!important;color:#0C0E12!important;}
+body::before,body::after{display:none!important;}
+.section{background:transparent!important;}
+.section-alt{background:#F4F5F7!important;}
 
-/* nav + footer sit on near-black glass */
-.nav,.nav.scrolled{background:rgba(4,7,10,.82)!important;backdrop-filter:blur(14px);
-  border-bottom:1px solid rgba(31,214,198,.14)!important;}
-.footer{background:#04060A!important;border-top:1px solid rgba(31,214,198,.12);}
+/* ---- nav: white, dark links, black CTA ---- */
+.nav,.nav.scrolled{background:rgba(255,255,255,.92)!important;
+  border-bottom:1px solid rgba(0,0,0,.08)!important;backdrop-filter:blur(12px);}
+.nav-links a{color:#2A2F37!important;}
+.nav-links a:hover,.nav-links a.active{color:#000!important;}
+.brand-name{color:#0C0E12!important;}
+.brand-name em{color:#000!important;-webkit-text-fill-color:#000!important;background:none!important;}
+.nav-toggle{color:#0C0E12!important;border-color:rgba(0,0,0,.2)!important;}
 
-/* cards / glass surfaces → dark charcoal with a faint turquoise edge */
-.glass,.cat,.stat,.mq-card,.co-item,.checkout-summary,.checkout-form,.cf-card{
-  background:linear-gradient(180deg,rgba(13,20,22,.92),rgba(6,9,11,.92))!important;
-  border:1px solid rgba(31,214,198,.14)!important;
+/* ---- hero on white ---- */
+.hero-title{color:#0C0E12!important;}
+.hero-word{color:rgba(0,0,0,.045)!important;-webkit-text-fill-color:rgba(0,0,0,.045)!important;background:none!important;}
+.hero-sub{color:#495260!important;}
+.hero-trust span{color:#333!important;}
+.hero .orb{display:none!important;}
+
+/* ---- headings on white → solid black (kill gradient) ---- */
+.grad-text{color:#0A0C10!important;-webkit-text-fill-color:#0A0C10!important;background:none!important;}
+.eyebrow{color:#000!important;}
+.head p{color:#5A6472!important;}
+
+/* ---- CARDS: black with white text ---- */
+.glass,.cat,.stat,.mq-card,.co-item,.checkout-summary,.checkout-form,.cf-card,.search-bar,
+.svc-order-box,.svc-attach,.acc-card,.port{
+  background:#0A0B0D!important;
+  border:1px solid rgba(0,0,0,.14)!important;
+  color:#FFFFFF!important;
+  box-shadow:0 12px 34px rgba(0,0,0,.14)!important;
 }
-.glass:hover,.cat:hover,.mq-card:hover{border-color:rgba(31,214,198,.42)!important;
-  box-shadow:0 14px 40px rgba(0,0,0,.55),0 0 0 1px rgba(31,214,198,.18)!important;}
+/* text inside black cards → white / soft-white */
+.glass,.cat *,.stat *,.mq-card *,.co-item *,.checkout-summary *,.checkout-form *,.cf-card *{color:#FFFFFF;}
+.cat > p,.glass p,.stat p,.co-item small{color:rgba(255,255,255,.66)!important;}
+/* gradient text that sits INSIDE black cards → white */
+.cat .grad-text,.stat .grad-text,.glass .grad-text,.stat-num{
+  color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;background:none!important;}
+.cat:hover,.mq-card:hover{border-color:rgba(0,0,0,.35)!important;
+  box-shadow:0 18px 44px rgba(0,0,0,.22)!important;transform:translateY(-5px);}
+.cat .svc-price-tag,.svc-price-tag{color:#FFFFFF!important;}
 
-/* gradient text (headings, stats, brand em) → turquoise */
-.grad-text,.hero-word,.brand-name em{
-  background:linear-gradient(100deg,#8FF6EC 0%,#2FE0CF 45%,#0FB4A5 100%)!important;
-  -webkit-background-clip:text!important;background-clip:text!important;color:transparent!important;}
+/* ---- buttons: black solid / black outline ---- */
+.btn-grad{background:#0A0B0D!important;color:#FFFFFF!important;border:1px solid #000!important;
+  font-weight:800;box-shadow:0 8px 22px rgba(0,0,0,.22)!important;}
+.btn-grad:hover{background:#000!important;filter:none;box-shadow:0 12px 30px rgba(0,0,0,.30)!important;}
+.btn-ghost{background:transparent!important;border:1px solid rgba(0,0,0,.32)!important;color:#0C0E12!important;}
+.btn-ghost:hover{background:#0A0B0D!important;color:#FFFFFF!important;border-color:#000!important;}
+/* ghost buttons placed inside black cards need light outline */
+.glass .btn-ghost,.cat .btn-ghost,.cf-card .btn-ghost,.checkout-form .btn-ghost{
+  border-color:rgba(255,255,255,.4)!important;color:#FFFFFF!important;}
+.glass .btn-ghost:hover{background:rgba(255,255,255,.1)!important;}
 
-/* eyebrows / small labels → turquoise */
-.eyebrow{color:#3FE3D2!important;}
+/* ---- inputs (mostly inside black cards) ---- */
+input,textarea,select{background:#15171B!important;border:1px solid rgba(255,255,255,.16)!important;color:#FFFFFF!important;}
+input::placeholder,textarea::placeholder{color:rgba(255,255,255,.5)!important;}
+input:focus,textarea:focus,select:focus{border-color:#FFFFFF!important;outline:none;
+  box-shadow:0 0 0 3px rgba(0,0,0,.08)!important;}
+.search-bar input{background:transparent!important;border:none!important;}
+.search-bar i{color:rgba(255,255,255,.7)!important;}
 
-/* primary buttons: solid turquoise with dark text (like TRX) */
-.btn-grad{background:var(--grad-btn)!important;color:#04231F!important;
-  border:none!important;font-weight:800;box-shadow:0 10px 26px rgba(31,214,198,.30)!important;}
-.btn-grad:hover{filter:brightness(1.06);box-shadow:0 14px 34px rgba(31,214,198,.42)!important;}
+/* ---- top ticker: black ---- */
+.top-ticker{background:#0A0B0D!important;border-bottom:1px solid rgba(0,0,0,.2)!important;}
+.top-ticker .ticker-track span{color:#FFFFFF!important;}
+.top-ticker .tk-dot{color:rgba(255,255,255,.5)!important;}
 
-/* ghost/outline buttons → turquoise outline */
-.btn-ghost{border:1px solid rgba(31,214,198,.5)!important;color:#CFF7F1!important;background:transparent!important;}
-.btn-ghost:hover{background:rgba(31,214,198,.10)!important;border-color:#2FE0CF!important;color:#fff!important;}
+/* ---- footer: black ---- */
+.footer{background:#0A0B0D!important;border-top:1px solid rgba(0,0,0,.15);color:#FFFFFF!important;}
+.footer *{color:#FFFFFF;}
+.footer a{color:rgba(255,255,255,.72)!important;}
+.footer a:hover{color:#FFFFFF!important;}
 
-/* search bar + inputs on dark ground with turquoise focus */
-.search-bar{background:rgba(11,16,19,.92)!important;border:1px solid rgba(31,214,198,.20)!important;}
-input,textarea,select{background:rgba(8,12,14,.9)!important;border:1px solid rgba(31,214,198,.18)!important;color:#EAFBF9!important;}
-input:focus,textarea:focus,select:focus{border-color:#2FE0CF!important;outline:none;
-  box-shadow:0 0 0 3px rgba(31,214,198,.16)!important;}
+/* ---- category-page / checkout hero on white ---- */
+.cat-hero-head h1{color:#0A0C10!important;}
+.cat-hero-intro{color:#5A6472!important;}
+.back-link{color:#0C0E12!important;}
+.co-secure,.co-price-note{color:rgba(255,255,255,.7)!important;}
 
-/* top ticker → near-black with turquoise text */
-.top-ticker{background:#0A0F12!important;border-bottom:1px solid rgba(31,214,198,.16)!important;}
-.top-ticker .ticker-track span{color:#BFF3EC!important;}
-.top-ticker .tk-dot{color:#1FD6C6!important;}
-
-/* category icon chips keep their own brand colors; just calm the ring */
-.cat-ico,.mq-ico{box-shadow:0 6px 18px rgba(0,0,0,.5)!important;}
-
-/* focus visibility for accessibility */
-a:focus-visible,button:focus-visible{outline:2px solid #2FE0CF;outline-offset:2px;}
+/* focus visibility */
+a:focus-visible,button:focus-visible{outline:2px solid #000;outline-offset:2px;}
