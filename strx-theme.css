@@ -126,3 +126,9 @@ body.theme-b .btn-ghost{color:var(--turq)!important;border-color:var(--turq)!imp
 }
 body.theme-b .nav-links{background:#0E2429!important;border-bottom-color:rgba(255,255,255,.08)!important;}
 body.theme-b .nav-links li a{color:#DBEEEA!important;border-bottom-color:rgba(255,255,255,.08)!important;}
+
+/* ============ product grid (store images) ============ */
+.nn-prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;}
+.nn-prod{display:block;border-radius:16px;overflow:hidden;background:#16303A;box-shadow:0 12px 30px rgba(18,42,49,.16);transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s;}
+.nn-prod img{width:100%;height:auto;display:block;}
+.nn-prod:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 24px 52px rgba(18,42,49,.3);}
