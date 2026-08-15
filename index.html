@@ -3,39 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- always revalidate the HTML so new versions of the catalog/styles appear immediately -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <script>
-    /* auto-update: if the server has a newer build than this cached page, reload once to it */
-    (function () {
-      try {
-        var link = document.querySelector('link[href*="style.css?v="]');
-        var cur = link ? ((link.getAttribute('href').match(/v=(\d+)/) || [])[1] || '') : '';
-        fetch('ver.txt?_=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.text(); }).then(function (t) {
-          t = (t || '').trim();
-          if (t && cur && t !== cur && !sessionStorage.getItem('vr_' + t)) {
-            sessionStorage.setItem('vr_' + t, '1');
-            location.replace(location.pathname + '?v=' + t);
-          }
-        }).catch(function () {});
-      } catch (e) {}
-    })();
-    </script>
-    <title>NewlyNow — منصة الخدمات الرقمية الفاخرة</title>
-    <meta name="description" content="NewlyNow — كل ما هو جديد... الآن — منصة رقمية فاخرة لكل الخدمات: سوشيال ميديا، توثيق، حسابات جاهزة، وساطة آمنة، ذكاء اصطناعي، برمجة، تصميم، واشتراكات رقمية.">
-    <link rel="stylesheet" href="style.css?v=51">
-    <link rel="stylesheet" href="strx-theme.css?v=6">
+    <title>NewlyNow — كل خدماتك الرقمية في مكان واحد</title>
+    <meta name="description" content="NewlyNow — متجر الخدمات والاشتراكات الرقمية: سوشيال ميديا، اشتراكات، ألعاب، ذكاء اصطناعي وأكثر.">
+    <link rel="stylesheet" href="style.css?v=48">
+    <link rel="stylesheet" href="strx-theme.css?v=7">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Cairo:wght@400;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Kufam:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Cairo:wght@400;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <!-- ===== Top scrolling ticker ===== -->
+    <!-- ===== Top ticker ===== -->
     <div class="top-ticker" id="topTicker"><div class="ticker-track" id="tickerTrack"></div></div>
 
     <!-- ===== Navbar ===== -->
@@ -47,476 +27,50 @@
             </a>
             <ul class="nav-links" id="navLinks">
                 <li><a href="#categories">الأقسام</a></li>
-                <li><a href="#featured">الأكثر طلبًا</a></li>
-                <li><a href="#testimonials">التقييمات</a></li>
-                <li><a href="#faq">الأسئلة</a></li>
+                <li><a href="account.html">حسابي</a></li>
                 <li class="nav-m-only"><a href="account.html"><i class="fas fa-right-to-bracket"></i> تسجيل دخول</a></li>
-                <li class="nav-m-only"><a href="account.html"><i class="fas fa-user-plus"></i> إنشاء حساب</a></li>
                 <li class="nav-m-only"><a href="https://wa.me/201055578777" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> تواصل الآن</a></li>
             </ul>
             <a href="account.html" class="btn btn-ghost btn-sm nav-auth"><i class="fas fa-right-to-bracket"></i> تسجيل دخول</a>
-            <a href="account.html" class="btn btn-ghost btn-sm nav-auth"><i class="fas fa-user-plus"></i> سجّل</a>
-            <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="btn btn-grad btn-sm">
-                <i class="fab fa-whatsapp"></i> تواصل الآن
-            </a>
+            <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="btn btn-grad btn-sm"><i class="fab fa-whatsapp"></i> تواصل الآن</a>
             <button class="nav-toggle" id="navToggle" aria-label="القائمة"><i class="fas fa-bars"></i></button>
         </div>
     </nav>
 
-
     <!-- ===== Hero ===== -->
     <header class="hero" id="hero">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-        <div class="hero-word" data-k="heroWord">الوساطة</div>
         <div class="container hero-inner">
-            <h1 class="hero-title">
-                <span data-k="heroLine1">كل خدماتك الرقمية</span><br>
-                <span class="grad-text" data-k="heroLine2">في مكان واحد</span>
-            </h1>
-            <p class="hero-sub" data-k="heroSub">
-                سوشيال ميديا • توثيق رسمي • حسابات جاهزة • وساطة آمنة • ذكاء اصطناعي • برمجة • تصميم • اشتراكات رقمية.
-                تجربة فاخرة، تنفيذ سريع، وحقوق محفوظة بالكامل.
-            </p>
-
+            <h1 class="hero-title"><span>كل خدماتك الرقمية</span><br><span class="grad-text">في مكان واحد</span></h1>
+            <p class="hero-sub">سوشيال ميديا · اشتراكات · ألعاب · ذكاء اصطناعي · برمجة · تصميم — تنفيذ سريع ودعم 24/7.</p>
             <div class="search-bar">
                 <i class="fas fa-magnifying-glass"></i>
-                <input type="text" id="searchInput" placeholder="دوّر على أي خدمة… متابعين، توثيق، حساب جاهز، بوت…">
+                <input type="text" id="searchInput" placeholder="دوّر على أي خدمة…">
                 <button class="btn btn-grad" id="searchBtn">بحث</button>
             </div>
-
             <div class="hero-cta">
                 <a href="#categories" class="btn btn-grad btn-lg"><i class="fas fa-grip"></i> تصفح الأقسام</a>
                 <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="btn btn-ghost btn-lg"><i class="fab fa-whatsapp"></i> تواصل معنا</a>
             </div>
-
-            <div class="hero-trust">
-                <span><i class="fas fa-shield-halved"></i> وساطة آمنة 100%</span>
-                <span><i class="fas fa-bolt"></i> تنفيذ فوري</span>
-                <span><i class="fas fa-headset"></i> دعم 24/7</span>
-            </div>
         </div>
     </header>
-
-    <!-- ===== Promo hero carousel (NewlyNow offers) ===== -->
-    <section class="promo-hero" aria-label="عروض NewlyNow">
-        <div class="promo-wrap">
-            <div class="promo-stage" id="promoStage">
-                <a class="promo-slide active" href="#categories">
-                    <img src="assets/banners/newlynow-premium.jpg" alt="NewlyNow Premium — أفضل الخدمات الرقمية في مكان واحد" loading="eager" decoding="async">
-                    <canvas class="ph-parts" aria-hidden="true"></canvas>
-                    <span class="ph-sweep" aria-hidden="true"></span>
-                </a>
-                <a class="promo-slide" href="#categories">
-                    <img src="assets/banners/offers-discounts.jpg" alt="خصومات خاصة على خدمات ومنصات التواصل الاجتماعي" loading="lazy" decoding="async">
-                    <canvas class="ph-parts" aria-hidden="true"></canvas>
-                    <span class="ph-sweep" aria-hidden="true"></span>
-                </a>
-                <a class="promo-slide" href="#payments">
-                    <img src="assets/banners/payment-methods.jpg" alt="وسائل الدفع — حلول دفع آمنة ومتعددة" loading="lazy" decoding="async">
-                    <canvas class="ph-parts" aria-hidden="true"></canvas>
-                    <span class="ph-sweep" aria-hidden="true"></span>
-                </a>
-                <button class="promo-arrow promo-prev" type="button" aria-label="السابق"><i class="fas fa-chevron-right"></i></button>
-                <button class="promo-arrow promo-next" type="button" aria-label="التالي"><i class="fas fa-chevron-left"></i></button>
-                <div class="promo-dots" id="promoDots" role="tablist"></div>
-            </div>
-        </div>
-    </section>
-    <script>
-      // ===== Promo hero carousel: auto-rotate + dots + arrows + swipe + ambient motes =====
-      (function () {
-        const stage = document.getElementById('promoStage');
-        if (!stage) return;
-        const slides = [].slice.call(stage.querySelectorAll('.promo-slide'));
-        const dotsBox = document.getElementById('promoDots');
-        const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
-        let idx = 0, timer = null, hovered = false;
-        // dots
-        slides.forEach((s, i) => {
-          const d = document.createElement('button');
-          d.className = 'promo-dot' + (i === 0 ? ' active' : '');
-          d.type = 'button'; d.setAttribute('role', 'tab'); d.setAttribute('aria-label', 'شريحة ' + (i + 1));
-          d.addEventListener('click', e => { e.preventDefault(); go(i); rearm(); });
-          dotsBox.appendChild(d);
-        });
-        const dots = [].slice.call(dotsBox.children);
-        function go(n) {
-          idx = (n + slides.length) % slides.length;
-          slides.forEach((s, i) => s.classList.toggle('active', i === idx));
-          dots.forEach((d, i) => d.classList.toggle('active', i === idx));
-        }
-        function next() { go(idx + 1); }
-        function rearm() { if (timer) clearInterval(timer); timer = setInterval(() => { if (!hovered) next(); }, 5200); }
-        stage.querySelector('.promo-next').addEventListener('click', e => { e.preventDefault(); next(); rearm(); });
-        stage.querySelector('.promo-prev').addEventListener('click', e => { e.preventDefault(); go(idx - 1); rearm(); });
-        stage.addEventListener('mouseenter', () => hovered = true);
-        stage.addEventListener('mouseleave', () => hovered = false);
-        // swipe (RTL-aware: swipe left -> next)
-        let sx = 0, dragging = false;
-        stage.addEventListener('pointerdown', e => { dragging = true; sx = e.clientX; });
-        addEventListener('pointerup', e => {
-          if (!dragging) return; dragging = false;
-          const dx = e.clientX - sx;
-          if (Math.abs(dx) > 45) { dx < 0 ? next() : go(idx - 1); rearm(); }
-        });
-        rearm();
-        // ambient motes per slide (perf-gated to the promo being on-screen)
-        if (!reduce) {
-          const CY = [32, 214, 227], AQ = [93, 231, 242], OR = [247, 147, 30];
-          const engines = slides.map(sl => {
-            const cv = sl.querySelector('canvas.ph-parts'); const bg = sl.querySelector('img');
-            const ctx = cv.getContext('2d');
-            let dpr = Math.min(devicePixelRatio || 1, 2), W = 0, H = 0, ps = [], raf = 0, t0 = 0;
-            function size() {
-              W = sl.clientWidth; H = sl.clientHeight; if (!W || !H) { ps = []; return; }
-              cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-              const n = Math.max(9, Math.round(W / 64)); ps = [];
-              for (let i = 0; i < n; i++) { const c = [CY, CY, AQ, OR][Math.floor(Math.random() * 4)];
-                ps.push({ x: Math.random() * W, y: Math.random() * H, r: 1.1 + Math.random() * 2.2, sp: 6 + Math.random() * 13,
-                  sw: 6 + Math.random() * 14, ph: Math.random() * 6.28, a: .2 + Math.random() * .38, c: c }); }
-            }
-            if (bg && !bg.complete) bg.addEventListener('load', size, { once: true });
-            if (window.ResizeObserver) { try { new ResizeObserver(() => { if (W !== sl.clientWidth || H !== sl.clientHeight) size(); }).observe(sl); } catch (e) {} }
-            function loop(now) {
-              const t = (now - t0) / 1000; ctx.clearRect(0, 0, W, H);
-              for (let i = 0; i < ps.length; i++) { const p = ps[i]; let y = (p.y - p.sp * t) % H; if (y < 0) y += H;
-                const x = p.x + p.sw * Math.sin(t * .6 + p.ph); const tw = p.a * (.6 + .4 * Math.sin(t * 1.6 + p.ph));
-                const g = ctx.createRadialGradient(x, y, 0, x, y, p.r * 4);
-                g.addColorStop(0, 'rgba(' + p.c[0] + ',' + p.c[1] + ',' + p.c[2] + ',' + tw + ')');
-                g.addColorStop(1, 'rgba(' + p.c[0] + ',' + p.c[1] + ',' + p.c[2] + ',0)');
-                ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, p.r * 4, 0, 6.2832); ctx.fill(); }
-              raf = requestAnimationFrame(loop);
-            }
-            return { start() { if (raf) return; if (!W) size(); t0 = performance.now(); raf = requestAnimationFrame(loop); },
-                     stop() { if (raf) { cancelAnimationFrame(raf); raf = 0; } } };
-          });
-          const io = new IntersectionObserver(es => es.forEach(e => {
-            e.isIntersecting ? engines.forEach(en => en.start()) : engines.forEach(en => en.stop());
-          }), { rootMargin: '200px' });
-          io.observe(stage);
-        }
-      })();
-    </script>
-
-    <div class="trx-banner"><a href="#categories"><img src="assets/banners/banner-premium.jpg" alt="EXD Premium — أفضل الخدمات الرقمية في تجربة واحدة" loading="lazy" decoding="async"></a></div>
-
-    <!-- ===== Social platform showcase ===== -->
-    <section class="section platforms-sec" id="platforms">
-        <div class="container">
-            <div class="head">
-                <span class="eyebrow">منصات التواصل</span>
-                <h2>خدمات <span class="grad-text">كل منصة</span> باحتراف</h2>
-                <p>متابعين، توثيق، حسابات جاهزة، ودعم كامل — لكل منصات السوشيال ميديا في مكان واحد.</p>
-            </div>
-            <div class="platforms-grid">
-                <a href="category.html?id=instagram" class="pf-card"><img src="assets/platforms/instagram.jpg" alt="خدمات Instagram" loading="lazy" decoding="async"></a>
-                <a href="category.html?id=facebook" class="pf-card"><img src="assets/platforms/facebook.jpg" alt="خدمات Facebook" loading="lazy" decoding="async"></a>
-                <a href="category.html?id=youtube" class="pf-card"><img src="assets/platforms/youtube.jpg" alt="خدمات YouTube" loading="lazy" decoding="async"></a>
-                <a href="category.html?id=telegram" class="pf-card"><img src="assets/platforms/telegram.jpg" alt="خدمات Telegram" loading="lazy" decoding="async"></a>
-                <a href="category.html?id=twitter-x" class="pf-card"><img src="assets/platforms/twitter-x.jpg" alt="خدمات X" loading="lazy" decoding="async"></a>
-                <a href="category.html?id=snapchat" class="pf-card"><img src="assets/platforms/snapchat.jpg" alt="خدمات Snapchat" loading="lazy" decoding="async"></a>
-                <a href="category.html?id=linkedin" class="pf-card"><img src="assets/platforms/linkedin.jpg" alt="خدمات LinkedIn" loading="lazy" decoding="async"></a>
-                <a href="#categories" class="pf-card"><img src="assets/platforms/whatsapp.jpg" alt="خدمات WhatsApp" loading="lazy" decoding="async"></a>
-                <a href="#categories" class="pf-card"><img src="assets/platforms/pinterest.jpg" alt="خدمات Pinterest" loading="lazy" decoding="async"></a>
-                <a href="#categories" class="pf-card"><img src="assets/platforms/gmail.jpg" alt="خدمات Gmail" loading="lazy" decoding="async"></a>
-            </div>
-        </div>
-    </section>
-
-    <!-- ===== Founder ===== -->
-    <!-- ===== Stats ===== -->
-    <section class="stats-strip">
-        <div class="container stats-grid">
-            <div class="stat glass"><span class="stat-num grad-text" data-count="17872">0</span><p>طلب موثق</p></div>
-            <div class="stat glass"><span class="stat-num grad-text" data-count="37152">0</span><p>عميل</p></div>
-            <div class="stat glass"><span class="stat-num grad-text" data-count="97">0</span><span class="grad-text">%</span><p>رضا العملاء</p></div>
-            <div class="stat glass"><span class="stat-num grad-text">24/7</span><p>دعم مستمر</p></div>
-        </div>
-    </section>
-
-    <div class="trx-banner"><a href="#featured"><img src="assets/banners/banner-offers.jpg" alt="العروض والخصومات — أفضل العروض والتخفيضات" loading="lazy" decoding="async"></a></div>
 
     <!-- ===== Categories ===== -->
     <section class="section" id="categories">
         <div class="container">
-            <div class="head">
-                <span class="eyebrow" data-k="catsEyebrow">الأقسام الرئيسية</span>
-                <h2>استكشف <span class="grad-text">30+ قسم</span> احترافي</h2>
-                <p data-k="catsDesc">كل ما تحتاجه من خدمات رقمية منظمة في أقسام واضحة وسهلة التصفح.</p>
-            </div>
-
+            <div class="head"><span class="eyebrow">الأقسام</span><h2>تصفّح <span class="grad-text">أقسامنا</span></h2></div>
             <div class="cat-grid">
-                <a href="category.html?id=facebook" class="cat glass" style="--g1:#17A85E;--g2:#0E7A45">
-                    <div class="cat-ico"><i class="fa-brands fa-facebook"></i></div>
-                    <h3>خدمات فيسبوك</h3>
-                    <p>متابعين، لايكات، مشاهدات، مشاركات، دعم صفحات وجروبات.</p>
-                </a>
-                <a href="category.html?id=instagram" class="cat glass" style="--g1:#FFD400;--g2:#FF8A00">
-                    <div class="cat-ico"><i class="fa-brands fa-instagram"></i></div>
-                    <h3>خدمات إنستجرام</h3>
-                    <p>متابعين، لايكات، مشاهدات ريلز وستوري، تعليقات وحفظ.</p>
-                </a>
-                <a href="category.html?id=tiktok" class="cat glass" style="--g1:#0E7A45;--g2:#17C8AC">
-                    <div class="cat-ico"><i class="fa-brands fa-tiktok"></i></div>
-                    <h3>خدمات تيك توك</h3>
-                    <p>متابعين، لايكات، مشاهدات، مشاركات ومشاهدات البث.</p>
-                </a>
-                <a href="category.html?id=youtube" class="cat glass" style="--g1:#FF8A00;--g2:#17A85E">
-                    <div class="cat-ico"><i class="fa-brands fa-youtube"></i></div>
-                    <h3>خدمات يوتيوب</h3>
-                    <p>مشتركين، مشاهدات، ساعات مشاهدة للربح، شورتس وتعليقات.</p>
-                </a>
-                <a href="category.html?id=telegram" class="cat glass" style="--g1:#17C8AC;--g2:#0E7A45">
-                    <div class="cat-ico"><i class="fa-brands fa-telegram"></i></div>
-                    <h3>خدمات تيليجرام</h3>
-                    <p>أعضاء، نقل أعضاء، نقل من قناة لقناة، إعلانات وإنشاء بوتات.</p>
-                </a>
-                <a href="category.html?id=twitter-x" class="cat glass" style="--g1:#0E7A45;--g2:#17A85E">
-                    <div class="cat-ico"><i class="fa-brands fa-x-twitter"></i></div>
-                    <h3>خدمات تويتر X</h3>
-                    <p>متابعين، لايكات، مشاهدات، ريتويت وتعليقات.</p>
-                </a>
-                <a href="category.html?id=snapchat" class="cat glass" style="--g1:#FFD400;--g2:#17A85E">
-                    <div class="cat-ico"><i class="fa-brands fa-snapchat"></i></div>
-                    <h3>خدمات سناب شات</h3>
-                    <p>متابعين، مشاهدات، ورفع النقاط بسرعة وأمان.</p>
-                </a>
-                <a href="category.html?id=linkedin" class="cat glass" style="--g1:#17A85E;--g2:#17C8AC">
-                    <div class="cat-ico"><i class="fa-brands fa-linkedin"></i></div>
-                    <h3>خدمات لينكدإن</h3>
-                    <p>زيادة المتابعين ورفع التفاعل على حسابك المهني.</p>
-                </a>
-                <a href="category.html?id=verification" class="cat glass" style="--g1:#FFD400;--g2:#FF8A00">
-                    <div class="cat-ico"><i class="fas fa-circle-check"></i></div>
-                    <h3>التوثيق الرسمي</h3>
-                    <p>العلامة الزرقاء على كل المنصات باحترافية ومتابعة كاملة.</p>
-                    <div class="cat-tags"><span>TikTok</span><span>Instagram</span><span>Facebook</span><span>X</span></div>
-                </a>
-                <a href="category.html?id=ready-accounts" class="cat glass" style="--g1:#0E7A45;--g2:#17A85E">
-                    <div class="cat-ico"><i class="fas fa-id-badge"></i></div>
-                    <h3>الحسابات الجاهزة</h3>
-                    <p>حسابات مفعلة وموثقة بنقل ملكية آمن عبر الوساطة.</p>
-                    <div class="cat-tags"><span>TikTok</span><span>AdSense</span><span>PayPal</span><span>Wise</span></div>
-                </a>
-                <a href="category.html?id=buy-sell" class="cat glass" style="--g1:#FF8A00;--g2:#17A85E">
-                    <div class="cat-ico"><i class="fas fa-right-left"></i></div>
-                    <h3>بيع وشراء</h3>
-                    <p>حسابات، صفحات، جروبات، قنوات، بوتات، دومينات ومواقع.</p>
-                    <div class="cat-tags"><span>صفحات</span><span>قنوات</span><span>دومينات</span><span>مواقع</span></div>
-                </a>
-                <a href="category.html?id=escrow" class="cat glass" style="--g1:#FFD400;--g2:#17A85E">
-                    <div class="cat-ico"><i class="fas fa-handshake"></i></div>
-                    <h3>الوساطة الآمنة</h3>
-                    <p>وسيط معتمد لكل صفقة وحماية أموالك حتى التسليم الكامل.</p>
-                    <div class="cat-tags"><span>حسابات</span><span>دومينات</span><span>مواقع</span><span>بوتات</span></div>
-                </a>
-                <a href="category.html?id=media-buying" class="cat glass" style="--g1:#0E7A45;--g2:#FF8A00">
-                    <div class="cat-ico"><i class="fas fa-bullhorn"></i></div>
-                    <h3>الميديا باينج</h3>
-                    <p>حملات ممولة بنتائج قابلة للقياس على كل المنصات.</p>
-                    <div class="cat-tags"><span>Meta Ads</span><span>TikTok Ads</span><span>Google Ads</span></div>
-                </a>
-                <a href="category.html?id=design" class="cat glass" style="--g1:#17A85E;--g2:#FFD400">
-                    <div class="cat-ico"><i class="fas fa-palette"></i></div>
-                    <h3>التصميم</h3>
-                    <p>شعارات، هوية بصرية، بوستات، موشن، UI/UX، و3D وصور AI.</p>
-                    <div class="cat-tags"><span>لوجو</span><span>UI/UX</span><span>موشن</span><span>3D</span></div>
-                </a>
-                <a href="category.html?id=programming" class="cat glass" style="--g1:#0E7A45;--g2:#FFD400">
-                    <div class="cat-ico"><i class="fas fa-code"></i></div>
-                    <h3>البرمجة</h3>
-                    <p>مواقع، متاجر، صفحات هبوط، لوحات تحكم، APIs، وأنظمة CRM/ERP.</p>
-                    <div class="cat-tags"><span>مواقع</span><span>APIs</span><span>بوتات</span><span>CRM</span></div>
-                </a>
-                <a href="category.html?id=ai" class="cat glass" style="--g1:#FF8A00;--g2:#0E7A45">
-                    <div class="cat-ico"><i class="fas fa-robot"></i></div>
-                    <h3>الذكاء الاصطناعي</h3>
-                    <p>ChatGPT، Claude، Gemini، Midjourney، Runway، ElevenLabs وأكثر.</p>
-                    <div class="cat-tags"><span>ChatGPT</span><span>Claude</span><span>Midjourney</span><span>Veo</span></div>
-                </a>
-                <a href="category.html?id=automation" class="cat glass" style="--g1:#FFD400;--g2:#0E7A45">
-                    <div class="cat-ico"><i class="fas fa-diagram-project"></i></div>
-                    <h3>Automation</h3>
-                    <p>n8n، Make، Zapier، AI Agents، Workflows، وربط MCP وAPIs.</p>
-                    <div class="cat-tags"><span>n8n</span><span>Make</span><span>AI Agents</span><span>MCP</span></div>
-                </a>
-                <a href="category.html?id=websites-stores" class="cat glass" style="--g1:#17A85E;--g2:#FF8A00">
-                    <div class="cat-ico"><i class="fas fa-store"></i></div>
-                    <h3>المواقع والمتاجر</h3>
-                    <p>WordPress، Shopify، WooCommerce، Laravel، React وNext.js.</p>
-                    <div class="cat-tags"><span>Shopify</span><span>Laravel</span><span>Next.js</span></div>
-                </a>
-                <a href="category.html?id=domains-hosting" class="cat glass" style="--g1:#0E7A45;--g2:#17A85E">
-                    <div class="cat-ico"><i class="fas fa-server"></i></div>
-                    <h3>الدومينات والاستضافة</h3>
-                    <p>دومينات، VPS، Cloud، SSL، CDN، واستضافة بريد احترافي.</p>
-                    <div class="cat-tags"><span>VPS</span><span>Cloud</span><span>SSL</span><span>CDN</span></div>
-                </a>
-                <a href="category.html?id=subscriptions" class="cat glass" style="--g1:#FFD400;--g2:#FF8A00">
-                    <div class="cat-ico"><i class="fas fa-clapperboard"></i></div>
-                    <h3>الاشتراكات الرقمية</h3>
-                    <p>Netflix، Spotify، Shahid، Canva Pro، Microsoft 365، Adobe.</p>
-                    <div class="cat-tags"><span>Netflix</span><span>Canva Pro</span><span>Adobe</span><span>VPN</span></div>
-                </a>
-                <a href="category.html?id=games" class="cat glass" style="--g1:#FF8A00;--g2:#17A85E">
-                    <div class="cat-ico"><i class="fas fa-gamepad"></i></div>
-                    <h3>الألعاب</h3>
-                    <p>شحن الألعاب، بطاقات هدايا، UC، Diamonds، CP، وV-Bucks.</p>
-                    <div class="cat-tags"><span>UC</span><span>Diamonds</span><span>V-Bucks</span></div>
-                </a>
-                <a href="category.html?id=security" class="cat glass" style="--g1:#17A85E;--g2:#0E7A45">
-                    <div class="cat-ico"><i class="fas fa-shield-halved"></i></div>
-                    <h3>الحماية والاسترجاع</h3>
-                    <p>استرجاع حسابات، فك القيود، إزالة الانتهاكات، ومراجعة الأمان.</p>
-                    <div class="cat-tags"><span>استرجاع</span><span>فك حظر</span><span>حماية</span></div>
-                </a>
-                <a href="category.html?id=finance" class="cat glass" style="--g1:#FFD400;--g2:#17A85E">
-                    <div class="cat-ico"><i class="fas fa-wallet"></i></div>
-                    <h3>الخدمات المالية</h3>
-                    <p>PayPal، Wise، Stripe، Payoneer، Binance، والمحافظ الإلكترونية.</p>
-                    <div class="cat-tags"><span>PayPal</span><span>Wise</span><span>Stripe</span><span>Binance</span></div>
-                </a>
-                <a href="category.html?id=business" class="cat glass" style="--g1:#0E7A45;--g2:#FF8A00">
-                    <div class="cat-ico"><i class="fas fa-building"></i></div>
-                    <h3>الأعمال والشركات</h3>
-                    <p>تأسيس شركات، Business Manager، Google Business، بريد احترافي.</p>
-                    <div class="cat-tags"><span>شركات</span><span>BM</span><span>Google Business</span></div>
-                </a>
-                <a href="category.html?id=education" class="cat glass" style="--g1:#FF8A00;--g2:#FFD400">
-                    <div class="cat-ico"><i class="fas fa-graduation-cap"></i></div>
-                    <h3>التعليم والكورسات</h3>
-                    <p>كورسات، استشارات، تدريب فردي، وملفات PDF احترافية.</p>
-                    <div class="cat-tags"><span>كورسات</span><span>استشارات</span><span>تدريب</span></div>
-                </a>
-                <a href="category.html?id=marketplace" class="cat glass" style="--g1:#17A85E;--g2:#FFD400">
-                    <div class="cat-ico"><i class="fas fa-shop"></i></div>
-                    <h3>Marketplace</h3>
-                    <p>خدمات الموردين والفريلانسر والشركات والشركاء في مكان واحد.</p>
-                    <div class="cat-tags"><span>موردين</span><span>فريلانسر</span><span>شركاء</span></div>
-                </a>
-                <a href="category.html?id=portfolio" class="cat glass" style="--g1:#0E7A45;--g2:#17A85E">
-                    <div class="cat-ico"><i class="fas fa-briefcase"></i></div>
-                    <h3>Portfolio</h3>
-                    <p>مواقع، بوتات، AI، تصميمات، حسابات تم بيعها وقصص نجاح.</p>
-                    <div class="cat-tags"><span>مشاريع</span><span>قصص نجاح</span><span>أعمال</span></div>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <div class="trx-banner"><a href="category.html?id=ai"><img src="assets/banners/banner-ai.jpg" alt="الذكاء الاصطناعي — أقوى أدوات وحلول الذكاء الاصطناعي" loading="lazy" decoding="async"></a></div>
-
-    <!-- ===== Featured Services ===== -->
-    <section class="section section-alt" id="featured">
-        <div class="container">
-            <div class="head">
-                <span class="eyebrow" data-k="featEyebrow">الخدمات المميزة</span>
-                <h2>الأكثر <span class="grad-text">طلبًا</span></h2>
-                <p data-k="featDesc">خدمات مختارة بعناية تحقق أعلى نتائج لعملائنا.</p>
-            </div>
-            <div class="svc-grid">
-                <div class="svc glass">
-                    <div class="svc-top"><span class="badge">الأكثر مبيعًا</span><div class="svc-ico"><i class="fab fa-snapchat"></i></div></div>
-                    <h3>حسابات سناب شات موثقة وجاهزة</h3>
-                    <p>حسابات مفعلة أرباح وموثقة مع استلام منظم وآمن عبر الوساطة.</p>
-                    <div class="svc-foot">
-                        <span class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></span>
-                        <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="btn btn-grad btn-sm">اطلب الآن</a>
-                    </div>
-                </div>
-                <div class="svc glass">
-                    <div class="svc-top"><span class="badge">VIP</span><div class="svc-ico"><i class="fas fa-circle-check"></i></div></div>
-                    <h3>توثيق العلامة الزرقاء</h3>
-                    <p>توثيق رسمي على تيك توك وإنستجرام وفيسبوك وX بمتابعة كاملة.</p>
-                    <div class="svc-foot">
-                        <span class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></span>
-                        <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="btn btn-grad btn-sm">اطلب الآن</a>
-                    </div>
-                </div>
-                <div class="svc glass">
-                    <div class="svc-top"><span class="badge">مضمون</span><div class="svc-ico"><i class="fas fa-handshake"></i></div></div>
-                    <h3>وساطة آمنة للصفقات</h3>
-                    <p>وسيط معتمد يحفظ حقوق البائع والمشتري حتى إتمام التسليم.</p>
-                    <div class="svc-foot">
-                        <span class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></span>
-                        <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="btn btn-grad btn-sm">ابدأ صفقة</a>
-                    </div>
-                </div>
-                <div class="svc glass">
-                    <div class="svc-top"><span class="badge">جديد</span><div class="svc-ico"><i class="fas fa-robot"></i></div></div>
-                    <h3>اشتراكات وأدوات AI</h3>
-                    <p>ChatGPT Plus، Claude، Midjourney وأدوات الذكاء الاصطناعي بتفعيل فوري.</p>
-                    <div class="svc-foot">
-                        <span class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></span>
-                        <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="btn btn-grad btn-sm">اطلب الآن</a>
-                    </div>
-                </div>
-                <div class="svc glass">
-                    <div class="svc-top"><span class="badge">احترافي</span><div class="svc-ico"><i class="fas fa-bullhorn"></i></div></div>
-                    <h3>إدارة الحملات الممولة</h3>
-                    <p>Meta وTikTok وGoogle Ads بإدارة احترافية ونتائج قابلة للقياس.</p>
-                    <div class="svc-foot">
-                        <span class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></span>
-                        <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="btn btn-grad btn-sm">اطلب الآن</a>
-                    </div>
-                </div>
-                <div class="svc glass">
-                    <div class="svc-top"><span class="badge">مطوّرين</span><div class="svc-ico"><i class="fas fa-code"></i></div></div>
-                    <h3>برمجة مواقع ومتاجر وبوتات</h3>
-                    <p>أنظمة مخصصة، متاجر إلكترونية، بوتات، وربط APIs باحترافية.</p>
-                    <div class="svc-foot">
-                        <span class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></span>
-                        <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="btn btn-grad btn-sm">اطلب الآن</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <div class="trx-banner"><a href="category.html?id=subscriptions"><img src="assets/banners/banner-music.jpg" alt="الموسيقى والصوت — استمتع بمحتواك الصوتي بلا حدود" loading="lazy" decoding="async"></a></div>
-
-    <!-- ===== Testimonials ===== -->
-    <section class="section section-alt" id="testimonials">
-        <div class="container">
-            <div class="head">
-                <span class="eyebrow" data-k="revEyebrow">آراء العملاء</span>
-                <h2>NewlyNow… <span class="grad-text">ثقة وأمان</span></h2>
-                <p data-k="revDesc">آراء حقيقية من عملاء وثّقوا تقييمهم عبر Google و Facebook.</p>
-            </div>
-            <div id="liveReviews" class="rev-grid"></div>
-            <div id="reviewsEmpty" class="reviews-empty" style="display:none">كن أول من يشارك تقييمه بعد تعاملك معنا.</div>
-        </div>
-        <div class="container rev-add"><a href="review.html" class="btn btn-grad btn-lg"><i class="fas fa-star"></i> أضف تقييمك</a></div>
-    </section>
-
-
-
-
-
-
-    <div class="trx-banner"><a href="#categories"><img src="assets/banners/banner-payments.jpg" alt="وسائل الدفع — طرق دفع آمنة ومتعددة" loading="lazy" decoding="async"></a></div>
-
-    <!-- ===== Products grid (from store images) ===== -->
-    <section class="section" id="products">
-        <div class="container">
-            <div class="head"><span class="eyebrow">تسوّق الآن</span><h2>منتجات <span class="grad-text">مميزة</span></h2><p>باقات واشتراكات جاهزة بأفضل الأسعار.</p></div>
-            <div class="nn-prod-grid reveal" id="nnProducts"></div>
-        </div>
-    </section>
-
-    <!-- ===== FAQ ===== -->
-    <section class="section" id="faq">
-        <div class="container">
-            <div class="head"><span class="eyebrow">مساعدة</span><h2>الأسئلة <span class="grad-text">الشائعة</span></h2></div>
-            <div class="trx-faq">
-                <details class="trx-q"><summary>كيف أطلب من المتجر؟</summary><p>اختر الخدمة من القسم المناسب وأضِفها للسلة ثم أكمل الطلب، أو تواصل معنا مباشرة على واتساب.</p></details>
-                <details class="trx-q"><summary>هل وسائل الدفع آمنة؟</summary><p>نعم، كل المدفوعات آمنة، والمبالغ الكبيرة تتم عبر الوساطة الآمنة لحفظ حقوقك حتى الاستلام.</p></details>
-                <details class="trx-q"><summary>مدة تسليم الطلب؟</summary><p>أغلب الخدمات تبدأ خلال دقائق إلى ساعات حسب نوعها، والدعم متاح 24/7.</p></details>
-                <details class="trx-q"><summary>ما طرق الدفع المتوفرة؟</summary><p>فودافون كاش، إنستاباي، تحويل بنكي، USDT، فوري وغيرها — تظهر عند إتمام الطلب.</p></details>
-                <details class="trx-q"><summary>هل المتجر موثوق؟</summary><p>أكثر من 37 ألف عميل وتقييمات حقيقية موثّقة عبر Google و Facebook.</p></details>
-                <details class="trx-q"><summary>إزاي أتواصل معكم؟</summary><p>على مدار الساعة عبر واتساب وتيليجرام — الروابط في الأعلى وفي التذييل.</p></details>
+                <a href="category.html?id=facebook" class="cat glass" style="--g1:#1877F2;--g2:#0E5AB8"><div class="cat-ico"><i class="fa-brands fa-facebook"></i></div><h3>خدمات فيسبوك</h3><p>متابعين، لايكات، مشاهدات ودعم صفحات.</p></a>
+                <a href="category.html?id=instagram" class="cat glass" style="--g1:#E1306C;--g2:#B81E52"><div class="cat-ico"><i class="fa-brands fa-instagram"></i></div><h3>خدمات إنستجرام</h3><p>متابعين، لايكات، مشاهدات ريلز وستوري.</p></a>
+                <a href="category.html?id=tiktok" class="cat glass" style="--g1:#25F4EE;--g2:#0FB5AE"><div class="cat-ico"><i class="fa-brands fa-tiktok"></i></div><h3>خدمات تيك توك</h3><p>متابعين، لايكات، مشاهدات ومشاهدات البث.</p></a>
+                <a href="category.html?id=youtube" class="cat glass" style="--g1:#FF0000;--g2:#B80000"><div class="cat-ico"><i class="fa-brands fa-youtube"></i></div><h3>خدمات يوتيوب</h3><p>مشتركين، مشاهدات، ساعات مشاهدة وشورتس.</p></a>
+                <a href="category.html?id=telegram" class="cat glass" style="--g1:#229ED9;--g2:#1479A6"><div class="cat-ico"><i class="fa-brands fa-telegram"></i></div><h3>خدمات تيليجرام</h3><p>أعضاء، نقل أعضاء، إعلانات وبوتات.</p></a>
+                <a href="category.html?id=snapchat" class="cat glass" style="--g1:#F7C400;--g2:#D9A800"><div class="cat-ico"><i class="fa-brands fa-snapchat"></i></div><h3>خدمات سناب شات</h3><p>متابعين، مشاهدات ورفع النقاط.</p></a>
+                <a href="category.html?id=ai" class="cat glass" style="--g1:#22B4A5;--g2:#128577"><div class="cat-ico"><i class="fas fa-robot"></i></div><h3>الذكاء الاصطناعي</h3><p>ChatGPT، Claude، Gemini، Midjourney.</p></a>
+                <a href="category.html?id=subscriptions" class="cat glass" style="--g1:#F7941E;--g2:#D97908"><div class="cat-ico"><i class="fas fa-clapperboard"></i></div><h3>الاشتراكات الرقمية</h3><p>Netflix، Spotify، Canva، Microsoft 365.</p></a>
+                <a href="category.html?id=games" class="cat glass" style="--g1:#7C5CFC;--g2:#5A3FD0"><div class="cat-ico"><i class="fas fa-gamepad"></i></div><h3>شحن الألعاب</h3><p>UC، Diamonds، CP، V-Bucks وبطاقات.</p></a>
+                <a href="category.html?id=design" class="cat glass" style="--g1:#F7941E;--g2:#22B4A5"><div class="cat-ico"><i class="fas fa-palette"></i></div><h3>التصميم</h3><p>شعارات، هوية، موشن وصور AI.</p></a>
+                <a href="category.html?id=programming" class="cat glass" style="--g1:#22B4A5;--g2:#0E5AB8"><div class="cat-ico"><i class="fas fa-code"></i></div><h3>البرمجة</h3><p>مواقع، متاجر، APIs وأنظمة إدارة.</p></a>
+                <a href="category.html?id=finance" class="cat glass" style="--g1:#17A85E;--g2:#0E7A45"><div class="cat-ico"><i class="fas fa-wallet"></i></div><h3>الخدمات المالية</h3><p>PayPal، Wise، Payoneer، Binance.</p></a>
             </div>
         </div>
     </section>
@@ -526,383 +80,53 @@
         <div class="container footer-grid">
             <div class="foot-brand">
                 <a href="#hero" class="brand"><img src="assets/logo.png" alt="NewlyNow" class="brand-logo-img"><span class="brand-name">NewlyNow<em>.com</em></span></a>
-                <p>منصة رقمية فاخرة لكل الخدمات الرقمية والوساطة الآمنة — من NewlyNow.</p>
+                <p>متجر الخدمات والاشتراكات الرقمية.</p>
                 <div class="foot-social">
                     <a href="https://wa.me/201055578777" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                     <a href="https://t.me/elawaadyofficial" target="_blank" rel="noopener" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
-                    <a href="https://x.com/eIawaadyoffici" target="_blank" rel="noopener" aria-label="X"><i class="fab fa-x-twitter"></i></a>
-                    <a href="https://www.linkedin.com/in/elawaadyofficial" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                 </div>
             </div>
             <div class="foot-col">
-                <h4>الأقسام</h4>
-                <a href="#categories">السوشيال ميديا</a>
-                <a href="#categories">التوثيق الرسمي</a>
-                <a href="#categories">الوساطة الآمنة</a>
-                <a href="#categories">الذكاء الاصطناعي</a>
-            </div>
-            <div class="foot-col">
                 <h4>روابط</h4>
-                <a href="#featured">الخدمات المميزة</a>
-                <a href="#portfolio">أعمالنا</a>
-                <a href="#testimonials">آراء العملاء</a>
-                <a href="https://elawaady.com" target="_blank" rel="noopener">المتجر الرسمي</a>
+                <a href="#categories">الأقسام</a>
+                <a href="account.html">حسابي</a>
             </div>
             <div class="foot-col">
                 <h4>تواصل</h4>
                 <a href="https://wa.me/201055578777" target="_blank" rel="noopener" dir="ltr">+20 105 557 8777</a>
-                <a href="https://wa.me/201008002333" target="_blank" rel="noopener" dir="ltr">+20 100 800 2333</a>
                 <a href="https://t.me/elawaadyofficial" target="_blank" rel="noopener">@elawaadyofficial</a>
             </div>
         </div>
-        <div class="foot-bottom">© 2026 NewlyNow.com — جميع الحقوق محفوظة | كل ما هو جديد... الآن</div>
+        <div class="foot-bottom">© 2026 NewlyNow.com — جميع الحقوق محفوظة</div>
     </footer>
 
-    <!-- Floating WhatsApp -->
     <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="fab-wa" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
 
     <script src="script.js"></script>
-    <script src="contact.js"></script>
-    <script src="chatbot-seed.js?v=1"></script>
-    <script src="chatbot.js?v=3"></script>
     <script src="firebase-config.js"></script>
-    <script src="config.js?v=51"></script>
-    <script src="auth.js"></script>
+    <script src="config.js"></script>
     <script src="cart.js"></script>
-    <script src="data.js?v=51"></script>
-    <script src="catalog.js?v=51"></script>
+    <script src="data.js"></script>
+    <script src="catalog.js"></script>
     <script>
-      // Render categories grid from the dashboard catalog (fallback: keep static cards)
+      // render categories from the dashboard catalog (fallback: keep static tiles)
       (async function () {
         try {
-          const built = window.CATEGORIES || {};
-          const fire = (window.getCatalog && await window.getCatalog()) || {};
-          // The BUILT-IN catalog is always the authoritative structure (sections/order/
-          // marquee) so the layout is guaranteed correct and never breaks on a partial or
-          // malformed dashboard import. Dashboard edits are OVERLAID on matching platforms
-          // (image, title, colors, prices/groups, active state) so admin changes still show.
-          const cat = {};
-          for (const id in built) {
-            const b = built[id], f = fire[id];
-            if (f && f.active === false) continue;            // respect "hide" from dashboard
-            cat[id] = f ? Object.assign({}, b, {
-              img: f.img || b.img,
-              title: f.title || b.title,
-              g1: f.g1 || b.g1, g2: f.g2 || b.g2,
-              rating: f.rating != null ? f.rating : b.rating,
-              reviews: f.reviews != null ? f.reviews : b.reviews,
-              price: f.price != null ? f.price : b.price,
-              groups: (f.groups && f.groups.length) ? f.groups : b.groups
-            }) : b;
-          }
-          if (!Object.keys(cat).length) return;
-          const grid = document.querySelector('.cat-grid');
-          if (!grid) return;
-          const esc = s => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-          const ids = Object.keys(cat).filter(id => cat[id].active !== false).sort((a, b) => (cat[a].order || 0) - (cat[b].order || 0));
+          const cat = window.getCatalog && await window.getCatalog();
+          if (!cat) return;
+          const grid = document.querySelector('.cat-grid'); if (!grid) return;
+          const esc = s => String(s || '').replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+          const ids = Object.keys(cat).filter(id => cat[id].active !== false).sort((a,b)=>(cat[a].order||0)-(cat[b].order||0));
           if (!ids.length) return;
-          // dividers: always the built-in section banners (guaranteed to match the structure)
-          const divs = window.DEFAULT_DIVIDERS || [];
-          const byBefore = {};
-          divs.filter(d => d && d.active !== false).forEach(d => { const k = d.before || '__top'; (byBefore[k] = byBefore[k] || []).push(d); });
-          const artSizeMap = { sm: '84px', md: '118px', lg: '155px', xl: '200px' };
-          const titleSizeMap = {
-            sm: 'clamp(.95rem,3.2vw,1.2rem)', md: 'clamp(1.1rem,4vw,1.6rem)',
-            lg: 'clamp(1.3rem,5vw,2rem)', xl: 'clamp(1.55rem,6vw,2.6rem)'
-          };
-          const dividerHtml = d => {
-            // Premium full-image section banner (title baked into the artwork).
-            // Renders the banner + a 45° light sweep; the breathing zoom is CSS-driven.
-            if (d.banner) {
-              const rb = 'border-radius:' + (d.radius != null ? parseInt(d.radius, 10) : 18) + 'px';
-              return '<div class="cat-divider imgbanner" style="' + rb + '">' +
-                '<img class="cd-bg" src="' + esc(d.banner) + '" alt="' + esc(d.title || '') + '" loading="lazy" decoding="async">' +
-                '<canvas class="cd-parts" aria-hidden="true"></canvas>' +
-                '<span class="cd-sweep" aria-hidden="true"></span>' +
-                '</div>';
-            }
-            const arts = (d.arts && d.arts.length) ? d.arts : (d.img ? [{ img: d.img, size: d.size || 'lg' }] : []);
-            const artHtml = arts.filter(a => a && a.img).map(a =>
-              '<img class="cd-el" style="height:' + (artSizeMap[a.size] || artSizeMap.lg) + '" src="' + esc(a.img) + '" alt="" loading="lazy">').join('');
-            let st = '--dg1:' + esc(d.g1 || '#0c2a2f') + ';--dg2:' + esc(d.g2 || '#0b1c24');
-            st += ';--dvr:' + (d.radius != null ? parseInt(d.radius, 10) : 20) + 'px';
-            if (d.titleColor) st += ';--dvtc:' + esc(d.titleColor);
-            if (d.subColor) st += ';--dvsc:' + esc(d.subColor);
-            st += ';--dvts:' + (titleSizeMap[d.titleSize] || titleSizeMap.md);
-            if (d.wave) st += ";--wave:url('" + esc(d.wave) + "')";
-            const cls = 'cat-divider' + (artHtml ? '' : ' no-art') + (d.wave ? ' wave' : '');
-            // the animated wave banner sits UNDER the bar content (drifts + shimmers)
-            const waveHtml = d.wave ? '<div class="cd-wave" aria-hidden="true"></div>' : '';
-            return '<div class="' + cls + '" style="' + st + '">' +
-              waveHtml +
-              '<div class="cd-text no-kashida"><h3>' + esc(d.title || '') + '</h3>' + (d.sub ? '<span>' + esc(d.sub) + '</span>' : '') + '</div>' +
-              (artHtml ? '<div class="cd-arts">' + artHtml + '</div>' : '') +
-              '</div>';
-          };
-          // deterministic pseudo-random from an id (stable per platform)
-          const hashN = s => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0; return h; };
-          const catHtml = id => {
+          grid.innerHTML = ids.map(id => {
             const c = cat[id];
-            const ico = c.img ? '<img src="' + esc(c.img) + '" alt="' + esc(c.title || '') + '">' : '<i class="' + (window.faIcon ? window.faIcon(c.icon) : ('fas ' + esc(c.icon || 'fa-layer-group'))) + '"></i>';
-            const desc = window.catDesc ? window.catDesc(c.title || 'الخدمات') : '';
-            // same clean glassy card as the homepage (icon glow + title + description)
-            return '<a href="category.html?id=' + encodeURIComponent(id) + '" class="cat glass" style="--g1:' + esc(c.g1 || '#17A85E') + ';--g2:' + esc(c.g2 || '#0E7A45') + '">' +
-              '<div class="cat-ico">' + ico + '</div>' +
-              '<h3>' + esc(c.title || '') + '</h3>' +
-              '<p>' + esc(desc) + '</p>' +
-              '</a>';
-          };
-          // ===== Treks-style layout: each SECTION = a divider banner + a horizontal row of its cards =====
-          const divByBefore = {};
-          divs.filter(d => d && d.active !== false).forEach(d => { divByBefore[d.before || '__top'] = d; });
-          // group category ids by their section, preserving order
-          const sectionsOrder = []; const bySection = {};
-          ids.forEach(id => {
-            const s = cat[id].section || ('__' + id);
-            if (!bySection[s]) { bySection[s] = []; sectionsOrder.push(s); }
-            bySection[s].push(id);
-          });
-          const secTitleHtml = t => '<div class="cat-divider no-art"><div class="cd-text no-kashida"><h3>' + esc(t) + '</h3></div></div>';
-          let html = '';
-          if (divByBefore['__top']) html += dividerHtml(divByBefore['__top']);
-          const grouped = sectionsOrder.some(s => bySection[s].length > 1); // real sections exist
-          if (grouped) {
-            grid.classList.add('home-sections');
-            // A seamless marquee row: repeat the cards until one copy is wider than the
-            // screen (so it never leaves an empty gap), then duplicate for a continuous loop.
-            // one card's footprint (width + margin) at the current viewport, matching the CSS
-            const cardW = (window.innerWidth >= 700 ? 200 : Math.min(185, Math.max(140, window.innerWidth * 0.33))) + 14;
-            // ONE copy must be wider than the screen so that one+one (translated -50%)
-            // always fills the row with no empty gap — even for a section with 1–2 cards.
-            // use the LARGER screen dimension so a row still fills after rotating to landscape
-            const fillW = Math.max(window.innerWidth, window.innerHeight);
-            const minCards = Math.ceil((fillW * 1.6) / cardW); // extra buffer so a row never shows a gap
-            const track = (arr, dir, speed) => {
-              if (!arr.length) return '';
-              const reps = Math.max(1, Math.ceil(minCards / arr.length)); // fill the width for small rows
-              const one = arr.map(catHtml).join('').repeat(reps);
-              return '<div class="mq-row" data-dir="' + dir + '" data-speed="' + speed + '">' + one + one + '</div>';
-            };
-            sectionsOrder.forEach((s, si) => {
-              const catIds = bySection[s]; const firstId = catIds[0];
-              const d = divByBefore[firstId];
-              const secTitle = cat[firstId].sectionTitle || '';
-              const rowA = [], rowB = [];
-              catIds.forEach((id, i) => (i % 2 === 0 ? rowA : rowB).push(id));
-              // opposite directions + varied speed per row (px per frame) so motion isn't monotonous
-              const flip = si % 2 === 1;
-              const spA = (0.5 + (si % 3) * 0.12).toFixed(2), spB = (0.62 - (si % 2) * 0.16).toFixed(2);
-              html += '<div class="home-sec enter-' + (si % 8) + ' pre">';
-              html += d ? dividerHtml(d) : (secTitle ? secTitleHtml(secTitle) : '');
-              html += '<div class="sec-marquee">' +
-                track(rowA, flip ? 'rtl' : 'ltr', spA) +
-                track(rowB, flip ? 'ltr' : 'rtl', spB) + '</div>';
-              html += '</div>';
-            });
-          } else {
-            // flat fallback (no section metadata): dividers interleaved with a grid
-            ids.forEach(id => { if (divByBefore[id]) html += dividerHtml(divByBefore[id]); html += catHtml(id); });
-          }
-          grid.innerHTML = html;
-          grid.querySelectorAll('.cat').forEach(el => el.classList.add('reveal', 'show'));
-
-          // ===== draggable + auto-scrolling seamless rows =====
-          grid.querySelectorAll('.mq-row').forEach(row => {
-            const dir = row.dataset.dir === 'rtl' ? -1 : 1;
-            const speed = parseFloat(row.dataset.speed) || 0.5;
-            const half = () => (row.scrollWidth / 2) || 1;
-            // float accumulator — scrollLeft is integer-rounded, so a sub-pixel speed
-            // would never accumulate; we track the exact position ourselves.
-            let pos = 0, paused = false, down = false, sx = 0, ss = 0, moved = false, idleTimer = null;
-            requestAnimationFrame(() => { pos = dir < 0 ? half() : 0; row.scrollLeft = pos; });
-            const tick = () => {
-              if (paused || down) { pos = row.scrollLeft; } // follow the user / momentum
-              else {
-                pos += dir * speed;
-                const h = half(); if (pos >= h) pos -= h; else if (pos < 0) pos += h;
-                row.scrollLeft = pos;
-              }
-              requestAnimationFrame(tick);
-            };
-            requestAnimationFrame(tick);
-            // resume auto-scroll only after all scrolling/momentum has settled
-            const scheduleResume = () => { clearTimeout(idleTimer); idleTimer = setTimeout(() => { if (!down) paused = false; }, 550); };
-            row.addEventListener('mouseenter', () => paused = true);
-            row.addEventListener('mouseleave', () => { if (!down) scheduleResume(); });
-            // ANY touch/click pauses auto-scroll immediately (pointerdown fires for touch on iOS too)
-            row.addEventListener('pointerdown', e => {
-              paused = true; clearTimeout(idleTimer);
-              if (e.pointerType === 'mouse') {  // desktop: manual grab-drag (no pointer capture, so card clicks still open)
-                down = true; moved = false; sx = e.clientX; ss = row.scrollLeft;
-                row.classList.add('grabbing');
-              }
-            });
-            document.addEventListener('pointermove', e => {
-              if (!down) return;
-              const dx = e.clientX - sx; if (Math.abs(dx) > 6) moved = true;
-              let np = ss - dx; const h = half(); if (np >= h) np -= h; else if (np < 0) np += h;
-              row.scrollLeft = np;
-            });
-            const release = () => { if (down) { down = false; row.classList.remove('grabbing'); } scheduleResume(); };
-            document.addEventListener('pointerup', release);
-            document.addEventListener('pointercancel', release);
-            // native touch scrolling fires 'scroll'; keep auto-scroll paused until it fully stops
-            row.addEventListener('scroll', () => { if (paused) scheduleResume(); }, { passive: true });
-            // if the user dragged, swallow the click so it doesn't open the card
-            row.addEventListener('click', e => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
-          });
-
-          // ===== varied entrance animation per section (reveal ONCE, then stays put) =====
-          try {
-            const reveal = el => { el.classList.remove('pre'); el.classList.add('in'); };
-            // reveal each section the first time it enters the viewport, then stop watching it
-            // so it stays visible — no flashing/fading out when it scrolls back off-screen.
-            const io = new IntersectionObserver(ents => {
-              ents.forEach(e => { if (e.isIntersecting) { reveal(e.target); io.unobserve(e.target); } });
-            }, { threshold: 0.14 });
-            grid.querySelectorAll('.home-sec').forEach(el => io.observe(el));
-            // safety: if IntersectionObserver is unavailable, never leave content hidden
-            if (!('IntersectionObserver' in window))
-              grid.querySelectorAll('.home-sec.pre').forEach(reveal);
-            setTimeout(() => grid.querySelectorAll('.home-sec').forEach(el => {
-              const r = el.getBoundingClientRect();
-              if (r.top < innerHeight && r.bottom > 0) reveal(el); // reveal whatever is on screen now
-            }), 2500);
-            // section banner "pops" ONCE the first time it's seen, then stays put
-            const dio = new IntersectionObserver(ents => {
-              ents.forEach(e => { if (e.isIntersecting) { e.target.classList.add('pop'); dio.unobserve(e.target); } });
-            }, { threshold: 0.25 });
-            grid.querySelectorAll('.cat-divider').forEach(el => dio.observe(el));
-
-            // ===== ambient floating motes on the image banners (perf-gated canvas) =====
-            // Runs only while a banner is near the viewport; calm & continuous — no pulse.
-            (function () {
-              const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
-              if (reduce) return;
-              const CY = [32, 214, 227], AQ = [93, 231, 242], OR = [247, 147, 30];
-              const banners = [].slice.call(grid.querySelectorAll('.cat-divider.imgbanner'));
-              banners.forEach(function (bn) {
-                const cv = bn.querySelector('canvas.cd-parts'); if (!cv) return;
-                const ctx = cv.getContext('2d');
-                const bg = bn.querySelector('img.cd-bg');
-                let dpr = Math.min(devicePixelRatio || 1, 2), W = 0, H = 0, ps = [], raf = 0, t0 = 0;
-                function size() {
-                  W = bn.clientWidth; H = bn.clientHeight; if (!W || !H) { ps = []; return; }
-                  cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-                  const n = Math.max(8, Math.round(W / 64)); ps = [];
-                  for (let i = 0; i < n; i++) {
-                    const c = [CY, CY, AQ, OR][Math.floor(Math.random() * 4)];
-                    ps.push({ x: Math.random() * W, y: Math.random() * H, r: 1.1 + Math.random() * 2.2,
-                      sp: 6 + Math.random() * 13, sw: 6 + Math.random() * 14, ph: Math.random() * 6.28,
-                      a: .2 + Math.random() * .38, c: c });
-                  }
-                }
-                // the banner is height:auto, so its real height only exists once the image
-                // decodes — re-measure on load and whenever the box resizes.
-                if (bg && !bg.complete) bg.addEventListener('load', size, { once: true });
-                if (window.ResizeObserver) { try { new ResizeObserver(function () { if (W !== bn.clientWidth || H !== bn.clientHeight) size(); }).observe(bn); } catch (e) {} }
-                function loop(now) {
-                  const t = (now - t0) / 1000; ctx.clearRect(0, 0, W, H);
-                  for (let i = 0; i < ps.length; i++) {
-                    const p = ps[i]; let y = (p.y - p.sp * t) % H; if (y < 0) y += H;
-                    const x = p.x + p.sw * Math.sin(t * .6 + p.ph);
-                    const tw = p.a * (.6 + .4 * Math.sin(t * 1.6 + p.ph));
-                    const g = ctx.createRadialGradient(x, y, 0, x, y, p.r * 4);
-                    g.addColorStop(0, 'rgba(' + p.c[0] + ',' + p.c[1] + ',' + p.c[2] + ',' + tw + ')');
-                    g.addColorStop(1, 'rgba(' + p.c[0] + ',' + p.c[1] + ',' + p.c[2] + ',0)');
-                    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, p.r * 4, 0, 6.2832); ctx.fill();
-                  }
-                  raf = requestAnimationFrame(loop);
-                }
-                bn._start = function () { if (raf) return; if (!W) size(); t0 = performance.now(); raf = requestAnimationFrame(loop); };
-                bn._stop = function () { if (raf) { cancelAnimationFrame(raf); raf = 0; } }; // pause only, keep last frame (no flash)
-                addEventListener('resize', function () { if (raf) size(); });
-              });
-              const pio = new IntersectionObserver(function (es) {
-                es.forEach(function (e) { e.isIntersecting ? (e.target._start && e.target._start()) : (e.target._stop && e.target._stop()); });
-              }, { rootMargin: '300px' });
-              banners.forEach(function (b) { pio.observe(b); });
-            })();
-          } catch (e) {}
-        } catch (e) { /* keep static */ }
+            const ico = '<i class="'+(window.faIcon?window.faIcon(c.icon):('fas '+esc(c.icon||'fa-layer-group')))+'"></i>';
+            return '<a href="category.html?id='+encodeURIComponent(id)+'" class="cat glass" style="--g1:'+esc(c.g1||'#22B4A5')+';--g2:'+esc(c.g2||'#128577')+'">'+
+              '<div class="cat-ico">'+ico+'</div><h3>'+esc(c.title||'')+'</h3><p>'+esc(c.intro||'')+'</p></a>';
+          }).join('');
+        } catch (e) {}
       })();
     </script>
-    <script src="widgets.js?v=51"></script>
-    <script src="coverflow.js?v=3"></script>
-    <script>
-      // Unified card description under every category card (works on static + dynamic cards)
-      (function () {
-        function apply() {
-          document.querySelectorAll('.cat-grid .cat').forEach(function (c) {
-            var h = c.querySelector('h3'), p = c.querySelector('p');
-            if (h && p && window.catDesc) p.textContent = window.catDesc(h.textContent.trim());
-          });
-        }
-        apply();
-        setTimeout(apply, 2200);           // after the Firestore catalog re-renders the grid
-        document.addEventListener('siteconfig', function () { setTimeout(apply, 120); });
-      })();
-    </script>
-    <script type="module">
-      // ===== Live reviews: show approved Firestore reviews on the homepage =====
-      (async function () {
-        const cfg = window.FIREBASE_CONFIG;
-        const box = document.getElementById('liveReviews');
-        if (!cfg || !cfg.apiKey || !box) return;
-        try {
-          const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
-          const { getFirestore, collection, query, where, orderBy, limit, getDocs } =
-            await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
-          const db = getFirestore(initializeApp(cfg));
-          let snap;
-          try {
-            snap = await getDocs(query(collection(db, 'reviews'),
-              where('approved', '==', true), orderBy('createdAt', 'desc'), limit(12)));
-          } catch (e) {
-            // Fallback if composite index is missing
-            snap = await getDocs(query(collection(db, 'reviews'), where('approved', '==', true), limit(12)));
-          }
-          const esc = s => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-          const GG = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIj48cGF0aCBmaWxsPSIjRUE0MzM1IiBkPSJNMjQgOS41YzMuNTQgMCA2LjcxIDEuMjIgOS4yMSAzLjZsNi44NS02Ljg1QzM1LjkgMi4zOCAzMC40NyAwIDI0IDAgMTQuNjIgMCA2LjUxIDUuMzggMi41NiAxMy4yMmw3Ljk4IDYuMTlDMTIuNDMgMTMuNzIgMTcuNzQgOS41IDI0IDkuNXoiLz48cGF0aCBmaWxsPSIjNDI4NUY0IiBkPSJNNDYuOTggMjQuNTVjMC0xLjU3LS4xNS0zLjA5LS4zOC00LjU1SDI0djkuMDJoMTIuOTRjLS41OCAyLjk2LTIuMjYgNS40OC00Ljc4IDcuMThsNy43MyA2Yy40NS0uNCA4LjA5LTcuMjIgOC4wOS0xNy42NXoiLz48cGF0aCBmaWxsPSIjRkJCQzA1IiBkPSJNMTAuNTMgMjguNTljLS40OC0xLjQ1LS43Ni0yLjk5LS43Ni00LjU5czAuMjctMy4xNC43Ni00LjU5bC03Ljk4LTYuMTlDMC45MiAxNi40NiAwIDIwLjEyIDAgMjRjMCAzLjg4LjkyIDcuNTQgMi41NiAxMC43OGw3Ljk3LTYuMTl6Ii8+PHBhdGggZmlsbD0iIzM0QTg1MyIgZD0iTTI0IDQ4YzYuNDggMCAxMS45My0yLjEzIDE1Ljg5LTUuODFsLTcuNzMtNmMtMi4xNSAxLjQ1LTQuOTIgMi4zLTguMTYgMi4zLTYuMjYgMC0xMS41Ny00LjIyLTEzLjQ3LTkuOTFsLTcuOTggNi4xOUM2LjUxIDQyLjYyIDE0LjYyIDQ4IDI0IDQ4eiIvPjwvc3ZnPg==";
-          const hl = t => t.replace(/(مضمون[ةه]?|المضمون[ةه]?|ضمان)/, '<span class="rev-word">$1</span>');
-          const cards = [];
-          snap.forEach(doc => {
-            const d = doc.data();
-            const name = esc(d.name || 'عميل');
-            const rating = Math.max(1, Math.min(5, parseInt(d.rating, 10) || 5));
-            const text = hl(esc(d.text || d.opinion || ''));
-            const av = esc(name.trim().charAt(0) || 'ع');
-            const fb = (d.provider === 'facebook');
-            const badge = fb ? '<span class="gbadge gbadge-fb"><i class="fab fa-facebook-f"></i></span>'
-                             : '<img class="gbadge" src="' + GG + '" alt="Google">';
-            const label = fb ? 'موثّق عبر Facebook' : 'موثّق عبر Google';
-            const stars = '<i class="fas fa-star"></i>'.repeat(rating) + '<i class="fas fa-star off"></i>'.repeat(5 - rating);
-            cards.push('<div class="tcard"><span class="stars">' + stars + '</span><p>' + text +
-              '</p><div class="tby"><span class="av-wrap"><span class="av">' + av + '</span>' + badge +
-              '</span><div><strong>' + name + '</strong><small><i class="fas fa-circle-check"></i> ' + label +
-              '</small></div></div></div>');
-          });
-          box.innerHTML = cards.join('');
-          const emptyEl = document.getElementById('reviewsEmpty');
-          if (emptyEl) emptyEl.style.display = cards.length ? 'none' : 'block';
-        } catch (err) {
-          console.warn('live reviews unavailable', err);
-        }
-      })();
-    </script>
-    <script src="kashida.js?v=1"></script>
-    <script>
-      // scroll-reveal: fade sections/cards up as they enter the viewport
-      (function(){
-        if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-        var sel='.section .head, .platforms-grid, .cat-grid, .svc-grid, .rev-grid, .stats-grid, .trx-faq, .promo-hero, .trx-banner';
-        var els=[].slice.call(document.querySelectorAll(sel));
-        els.forEach(function(e){e.classList.add('reveal');});
-        var io=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}});},{rootMargin:'0px 0px -8% 0px'});
-        els.forEach(function(e){io.observe(e);});
-      })();
-    </script>
-    <script src="theme-switch.js?v=1" defer></script>
-    <script src="nn-store.js?v=1" defer></script>
+    <script src="widgets.js"></script>
 </body>
 </html>
