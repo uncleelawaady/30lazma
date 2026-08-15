@@ -186,3 +186,10 @@ a:focus-visible,button:focus-visible{outline:2px solid #000;outline-offset:2px;}
   .head::after{animation:none;}
   .platforms-grid.in>*,.cat-grid.in>*,.svc-grid.in>*,.rev-grid.in>*,.stats-grid.in>*{transition:none;opacity:1;transform:none;}
 }
+
+/* ============ section banners (user-provided black/gold) ============ */
+.trx-banner{max-width:1180px;margin:2.6rem auto;padding:0 1rem;}
+.trx-banner a{display:block;border-radius:18px;overflow:hidden;
+  box-shadow:0 16px 44px rgba(0,0,0,.26);transition:transform .45s cubic-bezier(.22,1,.36,1),box-shadow .45s;}
+.trx-banner img{width:100%;height:auto;display:block;}
+.trx-banner a:hover{transform:translateY(-5px);box-shadow:0 28px 66px rgba(0,0,0,.42);}
