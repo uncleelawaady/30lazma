@@ -31,7 +31,9 @@ body {
 
 body::before, body::after { display: none !important; }
 .section { background: transparent !important; }
-.section-alt { background: #EBE4D6 !important; }
+.section-alt {
+  background: linear-gradient(180deg, transparent, rgba(95,208,194,.03), transparent) !important;
+}
 .orb { display: none !important; }
 
 /* ===== ANIMATIONS ===== */
@@ -356,7 +358,11 @@ input:focus, textarea:focus, select:focus {
 
 /* ===== FEATURED SECTION ===== */
 .featured-section {
-  padding: 3rem 0;
+  padding: 4rem 0 3rem 0;
+}
+
+.hero {
+  padding-bottom: 2rem;
 }
 
 .section-head {
