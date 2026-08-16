@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NewlyNow — كل خدماتك الرقمية في مكان واحد</title>
-    <meta name="description" content="NewlyNow — متجر الخدمات والاشتراكات الرقمية: سوشيال ميديا، اشتراكات، ألعاب، ذكاء اصطناعي وأكثر.">
-    <link rel="stylesheet" href="style.css?v=48">
-    <link rel="stylesheet" href="strx-theme.css?v=7">
+    <meta name="description" content="NewlyNow — متجر الخدمات الرقمية: سوشيال ميديا، اشتراكات، ألعاب، ذكاء اصطناعي، برمجة، تصميم، وأكثر.">
+    <link rel="stylesheet" href="style.css?v=52">
+    <link rel="stylesheet" href="strx-theme.css?v=8">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,7 +15,7 @@
 </head>
 <body>
 
-    <!-- ===== Top ticker ===== -->
+    <!-- ===== Top Ticker ===== -->
     <div class="top-ticker" id="topTicker"><div class="ticker-track" id="tickerTrack"></div></div>
 
     <!-- ===== Navbar ===== -->
@@ -27,9 +27,11 @@
             </a>
             <ul class="nav-links" id="navLinks">
                 <li><a href="#categories">الأقسام</a></li>
+                <li><a href="#featured">المميزة</a></li>
+                <li><a href="#popular">الأكثر طلباً</a></li>
                 <li><a href="account.html">حسابي</a></li>
                 <li class="nav-m-only"><a href="account.html"><i class="fas fa-right-to-bracket"></i> تسجيل دخول</a></li>
-                <li class="nav-m-only"><a href="https://wa.me/201055578777" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> تواصل الآن</a></li>
+                <li class="nav-m-only"><a href="https://wa.me/201055578777" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> تواصل</a></li>
             </ul>
             <a href="account.html" class="btn btn-ghost btn-sm nav-auth"><i class="fas fa-right-to-bracket"></i> تسجيل دخول</a>
             <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="btn btn-grad btn-sm"><i class="fab fa-whatsapp"></i> تواصل الآن</a>
@@ -54,23 +56,135 @@
         </div>
     </header>
 
+    <!-- ===== Animation Divider ===== -->
+    <div class="divider-section"></div>
+
     <!-- ===== Categories ===== -->
     <section class="section" id="categories">
         <div class="container">
             <div class="head"><span class="eyebrow">الأقسام</span><h2>تصفّح <span class="grad-text">أقسامنا</span></h2></div>
-            <div class="cat-grid">
-                <a href="category.html?id=facebook" class="cat glass" style="--g1:#1877F2;--g2:#0E5AB8"><div class="cat-ico"><i class="fa-brands fa-facebook"></i></div><h3>خدمات فيسبوك</h3><p>متابعين، لايكات، مشاهدات ودعم صفحات.</p></a>
-                <a href="category.html?id=instagram" class="cat glass" style="--g1:#E1306C;--g2:#B81E52"><div class="cat-ico"><i class="fa-brands fa-instagram"></i></div><h3>خدمات إنستجرام</h3><p>متابعين، لايكات، مشاهدات ريلز وستوري.</p></a>
-                <a href="category.html?id=tiktok" class="cat glass" style="--g1:#25F4EE;--g2:#0FB5AE"><div class="cat-ico"><i class="fa-brands fa-tiktok"></i></div><h3>خدمات تيك توك</h3><p>متابعين، لايكات، مشاهدات ومشاهدات البث.</p></a>
-                <a href="category.html?id=youtube" class="cat glass" style="--g1:#FF0000;--g2:#B80000"><div class="cat-ico"><i class="fa-brands fa-youtube"></i></div><h3>خدمات يوتيوب</h3><p>مشتركين، مشاهدات، ساعات مشاهدة وشورتس.</p></a>
-                <a href="category.html?id=telegram" class="cat glass" style="--g1:#229ED9;--g2:#1479A6"><div class="cat-ico"><i class="fa-brands fa-telegram"></i></div><h3>خدمات تيليجرام</h3><p>أعضاء، نقل أعضاء، إعلانات وبوتات.</p></a>
-                <a href="category.html?id=snapchat" class="cat glass" style="--g1:#F7C400;--g2:#D9A800"><div class="cat-ico"><i class="fa-brands fa-snapchat"></i></div><h3>خدمات سناب شات</h3><p>متابعين، مشاهدات ورفع النقاط.</p></a>
-                <a href="category.html?id=ai" class="cat glass" style="--g1:#22B4A5;--g2:#128577"><div class="cat-ico"><i class="fas fa-robot"></i></div><h3>الذكاء الاصطناعي</h3><p>ChatGPT، Claude، Gemini، Midjourney.</p></a>
-                <a href="category.html?id=subscriptions" class="cat glass" style="--g1:#F7941E;--g2:#D97908"><div class="cat-ico"><i class="fas fa-clapperboard"></i></div><h3>الاشتراكات الرقمية</h3><p>Netflix، Spotify، Canva، Microsoft 365.</p></a>
-                <a href="category.html?id=games" class="cat glass" style="--g1:#7C5CFC;--g2:#5A3FD0"><div class="cat-ico"><i class="fas fa-gamepad"></i></div><h3>شحن الألعاب</h3><p>UC، Diamonds، CP، V-Bucks وبطاقات.</p></a>
-                <a href="category.html?id=design" class="cat glass" style="--g1:#F7941E;--g2:#22B4A5"><div class="cat-ico"><i class="fas fa-palette"></i></div><h3>التصميم</h3><p>شعارات، هوية، موشن وصور AI.</p></a>
-                <a href="category.html?id=programming" class="cat glass" style="--g1:#22B4A5;--g2:#0E5AB8"><div class="cat-ico"><i class="fas fa-code"></i></div><h3>البرمجة</h3><p>مواقع، متاجر، APIs وأنظمة إدارة.</p></a>
-                <a href="category.html?id=finance" class="cat glass" style="--g1:#17A85E;--g2:#0E7A45"><div class="cat-ico"><i class="fas fa-wallet"></i></div><h3>الخدمات المالية</h3><p>PayPal، Wise، Payoneer، Binance.</p></a>
+            <div class="cat-grid" data-stagger>
+                <a href="category.html?id=facebook" class="cat glass" style="--g1:#1877F2;--g2:#0E5AB8"><div class="cat-ico"><i class="fa-brands fa-facebook"></i></div><h3>فيسبوك</h3><p>متابعين، لايكات، مشاهدات</p></a>
+                <a href="category.html?id=instagram" class="cat glass" style="--g1:#E1306C;--g2:#B81E52"><div class="cat-ico"><i class="fa-brands fa-instagram"></i></div><h3>إنستجرام</h3><p>متابعين، لايكات، مشاهدات</p></a>
+                <a href="category.html?id=tiktok" class="cat glass" style="--g1:#25F4EE;--g2:#0FB5AE"><div class="cat-ico"><i class="fa-brands fa-tiktok"></i></div><h3>تيك توك</h3><p>متابعين، لايكات، مشاهدات</p></a>
+                <a href="category.html?id=youtube" class="cat glass" style="--g1:#FF0000;--g2:#B80000"><div class="cat-ico"><i class="fa-brands fa-youtube"></i></div><h3>يوتيوب</h3><p>مشتركين، مشاهدات، ساعات</p></a>
+                <a href="category.html?id=telegram" class="cat glass" style="--g1:#229ED9;--g2:#1479A6"><div class="cat-ico"><i class="fa-brands fa-telegram"></i></div><h3>تيليجرام</h3><p>أعضاء، نقل، إعلانات</p></a>
+                <a href="category.html?id=snapchat" class="cat glass" style="--g1:#F7C400;--g2:#D9A800"><div class="cat-ico"><i class="fa-brands fa-snapchat"></i></div><h3>سناب شات</h3><p>متابعين، مشاهدات، نقاط</p></a>
+                <a href="category.html?id=ai" class="cat glass" style="--g1:#22B4A5;--g2:#128577"><div class="cat-ico"><i class="fas fa-robot"></i></div><h3>ذكاء اصطناعي</h3><p>ChatGPT، Claude، Gemini</p></a>
+                <a href="category.html?id=subscriptions" class="cat glass" style="--g1:#F7941E;--g2:#D97908"><div class="cat-ico"><i class="fas fa-clapperboard"></i></div><h3>الاشتراكات</h3><p>Netflix، Spotify، Canva</p></a>
+                <a href="category.html?id=games" class="cat glass" style="--g1:#7C5CFC;--g2:#5A3FD0"><div class="cat-ico"><i class="fas fa-gamepad"></i></div><h3>شحن الألعاب</h3><p>UC، Diamonds، CP، V-Bucks</p></a>
+                <a href="category.html?id=design" class="cat glass" style="--g1:#F7941E;--g2:#22B4A5"><div class="cat-ico"><i class="fas fa-palette"></i></div><h3>التصميم</h3><p>شعارات، هوية، موشن</p></a>
+                <a href="category.html?id=programming" class="cat glass" style="--g1:#22B4A5;--g2:#0E5AB8"><div class="cat-ico"><i class="fas fa-code"></i></div><h3>البرمجة</h3><p>مواقع، متاجر، APIs</p></a>
+                <a href="category.html?id=finance" class="cat glass" style="--g1:#17A85E;--g2:#0E7A45"><div class="cat-ico"><i class="fas fa-wallet"></i></div><h3>الخدمات المالية</h3><p>PayPal، Wise، Payoneer</p></a>
+                <a href="category.html?id=linkedin" class="cat glass" style="--g1:#0A66C2;--g2:#055399"><div class="cat-ico"><i class="fa-brands fa-linkedin"></i></div><h3>لينكدإن</h3><p>متابعين، تفاعلات، مشاهدات</p></a>
+                <a href="category.html?id=twitter" class="cat glass" style="--g1:#1DA1F2;--g2:#1578C6"><div class="cat-ico"><i class="fa-brands fa-x-twitter"></i></div><h3>إكس (تويتر)</h3><p>متابعين، لايكات، إعادات</p></a>
+                <a href="category.html?id=pinterest" class="cat glass" style="--g1:#E60023;--g2:#B4001B"><div class="cat-ico"><i class="fa-brands fa-pinterest"></i></div><h3>بينترست</h3><p>متابعين، حفظ، مشاهدات</p></a>
+                <a href="category.html?id=discord" class="cat glass" style="--g1:#5865F2;--g2:#4250D3"><div class="cat-ico"><i class="fa-brands fa-discord"></i></div><h3>ديسكورد</h3><p>أعضاء، رسائل، مشاهدات</p></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Animation Divider ===== -->
+    <div class="divider-section"></div>
+
+    <!-- ===== Featured Services ===== -->
+    <section class="section section-alt" id="featured">
+        <div class="container">
+            <div class="head"><span class="eyebrow">المميزة</span><h2><span class="grad-text">خدماتنا المتميزة</span></h2></div>
+            <div class="services-grid" data-stagger>
+                <div class="svc glass reveal">
+                    <div class="svc-icon"><i class="fas fa-bolt"></i></div>
+                    <h3>تنفيذ فوري</h3>
+                    <p>جميع الخدمات تُنفذ بسرعة فائقة مع ضمان الجودة والأمان.</p>
+                </div>
+                <div class="svc glass reveal">
+                    <div class="svc-icon"><i class="fas fa-shield-halved"></i></div>
+                    <h3>حماية 100%</h3>
+                    <p>حسابك آمن تماماً مع بيانات محفوظة وعدم الكشف عن الهوية.</p>
+                </div>
+                <div class="svc glass reveal">
+                    <div class="svc-icon"><i class="fas fa-headset"></i></div>
+                    <h3>دعم 24/7</h3>
+                    <p>فريق دعم متاح طوال الوقت على WhatsApp و Telegram.</p>
+                </div>
+                <div class="svc glass reveal">
+                    <div class="svc-icon"><i class="fas fa-check-circle"></i></div>
+                    <h3>ضمان الرضا</h3>
+                    <p>نضمن رضاك عن الخدمة أو استرجاع الأموال كاملة.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Animation Divider ===== -->
+    <div class="divider-section"></div>
+
+    <!-- ===== Popular Services ===== -->
+    <section class="section" id="popular">
+        <div class="container">
+            <div class="head"><span class="eyebrow">الأكثر طلباً</span><h2>الخدمات <span class="grad-text">الأكثر شيوعاً</span></h2></div>
+            <div class="popular-grid" data-stagger>
+                <a href="category.html?id=instagram" class="pop-card glass reveal">
+                    <span class="pop-badge"><i class="fas fa-fire"></i> الأكثر</span>
+                    <div class="pop-ico"><i class="fa-brands fa-instagram"></i></div>
+                    <h3>1000 متابع إنستجرام</h3>
+                    <p>متابعين حقيقيين نشطين جداً</p>
+                    <span class="pop-price">حسب الطلب</span>
+                </a>
+                <a href="category.html?id=tiktok" class="pop-card glass reveal">
+                    <span class="pop-badge"><i class="fas fa-fire"></i> شهير</span>
+                    <div class="pop-ico"><i class="fa-brands fa-tiktok"></i></div>
+                    <h3>1000 متابع تيك توك</h3>
+                    <p>متابعين خليج سعودي</p>
+                    <span class="pop-price">حسب الطلب</span>
+                </a>
+                <a href="category.html?id=youtube" class="pop-card glass reveal">
+                    <span class="pop-badge"><i class="fas fa-fire"></i> ساخن</span>
+                    <div class="pop-ico"><i class="fa-brands fa-youtube"></i></div>
+                    <h3>1000 مشترك يوتيوب</h3>
+                    <p>مشتركين عرب حقيقيين</p>
+                    <span class="pop-price">حسب الطلب</span>
+                </a>
+                <a href="category.html?id=facebook" class="pop-card glass reveal">
+                    <span class="pop-badge"><i class="fas fa-fire"></i> مشهور</span>
+                    <div class="pop-ico"><i class="fa-brands fa-facebook"></i></div>
+                    <h3>100 لايكة فيسبوك</h3>
+                    <p>لايكات حقيقية من عرب</p>
+                    <span class="pop-price">حسب الطلب</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Animation Divider ===== -->
+    <div class="divider-section"></div>
+
+    <!-- ===== How It Works ===== -->
+    <section class="section section-alt">
+        <div class="container">
+            <div class="head"><span class="eyebrow">الخطوات</span><h2>كيف <span class="grad-text">نعمل</span>؟</h2></div>
+            <div class="steps-grid">
+                <div class="step glass reveal"><span class="step-n">1</span><h4>اختر الخدمة</h4><p>ابحث في أقسامنا واختر الخدمة المناسبة.</p></div>
+                <div class="step glass reveal"><span class="step-n">2</span><h4>تواصل معنا</h4><p>ابعتلنا الطلب على WhatsApp أو Telegram.</p></div>
+                <div class="step glass reveal"><span class="step-n">3</span><h4>تأكيد وتنفيذ</h4><p>نأكد التفاصيل وننفذ الخدمة فوراً.</p></div>
+                <div class="step glass reveal"><span class="step-n">4</span><h4>التسليم والدعم</h4><p>نسلمك الخدمة ونتابع معك حتى رضاك الكامل.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Animation Divider ===== -->
+    <div class="divider-section"></div>
+
+    <!-- ===== Call to Action ===== -->
+    <section class="section">
+        <div class="container">
+            <div class="cta-box glass">
+                <h2>ابدأ <span class="grad-text">الآن</span></h2>
+                <p>اختر من آلاف الخدمات الرقمية واحصل على أفضل سعر مع تنفيذ فوري.</p>
+                <div class="cta-actions">
+                    <a href="#categories" class="btn btn-grad btn-lg"><i class="fas fa-grip"></i> تصفح الخدمات</a>
+                    <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="btn btn-ghost btn-lg"><i class="fab fa-whatsapp"></i> تواصل الآن</a>
+                </div>
             </div>
         </div>
     </section>
@@ -80,53 +194,38 @@
         <div class="container footer-grid">
             <div class="foot-brand">
                 <a href="#hero" class="brand"><img src="assets/logo.png" alt="NewlyNow" class="brand-logo-img"><span class="brand-name">NewlyNow<em>.com</em></span></a>
-                <p>متجر الخدمات والاشتراكات الرقمية.</p>
+                <p>متجر الخدمات الرقمية الموثوقة.</p>
                 <div class="foot-social">
                     <a href="https://wa.me/201055578777" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                     <a href="https://t.me/elawaadyofficial" target="_blank" rel="noopener" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
                 </div>
             </div>
             <div class="foot-col">
-                <h4>روابط</h4>
+                <h4>الروابط</h4>
                 <a href="#categories">الأقسام</a>
                 <a href="account.html">حسابي</a>
             </div>
             <div class="foot-col">
-                <h4>تواصل</h4>
+                <h4>التواصل</h4>
                 <a href="https://wa.me/201055578777" target="_blank" rel="noopener" dir="ltr">+20 105 557 8777</a>
                 <a href="https://t.me/elawaadyofficial" target="_blank" rel="noopener">@elawaadyofficial</a>
             </div>
         </div>
-        <div class="foot-bottom">© 2026 NewlyNow.com — جميع الحقوق محفوظة</div>
+        <div class="foot-bottom">© 2026 NewlyNow.com — جميع الحقوق محفوظة | كل ما هو جديد... الآن</div>
     </footer>
 
+    <!-- ===== WhatsApp FAB ===== -->
     <a href="https://wa.me/201055578777" target="_blank" rel="noopener" class="fab-wa" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
 
+    <!-- ===== Scripts ===== -->
+    <script src="animations.js"></script>
+    <script src="image-manager.js"></script>
     <script src="script.js"></script>
     <script src="firebase-config.js"></script>
     <script src="config.js"></script>
     <script src="cart.js"></script>
     <script src="data.js"></script>
     <script src="catalog.js"></script>
-    <script>
-      // render categories from the dashboard catalog (fallback: keep static tiles)
-      (async function () {
-        try {
-          const cat = window.getCatalog && await window.getCatalog();
-          if (!cat) return;
-          const grid = document.querySelector('.cat-grid'); if (!grid) return;
-          const esc = s => String(s || '').replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
-          const ids = Object.keys(cat).filter(id => cat[id].active !== false).sort((a,b)=>(cat[a].order||0)-(cat[b].order||0));
-          if (!ids.length) return;
-          grid.innerHTML = ids.map(id => {
-            const c = cat[id];
-            const ico = '<i class="'+(window.faIcon?window.faIcon(c.icon):('fas '+esc(c.icon||'fa-layer-group')))+'"></i>';
-            return '<a href="category.html?id='+encodeURIComponent(id)+'" class="cat glass" style="--g1:'+esc(c.g1||'#22B4A5')+';--g2:'+esc(c.g2||'#128577')+'">'+
-              '<div class="cat-ico">'+ico+'</div><h3>'+esc(c.title||'')+'</h3><p>'+esc(c.intro||'')+'</p></a>';
-          }).join('');
-        } catch (e) {}
-      })();
-    </script>
     <script src="widgets.js"></script>
 </body>
 </html>

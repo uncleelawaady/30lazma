@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>إتمام الطلب | NewlyNow.com</title>
-    <link rel="stylesheet" href="style.css?v=48">
-    <link rel="stylesheet" href="strx-theme.css?v=7">
+    <link rel="stylesheet" href="style.css?v=52">
+    <link rel="stylesheet" href="strx-theme.css?v=8">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,7 +14,6 @@
 </head>
 <body>
     <div class="top-ticker" id="topTicker"><div class="ticker-track" id="tickerTrack"></div></div>
-    <!-- Navbar -->
     <nav class="nav" id="nav">
         <div class="container nav-inner">
             <a href="index.html" class="brand">
@@ -26,8 +25,6 @@
     </nav>
 
     <header class="cat-hero" id="catHero">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
         <div class="container">
             <a href="index.html" class="back-link"><i class="fas fa-arrow-right"></i> رجوع للمتجر</a>
             <div class="cat-hero-head">
@@ -37,44 +34,43 @@
                     <h1 class="grad-text">إتمام الطلب</h1>
                 </div>
             </div>
-            <p class="cat-hero-intro">راجع خدماتك، سجّل بياناتك، ونأكد طلبك — كل عميل بيتحفظ عندنا لمتابعة طلبه وخدمته بأمان.</p>
+            <p class="cat-hero-intro">راجع خدماتك، سجّل بياناتك، وأتمّ الطلب بأمان.</p>
         </div>
     </header>
 
     <section class="section">
         <div class="container checkout-wrap">
-            <!-- order summary -->
             <div class="checkout-summary glass">
                 <h3 class="co-title"><i class="fas fa-list-check"></i> ملخص الطلب</h3>
                 <div id="coItems"></div>
-                <div class="co-count-row"><span>إجمالي عدد الخدمات</span><strong id="coCount">0</strong></div>
-                <p class="co-price-note"><i class="fas fa-circle-info"></i> السعر النهائي يتحدد بعد التأكيد حسب مواصفات كل خدمة.</p>
+                <div class="co-count-row"><span>إجمالي الخدمات</span><strong id="coCount">0</strong></div>
+                <p class="co-price-note"><i class="fas fa-circle-info"></i> السعر النهائي يتحدد عند التأكيد.</p>
             </div>
 
-            <!-- customer form -->
             <div class="checkout-form glass">
-                <h3 class="co-title"><i class="fas fa-user-check"></i> بيانات العميل</h3>
+                <h3 class="co-title"><i class="fas fa-user-check"></i> بيانات الطلب</h3>
                 <form id="coForm">
                     <label>الاسم الكامل *</label>
-                    <input type="text" id="coName" required placeholder="اكتب اسمك">
+                    <input type="text" id="coName" required placeholder="اسمك">
                     <label>رقم الواتساب *</label>
                     <input type="tel" id="coPhone" required placeholder="01xxxxxxxxx" inputmode="tel">
-                    <label>ملاحظات الطلب (اختياري)</label>
-                    <textarea id="coNotes" rows="3" placeholder="أي تفاصيل إضافية تساعدنا نجهّز طلبك بشكل أفضل..."></textarea>
+                    <label>ملاحظات إضافية</label>
+                    <textarea id="coNotes" rows="3" placeholder="أي تفاصيل تخصك..."></textarea>
                     <button type="submit" class="btn btn-grad btn-lg co-submit" id="coSubmit">
                         <i class="fab fa-whatsapp"></i> تأكيد الطلب
                     </button>
-                    <p class="co-secure"><i class="fas fa-lock"></i> بياناتك محفوظة بأمان وتُستخدم لمتابعة طلبك فقط.</p>
-                    <p class="co-empty-msg" id="coEmptyMsg" style="display:none">سلتك فاضية — <a href="index.html#categories">تصفّح الخدمات</a> وأضف اللي عايزه.</p>
+                    <p class="co-secure"><i class="fas fa-lock"></i> بياناتك محفوظة وآمنة.</p>
+                    <p class="co-empty-msg" id="coEmptyMsg" style="display:none">السلة فاضية — <a href="index.html#categories">تصفّح الخدمات</a></p>
                 </form>
             </div>
         </div>
     </section>
 
     <footer class="footer">
-        <div class="foot-bottom">© 2026 NewlyNow.com — جميع الحقوق محفوظة | كل ما هو جديد... الآن</div>
+        <div class="foot-bottom">© 2026 NewlyNow.com — جميع الحقوق محفوظة</div>
     </footer>
 
+    <script src="animations.js"></script>
     <script src="cart.js"></script>
     <script src="firebase-config.js"></script>
     <script type="module">
@@ -96,30 +92,26 @@
         }
         box.innerHTML = items.map(it =>
           '<div class="co-item"><div><strong>' + esc(it.name) + '</strong>' +
-          (it.category ? '<small>' + esc(it.category) + '</small>' : '') +
-          (it.link ? '<small class="ci-link"><i class="fas fa-link"></i> ' + esc(it.link) + '</small>' : '') + '</div>' +
+          (it.category ? '<small>' + esc(it.category) + '</small>' : '') + '</div>' +
           '<span class="co-qty">×' + (it.qty || 1) + '</span></div>'
         ).join('');
         return items;
       }
 
       function orderNumber() { return 'EL-' + (10000 + Math.floor(Math.random() * 89999)); }
+
       function buildOrderText(name, phone, notes, items, orderNo) {
-        let t = 'مرحبًا فريق NewlyNow 👋\n';
-        t += 'أنا أريد إتمام طلب من المتجر\n\n';
-        t += 'اسم المستخدم: ' + name + '\n';
-        t += 'رقم الهاتف: ' + phone + '\n';
+        let t = 'مرحبًا فريق NewlyNow\n';
+        t += 'أريد إتمام طلب\n\n';
+        t += 'الاسم: ' + name + '\n';
+        t += 'الهاتف: ' + phone + '\n';
         t += 'رقم الطلب: ' + orderNo + '\n\n';
-        t += 'الخدمات المطلوبة:\n';
+        t += 'الخدمات:\n';
         items.forEach((it, i) => {
-          t += (i + 1) + ') ' + it.name + ' ×' + (it.qty || 1) + (it.category ? ' — ' + it.category : '') + '\n';
-          if (it.link) t += '   🔗 الرابط: ' + it.link + '\n';
-          if (it.coupon) t += '   🎟️ كوبون: ' + it.coupon + '\n';
-          if (it.notes) t += '   📝 ' + it.notes + '\n';
+          t += (i + 1) + ') ' + it.name + ' ×' + (it.qty || 1) + '\n';
         });
-        t += '\nإجمالي السعر: حسب الطلب (يُحدد بعد التأكيد)\n';
-        if (notes) t += '\nملاحظات المستخدم: ' + notes + '\n';
-        t += '\nبرجاء متابعة الطلب وإتمام الصفقة.';
+        t += '\nإجمالي السعر: حسب الطلب\n';
+        if (notes) t += '\nملاحظات: ' + notes + '\n';
         return t;
       }
 
@@ -135,10 +127,9 @@
         if (!name || !phone) return;
         const btn = document.getElementById('coSubmit');
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التأكيد...';
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري...';
         const orderNo = orderNumber();
 
-        // Save order + customer to Firebase (best effort — never blocks the order)
         try {
           const cfg = window.FIREBASE_CONFIG;
           if (cfg && cfg.apiKey) {
@@ -148,16 +139,14 @@
             const db = getFirestore(initializeApp(cfg));
             const payload = {
               orderNo, name, phone, notes,
-              items: items.map(it => ({ name: it.name, category: it.category || '', qty: it.qty || 1, link: it.link || '', notes: it.notes || '', coupon: it.coupon || '', code: it.code || '' })),
+              items: items.map(it => ({ name: it.name, category: it.category || '', qty: it.qty || 1 })),
               count: items.reduce((s, x) => s + (x.qty || 1), 0),
-              status: 'new', source: 'store', createdAt: serverTimestamp()
+              status: 'new', createdAt: serverTimestamp()
             };
-            try { await addDoc(collection(db, 'customers'), { name, phone, source: 'order', createdAt: serverTimestamp() }); } catch (e) {}
             try { await addDoc(collection(db, 'orders'), payload); } catch (e) {}
           }
-        } catch (err) { console.warn('order save skipped', err); }
+        } catch (err) {}
 
-        // Always send the order to WhatsApp to complete
         const text = buildOrderText(name, phone, notes, items, orderNo);
         window.Cart && window.Cart.clear();
         window.location.href = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(text);
@@ -165,8 +154,5 @@
     </script>
     <script src="config.js?v=48"></script>
     <script src="widgets.js?v=48"></script>
-    <script src="chatbot-seed.js?v=1"></script>
-    <script src="chatbot.js?v=3"></script>
-    <script src="kashida.js?v=1"></script>
 </body>
 </html>
