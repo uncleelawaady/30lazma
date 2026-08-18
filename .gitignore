@@ -1,0 +1,21 @@
+# أسرار — لا تُرفع أبداً
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+serviceAccountKey.json
+firebase-adminsdk*.json
+
+# تبعيات ومخرجات بناء
+node_modules/
+dist/
+build/
+.firebase/
+
+# سجلات ومؤقتات
+*.log
+npm-debug.log*
+.cache/
+.DS_Store
+Thumbs.db

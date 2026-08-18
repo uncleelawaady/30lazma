@@ -1,0 +1,79 @@
+rules_version = '2';
+
+// =====================================================================
+//  قواعد أمان Firestore — مشروع elwaset-store
+//  انشرها من Firebase Console > Firestore > Rules، أو:
+//      firebase deploy --only firestore:rules
+//
+//  لماذا هذا الملف مهم:
+//  مفتاح Firebase في firebase-config.js عام بالتصميم ويظهر لأي زائر.
+//  الشيء الوحيد الذي يمنع القراءة أو الكتابة غير المصرح بها هو هذه
+//  القواعد. بدونها (أو في وضع الاختبار المفتوح) يستطيع أي شخص قراءة
+//  بيانات العملاء أو حذف التقييمات.
+// =====================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- دوال مساعدة ----------
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // التقييم الوارد يجب أن يطابق الشكل المتوقع تماماً
+    function validReview(d) {
+      return d.keys().hasOnly(['name', 'email', 'phone', 'uid', 'photo',
+                               'source', 'rating', 'text', 'approved', 'createdAt'])
+        && d.name is string   && d.name.size()  >= 2  && d.name.size()  <= 60
+        && d.text is string   && d.text.size()  >= 3  && d.text.size()  <= 1000
+        && d.rating is int    && d.rating >= 1        && d.rating <= 5
+        // لا يستطيع أحد نشر تقييم معتمد من تلقاء نفسه — الاعتماد من الكونسول فقط
+        && d.approved == false
+        && d.source in ['google', 'phone']
+        && d.email is string  && d.email.size() <= 120
+        && d.phone is string  && d.phone.size() <= 20
+        && d.photo is string  && d.photo.size() <= 500;
+    }
+
+    function validCustomer(d) {
+      return d.name is string  && d.name.size()  >= 2 && d.name.size()  <= 60
+        && (!('email' in d) || (d.email is string && d.email.size() <= 120))
+        && (!('phone' in d) || (d.phone is string && d.phone.size() <= 20))
+        && (!('photo' in d) || (d.photo is string && d.photo.size() <= 500));
+    }
+
+    // ---------- التقييمات ----------
+    match /reviews/{id} {
+      // الزوار يقرؤون التقييمات المعتمدة فقط — غير المعتمدة تبقى مخفية
+      allow read: if resource.data.approved == true;
+
+      // أي زائر يستطيع إرسال تقييم، لكن بشكل مقيّد وبحالة "غير معتمد"
+      allow create: if validReview(request.resource.data);
+
+      // لا تعديل ولا حذف من العميل إطلاقاً — الإدارة من Firebase Console
+      allow update, delete: if false;
+    }
+
+    // ---------- بيانات العملاء (تحتوي بيانات شخصية) ----------
+    match /customers/{id} {
+      // ممنوع القراءة من العميل نهائياً — الاطلاع من الكونسول فقط.
+      // هذا أهم سطر في الملف: يمنع سحب قائمة العملاء وأرقام هواتفهم.
+      allow read: if false;
+
+      // المستخدم المسجّل بحساب Google يكتب مستنده الخاص فقط
+      allow create, update: if isSignedIn()
+        && request.auth.uid == id
+        && validCustomer(request.resource.data);
+
+      // تسجيل برقم الهاتف (بدون مصادقة) — إنشاء فقط، بلا تعديل ولا حذف
+      allow create: if !isSignedIn() && validCustomer(request.resource.data);
+
+      allow delete: if false;
+    }
+
+    // ---------- الافتراضي: رفض كل ما سبق عدم تغطيته ----------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -5,33 +5,63 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+/* =====================================================================
+   نمط SaaS فاتح — خلفية بيضاء، كروت بيضاء، لمسة برتقالية دافئة
+   ===================================================================== */
 :root {
-    --bg: #06110f;
-    --bg-2: #0a1a17;
-    --yellow: #FFD400;
-    --orange: #FF8A00;
-    --pink: #17A85E;
-    --purple: #0E7A45;
-    --violet: #17C8AC;
-    --teal: #17C8AC;
-    --text: #F2F6F5;
-    --muted: #97A6A2;
-    --dim: #5E706C;
-    --glass: rgba(18, 150, 132, 0.06);
-    --glass-brd: rgba(34, 210, 180, 0.16);
-    --grad: linear-gradient(90deg, #FFD400, #4FBE6C 52%, #0E7A45);
-    --grad-btn: linear-gradient(90deg, #FFD400 0%, #2AA85E 45%, #0A5A38 100%);
-    --radius: 24px;
-    --tr: all .35s cubic-bezier(.22,1,.36,1);
+    /* الأسطح */
+    --bg: #FFFFFF;
+    --bg-2: #FAF8F6;
+    --bg-3: #F4F1ED;
+    --card: #FFFFFF;
+
+    /* البرتقالي — من نسيج المرجع */
+    --orange: #D2691E;
+    --orange-600: #B4530F;
+    --orange-400: #E8904F;
+    --orange-100: #FBE3CE;
+    --orange-50: #FDF5EE;
+
+    /* أسماء قديمة مُعاد توجيهها حتى لا ينكسر أي شيء */
+    --yellow: #E8904F;
+    --pink: #D2691E;
+    --purple: #B4530F;
+    --violet: #D2691E;
+    --teal: #B4530F;
+
+    /* النصوص — رمادي دافئ يناسب البرتقالي */
+    --text: #1C1917;
+    --muted: #57534E;
+    --dim: #8C857E;
+
+    /* الحدود والأسطح الزجاجية → كروت بيضاء بحد رفيع */
+    --line: #E9E5E0;
+    --glass: #FFFFFF;
+    --glass-brd: #E9E5E0;
+
+    /* ظلال SaaS الطبقية */
+    --sh-xs: 0 1px 2px rgba(28, 25, 23, .05);
+    --sh-sm: 0 1px 3px rgba(28, 25, 23, .07), 0 1px 2px rgba(28, 25, 23, .04);
+    --sh-md: 0 4px 12px rgba(28, 25, 23, .07), 0 2px 4px rgba(28, 25, 23, .04);
+    --sh-lg: 0 12px 32px rgba(28, 25, 23, .09), 0 4px 8px rgba(28, 25, 23, .04);
+    --sh-orange: 0 8px 24px rgba(210, 105, 30, .22);
+
+    --grad: linear-gradient(90deg, #B4530F, #D2691E 55%, #E8904F);
+    --grad-btn: linear-gradient(135deg, #D2691E 0%, #B4530F 100%);
+
+    --radius: 16px;
+    --radius-lg: 22px;
+    --tr: all .28s cubic-bezier(.22,1,.36,1);
 }
 
 html { scroll-behavior: smooth; }
 
 body {
     font-family: 'IBM Plex Sans Arabic', 'Cairo', sans-serif;
+    /* خلفية بيضاء بتوهج برتقالي خفيف أعلى الصفحة — توقيع SaaS */
     background:
-        linear-gradient(180deg, rgba(5,17,17,.62), rgba(4,15,16,.82)),
-        url('assets/bg-grid.jpg') center top / cover no-repeat,
+        radial-gradient(900px 480px at 78% -8%, rgba(210, 105, 30, .10), transparent 62%),
+        radial-gradient(760px 420px at 12% 4%, rgba(232, 144, 79, .08), transparent 60%),
         var(--bg);
     background-attachment: fixed;
     color: var(--text);
@@ -661,3 +691,322 @@ body.lb-open { overflow: hidden; }
 
 /* small platform brand-mark on chips */
 .chip .plat-ic { font-size: 1.02rem !important; opacity: 1 !important; }
+
+/* =====================================================================
+   طبقة نمط SaaS — كروت بيضاء، ظلال ناعمة، حدود رفيعة، مساحات مريحة
+   تُطبَّق فوق القواعد القديمة لتحويل الواجهة من داكن إلى فاتح احترافي.
+   ===================================================================== */
+
+/* ---------- الأسطح: كل ما كان زجاجياً داكناً يصبح كرت أبيض ---------- */
+.card, .glass, .service-card, .project-card, .domain-card, .skill-card,
+.stat-card, .tcard, .proof-card, .channel-card, .exp-item, .panel,
+.review-card, .rev-user-card, .cat-card, .box, .feature, .info-card,
+section > .container > .grid > *, .grid > .item {
+    background: var(--card) !important;
+    border: 1px solid var(--line) !important;
+    box-shadow: var(--sh-sm);
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-radius: var(--radius);
+    transition: var(--tr);
+}
+.card:hover, .service-card:hover, .project-card:hover, .domain-card:hover,
+.skill-card:hover, .tcard:hover, .proof-card:hover, .channel-card:hover,
+.cat-card:hover, .feature:hover {
+    box-shadow: var(--sh-lg);
+    border-color: var(--orange-100) !important;
+    transform: translateY(-3px);
+}
+
+/* ---------- النصوص ---------- */
+body, p, li, td, span, small, label, .lead, .desc {
+    color: var(--text);
+}
+p, .lead, .desc, .muted, small { color: var(--muted); }
+h1, h2, h3, h4, h5, strong, b { color: var(--text); }
+.dim, .hint, .meta, .when { color: var(--dim); }
+a { color: var(--orange-600); }
+a:hover { color: var(--orange); }
+
+/* ---------- الهيدر: شريط أبيض شفاف مع حد رفيع ---------- */
+header, .nav, #nav, .site-header, .navbar {
+    background: rgba(255, 255, 255, .82) !important;
+    backdrop-filter: saturate(180%) blur(14px);
+    -webkit-backdrop-filter: saturate(180%) blur(14px);
+    border-bottom: 1px solid var(--line) !important;
+    box-shadow: none !important;
+}
+.nav a, #nav a, .nav-links a { color: var(--muted) !important; font-weight: 600; }
+.nav a:hover, #nav a:hover, .nav-links a:hover,
+.nav a.active, .nav-links a.active { color: var(--orange-600) !important; }
+.nav-links.open { background: #fff !important; border: 1px solid var(--line); box-shadow: var(--sh-lg); }
+
+/* ---------- الأزرار: نمط SaaS ---------- */
+.btn, button.btn, .btn-primary, .cta, a.btn {
+    border-radius: 10px;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    transition: var(--tr);
+    border: 1px solid transparent;
+}
+.btn-primary, .btn.primary, .cta-primary, .btn-grad {
+    background: var(--grad-btn) !important;
+    color: #fff !important;
+    box-shadow: var(--sh-orange);
+}
+.btn-primary:hover, .btn.primary:hover, .cta-primary:hover, .btn-grad:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(210, 105, 30, .3);
+}
+.btn-ghost, .btn.ghost, .btn-outline, .btn-secondary {
+    background: #fff !important;
+    color: var(--text) !important;
+    border: 1px solid var(--line) !important;
+    box-shadow: var(--sh-xs);
+}
+.btn-ghost:hover, .btn.ghost:hover, .btn-outline:hover, .btn-secondary:hover {
+    border-color: var(--orange-400) !important;
+    color: var(--orange-600) !important;
+    background: var(--orange-50) !important;
+}
+
+/* ---------- الشارات والوسوم ---------- */
+.badge, .chip, .tag, .pill, .kicker, .label {
+    background: var(--orange-50) !important;
+    color: var(--orange-600) !important;
+    border: 1px solid var(--orange-100) !important;
+    border-radius: 999px;
+    font-weight: 700;
+}
+
+/* ---------- الأقسام المتناوبة ---------- */
+section:nth-of-type(even) { background: var(--bg-2); }
+section { border-top: 1px solid transparent; }
+
+/* ---------- النماذج ---------- */
+input, textarea, select {
+    background: #fff !important;
+    color: var(--text) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 10px;
+    box-shadow: var(--sh-xs);
+    transition: var(--tr);
+}
+input::placeholder, textarea::placeholder { color: var(--dim); }
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--orange-400) !important;
+    box-shadow: 0 0 0 3px rgba(210, 105, 30, .12);
+}
+
+/* ---------- النجوم والتقييمات ---------- */
+.stars i, .stars .on, #rfStars span.on, .rating i.on { color: var(--orange) !important; }
+#rfStars span { color: var(--line); cursor: pointer; transition: var(--tr); }
+#rfStars span.on { color: var(--orange) !important; }
+
+/* ---------- الفوتر ---------- */
+footer, .site-footer {
+    background: var(--bg-3) !important;
+    border-top: 1px solid var(--line) !important;
+    color: var(--muted);
+}
+footer a, .site-footer a { color: var(--muted) !important; }
+footer a:hover, .site-footer a:hover { color: var(--orange-600) !important; }
+
+/* ---------- تدرّج العناوين ---------- */
+.grad-text, .gradient, h1 .grad, h2 .grad, .hero h1 span {
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* ---------- الأفاتار والأيقونات الدائرية ---------- */
+.av, .avatar, .icon-circle, .ico {
+    background: var(--grad-btn) !important;
+    color: #fff !important;
+    box-shadow: var(--sh-orange);
+}
+
+/* ---------- الخطوط الفاصلة ---------- */
+hr, .divider, .sep { border-color: var(--line) !important; background: var(--line); }
+
+/* ---------- إزالة التوهجات الداكنة الموروثة ---------- */
+[class*="glow"], .halo, .orb { opacity: .5; filter: saturate(.6); }
+
+/* ---------- تحسين قابلية القراءة على الفاتح ---------- */
+::selection { background: var(--orange-100); color: var(--orange-600); }
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-track { background: var(--bg-2); }
+::-webkit-scrollbar-thumb { background: #D9D3CC; border-radius: 999px; border: 3px solid var(--bg-2); }
+::-webkit-scrollbar-thumb:hover { background: var(--orange-400); }
+
+/* ---------- تركيز واضح لإمكانية الوصول ---------- */
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
+    outline: 2px solid var(--orange);
+    outline-offset: 2px;
+    border-radius: 6px;
+}
+
+/* ---------- تصحيحات نهائية على العناصر الموروثة من النمط الداكن ---------- */
+
+/* التوهج المحيطي: من تركوازي داكن → دفء برتقالي خفيف جداً */
+body::before {
+    background:
+        radial-gradient(48% 42% at 10% 90%, rgba(210, 105, 30, .07), transparent 62%),
+        radial-gradient(55% 45% at 50% -6%, rgba(232, 144, 79, .06), transparent 62%),
+        radial-gradient(45% 40% at 90% 12%, rgba(180, 83, 15, .05), transparent 60%) !important;
+}
+
+/* الأوربس المتوهجة: تخفيفها بشدة حتى لا تلوّث الخلفية البيضاء */
+.orb { filter: blur(110px) !important; }
+.orb-1 { background: var(--orange-400) !important; opacity: .16 !important; }
+.orb-2 { background: var(--orange) !important;     opacity: .12 !important; }
+.orb-3 { background: var(--orange-400) !important; opacity: .09 !important; }
+
+/* الشريط العلوي */
+.nav { background: rgba(255,255,255,.82) !important; border-bottom: 1px solid var(--line) !important; }
+.nav.scrolled { box-shadow: var(--sh-sm) !important; }
+.nav-toggle { border-color: var(--line) !important; color: var(--text) !important; background: #fff !important; }
+.brand { color: var(--text) !important; }
+.brand-logo { color: #fff !important; box-shadow: var(--sh-orange) !important; }
+.brand-logo-img { filter: none !important; }
+.brand-name em { color: var(--orange) !important; }
+
+/* الشارة العلوية وشريط البحث */
+.pill {
+    background: var(--orange-50) !important;
+    border: 1px solid var(--orange-100) !important;
+    color: var(--orange-600) !important;
+}
+.pill i { color: var(--orange) !important; }
+.search-bar {
+    background: #fff !important;
+    border: 1px solid var(--line) !important;
+    box-shadow: var(--sh-md) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+.search-bar > i { color: var(--dim) !important; }
+.search-bar input { color: var(--text) !important; }
+
+/* الزجاج الأساسي → كرت أبيض */
+.glass {
+    background: #fff !important;
+    border: 1px solid var(--line) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: var(--sh-sm);
+}
+
+/* الأزرار الموروثة */
+.btn { border-radius: 12px !important; }
+.btn-grad {
+    background: var(--grad-btn) !important;
+    color: #fff !important;
+    text-shadow: none !important;
+    box-shadow: var(--sh-orange) !important;
+}
+.btn-grad:hover { box-shadow: 0 14px 34px rgba(210,105,30,.32) !important; }
+.btn-ghost {
+    background: #fff !important;
+    color: var(--text) !important;
+    border-color: var(--line) !important;
+    box-shadow: var(--sh-xs) !important;
+}
+.btn-ghost:hover {
+    border-color: var(--orange-400) !important;
+    background: var(--orange-50) !important;
+    color: var(--orange-600) !important;
+    box-shadow: var(--sh-md) !important;
+}
+
+/* العنوان الرئيسي والنص التمهيدي */
+.hero-title { color: var(--text); letter-spacing: -.02em; }
+.hero-sub { color: var(--muted) !important; }
+
+/* أي خلفية بيضاء شفافة موروثة تصبح صلبة */
+[style*="rgba(255,255,255,.05)"], [style*="rgba(255,255,255,0.05)"] { background: #fff !important; }
+
+/* ---------- العنصر الزخرفي في الهيرو: خافت خلف المحتوى ---------- */
+/* ملاحظة: نستخدم background-image لا الاختصار background —
+   لأن الاختصار يعيد ضبط background-clip فتُرسم الخلفية كشريط صلب */
+.hero-word {
+    top: clamp(96px, 13vh, 150px) !important;
+    font-size: clamp(2.6rem, 10vw, 5.4rem) !important;
+    line-height: 1.25 !important;
+    opacity: .07 !important;
+    z-index: 0 !important;
+    filter: none !important;
+    background-image: linear-gradient(90deg, #B4530F, #D2691E) !important;
+    background-color: transparent !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    color: transparent !important;
+}
+@media (max-width: 768px) { .hero-word { top: clamp(52px, 7vh, 80px) !important; } }
+
+/* أشرطة النِّسب */
+.bar, .bar-fill, [class*="bar"] > span, .meter > i {
+    background: var(--grad-btn) !important;
+    border-radius: 999px;
+}
+
+/* صناديق الأيقونات الملوّنة */
+.cat-hero-ico, .rev-avatar-lg, .ico-box, .cat-ico {
+    background: var(--grad-btn) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: var(--sh-orange) !important;
+}
+
+/* ---------- صفحة التقييم: مواءمة كاملة مع نمط SaaS ---------- */
+.rev-form {
+    background: #fff !important;
+    border: 1px solid var(--line) !important;
+    box-shadow: var(--sh-md) !important;
+    border-radius: var(--radius-lg) !important;
+}
+.rev-form h3 { color: var(--text) !important; }
+.rev-form p  { color: var(--muted) !important; }
+.rf-group label { color: var(--text) !important; }
+.rf-group input, .rf-group textarea {
+    background: #fff !important;
+    border: 1px solid var(--line) !important;
+    color: var(--text) !important;
+    border-radius: 10px !important;
+}
+.rf-group input:focus, .rf-group textarea:focus {
+    border-color: var(--orange-400) !important;
+    box-shadow: 0 0 0 3px rgba(210,105,30,.12) !important;
+}
+.rf-group input::placeholder, .rf-group textarea::placeholder { color: var(--dim) !important; }
+.rf-stars span { color: #E4DED7 !important; }
+.rf-stars span.on { color: var(--orange) !important; text-shadow: none !important; }
+.rev-form .rev-user-card {
+    background: var(--orange-50) !important;
+    border: 1px solid var(--orange-100) !important;
+    border-radius: 12px !important;
+}
+.rev-form .rev-user-card strong { color: var(--text) !important; }
+.rev-form .rev-user-card small  { color: var(--muted) !important; }
+.rev-form .rev-user-note {
+    background: var(--orange-50) !important;
+    border-color: var(--orange-100) !important;
+    color: var(--muted) !important;
+}
+.rev-form .btn-google {
+    border: 1px solid var(--line) !important;
+    background: #fff !important;
+    color: var(--text) !important;
+    box-shadow: var(--sh-xs);
+    border-radius: 10px !important;
+}
+.rev-form .btn-google:hover { border-color: var(--orange-400) !important; box-shadow: var(--sh-md); }
+.btn-plain { color: var(--muted) !important; }
+.btn-plain:hover { color: var(--orange-600) !important; }
+.rev-or span { background: #fff !important; color: var(--dim) !important; }
+.rev-or::before, .rev-or::after { background: var(--line) !important; }
+.eyebrow { color: var(--orange-600) !important; }
+.back-link { color: var(--muted) !important; }
+.back-link:hover { color: var(--orange-600) !important; }
