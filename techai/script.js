@@ -9,18 +9,63 @@ const $$ = (s, c = document) => [...c.querySelectorAll(s)];
 /* ---------- تخزين محلي ---------- */
 const LS = {
   get(k, def) { try { const v = localStorage.getItem("tan_" + k); return v ? JSON.parse(v) : def; } catch { return def; } },
-  set(k, v) { try { localStorage.setItem("tan_" + k, JSON.stringify(v)); } catch {} },
+  set(k, v) {
+    try { localStorage.setItem("tan_" + k, JSON.stringify(v)); return true; }
+    catch (e) {
+      /* امتلاء مساحة التخزين — نبلّغ المستخدم بدل الفشل الصامت */
+      if (e && (e.name === "QuotaExceededError" || e.code === 22))
+        toast("مساحة التخزين في متصفحك ممتلئة — احذف بعض المحفوظات", "fa-triangle-exclamation");
+      return false;
+    }
+  },
 };
+
+/* =========================================================
+   طبقة الحماية — تهريب المخرجات وحدود الإدخال
+   ملاحظة صريحة: هذا موقع static بلا خادم، فكل تحقق هنا
+   يحمي المستخدم من المحتوى الخبيث، ولا يمنع مالك الجهاز
+   من تعديل بياناته المحلية. الأمان الحقيقي يحتاج باك إند.
+   ========================================================= */
+
+/* تهريب النصوص قبل الحقن في HTML */
+const esc = (s) => String(s ?? "").replace(/[&<>"'`]/g, (m) =>
+  ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;", "`": "&#96;" }[m]));
+
+/* تهريب قيم السمات (data-* و href و title) */
+const escAttr = (s) => esc(s).replace(/\r?\n/g, " ");
+
+/* قائمة بيضاء لأسماء الأصناف والأيقونات — تمنع الهروب من السمة */
+const safeToken = (s, fallback = "") =>
+  /^[A-Za-z0-9_-]{1,40}$/.test(String(s ?? "")) ? String(s) : fallback;
+
+/* قراءة آمنة من كائن ثابت — تمنع prototype pollution عبر ?page=__proto__ */
+const safePick = (obj, key, fallbackKey) =>
+  Object.prototype.hasOwnProperty.call(obj, key) ? obj[key] : obj[fallbackKey];
+
+/* حدود أطوال الإدخال — تمنع إغراق التخزين وتشويه الواجهة */
+const LIMITS = {
+  comment: 1000, reply: 500, name: 60, email: 120, password: 128,
+  title: 200, excerpt: 300, body: 20000, tags: 200, search: 100,
+};
+const clamp = (s, max) => String(s ?? "").slice(0, max).trim();
+
+/* تجزئة SHA-256 عبر Web Crypto — بلا مكتبات خارجية */
+async function sha256(text) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+const randomSalt = () =>
+  [...crypto.getRandomValues(new Uint8Array(16))].map((b) => b.toString(16).padStart(2, "0")).join("");
 
 /* ---------- أدوات ---------- */
 const catOf = (id) => CATEGORIES.find((c) => c.id === id);
 const catLabel = (id) => (catOf(id) || {}).label || "عام";
 const authorOf = (id) => AUTHORS.find((a) => a.id === id) || AUTHORS[0];
-const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
 const fmtDate = (iso) => new Date(iso + "T12:00:00").toLocaleDateString("ar-EG", { day: "numeric", month: "long", year: "numeric" });
 const fmtNum = (n) => n >= 1000 ? (n / 1000).toFixed(1).replace(".0", "") + " ألف" : String(n);
 const param = (k) => new URLSearchParams(location.search).get(k);
-const iconCls = (item) => `${item.iconStyle || "fa-solid"} ${item.icon}`;
+const iconCls = (item) => `${safeToken(item.iconStyle, "fa-solid")} ${safeToken(item.icon, "fa-newspaper")}`;
+const coverCls = (item) => `cover-${safeToken(item.cover, "g1")}`;
 
 /* المحتوى الموحد: أخبار + مقالات + مراجعات (+ أخبار المدير المحلية) */
 function adminNews() { return LS.get("adminNews", []).filter((n) => n.status === "منشور"); }
@@ -42,31 +87,102 @@ function toast(msg, icon = "fa-circle-check") {
 /* =========================================================
    نظام المستخدمين والنقاط
    ========================================================= */
+/* مدة صلاحية جلسة القارئ */
+const SESSION_TTL = 7 * 24 * 60 * 60 * 1000; /* أسبوع */
+
+/* كلمات مرور شائعة تُرفض مباشرة */
+const WEAK_PASSWORDS = ["12345678", "password", "123456789", "qwerty123", "11111111",
+  "abc12345", "password1", "1234567890", "iloveyou", "admin123"];
+
+function passwordIssue(pass) {
+  if (pass.length < 8) return "كلمة المرور يجب ألا تقل عن 8 محارف";
+  if (WEAK_PASSWORDS.includes(pass.toLowerCase())) return "كلمة المرور شائعة جداً — اختر واحدة أقوى";
+  if (!/[A-Za-z؀-ۿ]/.test(pass) || !/[0-9]/.test(pass))
+    return "امزج بين الحروف والأرقام لكلمة مرور أقوى";
+  return null;
+}
+
 const Auth = {
-  user() { return LS.get("session", null); },
+  user() {
+    const s = LS.get("session", null);
+    if (!s) return null;
+    if (s.exp && Date.now() > s.exp) { LS.set("session", null); return null; }
+    return s;
+  },
   users() { return LS.get("users", []); },
-  register(name, email, pass) {
+
+  async register(name, email, pass) {
+    name = clamp(name, LIMITS.name);
+    email = clamp(email, LIMITS.email).toLowerCase();
+    pass = clamp(pass, LIMITS.password);
+    if (name.length < 3) return { err: "الاسم قصير جداً" };
+    const weak = passwordIssue(pass);
+    if (weak) return { err: weak };
+
     const users = this.users();
     if (users.some((u) => u.email === email)) return { err: "هذا البريد مسجل من قبل — سجّل دخولك" };
-    const u = { name, email, pass, joined: new Date().toISOString().slice(0, 10) };
-    users.push(u); LS.set("users", users);
-    this.start(u); Points.add(POINTS_RULES.register, "مكافأة إنشاء الحساب");
+
+    /* لا تُخزَّن كلمة المرور نصاً صريحاً — فقط بصمة مملّحة */
+    const salt = randomSalt();
+    const hash = await sha256(salt + pass);
+    users.push({ name, email, salt, hash, joined: new Date().toISOString().slice(0, 10) });
+    LS.set("users", users);
+    this.start({ name, email });
+    Points.add(POINTS_RULES.register, "مكافأة إنشاء الحساب");
     return { ok: true };
   },
-  login(email, pass) {
-    const u = this.users().find((x) => x.email === email && x.pass === pass);
-    if (!u) return { err: "بيانات الدخول غير صحيحة" };
-    this.start(u); return { ok: true };
-  },
-  social(provider) {
-    const u = { name: "مستخدم " + provider, email: provider.toLowerCase() + "@demo.techai", pass: "-", joined: new Date().toISOString().slice(0, 10) };
+
+  async login(email, pass) {
+    email = clamp(email, LIMITS.email).toLowerCase();
+    pass = clamp(pass, LIMITS.password);
+
+    /* تأخير تصاعدي بعد المحاولات الفاشلة */
+    const fails = LS.get("loginFails", 0);
+    if (fails >= 5) {
+      const wait = Math.min(30, 2 ** (fails - 4));
+      await new Promise((r) => setTimeout(r, wait * 1000));
+    }
+
     const users = this.users();
-    if (!users.some((x) => x.email === u.email)) { users.push(u); LS.set("users", users); }
+    const u = users.find((x) => x.email === email);
+    let ok = false;
+
+    if (u && u.salt && u.hash) {
+      ok = (await sha256(u.salt + pass)) === u.hash;
+    } else if (u && u.pass !== undefined) {
+      /* ترحيل الحسابات القديمة المخزَّنة نصاً صريحاً */
+      ok = u.pass === pass;
+      if (ok) {
+        u.salt = randomSalt();
+        u.hash = await sha256(u.salt + pass);
+        delete u.pass;
+        LS.set("users", users);
+      }
+    }
+
+    if (!ok) {
+      LS.set("loginFails", fails + 1);
+      return { err: "بيانات الدخول غير صحيحة" };
+    }
+    LS.set("loginFails", 0);
     this.start(u);
-    toast(`تم الدخول عبر ${provider} (وضع تجريبي)`, "fa-right-to-bracket");
+    return { ok: true };
   },
+
+  social(provider) {
+    const email = provider.toLowerCase() + "@demo.techai";
+    const users = this.users();
+    if (!users.some((x) => x.email === email)) {
+      users.push({ name: "مستخدم " + provider, email, salt: "", hash: "", social: provider,
+        joined: new Date().toISOString().slice(0, 10) });
+      LS.set("users", users);
+    }
+    this.start({ name: "مستخدم " + provider, email });
+    toast(`تم الدخول عبر ${provider} (وضع تجريبي — بلا OAuth حقيقي)`, "fa-right-to-bracket");
+  },
+
   start(u) {
-    LS.set("session", { name: u.name, email: u.email });
+    LS.set("session", { name: u.name, email: u.email, exp: Date.now() + SESSION_TTL });
     const today = new Date().toISOString().slice(0, 10);
     if (LS.get("lastLogin", "") !== today) {
       LS.set("lastLogin", today);
@@ -76,10 +192,25 @@ const Auth = {
   logout() { LS.set("session", null); location.reload(); },
 };
 
+/* النقاط موقّعة ببصمة — رادع للتلاعب العابر من الـ Console، لا حماية مطلقة */
 const Points = {
-  total() { return LS.get("points", 0); },
+  _sig(n) { let h = 2166136261; const s = "tan:" + n; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; },
+  total() {
+    const raw = LS.get("points", 0);
+    const sig = LS.get("pointsSig", null);
+    if (sig !== null && sig !== this._sig(raw)) {
+      /* القيمة عُدّلت خارج الموقع — نرجع لآخر قيمة موثوقة */
+      const safe = LS.get("pointsSafe", 0);
+      LS.set("points", safe); LS.set("pointsSig", this._sig(safe));
+      return safe;
+    }
+    return raw;
+  },
+  _write(n) {
+    LS.set("points", n); LS.set("pointsSig", this._sig(n)); LS.set("pointsSafe", n);
+  },
   add(n, why) {
-    LS.set("points", this.total() + n);
+    this._write(this.total() + n);
     Notify.push(`+${n} نقطة — ${why}`, "fa-star");
     toast(`+${n} نقطة — ${why}`, "fa-star");
   },
@@ -93,13 +224,86 @@ const Notify = {
   list() { return LS.get("notifs", []); },
   push(text, icon = "fa-bell") {
     const l = this.list();
-    l.unshift({ text, icon, at: Date.now(), read: false });
+    l.unshift({ text: clamp(text, 200), icon: safeToken(icon, "fa-bell"), at: Date.now(), read: false });
     LS.set("notifs", l.slice(0, 30));
     const b = $("#notif-bubble");
     if (b) { const n = this.unread(); b.textContent = n; b.style.display = n ? "grid" : "none"; }
   },
   unread() { return this.list().filter((n) => !n.read).length; },
   readAll() { LS.set("notifs", this.list().map((n) => ({ ...n, read: true }))); },
+};
+
+/* =========================================================
+   لوحة التحكم: قفل + أدوار + سجل عمليات
+   تحذير معماري: هذا قفل واجهة على موقع static. من يملك
+   الجهاز يستطيع تجاوزه من أدوات المطوّر. الغرض منه منع
+   العبث العابر وتوثيق العمليات، لا الحماية من مهاجم جاد.
+   ========================================================= */
+const ROLES = {
+  admin:  { label: "مدير",  icon: "fa-user-shield",  can: ["dash", "news", "cats", "comments", "quizzes", "newsletter", "ads", "seo", "users", "logs"] },
+  editor: { label: "محرر",  icon: "fa-user-pen",     can: ["dash", "news", "cats", "quizzes", "logs"] },
+  mod:    { label: "مراجع", icon: "fa-user-check",   can: ["dash", "comments", "logs"] },
+};
+
+const ADMIN_TTL = 30 * 60 * 1000; /* 30 دقيقة خمول */
+
+const Admin = {
+  isSetUp() { return !!LS.get("adminHash", null); },
+  session() {
+    const s = LS.get("adminSession", null);
+    if (!s) return null;
+    if (Date.now() > s.exp) { LS.set("adminSession", null); return null; }
+    return s;
+  },
+  touch() {
+    const s = this.session();
+    if (s) LS.set("adminSession", { ...s, exp: Date.now() + ADMIN_TTL });
+  },
+  role() { return (this.session() || {}).role || null; },
+  can(view) {
+    const r = this.role();
+    return !!r && (ROLES[r]?.can || []).includes(view);
+  },
+
+  async setup(pass, role = "admin") {
+    const weak = passwordIssue(clamp(pass, LIMITS.password));
+    if (weak) return { err: weak };
+    const salt = randomSalt();
+    LS.set("adminSalt", salt);
+    LS.set("adminHash", await sha256(salt + clamp(pass, LIMITS.password)));
+    LS.set("adminRole", role);
+    this.open(role);
+    this.log("ضبط كلمة مرور لوحة التحكم لأول مرة", "fa-key");
+    return { ok: true };
+  },
+
+  async unlock(pass) {
+    const fails = LS.get("adminFails", 0);
+    if (fails >= 5) await new Promise((r) => setTimeout(r, Math.min(30, 2 ** (fails - 4)) * 1000));
+
+    const ok = (await sha256(LS.get("adminSalt", "") + clamp(pass, LIMITS.password))) === LS.get("adminHash", null);
+    if (!ok) {
+      LS.set("adminFails", fails + 1);
+      this.log("محاولة دخول فاشلة للوحة التحكم", "fa-triangle-exclamation");
+      return { err: `كلمة المرور غير صحيحة (محاولة ${fails + 1})` };
+    }
+    LS.set("adminFails", 0);
+    this.open(LS.get("adminRole", "admin"));
+    this.log("دخول ناجح للوحة التحكم", "fa-right-to-bracket");
+    return { ok: true };
+  },
+
+  open(role) { LS.set("adminSession", { role, at: Date.now(), exp: Date.now() + ADMIN_TTL }); },
+  lock() { LS.set("adminSession", null); location.reload(); },
+
+  /* سجل العمليات — يوثّق كل تغيير في المحتوى */
+  log(action, icon = "fa-clock-rotate-left") {
+    const l = LS.get("auditLog", []);
+    l.unshift({ action: clamp(action, 160), icon: safeToken(icon, "fa-clock-rotate-left"),
+      role: this.role() || "—", at: Date.now() });
+    LS.set("auditLog", l.slice(0, 200));
+  },
+  logs() { return LS.get("auditLog", []); },
 };
 
 /* =========================================================
@@ -113,7 +317,7 @@ function buildShell() {
       <a href="category.html?cat=${c.id}"><i class="fa-solid ${c.icon}"></i> ${c.label} <i class="fa-solid fa-angle-down"></i></a>
       <div class="dropdown">
         <a href="category.html?cat=${c.id}"><i class="fa-solid fa-layer-group"></i> كل أخبار ${c.label}</a>
-        <div class="dd-subs">${c.subs.map((s) => `<a href="category.html?cat=${c.id}&sub=${encodeURIComponent(s)}">${s}</a>`).join("")}</div>
+        <div class="dd-subs">${c.subs.map((s) => `<a href="category.html?cat=${encodeURIComponent(c.id)}&sub=${encodeURIComponent(s)}">${esc(s)}</a>`).join("")}</div>
       </div>
     </div>`).join("");
 
@@ -287,18 +491,18 @@ function buildShell() {
    ========================================================= */
 function newsCardHTML(item) {
   const a = authorOf(item.author);
-  const score = item.score ? `<span class="review-score">${item.score}</span>` : "";
+  const score = item.score ? `<span class="review-score">${esc(item.score)}</span>` : "";
   return `
   <article class="news-card reveal">
-    <a href="article.html?id=${item.id}" class="card-cover cover-${item.cover}">
+    <a href="article.html?id=${encodeURIComponent(item.id)}" class="card-cover ${coverCls(item)}">
       <span class="card-tag ${item.tag ? "hot" : ""}">${esc(item.tag || catLabel(item.cat))}</span>${score}
       <i class="${iconCls(item)}"></i>
     </a>
     <div class="card-body">
-      <h3><a href="article.html?id=${item.id}">${esc(item.title)}</a></h3>
+      <h3><a href="article.html?id=${encodeURIComponent(item.id)}">${esc(item.title)}</a></h3>
       <p>${esc(item.excerpt)}</p>
       <div class="card-meta">
-        <a class="who" href="author.html?id=${a.id}"><i class="fa-solid fa-circle-user"></i> ${esc(a.name)}</a>
+        <a class="who" href="author.html?id=${encodeURIComponent(a.id)}"><i class="fa-solid fa-circle-user"></i> ${esc(a.name)}</a>
         <span class="when">
           <span><i class="fa-regular fa-eye"></i>${fmtNum(viewsOf(item))}</span>
           <span><i class="fa-regular fa-clock"></i>${item.readMins} د</span>
@@ -312,13 +516,13 @@ function articleCardHTML(item) {
   const a = authorOf(item.author);
   return `
   <article class="article-card reveal">
-    <a href="article.html?id=${item.id}" class="article-icon cover-${item.cover}"><i class="${iconCls(item)}"></i></a>
+    <a href="article.html?id=${encodeURIComponent(item.id)}" class="article-icon ${coverCls(item)}"><i class="${iconCls(item)}"></i></a>
     <div class="article-info">
       <span class="a-tag"><i class="fa-solid fa-bolt"></i> ${esc(item.tag || catLabel(item.cat))}</span>
-      <h3><a href="article.html?id=${item.id}">${esc(item.title)}</a></h3>
+      <h3><a href="article.html?id=${encodeURIComponent(item.id)}">${esc(item.title)}</a></h3>
       <p>${esc(item.excerpt)}</p>
       <div class="card-meta">
-        <a class="who" href="author.html?id=${a.id}"><i class="fa-solid fa-circle-user"></i> ${esc(a.name)}</a>
+        <a class="who" href="author.html?id=${encodeURIComponent(a.id)}"><i class="fa-solid fa-circle-user"></i> ${esc(a.name)}</a>
         <span class="when"><i class="fa-regular fa-clock"></i>${item.readMins} دقائق</span>
       </div>
     </div>
@@ -328,7 +532,7 @@ function articleCardHTML(item) {
 function videoCardHTML(v) {
   return `
   <article class="video-card reveal">
-    <div class="video-frame" data-youtube="${v.youtube}" data-title="${esc(v.title)}">
+    <div class="video-frame" data-youtube="${escAttr(safeToken(v.youtube))}" data-title="${esc(v.title)}">
       <img loading="lazy" src="https://img.youtube.com/vi/${v.youtube}/hqdefault.jpg" alt="${esc(v.title)}">
       <button class="play-btn" aria-label="تشغيل"><i class="fa-solid fa-play"></i></button>
       <span class="duration"><i class="fa-regular fa-clock"></i> ${v.duration}</span>
@@ -345,7 +549,7 @@ function trendItemHTML(item, i) {
   return `
   <div class="trend-item reveal">
     <span class="trend-rank">${i + 1}</span>
-    <h4><a href="article.html?id=${item.id}">${esc(item.title)}</a></h4>
+    <h4><a href="article.html?id=${encodeURIComponent(item.id)}">${esc(item.title)}</a></h4>
     <span class="views"><i class="fa-regular fa-eye"></i>${fmtNum(viewsOf(item))}</span>
   </div>`;
 }
@@ -358,7 +562,10 @@ function bindVideoGrid(grid) {
 }
 function openVideoModal(id, title) {
   const wrap = $("#video-modal-frame");
-  wrap.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0" title="${esc(title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+  /* معرّف يوتيوب يمر بقائمة بيضاء — لا يُحقن أي شيء آخر في src */
+  const vid = safeToken(id);
+  if (!vid) return toast("معرّف الفيديو غير صالح", "fa-triangle-exclamation");
+  wrap.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${vid}?autoplay=1&rel=0" title="${escAttr(title)}" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
   $("#video-modal").classList.add("open");
   document.body.style.overflow = "hidden";
 }
@@ -377,7 +584,7 @@ function initHome() {
 
   $("#hero-feature").innerHTML = `
     <a href="article.html?id=${featured.id}">
-      <div class="feature-cover cover-${featured.cover}">
+      <div class="feature-cover ${coverCls(featured)}">
         <span class="feature-badge"><i class="fa-solid fa-fire"></i> ${esc(featured.tag || "الأبرز")}</span>
         <i class="${iconCls(featured)}"></i>
       </div>
@@ -423,7 +630,7 @@ function initHome() {
     return `
     <div class="cat-block reveal">
       <div class="cat-block-head">
-        <span class="cat-ico"><i class="fa-solid ${c.icon}"></i></span>
+        <span class="cat-ico"><i class="fa-solid ${safeToken(c.icon, "fa-newspaper")}"></i></span>
         <h3>${c.label}</h3>
         <a class="more" href="category.html?cat=${c.id}">عرض الكل <i class="fa-solid fa-angle-left"></i></a>
       </div>
@@ -497,7 +704,7 @@ function initArticle() {
   /* المراجعات: صندوق التقييم */
   const reviewBlock = item.kind === "review" && item.score ? `
     <div class="score-banner">
-      <div><span class="big">${item.score}</span><span class="of"> / 10</span></div>
+      <div><span class="big">${esc(item.score)}</span><span class="of"> / 10</span></div>
       <p><b>خلاصة المراجعة:</b> ${esc(item.verdict)}</p>
     </div>` : "";
   const prosCons = item.pros ? `
@@ -512,14 +719,14 @@ function initArticle() {
     <nav class="breadcrumb">
       <a href="index.html"><i class="fa-solid fa-house"></i> الرئيسية</a>
       <i class="fa-solid fa-angle-left"></i>
-      <a href="category.html?cat=${item.cat}">${catLabel(item.cat)}</a>
+      <a href="category.html?cat=${encodeURIComponent(item.cat)}">${catLabel(item.cat)}</a>
       <i class="fa-solid fa-angle-left"></i><span>${esc(item.title.slice(0, 40))}…</span>
     </nav>
-    <div class="article-hero-cover cover-${item.cover}"><i class="${iconCls(item)}"></i></div>
+    <div class="article-hero-cover ${coverCls(item)}"><i class="${iconCls(item)}"></i></div>
     <h1 class="article-title">${esc(item.title)}</h1>
     <div class="article-meta-row">
       <span class="pill">${esc(item.tag || catLabel(item.cat))}</span>
-      <a href="author.html?id=${a.id}"><i class="fa-solid fa-circle-user"></i>${esc(a.name)}</a>
+      <a href="author.html?id=${encodeURIComponent(a.id)}"><i class="fa-solid fa-circle-user"></i>${esc(a.name)}</a>
       <span><i class="fa-regular fa-calendar"></i>${fmtDate(item.date)}</span>
       <span><i class="fa-regular fa-clock"></i>${item.readMins} دقائق قراءة</span>
       <span><i class="fa-regular fa-eye"></i>${fmtNum(viewsOf(item))} مشاهدة</span>
@@ -608,6 +815,7 @@ function initArticle() {
 }
 
 /* ---------- نظام التعليقات ---------- */
+const COMMENT_COOLDOWN = 10000; /* 10 ثوانٍ بين تعليق وآخر */
 function commentsOf(id) { return LS.get("comments_" + id, []); }
 function renderComments(articleId) {
   const box = $("#comments-box");
@@ -633,36 +841,69 @@ function renderComments(articleId) {
   box.innerHTML = `
     <h2><i class="fa-solid fa-comments"></i> التعليقات (${list.length})</h2>
     <form class="comment-form" id="comment-form">
-      <textarea placeholder="${user ? "شاركنا رأيك بأدب واحترام…" : "سجّل دخولك لكتابة تعليق — أو اكتب باسم زائر"}" required></textarea>
+      <textarea maxlength="${LIMITS.comment}" placeholder="${user ? "شاركنا رأيك بأدب واحترام…" : "سجّل دخولك لكتابة تعليق — أو اكتب باسم زائر"}" required></textarea>
       <div class="form-foot">
-        <span class="hint"><i class="fa-solid fa-shield-halved"></i> التعليقات المسيئة تُحذف ويُحظر صاحبها.</span>
+        <span class="hint"><i class="fa-solid fa-shield-halved"></i> التعليقات المسيئة تُحذف ويُحظر صاحبها · <span id="c-count">0</span>/${LIMITS.comment}</span>
         <button class="btn btn-primary" type="submit"><i class="fa-solid fa-paper-plane"></i> نشر التعليق</button>
       </div>
     </form>
     ${list.map((c, i) => cHTML(c, i)).join("") || `<p style="color:var(--faint);text-align:center;padding:20px 0">كن أول من يعلّق على هذا الموضوع!</p>`}`;
 
+  const ta = $("#comment-form textarea", box);
+  ta.addEventListener("input", () => ($("#c-count", box).textContent = ta.value.length));
+
   $("#comment-form").addEventListener("submit", (e) => {
     e.preventDefault();
-    const text = e.target.querySelector("textarea").value.trim();
+    const text = clamp(e.target.querySelector("textarea").value, LIMITS.comment);
     if (!text) return;
-    list.unshift({ name: user ? user.name : "زائر", text, at: Date.now(), likes: 0, replies: [] });
-    LS.set("comments_" + articleId, list);
+    /* تبريد بين التعليقات — يمنع الإغراق الآلي */
+    const last = LS.get("lastComment", 0);
+    if (Date.now() - last < COMMENT_COOLDOWN) {
+      const left = Math.ceil((COMMENT_COOLDOWN - (Date.now() - last)) / 1000);
+      return toast(`انتظر ${left} ثانية قبل التعليق مرة أخرى`, "fa-hourglass-half");
+    }
+    LS.set("lastComment", Date.now());
+    list.unshift({ name: clamp(user ? user.name : "زائر", LIMITS.name), text, at: Date.now(), likes: 0, replies: [] });
+    LS.set("comments_" + articleId, list.slice(0, 200));
     Points.add(POINTS_RULES.comment, "كتابة تعليق");
     renderComments(articleId);
   });
+
   $$(".c-like", box).forEach((b) => b.addEventListener("click", () => {
     const p = +b.dataset.p, i = +b.dataset.i;
-    const target = p > -1 ? list[p].replies[i] : list[i];
+    const target = p > -1 ? list[p]?.replies[i] : list[i];
+    if (!target) return;
     target.likedByMe = !target.likedByMe;
-    target.likes = (target.likes || 0) + (target.likedByMe ? 1 : -1);
+    target.likes = Math.max(0, (target.likes || 0) + (target.likedByMe ? 1 : -1));
     LS.set("comments_" + articleId, list); renderComments(articleId);
   }));
+
+  /* الرد عبر حقل داخل الصفحة بدل prompt() — يسمح بتطبيق حد الطول */
   $$(".c-reply", box).forEach((b) => b.addEventListener("click", () => {
-    const t = prompt("اكتب ردك:");
-    if (!t?.trim()) return;
-    list[+b.dataset.i].replies.push({ name: user ? user.name : "زائر", text: t.trim(), at: Date.now(), likes: 0 });
-    LS.set("comments_" + articleId, list); renderComments(articleId);
+    const i = +b.dataset.i;
+    if ($("#reply-form", box)) $("#reply-form", box).remove();
+    const form = document.createElement("form");
+    form.id = "reply-form";
+    form.className = "comment-form";
+    form.style.marginTop = "12px";
+    form.innerHTML = `
+      <textarea maxlength="${LIMITS.reply}" placeholder="اكتب ردك… (حتى ${LIMITS.reply} محرف)" required></textarea>
+      <div class="form-foot">
+        <button type="button" class="act-btn" id="reply-cancel"><i class="fa-solid fa-xmark"></i> إلغاء</button>
+        <button class="btn btn-primary" type="submit"><i class="fa-solid fa-reply"></i> إرسال الرد</button>
+      </div>`;
+    b.closest(".c-actions").after(form);
+    form.querySelector("textarea").focus();
+    $("#reply-cancel", form).addEventListener("click", () => form.remove());
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const t = clamp(form.querySelector("textarea").value, LIMITS.reply);
+      if (!t || !list[i]) return;
+      (list[i].replies ||= []).push({ name: clamp(user ? user.name : "زائر", LIMITS.name), text: t, at: Date.now(), likes: 0 });
+      LS.set("comments_" + articleId, list); renderComments(articleId);
+    });
   }));
+
   $$(".c-report", box).forEach((b) => b.addEventListener("click", () => toast("تم استلام البلاغ وسيراجعه فريق الإشراف", "fa-flag")));
 }
 
@@ -721,8 +962,8 @@ function initSearch() {
         : `<div class="empty-state"><i class="fa-solid fa-magnifying-glass"></i>لا نتائج مطابقة — جرّب كلمات أو فلاتر أخرى</div>`}</div>`;
     observeReveals();
   };
-  $("#s-cat").innerHTML = `<option value="">كل الأقسام</option>` + CATEGORIES.map((c) => `<option value="${c.id}">${c.label}</option>`).join("");
-  $("#s-author").innerHTML = `<option value="">كل الكتّاب</option>` + AUTHORS.map((a) => `<option value="${a.id}">${a.name}</option>`).join("");
+  $("#s-cat").innerHTML = `<option value="">كل الأقسام</option>` + CATEGORIES.map((c) => `<option value="${escAttr(c.id)}">${esc(c.label)}</option>`).join("");
+  $("#s-author").innerHTML = `<option value="">كل الكتّاب</option>` + AUTHORS.map((a) => `<option value="${escAttr(a.id)}">${esc(a.name)}</option>`).join("");
   if (param("q")) $("#s-q").value = param("q");
   form.addEventListener("submit", (e) => { e.preventDefault(); doSearch(); });
   form.addEventListener("change", doSearch);
@@ -740,11 +981,11 @@ function initAuthor() {
   const followed = LS.get("follows", []).includes(a.id);
   $("#author-shell").innerHTML = `
     <div class="panel-box glow author-hero reveal visible">
-      <span class="author-avatar cover-${a.cover}"><i class="fa-solid ${a.icon}"></i></span>
+      <span class="author-avatar ${coverCls(a)}"><i class="fa-solid ${safeToken(a.icon, "fa-user")}"></i></span>
       <div>
-        <h1>${a.name}</h1>
-        <div class="role"><i class="fa-solid fa-pen-nib"></i> ${a.role}</div>
-        <p class="bio">${a.bio}</p>
+        <h1>${esc(a.name)}</h1>
+        <div class="role"><i class="fa-solid fa-pen-nib"></i> ${esc(a.role)}</div>
+        <p class="bio">${esc(a.bio)}</p>
         <div class="a-stats">
           <span><b>${posts.length}</b> موضوعاً</span>
           <span><b id="f-count">${fmtNum(a.followers + (followed ? 1 : 0))}</b> متابع</span>
@@ -754,7 +995,7 @@ function initAuthor() {
       </div>
     </div>
     <div class="section-head" style="margin-top:40px">
-      <div class="titles"><h2>كل مواضيع <span class="grad">${a.name}</span></h2></div>
+      <div class="titles"><h2>كل مواضيع <span class="grad">${esc(a.name)}</span></h2></div>
     </div>
     <div class="cards-grid">${posts.map(newsCardHTML).join("")}</div>`;
   $("#follow-a").addEventListener("click", () => {
@@ -838,7 +1079,7 @@ function initQuiz() {
         const left = q.maxAttempts - attempts;
         return `
         <article class="quiz-card reveal">
-          <div class="quiz-cover cover-${q.cover}"><span class="quiz-period">${q.period}</span><i class="fa-solid ${q.icon}"></i></div>
+          <div class="quiz-cover ${coverCls(q)}"><span class="quiz-period">${esc(q.period)}</span><i class="fa-solid ${safeToken(q.icon, "fa-star")}"></i></div>
           <div class="quiz-body">
             <h3>${esc(q.title)}</h3>
             <p>${esc(q.desc)}</p>
@@ -849,8 +1090,8 @@ function initQuiz() {
               <span><i class="fa-solid fa-rotate"></i> ${left > 0 ? left + " محاولات متبقية" : "استنفدت المحاولات"}</span>
             </div>
             <div style="font-size:.75rem;color:var(--faint);margin-bottom:14px">
-              <b style="color:var(--cyan)">الجوائز:</b> ${q.prizes.join(" · ")}<br>
-              <b style="color:var(--cyan)">الشروط:</b> ${q.conditions.join(" · ")}
+              <b style="color:var(--cyan)">الجوائز:</b> ${q.prizes.map(esc).join(" · ")}<br>
+              <b style="color:var(--cyan)">الشروط:</b> ${q.conditions.map(esc).join(" · ")}
             </div>
             <button class="btn btn-primary quiz-start" data-id="${q.id}" ${left <= 0 ? "disabled style='opacity:.4'" : ""}>
               <i class="fa-solid fa-play"></i> ${left > 0 ? "ابدأ المسابقة" : "انتهت محاولاتك"}</button>
@@ -1045,9 +1286,9 @@ function initAccount() {
         <div class="panel-box glow auth-form">
           <h3 style="font-weight:900;margin-bottom:18px"><i class="fa-solid fa-user-plus" style="color:var(--cyan)"></i> حساب جديد <span class="tag-chip" style="font-size:.68rem">+${POINTS_RULES.register} نقطة ترحيبية</span></h3>
           <form id="reg-form">
-            <label>الاسم الكامل</label><input type="text" required minlength="3">
+            <label>الاسم الكامل</label><input type="text" required minlength="3" maxlength="${LIMITS.name}" autocomplete="name">
             <label>البريد الإلكتروني</label><input type="email" required>
-            <label>كلمة المرور</label><input type="password" required minlength="6">
+            <label>كلمة المرور</label><input type="password" required minlength="8" maxlength="${LIMITS.password}" autocomplete="new-password" placeholder="8 محارف على الأقل، حروف وأرقام">
             <button class="btn btn-primary" style="width:100%;justify-content:center"><i class="fa-solid fa-rocket"></i> إنشاء الحساب</button>
           </form>
         </div>
@@ -1121,7 +1362,7 @@ function initAccount() {
     <div class="tab-pane" id="tab-follows">
       ${follows.length ? follows.map((a) => `
         <div class="trend-item"><span class="lb-ava"><i class="fa-solid ${a.icon}"></i></span>
-          <h4><a href="author.html?id=${a.id}">${a.name}</a> — <span style="color:var(--faint);font-weight:600">${a.role}</span></h4></div>`).join("")
+          <h4><a href="author.html?id=${encodeURIComponent(a.id)}">${a.name}</a> — <span style="color:var(--faint);font-weight:600">${a.role}</span></h4></div>`).join("")
         : `<div class="empty-state"><i class="fa-solid fa-user-plus"></i>لا تتابع أي كاتب بعد</div>`}
     </div>
     <div class="tab-pane" id="tab-quiz">
@@ -1152,17 +1393,147 @@ function initAccount() {
    لوحة التحكم
    ========================================================= */
 function initAdmin() {
+  /* لا يُعرض أي شيء من اللوحة قبل اجتياز القفل */
+  if (!Admin.session()) return renderAdminGate();
+
   const views = {
     dash: renderAdminDash, news: renderAdminNews, cats: renderAdminCats,
     comments: renderAdminComments, quizzes: renderAdminQuizzes,
     newsletter: renderAdminNewsletter, ads: renderAdminAds, seo: renderAdminSEO,
+    users: renderAdminUsers, logs: renderAdminLogs,
   };
-  $$(".admin-side button").forEach((b) => b.addEventListener("click", () => {
+  const role = Admin.role();
+  const roleDef = ROLES[role] || ROLES.mod;
+
+  /* بناء القائمة الجانبية حسب صلاحيات الدور فقط */
+  const items = [
+    ["dash", "fa-gauge-high", "الإحصائيات"], ["news", "fa-newspaper", "إدارة الأخبار"],
+    ["cats", "fa-layer-group", "التصنيفات والوسوم"], ["comments", "fa-comments", "التعليقات"],
+    ["quizzes", "fa-trophy", "المسابقات"], ["newsletter", "fa-envelope", "النشرة البريدية"],
+    ["ads", "fa-rectangle-ad", "الإعلانات"], ["seo", "fa-magnifying-glass-chart", "SEO"],
+    ["users", "fa-users-gear", "المستخدمون والأدوار"], ["logs", "fa-clock-rotate-left", "سجل العمليات"],
+  ].filter(([v]) => Admin.can(v));
+
+  $(".admin-side").innerHTML = `
+    <div class="admin-who">
+      <span class="lb-ava"><i class="fa-solid ${safeToken(roleDef.icon, "fa-user")}"></i></span>
+      <div><b>${esc(roleDef.label)}</b><span>جلسة إدارة نشطة</span></div>
+    </div>
+    ${items.map(([v, i, l], k) => `<button class="${k === 0 ? "active" : ""}" data-v="${escAttr(v)}"><i class="fa-solid ${i}"></i> ${l}</button>`).join("")}
+    <button id="admin-lock" style="color:#ff9d9d"><i class="fa-solid fa-lock"></i> إقفال اللوحة</button>`;
+
+  $$(".admin-side button[data-v]").forEach((b) => b.addEventListener("click", () => {
+    Admin.touch();
+    if (!Admin.can(b.dataset.v)) return toast("لا تملك صلاحية هذا القسم", "fa-ban");
     $$(".admin-side button").forEach((x) => x.classList.remove("active"));
     b.classList.add("active");
     views[b.dataset.v]();
   }));
-  renderAdminDash();
+  $("#admin-lock").addEventListener("click", () => { Admin.log("إقفال اللوحة", "fa-lock"); Admin.lock(); });
+
+  /* إنهاء الجلسة تلقائياً عند الخمول */
+  setInterval(() => { if (!Admin.session()) { toast("انتهت جلسة الإدارة", "fa-lock"); location.reload(); } }, 30000);
+  ["click", "keydown"].forEach((ev) => document.addEventListener(ev, () => Admin.touch(), { passive: true }));
+
+  (views[items[0]?.[0]] || renderAdminDash)();
+}
+
+/* شاشة القفل — ضبط أول مرة أو دخول */
+function renderAdminGate() {
+  const side = $(".admin-side");
+  if (side) side.style.display = "none";
+  const first = !Admin.isSetUp();
+
+  adminMain().innerHTML = `
+    <div class="admin-gate panel-box glow">
+      <span class="gate-ico"><i class="fa-solid fa-shield-halved"></i></span>
+      <h2>${first ? "تأمين لوحة التحكم" : "لوحة التحكم مقفلة"}</h2>
+      <p>${first
+        ? "اضبط كلمة مرور للوحة التحكم. لن تُخزَّن كلمة المرور نفسها — فقط بصمة SHA-256 مملّحة."
+        : "أدخل كلمة مرور اللوحة للمتابعة. تنتهي الجلسة تلقائياً بعد 30 دقيقة خمول."}</p>
+
+      <form class="auth-form" id="gate-form" autocomplete="off">
+        ${first ? `
+          <label>الدور</label>
+          <select id="gate-role">${Object.entries(ROLES).map(([k, r]) => `<option value="${escAttr(k)}">${esc(r.label)}</option>`).join("")}</select>` : ""}
+        <label>كلمة المرور</label>
+        <input type="password" id="gate-pass" required autocomplete="new-password" maxlength="${LIMITS.password}"
+               placeholder="8 محارف على الأقل، حروف وأرقام">
+        <button class="btn btn-primary" style="width:100%;justify-content:center">
+          <i class="fa-solid ${first ? "fa-key" : "fa-unlock"}"></i> ${first ? "ضبط وحفظ" : "دخول"}</button>
+      </form>
+
+      <div class="gate-warn">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <div><b>اعرف حدود هذه الحماية:</b> الموقع يعمل بلا خادم، وهذا قفل على مستوى الواجهة فقط.
+        من يملك الجهاز يستطيع تجاوزه من أدوات المطوّر. للحماية الفعلية يلزم ربط اللوحة بباك إند
+        (Firebase Auth أو API) يتحقق من الصلاحيات على الخادم.</div>
+      </div>
+      ${!first ? `<button class="act-btn" id="gate-reset"><i class="fa-solid fa-rotate-left"></i> نسيت كلمة المرور — إعادة الضبط ومسح بيانات الإدارة</button>` : ""}
+    </div>`;
+
+  $("#gate-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const pass = $("#gate-pass").value;
+    const r = first
+      ? await Admin.setup(pass, safePick(ROLES, $("#gate-role").value, "admin") ? $("#gate-role").value : "admin")
+      : await Admin.unlock(pass);
+    if (r.err) return toast(r.err, "fa-triangle-exclamation");
+    toast(first ? "تم تأمين اللوحة بنجاح" : "أهلاً بك", "fa-shield-halved");
+    if (side) side.style.display = "";
+    initAdmin();
+  });
+
+  $("#gate-reset")?.addEventListener("click", () => {
+    if (!confirm("سيُمسح قفل اللوحة وسجل العمليات والأخبار والمسابقات المضافة محلياً. متابعة؟")) return;
+    ["adminHash", "adminSalt", "adminRole", "adminSession", "adminFails", "auditLog", "adminNews", "adminQuizzes"]
+      .forEach((k) => localStorage.removeItem("tan_" + k));
+    location.reload();
+  });
+}
+
+/* إدارة المستخدمين والأدوار */
+function renderAdminUsers() {
+  const users = Auth.users();
+  adminMain().innerHTML = `
+    <div class="panel-box" style="margin-bottom:24px">
+      <h3 style="font-weight:900;margin-bottom:14px"><i class="fa-solid fa-users-gear" style="color:var(--cyan)"></i> المستخدمون المسجلون (${users.length})</h3>
+      ${users.length ? `<div class="table-scroll"><table class="data-table">
+        <tr><th>الاسم</th><th>البريد</th><th>طريقة الدخول</th><th>كلمة المرور</th><th>تاريخ الانضمام</th></tr>
+        ${users.map((u) => `<tr>
+          <td><b>${esc(u.name)}</b></td><td>${esc(u.email)}</td>
+          <td>${u.social ? esc(u.social) : "بريد وكلمة مرور"}</td>
+          <td><span class="status-pill ${u.hash ? "pub" : "draft"}">${u.hash ? "مُجزَّأة SHA-256" : u.social ? "لا تنطبق" : "قديمة — تُرحَّل عند الدخول"}</span></td>
+          <td>${esc(u.joined)}</td></tr>`).join("")}
+      </table></div>` : `<div class="empty-state"><i class="fa-solid fa-users"></i>لا مستخدمين مسجلين من هذا المتصفح</div>`}
+      <p style="color:var(--faint);font-size:.78rem;margin-top:14px"><i class="fa-solid fa-circle-info"></i>
+        كلمات المرور تُخزَّن كبصمة SHA-256 مع مِلح فريد لكل مستخدم — لا يمكن استرجاع النص الأصلي منها.</p>
+    </div>
+    <div class="panel-box">
+      <h3 style="font-weight:900;margin-bottom:14px"><i class="fa-solid fa-user-shield" style="color:var(--cyan)"></i> الأدوار والصلاحيات</h3>
+      <div class="table-scroll"><table class="data-table">
+        <tr><th>الدور</th><th>الأقسام المصرّح بها</th></tr>
+        ${Object.entries(ROLES).map(([k, r]) => `<tr>
+          <td><i class="fa-solid ${safeToken(r.icon, "fa-user")}" style="color:var(--blue-soft);margin-inline-end:8px"></i><b>${esc(r.label)}</b>${k === Admin.role() ? ' <span class="status-pill pub">دورك الحالي</span>' : ""}</td>
+          <td>${r.can.map(esc).join(" · ")}</td></tr>`).join("")}
+      </table></div>
+    </div>`;
+}
+
+/* سجل العمليات */
+function renderAdminLogs() {
+  const logs = Admin.logs();
+  adminMain().innerHTML = `
+    <div class="panel-box">
+      <h3 style="font-weight:900;margin-bottom:14px"><i class="fa-solid fa-clock-rotate-left" style="color:var(--cyan)"></i> سجل العمليات (${logs.length})</h3>
+      ${logs.length ? `<div class="table-scroll"><table class="data-table">
+        <tr><th>العملية</th><th>الدور</th><th>الوقت</th></tr>
+        ${logs.map((l) => `<tr>
+          <td><i class="fa-solid ${safeToken(l.icon, "fa-circle")}" style="color:var(--blue-soft);margin-inline-end:8px"></i>${esc(l.action)}</td>
+          <td>${esc((ROLES[l.role] || {}).label || l.role)}</td>
+          <td>${new Date(l.at).toLocaleString("ar-EG")}</td></tr>`).join("")}
+      </table></div>` : `<div class="empty-state"><i class="fa-solid fa-clock-rotate-left"></i>لا عمليات مسجلة بعد</div>`}
+    </div>`;
 }
 
 function adminMain() { return $("#admin-main"); }
@@ -1207,17 +1578,17 @@ function renderAdminNews() {
     <div class="panel-box" style="margin-bottom:24px">
       <h3 style="font-weight:900;margin-bottom:16px"><i class="fa-solid fa-plus" style="color:var(--cyan)"></i> إضافة خبر جديد</h3>
       <form class="admin-form" id="add-news-form">
-        <div><label>عنوان الخبر</label><input name="title" required></div>
+        <div><label>عنوان الخبر</label><input name="title" required maxlength="${LIMITS.title}"></div>
         <div class="row2">
-          <div><label>القسم</label><select name="cat">${CATEGORIES.map((c) => `<option value="${c.id}">${c.label}</option>`).join("")}</select></div>
+          <div><label>القسم</label><select name="cat">${CATEGORIES.map((c) => `<option value="${escAttr(c.id)}">${esc(c.label)}</option>`).join("")}</select></div>
           <div><label>الحالة</label><select name="status"><option>منشور</option><option>مسودة</option><option>مجدول</option><option>قيد المراجعة</option><option>مؤرشف</option></select></div>
         </div>
         <div class="row2">
-          <div><label>الكاتب</label><select name="author">${AUTHORS.map((a) => `<option value="${a.id}">${a.name}</option>`).join("")}</select></div>
+          <div><label>الكاتب</label><select name="author">${AUTHORS.map((a) => `<option value="${escAttr(a.id)}">${esc(a.name)}</option>`).join("")}</select></div>
           <div><label>تاريخ النشر / الجدولة</label><input type="date" name="date" value="${new Date().toISOString().slice(0, 10)}"></div>
         </div>
-        <div><label>مقدمة مختصرة</label><input name="excerpt" required></div>
-        <div><label>نص الخبر (افصل الفقرات بسطر فارغ)</label><textarea name="body" required></textarea></div>
+        <div><label>مقدمة مختصرة</label><input name="excerpt" required maxlength="${LIMITS.excerpt}"></div>
+        <div><label>نص الخبر (افصل الفقرات بسطر فارغ)</label><textarea name="body" required maxlength="${LIMITS.body}"></textarea></div>
         <div><label>وسوم (مفصولة بفواصل)</label><input name="tags" placeholder="ذكاء اصطناعي, Google"></div>
         <button class="btn btn-primary" style="justify-self:start"><i class="fa-solid fa-floppy-disk"></i> حفظ الخبر</button>
       </form>
@@ -1244,24 +1615,29 @@ function renderAdminNews() {
     const list = LS.get("adminNews", []);
     list.unshift({
       id: "custom-" + Date.now(),
-      title: f.get("title"), excerpt: f.get("excerpt"),
-      body: f.get("body").split(/\n\s*\n/).filter(Boolean),
-      cat: f.get("cat"), author: f.get("author"), date: f.get("date"),
-      status: f.get("status"), tags: f.get("tags").split(",").map((t) => t.trim()).filter(Boolean),
+      title: clamp(f.get("title"), LIMITS.title), excerpt: clamp(f.get("excerpt"), LIMITS.excerpt),
+      body: clamp(f.get("body"), LIMITS.body).split(/\n\s*\n/).filter(Boolean),
+      cat: safeToken(f.get("cat"), "ai"), author: safeToken(f.get("author"), "team"), date: clamp(f.get("date"), 10),
+      status: clamp(f.get("status"), 20),
+      tags: clamp(f.get("tags"), LIMITS.tags).split(",").map((t) => clamp(t, 40)).filter(Boolean).slice(0, 8),
       readMins: Math.max(2, Math.round(f.get("body").length / 700)),
       cover: "g" + (1 + Math.floor(Math.random() * 6)), icon: "fa-newspaper", views: 0, sources: [],
     });
     LS.set("adminNews", list);
+    Admin.log(`إضافة خبر: ${clamp(f.get("title"), 60)} (${f.get("status")})`, "fa-plus");
     toast("تم حفظ الخبر بنجاح"); renderAdminNews();
   });
   $$(".del-news").forEach((b) => b.addEventListener("click", () => {
     if (!confirm("حذف هذا الخبر نهائياً؟")) return;
-    const list = LS.get("adminNews", []); list.splice(+b.dataset.i, 1);
+    const list = LS.get("adminNews", []);
+    Admin.log(`حذف خبر: ${clamp((list[+b.dataset.i] || {}).title, 60)}`, "fa-trash");
+    list.splice(+b.dataset.i, 1);
     LS.set("adminNews", list); renderAdminNews();
   }));
   $$(".arch-news").forEach((b) => b.addEventListener("click", () => {
     const list = LS.get("adminNews", []);
     list[+b.dataset.i].status = "مؤرشف";
+    Admin.log(`أرشفة خبر: ${clamp(list[+b.dataset.i].title, 60)}`, "fa-box-archive");
     LS.set("adminNews", list); renderAdminNews();
   }));
 }
@@ -1273,7 +1649,7 @@ function renderAdminCats() {
       <div class="table-scroll"><table class="data-table">
         <tr><th>القسم</th><th>الأقسام الفرعية</th><th>عدد المواضيع</th></tr>
         ${CATEGORIES.map((c) => `<tr><td><i class="fa-solid ${c.icon}" style="color:var(--blue-soft);margin-inline-end:8px"></i><b>${c.label}</b></td>
-          <td>${c.subs.join(" · ")}</td><td>${allContent().filter((n) => n.cat === c.id).length}</td></tr>`).join("")}
+          <td>${c.subs.map(esc).join(" · ")}</td><td>${allContent().filter((n) => n.cat === c.id).length}</td></tr>`).join("")}
       </table></div>
       <p style="color:var(--faint);font-size:.78rem;margin-top:14px"><i class="fa-solid fa-circle-info"></i> في النسخة المربوطة بالخادم يمكن الإضافة والتعديل والحذف مباشرة من هنا.</p>
     </div>`;
@@ -1297,12 +1673,15 @@ function renderAdminComments() {
       </table></div>` : `<div class="empty-state"><i class="fa-solid fa-comments"></i>لا تعليقات بعد</div>`}
     </div>`;
   $$(".c-del").forEach((b) => b.addEventListener("click", () => {
-    const list = commentsOf(b.dataset.a); list.splice(+b.dataset.i, 1);
+    const list = commentsOf(b.dataset.a);
+    Admin.log(`حذف تعليق لـ ${clamp((list[+b.dataset.i] || {}).name, 40)}`, "fa-trash");
+    list.splice(+b.dataset.i, 1);
     LS.set("comments_" + b.dataset.a, list); renderAdminComments();
   }));
   $$(".c-pin").forEach((b) => b.addEventListener("click", () => {
     const list = commentsOf(b.dataset.a);
     list[+b.dataset.i].pinned = !list[+b.dataset.i].pinned;
+    Admin.log(`${list[+b.dataset.i].pinned ? "تثبيت" : "إلغاء تثبيت"} تعليق`, "fa-thumbtack");
     LS.set("comments_" + b.dataset.a, list); toast("تم تحديث التثبيت"); renderAdminComments();
   }));
   $$(".c-ban").forEach((b) => b.addEventListener("click", () => toast("تم حظر المستخدم (تجريبي)", "fa-ban")));
@@ -1340,20 +1719,21 @@ function renderAdminQuizzes() {
   $("#add-quiz-form").addEventListener("submit", (e) => {
     e.preventDefault();
     const f = new FormData(e.target);
-    const opts = f.get("q1o").split(",").map((s) => s.trim()).filter(Boolean);
+    const opts = clamp(f.get("q1o"), 400).split(",").map((s) => clamp(s, 80)).filter(Boolean);
     const list = LS.get("adminQuizzes", []);
     list.unshift({
-      id: "cq-" + Date.now(), title: f.get("title"), desc: f.get("desc"),
-      cover: "g6", icon: "fa-star", period: f.get("period"),
+      id: "cq-" + Date.now(), title: clamp(f.get("title"), LIMITS.title), desc: clamp(f.get("desc"), LIMITS.excerpt),
+      cover: "g6", icon: "fa-star", period: clamp(f.get("period"), 20),
       startDate: new Date().toISOString().slice(0, 10), endDate: "2026-12-31",
       winners: 1, timePerQ: 30, maxAttempts: 3, requireLogin: false,
-      prizes: [f.get("prize")], conditions: ["إكمال جميع الأسئلة"],
+      prizes: [clamp(f.get("prize"), 80)], conditions: ["إكمال جميع الأسئلة"],
       questions: [
-        { type: "mcq", q: f.get("q1"), options: opts, answer: 0 },
-        { type: "tf", q: f.get("q2"), answer: true },
+        { type: "mcq", q: clamp(f.get("q1"), 300), options: opts.slice(0, 6), answer: 0 },
+        { type: "tf", q: clamp(f.get("q2"), 300), answer: true },
       ],
     });
     LS.set("adminQuizzes", list);
+    Admin.log(`إنشاء مسابقة: ${clamp(f.get("title"), 60)}`, "fa-trophy");
     toast("تم إنشاء المسابقة!"); renderAdminQuizzes();
   });
 }
@@ -1418,7 +1798,8 @@ function renderAdminSEO() {
    الصفحات الثابتة
    ========================================================= */
 function initStatic() {
-  const p = STATIC_PAGES[param("page")] || STATIC_PAGES.about;
+  /* safePick يمنع الوصول لـ __proto__ / constructor عبر ?page= */
+  const p = safePick(STATIC_PAGES, param("page"), "about") || STATIC_PAGES.about;
   document.title = `${p.title} | ${SITE.nameAr}`;
   $("#static-shell").innerHTML = `
     <nav class="breadcrumb"><a href="index.html"><i class="fa-solid fa-house"></i> الرئيسية</a>
@@ -1437,8 +1818,8 @@ function initStatic() {
           <button class="btn btn-primary" style="justify-self:start"><i class="fa-solid fa-paper-plane"></i> إرسال</button>
         </form>` : ""}
       ${p.showTeam ? `<div class="cards-grid" style="margin-top:20px">${AUTHORS.map((a) => `
-        <a class="article-card" href="author.html?id=${a.id}">
-          <span class="article-icon cover-${a.cover}"><i class="fa-solid ${a.icon}"></i></span>
+        <a class="article-card" href="author.html?id=${encodeURIComponent(a.id)}">
+          <span class="article-icon ${coverCls(a)}"><i class="fa-solid ${a.icon}"></i></span>
           <div class="article-info"><h3>${a.name}</h3><p>${a.role}</p></div>
         </a>`).join("")}</div>` : ""}
     </div>`;
