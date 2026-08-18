@@ -29,10 +29,23 @@
     --violet: #D2691E;
     --teal: #B4530F;
 
-    /* النصوص — رمادي دافئ يناسب البرتقالي */
-    --text: #1C1917;
-    --muted: #57534E;
-    --dim: #8C857E;
+    /* ===== نظام النصوص المزدوج =====
+       ink   = نص غامق يُستخدم فوق الأسطح البيضاء (الكروت والنماذج والهيدر)
+       onbg  = نص أبيض يُستخدم فوق خلفية الصورة (الجلد البرتقالي) مباشرة
+       المتغيرات --text/--muted/--dim تبدأ بقيمة onbg، وتُعاد تعريفها
+       محلياً إلى ink داخل كل سطح أبيض — فتتلوّن كل عناصر الموقع
+       تلقائياً بالسياق الصحيح دون تكرار قواعد لكل عنصر. */
+    --ink: #1C1917;
+    --ink-muted: #57534E;
+    --ink-dim: #8C857E;
+
+    --onbg: #FFFFFF;
+    --onbg-muted: rgba(255, 255, 255, .85);
+    --onbg-dim: rgba(255, 255, 255, .65);
+
+    --text: var(--onbg);
+    --muted: var(--onbg-muted);
+    --dim: var(--onbg-dim);
 
     /* الحدود والأسطح الزجاجية → كروت بيضاء بحد رفيع */
     --line: #E9E5E0;
@@ -46,6 +59,8 @@
     --sh-lg: 0 12px 32px rgba(28, 25, 23, .09), 0 4px 8px rgba(28, 25, 23, .04);
     --sh-orange: 0 8px 24px rgba(210, 105, 30, .22);
 
+    /* تدرّج العناوين المميزة: أبيض دافئ فوق الصورة، ويتحول لبرتقالي غني داخل الكروت */
+    --accent-grad: linear-gradient(90deg, #ffffff, #ffe8d2);
     --grad: linear-gradient(90deg, #B4530F, #D2691E 55%, #E8904F);
     --grad-btn: linear-gradient(135deg, #D2691E 0%, #B4530F 100%);
 
@@ -56,40 +71,32 @@
 
 html { scroll-behavior: smooth; }
 
+/* خلفية البورتفوليو بالكامل = نسيج الجلد البرتقالي المرفق */
 body {
     font-family: 'IBM Plex Sans Arabic', 'Cairo', sans-serif;
-    /* خلفية بيضاء بتوهج برتقالي خفيف أعلى الصفحة — توقيع SaaS */
     background:
-        radial-gradient(900px 480px at 78% -8%, rgba(210, 105, 30, .10), transparent 62%),
-        radial-gradient(760px 420px at 12% 4%, rgba(232, 144, 79, .08), transparent 60%),
-        var(--bg);
+        linear-gradient(180deg, rgba(20, 8, 2, .38), rgba(20, 8, 2, .5)),
+        url('assets/bg-leather.jpg') center top / cover no-repeat;
     background-attachment: fixed;
     color: var(--text);
     line-height: 1.8;
     overflow-x: hidden;
     position: relative;
 }
+/* النص المباشر فوق الصورة يحتاج ظلاً خفيفاً ليبقى واضحاً على كل درجات النسيج */
+body { text-shadow: 0 1px 4px rgba(20, 8, 2, .35); }
 
-/* ambient glow — teal-forward to harmonize with the grid background */
-body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-        radial-gradient(45% 40% at 12% 88%, rgba(23,200,172,.22), transparent 62%),
-        radial-gradient(55% 45% at 50% -5%, rgba(20,180,158,.14), transparent 62%),
-        radial-gradient(45% 40% at 88% 10%, rgba(23,200,172,.10), transparent 60%);
-    z-index: -1;
-    pointer-events: none;
-}
+/* لا حاجة لتوهجات إضافية — الصورة نفسها توفر الغنى البصري */
+body::before { content: none; }
 
 h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; line-height: 1.35; font-weight: 800; }
 
 .container { width: min(1200px, 92%); margin-inline: auto; }
 
 .grad-text {
-    background: var(--grad);
+    background: var(--accent-grad);
     -webkit-background-clip: text; background-clip: text; color: transparent;
+    text-shadow: none;
 }
 
 /* ===== Glass base ===== */
@@ -725,12 +732,36 @@ body, p, li, td, span, small, label, .lead, .desc {
 p, .lead, .desc, .muted, small { color: var(--muted); }
 h1, h2, h3, h4, h5, strong, b { color: var(--text); }
 .dim, .hint, .meta, .when { color: var(--dim); }
-a { color: var(--orange-600); }
-a:hover { color: var(--orange); }
+a { color: #fff; }
+a:hover { color: var(--orange-100); }
 
-/* ---------- الهيدر: شريط أبيض شفاف مع حد رفيع ---------- */
-header, .nav, #nav, .site-header, .navbar {
-    background: rgba(255, 255, 255, .82) !important;
+/* ---------- السياق الغامق: أي سطح أبيض/فاتح يُعيد تعريف النصوص إلى ink ----------
+   لأن --text/--muted/--dim متغيرات موروثة (custom properties)، إعادة تعريفها هنا
+   تكفي لتلوين كل عنصر نصي داخل هذه الأسطح تلقائياً — بلا تكرار قواعد لكل مكوّن. */
+.card, .glass, .service-card, .project-card, .domain-card, .skill-card,
+.stat-card, .tcard, .proof-card, .channel-card, .exp-item, .panel,
+.review-card, .rev-user-card, .cat-card, .box, .feature, .info-card,
+.rev-form, .rev-user-card, .nav, #nav, .site-header, .navbar,
+.search-bar, footer, .site-footer, .nav-links.open,
+.btn-ghost, .btn.ghost, .btn-outline, .btn-secondary, .pill,
+section > .container > .grid > *, .grid > .item {
+    --text: var(--ink);
+    --muted: var(--ink-muted);
+    --dim: var(--ink-dim);
+    text-shadow: none;
+}
+.card a, .glass a, .rev-form a, footer a, .site-footer a,
+.nav a, #nav a, .nav-links a { color: var(--orange-600); }
+.card a:hover, .glass a:hover, .rev-form a:hover, footer a:hover,
+.site-footer a:hover, .nav a:hover, #nav a:hover, .nav-links a:hover { color: var(--orange); }
+
+/* ---------- الهيدر: شريط أبيض شفاف مع حد رفيع ----------
+   ملاحظة: تعمّدنا عدم استخدام محدد <header> الخام هنا — هذا الموقع
+   يستخدم <header class="hero"> لقسم البطل نفسه، فأي قاعدة على <header>
+   كانت ستُطبَّق بالخطأ على كل قسم الهيرو (وهو ما حدث فعلاً وأخفى خلفية
+   الصورة تماماً خلفه حتى اكتُشف الخطأ). النطاق الصحيح هو .nav/#nav فقط. */
+.nav, #nav, .site-header, .navbar {
+    background: rgba(255, 255, 255, .88) !important;
     backdrop-filter: saturate(180%) blur(14px);
     -webkit-backdrop-filter: saturate(180%) blur(14px);
     border-bottom: 1px solid var(--line) !important;
@@ -779,8 +810,8 @@ header, .nav, #nav, .site-header, .navbar {
     font-weight: 700;
 }
 
-/* ---------- الأقسام المتناوبة ---------- */
-section:nth-of-type(even) { background: var(--bg-2); }
+/* ---------- الأقسام: بلا خلفيات صلبة — نسيج الجلد يظهر عبر الصفحة كلها ---------- */
+section:nth-of-type(even) { background: none; }
 section { border-top: 1px solid transparent; }
 
 /* ---------- النماذج ---------- */
@@ -831,8 +862,8 @@ footer a:hover, .site-footer a:hover { color: var(--orange-600) !important; }
 /* ---------- الخطوط الفاصلة ---------- */
 hr, .divider, .sep { border-color: var(--line) !important; background: var(--line); }
 
-/* ---------- إزالة التوهجات الداكنة الموروثة ---------- */
-[class*="glow"], .halo, .orb { opacity: .5; filter: saturate(.6); }
+/* ---------- إزالة التوهجات الزخرفية القديمة — الصورة نفسها توفر الغنى البصري ---------- */
+[class*="glow"], .halo, .orb { display: none !important; }
 
 /* ---------- تحسين قابلية القراءة على الفاتح ---------- */
 ::selection { background: var(--orange-100); color: var(--orange-600); }
@@ -1007,6 +1038,21 @@ body::before {
 .btn-plain:hover { color: var(--orange-600) !important; }
 .rev-or span { background: #fff !important; color: var(--dim) !important; }
 .rev-or::before, .rev-or::after { background: var(--line) !important; }
-.eyebrow { color: var(--orange-600) !important; }
-.back-link { color: var(--muted) !important; }
-.back-link:hover { color: var(--orange-600) !important; }
+/* .eyebrow يظهر دائماً مباشرة فوق خلفية الصورة (لا داخل كرت) — نصه
+   الأصلي الغامق كان سيضيع فوق الأجزاء البرتقالية من النسيج، فحوّلناه
+   لشارة صغيرة فاتحة قائمة بذاتها، بنفس منطق "خلفية فاتحة = نص غامق". */
+.eyebrow {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, .92) !important;
+    color: var(--orange-600) !important;
+    border: 1px solid rgba(255, 255, 255, .5);
+    border-radius: 999px;
+    padding: 5px 14px;
+    text-shadow: none !important;
+    box-shadow: var(--sh-sm);
+}
+.eyebrow .dot { background: var(--orange); }
+.back-link { color: var(--onbg) !important; }
+.back-link:hover { color: var(--orange-100) !important; }
