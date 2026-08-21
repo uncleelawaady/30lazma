@@ -721,6 +721,29 @@ img { max-width: 100%; display: block; }
 .newsletter-note { font-size: 0.78rem; color: var(--faint); margin-top: 10px; }
 .newsletter-note.ok { color: var(--cyan); font-weight: 700; }
 
+/* ===================== مركز الأمان ===================== */
+.sec-feature { display: flex; flex-direction: column; gap: 10px; }
+.sec-feature-icon {
+  width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center;
+  background: linear-gradient(135deg, var(--blue-strong), var(--blue-soft)); color: #fff; font-size: 1.05rem;
+}
+.sec-feature h3 { font-size: 1rem; font-weight: 800; }
+.sec-feature p { color: var(--muted); font-size: 0.86rem; line-height: 1.8; margin: 0; }
+.pw-meter { margin-top: 16px; }
+.pw-meter-track { height: 8px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.pw-meter-fill { height: 100%; width: 0; border-radius: 999px; transition: width 0.25s ease, background 0.25s ease; background: var(--faint); }
+.pw-meter-fill.weak { background: #ff4d5e; }
+.pw-meter-fill.fair { background: #ffb44d; }
+.pw-meter-fill.good { background: #4fd07a; }
+.pw-meter-fill.strong { background: var(--cyan); }
+.pw-meter-label { margin-top: 8px; font-size: 0.86rem; font-weight: 700; color: var(--muted); }
+.pw-meter-tips { margin: 10px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.pw-meter-tips li { font-size: 0.8rem; color: var(--faint); display: flex; gap: 6px; }
+.pw-meter-tips li::before { content: "\f05a"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--blue-soft); }
+.sec-limits { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 14px; }
+.sec-limits li { display: flex; gap: 10px; color: var(--muted); font-size: 0.9rem; line-height: 1.8; }
+.sec-limits li i { color: #ff4d5e; margin-top: 3px; }
+
 /* ===================== الفوتر ===================== */
 .site-footer {
   margin-top: 60px;

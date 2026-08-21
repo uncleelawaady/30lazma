@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://img.youtube.com; frame-src https://www.youtube-nocookie.com; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>مركز الأمان | تك آي نيوز</title>
+  <meta name="description" content="مركز الأمان في تك آي نيوز: سياستنا الأمنية، نصائح عملية لحماية حسابك، وأداة فحص قوة كلمة المرور تعمل بالكامل داخل متصفحك.">
+  <link rel="canonical" href="https://techai.news/security.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="مركز الأمان | تك آي نيوز">
+  <meta property="og:description" content="سياسة الأمان ونصائح عملية وأداة فحص قوة كلمة المرور — كل ذلك داخل متصفحك فقط.">
+  <meta property="og:url" content="https://techai.news/security.html">
+  <meta property="og:site_name" content="TechAI News">
+  <meta name="twitter:card" content="summary">
+  <meta name="theme-color" content="#0a1352">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="security">
+  <div class="bg-scene"></div>
+  <div id="app-header"></div>
+  <main>
+    <section class="section" style="padding-block:30px 10px">
+      <div class="container">
+        <div class="section-head">
+          <div class="titles">
+            <span class="kicker"><i class="fa-solid fa-shield-halved"></i> الأمن والخصوصية</span>
+            <h2>مركز <span class="grad">الأمان</span></h2>
+          </div>
+        </div>
+        <div class="panel-box glow reveal">
+          <p style="color:var(--muted);line-height:1.9;margin:0">
+            هذا الموقع بأكمله <b>ثابت (Static)</b> ويعمل بلا خادم خلفي — كل بيانات حسابك وتعليقاتك ونقاطك
+            تُخزَّن محلياً داخل متصفحك أنت فقط (<code>localStorage</code>) ولا تصل إلينا أو لأي طرف آخر.
+            هذا يعني حماية جيدة من التتبع، لكنه أيضاً يعني أن أي «قفل» في الواجهة (مثل لوحة التحكم) قابل
+            للتجاوز نظرياً من أدوات المطوّر في متصفح نفس الجهاز — فهو رادع ضد الزوار العاديين لا حماية
+            بمستوى خادم حقيقي. كن صريحاً مع نفسك بشأن هذا الحد قبل تخزين أي شيء حساس.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div class="titles">
+            <span class="kicker"><i class="fa-solid fa-list-check"></i> ماذا نحمي فعلاً</span>
+            <h2>إجراءات <span class="grad">الحماية</span> الحالية</h2>
+          </div>
+        </div>
+        <div class="cards-grid" id="sec-features"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div class="titles">
+            <span class="kicker"><i class="fa-solid fa-key"></i> أداة تفاعلية</span>
+            <h2>فاحص <span class="grad">قوة كلمة المرور</span></h2>
+          </div>
+        </div>
+        <div class="panel-box glow reveal" style="max-width:520px">
+          <p style="color:var(--muted);font-size:0.86rem;margin:0 0 16px">
+            كل الفحص يتم داخل متصفحك بجافاسكريبت فقط — لا تُرسَل كلمة المرور لأي مكان، ولا تُخزَّن، ولا حتى
+            في سجلّات هذا المتصفح.
+          </p>
+          <form class="auth-form" id="pw-check-form" autocomplete="off">
+            <label for="pw-check-input">اكتب كلمة مرور لتجربتها</label>
+            <input type="password" id="pw-check-input" placeholder="••••••••" autocomplete="new-password">
+          </form>
+          <div class="pw-meter" id="pw-meter" aria-live="polite">
+            <div class="pw-meter-track"><div class="pw-meter-fill" id="pw-meter-fill"></div></div>
+            <div class="pw-meter-label" id="pw-meter-label">اكتب لتبدأ الفحص</div>
+            <ul class="pw-meter-tips" id="pw-meter-tips"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div class="titles">
+            <span class="kicker"><i class="fa-solid fa-triangle-exclamation"></i> بصراحة</span>
+            <h2>ما هو <span class="grad">غير</span> محمي</h2>
+          </div>
+        </div>
+        <div class="panel-box reveal">
+          <ul class="sec-limits">
+            <li><i class="fa-solid fa-circle-xmark"></i> بيانات المتصفح تُمسح إذا مسح الزائر ذاكرة المتصفح أو استخدم جهازاً آخر — لا نسخة احتياطية على خادم.</li>
+            <li><i class="fa-solid fa-circle-xmark"></i> قفل لوحة التحكم حماية واجهة على موقع Static، وليس بديلاً عن مصادقة خادم حقيقية.</li>
+            <li><i class="fa-solid fa-circle-xmark"></i> النقاط ونتائج المسابقات موقّعة محلياً كرادع، لا كحماية مطلقة من التلاعب من طرف يتحكم بجهازه بالكامل.</li>
+            <li><i class="fa-solid fa-circle-xmark"></i> لا يوجد تحقق بخطوتين (2FA) لأن الحساب أصلاً لا يمر عبر خادم مصادقة.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="app-footer"></div>
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

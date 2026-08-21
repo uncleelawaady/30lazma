@@ -411,6 +411,7 @@ function buildShell() {
             <li><a href="static.html?page=privacy"><i class="fa-solid fa-angle-left"></i> سياسة الخصوصية</a></li>
             <li><a href="static.html?page=terms"><i class="fa-solid fa-angle-left"></i> الشروط والأحكام</a></li>
             <li><a href="static.html?page=cookies"><i class="fa-solid fa-angle-left"></i> سياسة الكوكيز</a></li>
+            <li><a href="security.html"><i class="fa-solid fa-angle-left"></i> مركز الأمان</a></li>
             <li><a href="admin.html"><i class="fa-solid fa-angle-left"></i> لوحة التحكم</a></li>
           </ul>
           <ul class="footer-contact" style="margin-top:14px">
@@ -1819,14 +1820,73 @@ function initStatic() {
         </form>` : ""}
       ${p.showTeam ? `<div class="cards-grid" style="margin-top:20px">${AUTHORS.map((a) => `
         <a class="article-card" href="author.html?id=${encodeURIComponent(a.id)}">
-          <span class="article-icon ${coverCls(a)}"><i class="fa-solid ${a.icon}"></i></span>
-          <div class="article-info"><h3>${a.name}</h3><p>${a.role}</p></div>
+          <span class="article-icon ${coverCls(a)}"><i class="fa-solid ${safeToken(a.icon, "fa-user")}"></i></span>
+          <div class="article-info"><h3>${esc(a.name)}</h3><p>${esc(a.role)}</p></div>
         </a>`).join("")}</div>` : ""}
     </div>`;
   $("#contact-form")?.addEventListener("submit", (e) => {
     e.preventDefault();
     toast("تم إرسال رسالتك — سنعود إليك قريباً", "fa-paper-plane");
     e.target.reset();
+  });
+}
+
+/* =========================================================
+   مركز الأمان — صفحة أمان القارئ + فاحص كلمة المرور
+   كل الفحص محلي بالكامل، لا اتصال شبكة ولا تخزين لكلمة المرور
+   ========================================================= */
+const SECURITY_FEATURES = [
+  { icon: "fa-user-shield", title: "تجزئة كلمات المرور", body: "كل كلمة مرور تُحفظ كبصمة SHA-256 مع مِلح فريد لكل حساب — لا نص صريح مخزَّن أبداً." },
+  { icon: "fa-code", title: "تهريب المخرجات", body: "أي نص يكتبه زائر (تعليق، اسم، رد) يُهرَّب قبل عرضه لمنع حقن HTML/JS ضار (XSS)." },
+  { icon: "fa-lock", title: "قفل لوحة التحكم", body: "دخول محمي بكلمة مرور، مهلة خمول 30 دقيقة، وتأخير تصاعدي بعد المحاولات الفاشلة." },
+  { icon: "fa-users-gear", title: "أدوار وصلاحيات", body: "مدير / محرر / مراجع — كل دور يرى فقط ما يخصه، مع سجل عمليات لكل إضافة أو حذف." },
+  { icon: "fa-ruler", title: "حدود الإدخال", body: "طول محدود لكل حقل (تعليق، اسم، بريد) يمنع إغراق التخزين المحلي أو تشويه الواجهة." },
+  { icon: "fa-shield-halved", title: "سياسة أمان المحتوى (CSP)", body: "كل صفحة تمنع تحميل أي سكربت من مصدر غير موثوق، وتقصر الاتصال على مصادر معروفة." },
+];
+
+function initSecurity() {
+  const box = $("#sec-features");
+  if (box) box.innerHTML = SECURITY_FEATURES.map((f) => `
+    <div class="panel-box reveal sec-feature">
+      <span class="sec-feature-icon"><i class="fa-solid ${f.icon}"></i></span>
+      <h3>${esc(f.title)}</h3>
+      <p>${esc(f.body)}</p>
+    </div>`).join("");
+
+  const input = $("#pw-check-input");
+  const fill = $("#pw-meter-fill");
+  const label = $("#pw-meter-label");
+  const tips = $("#pw-meter-tips");
+  if (!input) return;
+
+  const LEVELS = [
+    { min: 0, cls: "weak", text: "ضعيفة جداً" },
+    { min: 2, cls: "fair", text: "مقبولة" },
+    { min: 4, cls: "good", text: "جيدة" },
+    { min: 5, cls: "strong", text: "قوية" },
+  ];
+
+  input.addEventListener("input", () => {
+    const pass = input.value;
+    if (!pass) {
+      fill.style.width = "0%"; fill.className = "pw-meter-fill";
+      label.textContent = "اكتب لتبدأ الفحص"; tips.innerHTML = "";
+      return;
+    }
+    let score = 0;
+    const notes = [];
+    if (pass.length >= 8) score++; else notes.push("استخدم 8 محارف على الأقل");
+    if (pass.length >= 12) score++;
+    if (/[a-z]/.test(pass) && /[A-Z]/.test(pass)) score++; else notes.push("امزج بين الحروف الكبيرة والصغيرة");
+    if (/[0-9]/.test(pass)) score++; else notes.push("أضف رقماً واحداً على الأقل");
+    if (/[^A-Za-z0-9]/.test(pass)) score++; else notes.push("أضف رمزاً خاصاً مثل ! أو _ أو #");
+    if (WEAK_PASSWORDS.includes(pass.toLowerCase())) { score = 0; notes.unshift("هذه من أشهر كلمات المرور المسرَّبة — لا تستخدمها إطلاقاً"); }
+
+    const level = [...LEVELS].reverse().find((l) => score >= l.min) || LEVELS[0];
+    fill.style.width = `${Math.min(100, (score / 6) * 100)}%`;
+    fill.className = `pw-meter-fill ${level.cls}`;
+    label.textContent = level.text;
+    tips.innerHTML = notes.slice(0, 3).map((n) => `<li>${esc(n)}</li>`).join("");
   });
 }
 
@@ -1843,7 +1903,7 @@ function observeReveals(scope = document) { $$(".reveal", scope).forEach((el) =>
 document.addEventListener("DOMContentLoaded", () => {
   buildShell();
   const page = document.body.dataset.page;
-  const inits = { home: initHome, article: initArticle, category: initCategory, search: initSearch, author: initAuthor, special: initSpecial, quiz: initQuiz, account: initAccount, admin: initAdmin, static: initStatic };
+  const inits = { home: initHome, article: initArticle, category: initCategory, search: initSearch, author: initAuthor, special: initSpecial, quiz: initQuiz, account: initAccount, admin: initAdmin, static: initStatic, security: initSecurity };
   inits[page]?.();
   observeReveals();
 });

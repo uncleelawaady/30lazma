@@ -1,7 +1,8 @@
 /* TechAI News — Service Worker (PWA + Cache) */
-const CACHE = "techai-v2";
+const CACHE = "techai-v3";
 const CORE = ["index.html", "article.html", "category.html", "search.html", "special.html",
-  "quiz.html", "account.html", "static.html", "style.css", "script.js", "data.js", "icon.svg", "manifest.json"];
+  "quiz.html", "account.html", "static.html", "author.html", "security.html", "offline.html",
+  "style.css", "script.js", "data.js", "icon.svg", "manifest.json"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE)).then(() => self.skipWaiting()));
