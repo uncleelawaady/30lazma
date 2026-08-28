@@ -13,6 +13,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .dpf-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1.3rem; }
+        .dpf-card{ border-radius:18px; overflow:hidden; }
+        .dpf-card img{ width:100%; aspect-ratio:4/3; object-fit:cover; display:block; }
+        .dpf-body{ padding:1.1rem 1.3rem 1.3rem; }
+        .dpf-tags{ display:flex; gap:.5rem; align-items:center; margin-bottom:.6rem; }
+        .dpf-tag{ font-size:.78rem; font-weight:800; padding:.25rem .7rem; border-radius:999px;
+            background:rgba(210,105,30,.1); color:var(--orange-600); border:1px solid var(--orange-100); }
+        .dpf-date{ font-size:.78rem; color:var(--muted); }
+        .dpf-body p{ color:var(--text); font-size:.95rem; line-height:1.7; margin:0; }
+    </style>
 </head>
 <body>
 
@@ -98,6 +109,18 @@
         </div>
     </section>
 
+    <!-- ===== توثيق مباشر: تعاملات أضافها العوضي بنفسه (منفصل عن الإثباتات الثابتة فوق) ===== -->
+    <section class="section section-alt" id="dealProofs" hidden>
+        <div class="container">
+            <div class="head">
+                <span class="eyebrow">توثيق مباشر</span>
+                <h2>تحديثات <span class="grad-text">أضافها العوضي بنفسه</span></h2>
+                <p>صور ووصف تعاملات وثّقها أحمد العوضي بنفسه أولًا بأول — قديمة أو جديدة.</p>
+            </div>
+            <div class="dpf-grid" id="dealProofsGrid"></div>
+        </div>
+    </section>
+
     <footer class="footer">
         <div class="foot-bottom">© 2026 Elwaset.net — جميع الحقوق محفوظة | EXD | Elawaady XDigital</div>
     </footer>
@@ -113,5 +136,54 @@
 
     <script src="script.js"></script>
     <script src="contact.js"></script>
+    <script src="firebase-config.js"></script>
+    <script type="module">
+      // ===== توثيق مباشر: يجيب تعاملات العوضي الظاهرة من Firestore =====
+      (async function () {
+        const cfg = window.FIREBASE_CONFIG;
+        const section = document.getElementById('dealProofs');
+        const box = document.getElementById('dealProofsGrid');
+        if (!cfg || !cfg.apiKey || !box || !section) return;
+        try {
+          const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+          const { getFirestore, collection, query, where, orderBy, limit, getDocs } =
+            await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+          const db = getFirestore(initializeApp(cfg));
+          let snap;
+          try {
+            snap = await getDocs(query(collection(db, 'deal_proofs'),
+              where('visible', '==', true), orderBy('createdAt', 'desc'), limit(60)));
+          } catch (e) {
+            // Fallback if the composite index isn't ready yet
+            snap = await getDocs(query(collection(db, 'deal_proofs'), where('visible', '==', true), limit(60)));
+          }
+          const esc = s => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+          const safeHttps = u => { try { const x = new URL(u); return x.protocol === 'https:' ? x.href : ''; } catch { return ''; } };
+          const fmtDate = ts => {
+            try { return ts.toDate().toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric' }); }
+            catch { return ''; }
+          };
+          const docs = [];
+          snap.forEach(d => docs.push(d.data()));
+          docs.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+
+          const cards = docs.map(d => {
+            const img = safeHttps(d.imageUrl);
+            if (!img) return '';
+            const date = fmtDate(d.createdAt);
+            return '<article class="dpf-card glass">' +
+              '<img src="' + esc(img) + '" alt="توثيق تعامل" loading="lazy" referrerpolicy="no-referrer">' +
+              '<div class="dpf-body"><div class="dpf-tags">' +
+              (d.isMediation ? '<span class="dpf-tag">وساطة</span>' : '') +
+              (date ? '<span class="dpf-date">' + esc(date) + '</span>' : '') +
+              '</div><p>' + esc(d.description || '') + '</p></div></article>';
+          }).filter(Boolean);
+
+          if (cards.length) { box.innerHTML = cards.join(''); section.hidden = false; }
+        } catch (err) {
+          console.warn('deal proofs unavailable', err);
+        }
+      })();
+    </script>
 </body>
 </html>

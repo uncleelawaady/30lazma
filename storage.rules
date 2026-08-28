@@ -1,0 +1,37 @@
+rules_version = '2';
+
+// =====================================================================
+//  قواعد أمان Firebase Storage — مشروع elwaset-store
+//  انشرها من Firebase Console > Storage > Rules، أو:
+//      firebase deploy --only storage
+//
+//  بتحكم في صور "التوثيق المباشر" اللي بيرفعها العوضي من لوحة dashboard.html.
+//  بدون هذا الملف، الإعداد الافتراضي لـ Storage بيرفض كل شيء أو يفتح كل شيء
+//  حسب وضع المشروع — لازم ننشره صراحةً.
+// =====================================================================
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    match /deal-proofs/{fileName} {
+      // القراءة عامة — الصور دي المفروض تظهر لأي زائر في صفحة الإثباتات
+      allow read: if true;
+
+      // الكتابة/الاستبدال لصاحب الموقع فقط، وبشرط يكون فعلاً صورة وحجمها معقول
+      allow write: if request.auth != null
+        && request.auth.token.email == 'elawadi.store4@gmail.com'
+        && request.auth.token.email_verified == true
+        && request.resource.size < 6 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+
+      allow delete: if request.auth != null
+        && request.auth.token.email == 'elawadi.store4@gmail.com'
+        && request.auth.token.email_verified == true;
+    }
+
+    // الافتراضي: رفض كل مسار غير مغطى أعلاه
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -42,6 +42,24 @@ service cloud.firestore {
         && (!('photo' in d) || (d.photo is string && d.photo.size() <= 500));
     }
 
+    // صاحب الموقع فقط — يتحقق ببريد حساب Google الموثّق، مفيش تسجيل تاني يقدر يمر بيه
+    function isOwner() {
+      return request.auth != null
+        && request.auth.token.email == 'elawadi.store4@gmail.com'
+        && request.auth.token.email_verified == true;
+    }
+
+    function validDealProof(d) {
+      return d.keys().hasOnly(['imageUrl', 'storagePath', 'description', 'isMediation', 'visible', 'createdAt', 'updatedAt'])
+        && d.imageUrl is string && d.imageUrl.matches('^https://.*')
+        && d.storagePath is string && d.storagePath.size() > 0
+        && d.description is string && d.description.size() >= 5 && d.description.size() <= 500
+        && d.isMediation is bool
+        && d.visible is bool
+        && d.createdAt is timestamp
+        && d.updatedAt is timestamp;
+    }
+
     // ---------- التقييمات ----------
     match /reviews/{id} {
       // الزوار يقرؤون التقييمات المعتمدة فقط — غير المعتمدة تبقى مخفية
@@ -69,6 +87,16 @@ service cloud.firestore {
       allow create: if !isSignedIn() && validCustomer(request.resource.data);
 
       allow delete: if false;
+    }
+
+    // ---------- توثيق مباشر: تعاملات يضيفها العوضي بنفسه (منفصل عن reviews العملاء) ----------
+    match /deal_proofs/{id} {
+      // الزوار يشوفوا بس اللي ظاهر — العوضي يشوف كل حاجة (حتى المخفي) من لوحته
+      allow read: if resource.data.visible == true || isOwner();
+
+      // الإضافة/التعديل/الحذف لصاحب الموقع فقط
+      allow create, update: if isOwner() && validDealProof(request.resource.data);
+      allow delete: if isOwner();
     }
 
     // ---------- الافتراضي: رفض كل ما سبق عدم تغطيته ----------

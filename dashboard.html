@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; img-src 'self' data: https:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.cloudfunctions.net wss://*.firebaseio.com; frame-src https://*.firebaseapp.com https://accounts.google.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>لوحة التوثيق المباشر | Elwaset.net</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="assets/favicon.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .dp-wrap{ max-width:900px; }
+        .dp-row{
+            display:flex; gap:1rem; align-items:center; padding:1rem;
+            background:#fff; border:1px solid var(--line); border-radius:16px; margin-bottom:.9rem;
+        }
+        .dp-row img{ width:76px; height:76px; object-fit:cover; border-radius:12px; flex:0 0 auto; }
+        .dp-row .dp-body{ flex:1; min-width:0; }
+        .dp-row .dp-body p{ color:var(--ink); margin:0 0 .4rem; font-size:.95rem; line-height:1.6;
+            overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+        .dp-tags{ display:flex; gap:.4rem; flex-wrap:wrap; }
+        .dp-tag{ font-size:.75rem; font-weight:700; padding:.2rem .6rem; border-radius:999px; }
+        .dp-tag.med{ background:rgba(210,105,30,.1); color:var(--orange-600); border:1px solid var(--orange-100); }
+        .dp-tag.hidden{ background:#f4f1ed; color:var(--ink-dim); border:1px solid var(--line); }
+        .dp-actions{ display:flex; gap:.5rem; flex:0 0 auto; }
+        .dp-actions button{
+            width:38px; height:38px; border-radius:10px; border:1px solid var(--line); background:#fff;
+            cursor:pointer; display:grid; place-items:center; color:var(--ink); transition:var(--tr);
+        }
+        .dp-actions button:hover{ border-color:var(--orange); color:var(--orange); }
+        .dp-actions button.danger:hover{ border-color:#c0392b; color:#c0392b; }
+        .dp-preview{
+            width:140px; height:140px; border-radius:14px; border:1px dashed var(--line);
+            display:grid; place-items:center; overflow:hidden; background:#faf8f6; color:var(--ink-dim);
+            cursor:pointer; margin-bottom:.3rem;
+        }
+        .dp-preview img{ width:100%; height:100%; object-fit:cover; }
+        .dp-check{ display:flex; align-items:center; gap:.5rem; font-family:'Cairo'; font-weight:700; font-size:.92rem; }
+        .dp-empty{ text-align:center; color:var(--muted); padding:2rem 0; }
+        .dp-form-actions{ display:flex; gap:.8rem; }
+        .dp-form-actions .btn-plain{ flex:0 0 auto; }
+    </style>
+</head>
+<body>
+
+    <nav class="nav" id="nav">
+        <div class="container nav-inner">
+            <a href="index.html" class="brand">
+                <img src="assets/logo.png" alt="Elwaset" class="brand-logo-img">
+                <span class="brand-name">Elwaset<em>.net</em></span>
+            </a>
+            <ul class="nav-links" id="navLinks"></ul>
+            <a href="index.html" class="btn btn-grad btn-sm"><i class="fas fa-house"></i> الرئيسية</a>
+        </div>
+    </nav>
+
+    <header class="cat-hero">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="container">
+            <div class="cat-hero-head">
+                <div class="cat-hero-ico" style="background:linear-gradient(135deg,#E8904F,#D2691E);box-shadow:0 10px 30px -6px #D2691E"><i class="fas fa-lock"></i></div>
+                <div>
+                    <span class="eyebrow">خاص — العوضي فقط</span>
+                    <h1 class="grad-text">لوحة التوثيق المباشر</h1>
+                </div>
+            </div>
+            <p class="cat-hero-intro">أضف صور تعاملاتك (قديمة أو جديدة) بنفسك — منفصلة تمامًا عن تقييمات العملاء. كل صورة معاها وصف للمعاملة وهل كانت وساطة ولا لأ.</p>
+        </div>
+    </header>
+
+    <section class="section" style="padding-top:1rem">
+        <div class="container dp-wrap">
+
+            <!-- Sign-in gate -->
+            <div class="rev-form" id="signinBox" style="text-align:center">
+                <div class="rev-avatar-lg"><i class="fas fa-user-lock"></i></div>
+                <h3 style="margin:1rem 0 .4rem">سجّل دخولك</h3>
+                <p style="margin-bottom:1.4rem">اللوحة دي خاصة بصاحب الموقع بس — سجّل بحساب Google المعتمد.</p>
+                <button class="btn-google" id="googleBtn">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIj48cGF0aCBmaWxsPSIjRUE0MzM1IiBkPSJNMjQgOS41YzMuNTQgMCA2LjcxIDEuMjIgOS4yMSAzLjZsNi44NS02Ljg1QzM1LjkgMi4zOCAzMC40NyAwIDI0IDAgMTQuNjIgMCA2LjUxIDUuMzggMi41NiAxMy4yMmw3Ljk4IDYuMTlDMTIuNDMgMTMuNzIgMTcuNzQgOS41IDI0IDkuNXoiLz48cGF0aCBmaWxsPSIjNDI4NUY0IiBkPSJNNDYuOTggMjQuNTVjMC0xLjU3LS4xNS0zLjA5LS4zOC00LjU1SDI0djkuMDJoMTIuOTRjLS41OCAyLjk2LTIuMjYgNS40OC00Ljc4IDcuMThsNy43MyA2Yy40NS0uNCA4LjA5LTcuMjIgOC4wOS0xNy42NXoiLz48cGF0aCBmaWxsPSIjRkJCQzA1IiBkPSJNMTAuNTMgMjguNTljLS40OC0xLjQ1LS43Ni0yLjk5LS43Ni00LjU5czAuMjctMy4xNC43Ni00LjU5bC03Ljk4LTYuMTlDMC45MiAxNi40NiAwIDIwLjEyIDAgMjRjMCAzLjg4LjkyIDcuNTQgMi41NiAxMC43OGw3Ljk3LTYuMTl6Ii8+PHBhdGggZmlsbD0iIzM0QTg1MyIgZD0iTTI0IDQ4YzYuNDggMCAxMS45My0yLjEzIDE1Ljg5LTUuODFsLTcuNzMtNmMtMi4xNSAxLjQ1LTQuOTIgMi4zLTguMTYgMi4zLTYuMjYgMC0xMS41Ny00LjIyLTEzLjQ3LTkuOTFsLTcuOTggNi4xOUM2LjUxIDQyLjYyIDE0LjYyIDQ4IDI0IDQ4eiIvPjwvc3ZnPg==" alt="Google">
+                    تسجيل الدخول بجوجل
+                </button>
+            </div>
+
+            <!-- Not the owner -->
+            <div class="rev-form" id="deniedBox" style="display:none; text-align:center">
+                <div class="rev-avatar-lg" style="background:#fdeceb;border-color:#f3b9b2;color:#c0392b"><i class="fas fa-triangle-exclamation"></i></div>
+                <h3 style="margin:1rem 0 .4rem">غير مصرح لك بالدخول</h3>
+                <p id="deniedEmail" style="margin-bottom:1.4rem"></p>
+                <button class="btn-plain" id="signoutDenied">تسجيل خروج</button>
+            </div>
+
+            <!-- Owner dashboard -->
+            <div id="ownerBox" style="display:none">
+
+                <form class="rev-form" id="dpForm" style="margin-bottom:2rem">
+                    <h3 id="dpFormTitle">إضافة تعامل جديد</h3>
+
+                    <div class="rf-group">
+                        <label>الصورة</label>
+                        <div class="dp-preview" id="dpPreview"><i class="fas fa-image"></i></div>
+                        <input type="file" id="dpFile" accept="image/*" hidden>
+                        <button type="button" class="btn-plain" id="dpPick" style="width:fit-content">اختر صورة</button>
+                    </div>
+
+                    <div class="rf-group">
+                        <label>المعاملة كانت إيه؟</label>
+                        <textarea id="dpDesc" rows="3" placeholder="مثال: بيع حساب إنستجرام موثّق بين طرفين عبر الوساطة الآمنة..." required maxlength="500"></textarea>
+                    </div>
+
+                    <label class="dp-check"><input type="checkbox" id="dpMed"> كانت وساطة</label>
+                    <label class="dp-check"><input type="checkbox" id="dpVis" checked> ظاهر في الموقع</label>
+
+                    <div class="dp-form-actions">
+                        <button type="submit" class="btn btn-grad btn-lg" id="dpSave" style="flex:1"><i class="fas fa-floppy-disk"></i> حفظ</button>
+                        <button type="button" class="btn-plain" id="dpCancel" style="display:none">إلغاء التعديل</button>
+                    </div>
+                </form>
+
+                <h3 style="margin-bottom:1rem">التعاملات المضافة</h3>
+                <div id="dpList"></div>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="foot-bottom">© 2026 Elwaset.net — جميع الحقوق محفوظة | EXD | Elawaady XDigital</div>
+    </footer>
+
+    <script src="firebase-config.js"></script>
+    <script type="module">
+    const OWNER_EMAIL = 'elawadi.store4@gmail.com';
+    const cfg = window.FIREBASE_CONFIG || {};
+    const configured = cfg.apiKey && cfg.apiKey !== 'REPLACE_ME';
+
+    const signinBox = document.getElementById('signinBox');
+    const deniedBox = document.getElementById('deniedBox');
+    const ownerBox = document.getElementById('ownerBox');
+    const deniedEmail = document.getElementById('deniedEmail');
+
+    const esc = s => String(s ?? '').replace(/[&<>"']/g,
+        c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const safeHttps = u => { try { const x = new URL(u); return x.protocol === 'https:' ? x.href : ''; } catch { return ''; } };
+
+    function showGate() { signinBox.style.display = 'block'; deniedBox.style.display = 'none'; ownerBox.style.display = 'none'; }
+    function showDenied(email) { signinBox.style.display = 'none'; deniedBox.style.display = 'block'; ownerBox.style.display = 'none'; deniedEmail.textContent = 'سجلت بحساب: ' + email; }
+    function showOwner() { signinBox.style.display = 'none'; deniedBox.style.display = 'none'; ownerBox.style.display = 'block'; }
+
+    if (!configured) {
+        document.getElementById('googleBtn').addEventListener('click', () => alert('قاعدة البيانات لسه بتتجهّز، جرّب تاني قريبًا.'));
+    } else {
+        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+        const { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } =
+            await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+        const { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, getDocs, query, orderBy, serverTimestamp } =
+            await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+        const { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } =
+            await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js');
+
+        const app = initializeApp(cfg);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+        const provider = new GoogleAuthProvider();
+
+        document.getElementById('googleBtn').addEventListener('click', async () => {
+            try { await signInWithPopup(auth, provider); }
+            catch (err) { alert('تعذّر تسجيل الدخول: ' + (err && err.message ? err.message : err)); }
+        });
+        const signOutAll = async () => { try { await signOut(auth); } catch (e) {} showGate(); };
+        document.getElementById('signoutDenied').addEventListener('click', signOutAll);
+
+        // ===== resize + compress image before upload =====
+        function resizeImage(file, maxDim, quality) {
+            return new Promise((resolve, reject) => {
+                const url = URL.createObjectURL(file);
+                const img = new Image();
+                img.onload = () => {
+                    let { width, height } = img;
+                    if (width > maxDim || height > maxDim) {
+                        const scale = maxDim / Math.max(width, height);
+                        width = Math.round(width * scale);
+                        height = Math.round(height * scale);
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width; canvas.height = height;
+                    canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                    canvas.toBlob(blob => {
+                        URL.revokeObjectURL(url);
+                        blob ? resolve(blob) : reject(new Error('تعذّر معالجة الصورة'));
+                    }, 'image/jpeg', quality);
+                };
+                img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('صورة غير صالحة')); };
+                img.src = url;
+            });
+        }
+
+        // ===== dashboard state =====
+        let items = [];
+        let editingId = null;
+        let pickedBlob = null;
+
+        const dpPreview = document.getElementById('dpPreview');
+        const dpFile = document.getElementById('dpFile');
+        const dpDesc = document.getElementById('dpDesc');
+        const dpMed = document.getElementById('dpMed');
+        const dpVis = document.getElementById('dpVis');
+        const dpForm = document.getElementById('dpForm');
+        const dpFormTitle = document.getElementById('dpFormTitle');
+        const dpCancel = document.getElementById('dpCancel');
+        const dpSave = document.getElementById('dpSave');
+        const dpList = document.getElementById('dpList');
+
+        document.getElementById('dpPick').addEventListener('click', () => dpFile.click());
+        dpFile.addEventListener('change', async () => {
+            const file = dpFile.files[0];
+            dpFile.value = '';
+            if (!file) return;
+            if (!file.type.startsWith('image/')) return alert('اختر ملف صورة.');
+            try {
+                pickedBlob = await resizeImage(file, 1600, 0.85);
+                dpPreview.innerHTML = '<img src="' + URL.createObjectURL(pickedBlob) + '" alt="">';
+            } catch (e) { alert(e.message); }
+        });
+
+        function resetForm() {
+            editingId = null; pickedBlob = null;
+            dpForm.reset(); dpVis.checked = true;
+            dpPreview.innerHTML = '<i class="fas fa-image"></i>';
+            dpFormTitle.textContent = 'إضافة تعامل جديد';
+            dpSave.innerHTML = '<i class="fas fa-floppy-disk"></i> حفظ';
+            dpCancel.style.display = 'none';
+        }
+        dpCancel.addEventListener('click', resetForm);
+
+        function startEdit(item) {
+            editingId = item.id; pickedBlob = null;
+            dpDesc.value = item.description || '';
+            dpMed.checked = !!item.isMediation;
+            dpVis.checked = item.visible !== false;
+            dpPreview.innerHTML = item.imageUrl ? '<img src="' + esc(item.imageUrl) + '" alt="">' : '<i class="fas fa-image"></i>';
+            dpFormTitle.textContent = 'تعديل التعامل';
+            dpSave.innerHTML = '<i class="fas fa-floppy-disk"></i> حفظ التعديل';
+            dpCancel.style.display = 'inline-block';
+            dpForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function row(item) {
+            const tags = [];
+            if (item.isMediation) tags.push('<span class="dp-tag med">وساطة</span>');
+            if (item.visible === false) tags.push('<span class="dp-tag hidden">مخفي</span>');
+            const img = safeHttps(item.imageUrl);
+            return '<div class="dp-row" data-id="' + esc(item.id) + '">' +
+                (img ? '<img src="' + esc(img) + '" alt="" loading="lazy" referrerpolicy="no-referrer">' : '') +
+                '<div class="dp-body"><p>' + esc(item.description || '') + '</p><div class="dp-tags">' + tags.join('') + '</div></div>' +
+                '<div class="dp-actions">' +
+                '<button type="button" data-act="edit" title="تعديل"><i class="fas fa-pen"></i></button>' +
+                '<button type="button" data-act="vis" title="' + (item.visible === false ? 'إظهار' : 'إخفاء') + '"><i class="fas fa-' + (item.visible === false ? 'eye' : 'eye-slash') + '"></i></button>' +
+                '<button type="button" class="danger" data-act="del" title="حذف"><i class="fas fa-trash"></i></button>' +
+                '</div></div>';
+        }
+
+        async function loadList() {
+            dpList.innerHTML = '<p class="dp-empty">جاري التحميل...</p>';
+            try {
+                const snap = await getDocs(query(collection(db, 'deal_proofs'), orderBy('createdAt', 'desc')));
+                items = [];
+                snap.forEach(d => items.push({ id: d.id, ...d.data() }));
+            } catch (e) {
+                dpList.innerHTML = '<p class="dp-empty">تعذّر تحميل القائمة: ' + esc(e.message) + '</p>';
+                return;
+            }
+            if (!items.length) { dpList.innerHTML = '<p class="dp-empty">لسه مفيش تعاملات مضافة.</p>'; return; }
+            dpList.innerHTML = items.map(row).join('');
+            dpList.querySelectorAll('[data-act="edit"]').forEach(b => b.addEventListener('click', () => {
+                const id = b.closest('.dp-row').dataset.id;
+                startEdit(items.find(i => i.id === id));
+            }));
+            dpList.querySelectorAll('[data-act="vis"]').forEach(b => b.addEventListener('click', async () => {
+                const id = b.closest('.dp-row').dataset.id;
+                const it = items.find(i => i.id === id);
+                try {
+                    await updateDoc(doc(db, 'deal_proofs', id), { visible: it.visible === false, updatedAt: serverTimestamp() });
+                    loadList();
+                } catch (e) { alert('تعذّر تحديث الحالة: ' + e.message); }
+            }));
+            dpList.querySelectorAll('[data-act="del"]').forEach(b => b.addEventListener('click', async () => {
+                const id = b.closest('.dp-row').dataset.id;
+                const it = items.find(i => i.id === id);
+                if (!confirm('تحذف التعامل ده نهائيًا؟')) return;
+                try {
+                    if (it.storagePath) { try { await deleteObject(ref(storage, it.storagePath)); } catch (e) {} }
+                    await deleteDoc(doc(db, 'deal_proofs', id));
+                    loadList();
+                } catch (e) { alert('تعذّر الحذف: ' + e.message); }
+            }));
+        }
+
+        dpForm.addEventListener('submit', async e => {
+            e.preventDefault();
+            const description = dpDesc.value.trim().slice(0, 500);
+            if (description.length < 5) return alert('اكتب وصف المعاملة (5 أحرف على الأقل).');
+            if (!editingId && !pickedBlob) return alert('اختر صورة للتعامل.');
+
+            dpSave.disabled = true;
+            const originalHtml = dpSave.innerHTML;
+            dpSave.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحفظ...';
+            try {
+                const id = editingId || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2));
+                let imageUrl, storagePath;
+                if (pickedBlob) {
+                    storagePath = 'deal-proofs/' + id + '.jpg';
+                    const sref = ref(storage, storagePath);
+                    await uploadBytes(sref, pickedBlob, { contentType: 'image/jpeg' });
+                    imageUrl = await getDownloadURL(sref);
+                } else {
+                    const existing = items.find(i => i.id === editingId);
+                    imageUrl = existing.imageUrl; storagePath = existing.storagePath;
+                }
+                const payload = {
+                    imageUrl, storagePath, description,
+                    isMediation: !!dpMed.checked, visible: !!dpVis.checked,
+                    updatedAt: serverTimestamp()
+                };
+                if (!editingId) payload.createdAt = serverTimestamp();
+                await setDoc(doc(db, 'deal_proofs', id), payload, { merge: true });
+                resetForm();
+                loadList();
+            } catch (err) {
+                alert('حصل خطأ أثناء الحفظ: ' + (err && err.message ? err.message : err));
+            } finally {
+                dpSave.disabled = false;
+                if (dpSave.innerHTML.includes('spinner')) dpSave.innerHTML = originalHtml;
+            }
+        });
+
+        onAuthStateChanged(auth, user => {
+            if (!user) return showGate();
+            if (user.email !== OWNER_EMAIL || !user.emailVerified) return showDenied(user.email || '—');
+            showOwner();
+            loadList();
+        });
+    }
+    </script>
+</body>
+</html>
