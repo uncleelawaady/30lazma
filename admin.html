@@ -78,6 +78,19 @@
     .ce-svclist{display:flex;flex-direction:column;gap:.5rem;margin-bottom:.6rem}
     .svc-row-edit{display:flex;align-items:center;gap:.5rem;flex-wrap:nowrap;background:#0a140f;border:1px solid var(--line);border-radius:10px;padding:.45rem}
     .svc-row-edit input{margin-bottom:0!important}
+    /* the advanced panel spans the whole row, below the inline controls */
+    .svc-row-edit{flex-wrap:wrap}
+    .se-more{flex:1 0 100%;margin-top:.35rem;border-top:1px dashed var(--line);padding-top:.4rem}
+    .se-more summary{cursor:pointer;font-size:.82rem;opacity:.75;user-select:none}
+    .se-more summary:hover{opacity:1}
+    .se-badge{display:inline-grid;place-items:center;min-width:1.1rem;height:1.1rem;padding:0 .25rem;
+      border-radius:999px;background:var(--brand,#17A85E);color:#04120b;font-size:.68rem;font-weight:800}
+    .se-more-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.5rem;margin-top:.5rem}
+    .se-more-grid label{display:flex;flex-direction:column;gap:.2rem;font-size:.76rem;opacity:.85}
+    .se-more-grid .se-wide{grid-column:1/-1}
+    .se-more-grid textarea{min-height:2.6rem;resize:vertical}
+    .se-kept{margin:.5rem 0 0;font-size:.75rem;opacity:.7}
+    .se-kept i{margin-inline-end:.3rem}
     .svc-row-edit .se-name{flex:2;min-width:90px}
     .svc-row-edit .se-price{flex:1;min-width:70px;max-width:130px}
     .svc-row-edit .se-desc{flex:2;min-width:100px}
@@ -269,6 +282,7 @@
   <script src="data.js"></script>
   <script src="firebase-config.js"></script>
   <script type="module">
+    import * as Services from './src/core/services.js';
     const TEXT_KEYS = [
       ['heroWord','كلمة الهيرو الكبيرة'],['pillText','شريط أعلى الهيرو'],
       ['heroLine1','عنوان الهيرو (سطر 1)'],['heroLine2','عنوان الهيرو (سطر 2 الملوّن)'],
@@ -586,6 +600,21 @@
       const desc = det.d || det.desc || '';
       const nq = det.needQty !== undefined ? det.needQty : guessQty(name);
       const nl = det.needLink !== undefined ? det.needLink : guessLink(name);
+      const curType = Services.TYPES[det.type] ? det.type : Services.DEFAULT_TYPE;
+      const typeOptions = Object.values(Services.TYPES).map(t =>
+        '<option value="' + esc(t.id) + '"' + (t.id === curType ? ' selected' : '') + '>' + esc(t.label) + '</option>').join('');
+      // How many of the advanced fields are already filled, so the row shows at
+      // a glance that there is something inside the collapsed panel.
+      const moreCount = ['priceBefore', 'duration', 'warranty', 'instructions']
+        .filter(k => det[k]).length + (curType !== Services.DEFAULT_TYPE ? 1 : 0);
+      // Packages and custom fields are not editable here yet. Say so, rather
+      // than letting a save silently look like it dropped them.
+      const kept = [];
+      if ((det.fields || []).length) kept.push((det.fields || []).length + ' حقل مخصص');
+      if ((det.packages || []).length) kept.push((det.packages || []).length + ' باقة');
+      const extrasNote = kept.length
+        ? '<i class="fas fa-lock"></i> محفوظ ومش بيتمسح: ' + esc(kept.join(' و')) + ' — بيتظبط من البيانات مباشرة حاليًا.'
+        : '';
       return '<div class="svc-row-edit">' +
         '<div class="se-imgrow">' +
           '<img class="se-preview" src="' + esc(img) + '" style="' + (img ? '' : 'display:none') + '">' +
@@ -599,6 +628,17 @@
         '<label class="se-flag" title="الخدمة بكمية (متابعين/لايكات/مشاهدات...)"><input type="checkbox" class="se-qty" ' + (nq ? 'checked' : '') + '> كمية</label>' +
         '<label class="se-flag" title="تطلب رابط الحساب/الصفحة/المنشور"><input type="checkbox" class="se-link" ' + (nl ? 'checked' : '') + '> رابط</label>' +
         '<button type="button" class="btn btn-red btn-sm se-del" title="حذف الخدمة"><i class="fas fa-trash"></i></button>' +
+        '<details class="se-more">' +
+          '<summary>تفاصيل أكثر' + (moreCount ? ' <span class="se-badge">' + moreCount + '</span>' : '') + '</summary>' +
+          '<div class="se-more-grid">' +
+            '<label>السعر قبل الخصم<input class="se-was" value="' + esc(det.priceBefore || '') + '" placeholder="مثال: 100"></label>' +
+            '<label>مدة التنفيذ<input class="se-duration" value="' + esc(det.duration || '') + '" placeholder="مثال: 1-3 ساعات"></label>' +
+            '<label>الضمان<input class="se-warranty" value="' + esc(det.warranty || '') + '" placeholder="مثال: ضمان 30 يوم"></label>' +
+            '<label>نوع الخدمة<select class="se-type">' + typeOptions + '</select></label>' +
+            '<label class="se-wide">تعليمات الطلب<textarea class="se-instructions" rows="2" placeholder="تظهر للعميل في صفحة الخدمة">' + esc(det.instructions || '') + '</textarea></label>' +
+          '</div>' +
+          (extrasNote ? '<p class="se-kept">' + extrasNote + '</p>' : '') +
+        '</details>' +
       '</div>';
     }
     function renderCatalog() {
@@ -693,8 +733,13 @@
       img.onerror = () => { URL.revokeObjectURL(url); alert('صورة غير صالحة'); };
       img.src = url;
     }
+    // Filled by collectCatalog(); the save handler refuses to write when it is
+    // not empty, so a bad discount or a select with no options never ships.
+    let invalid = [];
+
     function collectCatalog() {
       const out = {};
+      invalid = [];
       document.querySelectorAll('#catList .cat-edit').forEach((el, i) => {
         const id = el.dataset.id;
         const items = [];
@@ -706,14 +751,31 @@
           const img = r.querySelector('.se-img').value || '';
           const price = r.querySelector('.se-price').value.trim();
           const desc = r.querySelector('.se-desc').value.trim();
-          const d = {};
-          if (img) d.img = img;
-          if (price) d.price = price;
-          if (desc) d.d = desc;
+          // Start from whatever is already stored, so keys this form does not
+          // render (packages, fields, gallery, min/max...) survive a save.
+          const prev = (catalog[id] && catalog[id].details && catalog[id].details[name]) || {};
+          const d = Object.assign({}, prev);
+          const put = (key, value) => { if (value) d[key] = value; else delete d[key]; };
+
+          put('img', img);
+          put('price', price);
+          put('d', desc);
+          put('priceBefore', r.querySelector('.se-was').value.trim());
+          put('duration', r.querySelector('.se-duration').value.trim());
+          put('warranty', r.querySelector('.se-warranty').value.trim());
+          put('instructions', r.querySelector('.se-instructions').value.trim());
+
+          const type = r.querySelector('.se-type').value;
+          if (type && type !== Services.DEFAULT_TYPE) d.type = type; else delete d.type;
+
           // store the quantity/link flags only when they differ from the smart default
           const qc = r.querySelector('.se-qty').checked, lc = r.querySelector('.se-link').checked;
-          if (qc !== guessQty(name)) d.needQty = qc;
-          if (lc !== guessLink(name)) d.needLink = lc;
+          if (qc !== guessQty(name)) d.needQty = qc; else delete d.needQty;
+          if (lc !== guessLink(name)) d.needLink = lc; else delete d.needLink;
+
+          const problems = Services.validate(Object.assign({ name }, d));
+          if (problems.length) invalid.push(name + ': ' + problems[0]);
+
           if (Object.keys(d).length) details[name] = d;
         });
         out[id] = {
@@ -759,7 +821,12 @@
       renderCatalog(); toast('اتحمّلت — دوس حفظ');
     });
     document.getElementById('saveCatalog').addEventListener('click', async () => {
-      catalog = collectCatalog();
+      const next = collectCatalog();
+      if (invalid.length) {
+        toast('في بيانات غلط: ' + invalid[0] + (invalid.length > 1 ? ' (+' + (invalid.length - 1) + ')' : ''));
+        return;
+      }
+      catalog = next;
       try { await setDoc(CAT_REF, { categories: catalog }, { merge: false }); toast('اتحفظت الأقسام ✅'); }
       catch (e) { toast('تعذّر الحفظ — صلاحيات المالك'); }
     });

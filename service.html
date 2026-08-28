@@ -55,10 +55,21 @@
                     <a class="svc-cat-tag" id="catTag" href="#"><i class="fas fa-tag"></i> <span id="catTagName"></span></a>
                     <h1 id="svcTitle">اسم الخدمة</h1>
                     <span class="svc-code" id="svcCode"><i class="fas fa-hashtag"></i> كود الخدمة</span>
-                    <div class="svc-price"><span class="val" id="svcPrice">حسب الطلب</span><span class="lbl" id="svcPriceLbl">— يُحدد عند تأكيد الطلب</span></div>
+                    <div class="svc-price">
+                        <span class="val" id="svcPrice">حسب الطلب</span>
+                        <span class="was" id="svcPriceWas" hidden></span>
+                        <span class="off" id="svcPriceOff" hidden></span>
+                        <span class="lbl" id="svcPriceLbl">— يُحدد عند تأكيد الطلب</span>
+                    </div>
+                    <ul class="svc-facts" id="svcFacts" hidden></ul>
                     <p class="svc-lead" id="svcLead"></p>
 
                     <div class="svc-order-box glass">
+                        <!-- packages / options -->
+                        <div class="svc-field svc-packages" id="pkgField" hidden>
+                            <label id="pkgLabel">اختر الباقة</label>
+                            <div class="pkg-grid" id="pkgGrid"></div>
+                        </div>
                         <!-- quantity -->
                         <div class="svc-field" id="qtyField" style="margin-bottom:1rem">
                             <label for="qVal" id="qtyLabel">الكمية المطلوبة</label>
@@ -78,6 +89,8 @@
                             <input type="text" id="linkIn" placeholder="مثال: https://instagram.com/username" inputmode="url">
                             <span class="svc-warn" id="linkWarn"><i class="fas fa-triangle-exclamation"></i> لازم يكون الحساب/الصفحة <b>عام (بابلك)</b> عشان نقدر ننفّذ الطلب، ومتغيّرش اليوزر أثناء التنفيذ.</span>
                         </div>
+                        <!-- fields this service asks the customer for -->
+                        <div id="svcFields"></div>
                         <!-- coupon -->
                         <div class="svc-field" style="margin-bottom:.6rem">
                             <label for="couponIn">كود خصم (اختياري)</label>
@@ -93,6 +106,10 @@
                             <a href="#" target="_blank" rel="noopener" class="btn btn-ghost btn-lg" id="btnWa"><i class="fab fa-whatsapp"></i> تواصل معنا</a>
                         </div>
                         <p class="svc-note">اضغط «شراء الآن» لإضافة الخدمة للسلة وإتمام الطلب، أو تواصل مباشرة معنا.</p>
+                        <div class="svc-instructions" id="svcInstructions" hidden>
+                            <strong><i class="fas fa-circle-info"></i> تعليمات الطلب</strong>
+                            <p id="svcInstructionsText"></p>
+                        </div>
                     </div>
 
                     <div class="svc-attach" id="attachBox" style="display:none">
@@ -127,7 +144,8 @@
     <script src="firebase-config.js"></script>
     <script src="config.js"></script>
     <script src="data.js"></script>
-    <script>
+    <script type="module">
+    import * as Services from './src/core/services.js';
     (async function () {
         const WA = '201055578777';
         const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
@@ -182,19 +200,55 @@
         catTag.href = 'category.html?id=' + encodeURIComponent(catId);
         document.getElementById('catTagName').textContent = c.title;
 
+        // The one canonical view of this service. Everything below reads `svc`
+        // rather than poking at the raw detail object.
+        const svc = Services.normalize(svcName, d, { categoryId: catId, categoryTitle: c.title });
+
         // title / code / price
-        document.getElementById('svcTitle').textContent = svcName;
-        const code = d.code || ('EL-' + (catId || 'SVC').toString().slice(0, 3).toUpperCase() + '-' +
-            Math.abs(hash(svcName)).toString().slice(0, 4));
+        document.getElementById('svcTitle').textContent = svc.name;
+        const code = svc.code;
         document.getElementById('svcCode').innerHTML = '<i class="fas fa-hashtag"></i> كود الخدمة: ' + esc(code);
-        if (d.p || d.price) {
-            document.getElementById('svcPrice').textContent = d.price || d.p;
-            document.getElementById('svcPriceLbl').textContent = '';
+
+        const money = (n) => Number(n).toLocaleString('ar-EG') + ' ' + (svc.currency === 'EGP' ? 'ج.م' : svc.currency);
+
+        function paintPrice(price, priceBefore, discount) {
+            const valEl = document.getElementById('svcPrice');
+            const wasEl = document.getElementById('svcPriceWas');
+            const offEl = document.getElementById('svcPriceOff');
+            const lblEl = document.getElementById('svcPriceLbl');
+
+            if (price != null) { valEl.textContent = money(price); lblEl.textContent = ''; }
+            else if (svc.priceText) { valEl.textContent = svc.priceText; lblEl.textContent = ''; }
+            else { valEl.textContent = 'حسب الطلب'; lblEl.textContent = '— يُحدد عند تأكيد الطلب'; }
+
+            wasEl.hidden = priceBefore == null;
+            if (priceBefore != null) wasEl.textContent = money(priceBefore);
+
+            offEl.hidden = discount == null;
+            if (discount != null) offEl.textContent = 'خصم ' + discount + '%';
+        }
+        paintPrice(svc.price, svc.priceBefore, svc.discountPercent);
+
+        // duration / warranty / type — the promises a buyer decides on
+        const facts = [
+            svc.duration && ['fa-clock', 'مدة التنفيذ', svc.duration],
+            svc.warranty && ['fa-shield-halved', 'الضمان', svc.warranty],
+            ['fa-gear', 'نوع الخدمة', (Services.TYPES[svc.type] || {}).label || svc.type],
+        ].filter(Boolean);
+        const factsEl = document.getElementById('svcFacts');
+        factsEl.hidden = facts.length === 0;
+        factsEl.innerHTML = facts.map(([ico, label, value]) =>
+            '<li><i class="fas ' + ico + '"></i><span class="fk">' + esc(label) + '</span>' +
+            '<span class="fv">' + esc(value) + '</span></li>').join('');
+
+        // instructions
+        if (svc.instructions) {
+            document.getElementById('svcInstructions').hidden = false;
+            document.getElementById('svcInstructionsText').textContent = svc.instructions;
         }
 
         // lead / description
-        const desc = d.d || ('خدمة «' + svcName + '» ضمن قسم ' + c.title + ' — نوفرها بجودة عالية وتنفيذ آمن وسريع، مع دعم كامل ومتابعة حتى تمام الرضا.');
-        document.getElementById('svcLead').textContent = desc;
+        document.getElementById('svcLead').textContent = svc.desc;
         document.getElementById('mainBadge').textContent = c.title;
 
         // ===== gallery =====
@@ -242,7 +296,7 @@
         const D_service = P.service || 'نلتزم بتنفيذ الخدمة بأعلى جودة وفي الوقت المتفق عليه. نحافظ على خصوصية بياناتك ولا نشاركها مع أي طرف. الدعم متاح طوال فترة تنفيذ الخدمة وبعد التسليم.';
 
         const tabs = [
-            { k: 'desc', t: 'الوصف الكامل', h: '<p>' + esc(d.long || desc) + '</p>' },
+            { k: 'desc', t: 'الوصف الكامل', h: '<p>' + esc(svc.longDesc || d.long || svc.desc) + '</p>' },
             { k: 'feat', t: 'المميزات', h: '<ul>' + feats.map(x => '<li><i class="fas fa-check"></i>' + esc(x) + '</li>').join('') + '</ul>' },
             { k: 'req', t: 'المتطلبات', h: '<ul>' + reqs.map(x => '<li><i class="fas fa-circle-dot"></i>' + esc(x) + '</li>').join('') + '</ul>' },
             { k: 'terms', t: 'الشروط والاسترداد', h: '<p>' + esc(D_terms) + '</p>' },
@@ -309,6 +363,85 @@
             qtyField.style.display = 'none'; qVal.value = 1;
         }
 
+        // ===== packages =====
+        // A chosen package overrides the base price, so it repaints the header.
+        let selectedPackage = null;
+        if (svc.packages.length) {
+            const grid = document.getElementById('pkgGrid');
+            document.getElementById('pkgField').hidden = false;
+            grid.innerHTML = svc.packages.map((p, i) =>
+                '<button type="button" class="pkg' + (i === 0 ? ' active' : '') + '" data-pkg="' + esc(p.id) + '">' +
+                '<span class="pk-label">' + esc(p.label) + '</span>' +
+                (p.price != null ? '<span class="pk-price">' + esc(money(p.price)) + '</span>' : '') +
+                (p.priceBefore != null ? '<span class="pk-was">' + esc(money(p.priceBefore)) + '</span>' : '') +
+                (p.duration ? '<span class="pk-meta">' + esc(p.duration) + '</span>' : '') +
+                '</button>').join('');
+
+            const choose = (pkg, btn) => {
+                selectedPackage = pkg;
+                grid.querySelectorAll('.pkg').forEach((b) => b.classList.remove('active'));
+                btn.classList.add('active');
+                paintPrice(pkg.price, pkg.priceBefore, pkg.discountPercent);
+                sync();
+            };
+            grid.querySelectorAll('.pkg').forEach((btn) => {
+                const pkg = svc.packages.find((p) => p.id === btn.dataset.pkg);
+                btn.addEventListener('click', () => choose(pkg, btn));
+            });
+            choose(svc.packages[0], grid.querySelector('.pkg'));
+        }
+
+        // ===== the fields this service asks the customer for =====
+        // `linkField` above is the legacy, hand-written version of the account
+        // link. When a service declares its own fields we render those instead
+        // and leave the legacy one hidden, so nothing is asked for twice.
+        const declaredFields = svc.fields.filter((f) => f.key !== 'link' || !needLink);
+        const fieldsBox = document.getElementById('svcFields');
+        fieldsBox.innerHTML = declaredFields.map((f) => {
+            const req = f.required ? ' <span class="req">*</span>' : '';
+            const id = 'fld_' + f.key;
+            const ph = esc(f.placeholder);
+            const control = f.type === 'textarea'
+                ? '<textarea id="' + id + '" placeholder="' + ph + '"></textarea>'
+                : f.type === 'select'
+                    ? '<select id="' + id + '">' +
+                      f.options.map((o) => '<option value="' + esc(o) + '">' + esc(o) + '</option>').join('') +
+                      '</select>'
+                    : '<input type="' + esc(f.type === 'number' ? 'number' : 'text') + '" id="' + id +
+                      '" placeholder="' + ph + '"' +
+                      (f.type === 'url' ? ' inputmode="url"' : f.type === 'tel' ? ' inputmode="tel"' : '') + '>';
+            return '<div class="svc-field" style="margin-bottom:.6rem">' +
+                   '<label for="' + id + '">' + esc(f.label) + req + '</label>' + control + '</div>';
+        }).join('');
+
+        /** Everything the customer typed, keyed the way the service declared it. */
+        function readFields() {
+            const out = {};
+            declaredFields.forEach((f) => {
+                const el = document.getElementById('fld_' + f.key);
+                if (el) out[f.key] = el.value.trim();
+            });
+            return out;
+        }
+
+        function validateFields() {
+            for (const f of declaredFields) {
+                if (!f.required) continue;
+                const el = document.getElementById('fld_' + f.key);
+                if (el && !el.value.trim()) {
+                    alert('من فضلك املأ «' + f.label + '».');
+                    el.focus();
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        declaredFields.forEach((f) => {
+            const el = document.getElementById('fld_' + f.key);
+            if (el) el.addEventListener('input', sync);
+        });
+
         let linkLabelText = '';
         if (needLink) {
             document.getElementById('linkField').style.display = '';
@@ -327,13 +460,27 @@
 
         function validate() {
             if (needLink && !getLink()) { alert('من فضلك الصق «' + linkLabelText + '» عشان نقدر ننفّذ الطلب.'); linkIn.focus(); return false; }
-            return true;
+            return validateFields();
         }
 
         document.getElementById('btnCart').addEventListener('click', () => {
             if (!window.Cart || !validate()) return;
-            window.Cart.add({ name: svcName, category: c.title, qty: getQ(), price: (d.price || d.p || ''), link: getLink(), notes: getNotes(), coupon: getCoupon(), code: code });
-            window.Cart.setQty(svcName, getQ());
+            const inputs = readFields();
+            if (needLink && getLink()) inputs.link = getLink();
+            // The snapshot freezes name, price, package, duration and warranty as
+            // they are right now, so editing the service later cannot change what
+            // this customer bought.
+            const snap = Services.snapshot(svc, {
+                qty: getQ(),
+                packageId: selectedPackage ? selectedPackage.id : '',
+                inputs,
+            });
+            window.Cart.add({
+                name: svc.name, category: c.title, qty: getQ(),
+                price: snap.unitPriceText, link: getLink(), notes: getNotes(),
+                coupon: getCoupon(), code: code, snapshot: snap,
+            });
+            window.Cart.setQty(svc.name, getQ());
         });
 
         function buildWa() {

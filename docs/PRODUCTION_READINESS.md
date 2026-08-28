@@ -60,12 +60,17 @@ static-only hosting.
 - [x] Cart persists into checkout — tested.
 - [x] Checkout refuses an empty cart — tested.
 - [ ] Subcategory exists as a real entity.
-- [ ] A service is a record (id, type, price, pre-discount price, duration, warranty, instructions, required fields, packages) rather than a string.
-- [ ] The six service types are modelled.
+- [x] A service is a record (code, type, price, pre-discount price, duration, warranty, instructions, customer fields, packages) rather than a string — 43 unit tests.
+- [x] Every legacy shape still loads (`p`, `d`, bare strings) — tested.
+- [x] The six service types are modelled, each declaring whether it can auto-fulfil.
+- [x] The service page renders all of it — 7 browser tests.
+- [x] Editing a service from the dashboard preserves fields the form does not show.
+- [ ] Packages and custom fields editable from the dashboard (preserved, not yet editable).
 - [ ] Favorites and most-used sections are admin-driven.
 - [ ] Checkout computes a real total.
 - [ ] Payment is taken.
-- [ ] The order stores an immutable snapshot of service and price.
+- [x] A snapshot is frozen at add-to-cart time and survives a later edit to the service — tested.
+- [ ] Checkout writes that snapshot onto the order.
 - [x] A placed order cannot be mutated by the customer — tested.
 
 ## Gate 5 — Suppliers and fulfillment
@@ -115,14 +120,28 @@ static-only hosting.
 - [ ] Pagination in admin lists.
 - [ ] N+1 read patterns reviewed.
 
+## Gate 4b — Architecture (migration readiness)
+
+- [x] Business logic separated into `src/core/` — vendor-free, no I/O.
+- [x] Database access behind `REPOSITORY_PORT`.
+- [x] Authentication behind `AUTH_PORT`.
+- [x] Storage behind `STORAGE_PORT`.
+- [x] A second, complete adapter (in-memory) proves the ports are real.
+- [x] One contract suite runs against both adapters.
+- [x] No vendor type or vendor error crosses a port — tested.
+- [x] Layer boundaries enforced by test, not convention.
+- [x] Composition root fails loudly on an incomplete wiring.
+- [ ] The 8 existing pages migrated onto the ports (service.html uses `src/core/` only so far).
+
 ## Gate 9 — Testing
 
 - [x] Firestore rules: 37 tests, emulator-executed.
 - [x] Storage rules: 12 tests, emulator-executed.
 - [x] Service model: 43 unit tests.
+- [x] Composition root and layer boundaries: 9 tests.
 - [x] Repository contract: run against both the Firebase and in-memory adapters.
 - [x] Layer boundaries enforced by test (core/ports name no vendor).
-- [x] E2E storefront: 30 tests, real Chromium, self-serving.
+- [x] E2E storefront: 37 tests, real Chromium, self-serving and network-isolated.
 - [x] `npm test` runs everything with no manual setup.
 - [ ] Registration → Login covered end to end in E2E.
 - [ ] Checkout → Payment → Order → Fulfillment (flow does not exist).

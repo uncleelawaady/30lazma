@@ -13,7 +13,11 @@
     const ex = a.find(x => x.id === id);
     const extra = {
       category: item.category || '', link: item.link || '', notes: item.notes || '',
-      coupon: item.coupon || '', price: item.price || '', code: item.code || ''
+      coupon: item.coupon || '', price: item.price || '', code: item.code || '',
+      // Frozen at add-to-cart time: name, unit price, package, duration and
+      // warranty as they were when the customer chose them. Checkout stores this
+      // on the order so a later edit to the service cannot rewrite history.
+      snapshot: item.snapshot || null
     };
     if (ex) { ex.qty = (ex.qty || 1) + (item.qty || 1); Object.assign(ex, extra); }
     else a.push(Object.assign({ id, name: item.name, qty: item.qty || 1 }, extra));

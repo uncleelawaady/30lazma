@@ -67,6 +67,7 @@ them against the Firebase emulator. Every finding below has a regression test in
 | S12 | **Medium** | **Secrets have nowhere to live.** Provider API keys cannot be stored anywhere a browser cannot read. The `providers/` and `provider_secrets/` collections are therefore closed outright rather than left half-open. |
 | S13 | **Medium** | **Admin image fallback inlines base64 into Firestore.** `admin.html` falls back to embedding a data URL in the config document when Storage fails. This silently bloats a document toward the 1 MB Firestore limit and bypasses upload validation. |
 | S14 | **Low** | **No audit log.** Nothing records administrative actions. The collection and its rules exist; the writer must be a trusted server. |
+| S15 | **Low** | **No fallback when the Firebase SDK cannot load.** `account.html`, `admin.html` and `review.html` import the SDK from the CDN at module top level. If that fetch fails the page renders its shell and nothing else, with only a console error. Surfaced by the E2E suite, which now simulates exactly that. |
 
 **Not a finding:** the Firebase web config in `firebase-config.js` (apiKey, appId…)
 is public by design. It is an identifier, not a credential. Security comes from
@@ -87,10 +88,10 @@ the rules, which is what this branch strengthened.
 | 4 | Main → Sub → Services → Details → Purchase | **PARTIAL** | The funnel renders end to end (verified). But a subcategory is a heading string, not an entity, and a service is a **plain string** with no record of its own. |
 | 5 | Home shows each main category as a banner with its subcategories under it | **FAIL** | Home renders a flat grid of 54 category cards. |
 | 6 | Favorites + most-used sections, admin-controlled | **PARTIAL** | A `featured` section exists. "Most used" does not. Neither is driven by usage data. |
-| 7 | Service page: images, name, description, price, pre-discount price, duration, warranty, instructions, customer fields, packages, buy button | **PARTIAL** | Has: gallery, name, description, price field, buy button, qty/link/coupon/notes inputs. **Missing: pre-discount price, duration, warranty, instructions, packages** — there is no data model to hold them. |
+| 7 | Service page: images, name, description, price, pre-discount price, duration, warranty, instructions, customer fields, packages, buy button | **PASS** | All of it now renders and is verified by 7 browser tests: gallery, name, description, price, struck-through pre-discount price with a discount badge, duration, warranty, service type, instructions, per-service customer fields (text/url/number/select/textarea) and a package picker that repaints the price. Editable from the dashboard except packages and custom fields, which are preserved on save but not yet editable there. |
 | 8 | Cart, Buy Now, Checkout genuinely work | **PARTIAL** | Cart→checkout carry-over is **verified by test**. But checkout is a **WhatsApp handoff**: no total, no payment, no confirmation. |
-| 9 | Order stores a snapshot of service + price; later edits don't affect old orders | **FAIL** | No price is stored at all. Order immutability is now enforced (S9), which is the precondition — the snapshot itself needs a server-side write. |
-| 10 | Service types: Manual / API / Digital / Subscription / Account / Custom | **FAIL** | Services are strings. No type field. |
+| 9 | Order stores a snapshot of service + price; later edits don't affect old orders | **PARTIAL** | `Services.snapshot()` freezes name, code, type, package, unit price, pre-discount price, currency, quantity, line total, duration, warranty and the customer's inputs at add-to-cart time; the cart carries it and a test proves a later edit to the service cannot change it. Orders are immutable to the customer (S9). **Still open:** checkout does not yet write the snapshot onto the order, and the price is client-supplied until a server computes it. |
+| 10 | Service types: Manual / API / Digital / Subscription / Account / Custom | **PARTIAL** | All six are modelled, each declaring whether it can be fulfilled automatically, selectable per service in the dashboard and shown on the service page. **The behaviour behind a type** (an `api` service actually dispatching) still needs the backend. |
 | 11 | Unified Provider/Supplier API layer | **BLOCKED** | Requires a server. |
 | 12 | Per-provider: endpoint, key, balance, import, mapping, create order, status, refill, cancel | **BLOCKED** | Requires a server. |
 | 13 | Map a store service to a provider service without exposing the provider | **BLOCKED** | Requires a server. |
@@ -110,7 +111,7 @@ the rules, which is what this branch strengthened.
 | 27 | Preserve the existing visual identity | **PASS** | No design changes made. Only rules, tests, lazy-loading attributes. |
 | 28 | Approved fonts; Arabic kashida where visually appropriate | **PARTIAL** | Cairo + IBM Plex Sans Arabic are loaded. Kashida is not used anywhere. |
 | 29 | Performance: lazy loading, image optimization, caching, indexing, pagination, no N+1 | **PARTIAL** | `loading="lazy"` + `decoding="async"` added to all generated content images. **Still open:** 4 assets over 200 KB (largest 375 KB) unoptimized; admin loads orders/users with no pagination; no Firestore composite indexes defined. |
-| 30 | Automated tests for the critical path | **PARTIAL** | **49 rules tests + 29 E2E tests added and passing.** Registration→Login→Browse→Service→Checkout is covered up to checkout. **Payment→Order→Fulfillment cannot be tested — it does not exist.** |
+| 30 | Automated tests for the critical path | **PARTIAL** | **89 unit/contract + 77 rules/adapter-contract + 37 E2E = 203 tests, all passing.** Browse→Service→Cart→Checkout is covered, including the full service record and the order snapshot. **Payment→Order→Fulfillment cannot be tested — it does not exist.** |
 | 31 | Provider API flow test | **BLOCKED** | Nothing to test. |
 | 32 | No existing feature deleted without justification | **PASS** | Nothing removed. Storage rules deliberately keep the legacy `categories/` and `services/` upload folders and legacy root-object reads working. |
 | 33 | Understand code + DB + dependencies before refactoring | **PASS** | Full read of all 5,078 lines before any change. No refactor performed. |
@@ -120,7 +121,16 @@ the rules, which is what this branch strengthened.
 | 37 | Final report | **PASS** | This document. |
 | 38 | Production readiness checklist | **PASS** | `docs/PRODUCTION_READINESS.md`. |
 
-**Tally:** 8 PASS · 14 PARTIAL · 8 FAIL · 8 BLOCKED.
+**Tally:** 9 PASS · 16 PARTIAL · 5 FAIL · 8 BLOCKED.
+
+### Architecture (added after the audit, at your direction)
+
+Firebase is now one adapter behind vendor-neutral ports rather than the
+architecture itself. Business logic, database access, authentication and storage
+are separated, and the boundaries are enforced by tests rather than convention.
+See `docs/ARCHITECTURE.md` for each migration path (Firestore → MySQL/Postgres,
+Firebase Auth → custom provider, Firebase Storage → object storage, Cloud
+Functions → Node on a VPS).
 
 ---
 

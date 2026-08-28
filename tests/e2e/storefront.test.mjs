@@ -84,12 +84,27 @@ after(async () => {
   if (staticServer) await new Promise((r) => staticServer.close(r));
 });
 
+// Third-party hosts (fonts, Font Awesome, the Firebase SDK) are unreachable in
+// CI. Left to time out they take seconds, and the storefront's own fallback
+// races — service.html gives the catalog 1800ms before rendering from defaults,
+// so a slow failure silently tests the wrong path. Failing them immediately is
+// both faster and a faithful "Firebase is unreachable" simulation.
+const THIRD_PARTY = /^https?:\/\/(?!127\.0\.0\.1|localhost)/;
+
 /** Open a page, collect errors, and return a probe handle. */
 async function open(path, viewport = { width: 1440, height: 900 }) {
   const ctx = await browser.newContext({ viewport, locale: 'ar' });
   const page = await ctx.newPage();
+  await page.route(THIRD_PARTY, (route) => route.abort());
   const errors = [];
-  page.on('pageerror', (e) => errors.push(String(e)));
+  page.on('pageerror', (e) => {
+    // A third-party module that cannot be fetched is the environment, not the
+    // site. (That those pages show no fallback when the SDK is down is a real
+    // gap — tracked in docs/AUDIT.md, not asserted here.)
+    const msg = String(e);
+    if (/Failed to fetch dynamically imported module: https?:\/\/(?!127\.0\.0\.1|localhost)/.test(msg)) return;
+    errors.push(msg);
+  });
   page.on('console', (m) => {
     // Resource-load failures are asserted on via `requestfailed` below, where
     // the URL is available to tell a local 404 from a blocked CDN.
@@ -191,6 +206,129 @@ describe('browse -> service -> cart -> checkout', () => {
       await page.waitForTimeout(1000);
       const submitVisible = await page.$eval('#coSubmit', (e) => e.style.display !== 'none');
       assert.equal(submitVisible, false, 'empty cart still offers a submit button');
+    } finally { await ctx.close(); }
+  });
+});
+
+// Condition 7: the service page must actually render every field a buyer needs.
+// Driven through the live catalog by injecting a fully-specified service, so
+// this exercises the real rendering path rather than a fixture.
+describe('service page renders the full service record', () => {
+  const RICH = {
+    price: 60, priceBefore: 100, duration: '1-3 ساعات', warranty: 'ضمان 30 يوم',
+    instructions: 'خلي الحساب عام قبل الطلب.', type: 'api',
+    fields: [
+      { key: 'account', label: 'اسم المستخدم', type: 'text', required: true },
+      { key: 'country', label: 'الدولة', type: 'select', options: ['مصر', 'السعودية'] },
+    ],
+    packages: [
+      { id: 'p1', label: '1000 متابع', price: 90, priceBefore: 120, duration: 'يوم' },
+      { id: 'p2', label: '5000 متابع', price: 400 },
+    ],
+  };
+
+  /** Seed the cached catalog the page reads, then load the service page. */
+  async function openRich() {
+    const probe = await open('/index.html');
+    await probe.page.evaluate(({ svc, rich }) => {
+      const cats = JSON.parse(JSON.stringify(window.CATEGORIES));
+      cats.facebook.details = { [svc]: rich };
+      localStorage.setItem('elwasetCatalog', JSON.stringify(cats));
+    }, { svc: SVC, rich: RICH });
+    await probe.page.goto(BASE + ROUTES.service, { waitUntil: 'domcontentloaded' });
+    await probe.page.waitForTimeout(2000);
+    return probe;
+  }
+
+  test('price, pre-discount price and the discount badge', async () => {
+    const { page, ctx, errors } = await openRich();
+    try {
+      // The first package is selected on load, so the header shows its price.
+      assert.match(await page.textContent('#svcPrice'), /٩٠|90/);
+      assert.equal(await page.isVisible('#svcPriceWas'), true, 'pre-discount price is shown');
+      assert.match(await page.textContent('#svcPriceOff'), /25/, 'discount percent is shown');
+      assert.deepEqual(errors, []);
+    } finally { await ctx.close(); }
+  });
+
+  test('duration, warranty and service type', async () => {
+    const { page, ctx } = await openRich();
+    try {
+      const facts = await page.textContent('#svcFacts');
+      assert.match(facts, /1-3 ساعات/);
+      assert.match(facts, /ضمان 30 يوم/);
+      assert.match(facts, /تلقائي/, 'the service type is named');
+    } finally { await ctx.close(); }
+  });
+
+  test('instructions', async () => {
+    const { page, ctx } = await openRich();
+    try {
+      assert.equal(await page.isVisible('#svcInstructions'), true);
+      assert.match(await page.textContent('#svcInstructionsText'), /الحساب عام/);
+    } finally { await ctx.close(); }
+  });
+
+  test('packages render and switching one repaints the price', async () => {
+    const { page, ctx } = await openRich();
+    try {
+      assert.equal(await page.isVisible('#pkgField'), true);
+      assert.equal((await page.$$('#pkgGrid .pkg')).length, 2);
+      await page.click('#pkgGrid .pkg[data-pkg="p2"]');
+      await page.waitForTimeout(200);
+      assert.match(await page.textContent('#svcPrice'), /٤٠٠|400/);
+      assert.equal(await page.isVisible('#svcPriceWas'), false,
+        'the second package has no discount, so no struck-through price');
+    } finally { await ctx.close(); }
+  });
+
+  test('the declared customer fields are rendered with the right controls', async () => {
+    const { page, ctx } = await openRich();
+    try {
+      assert.equal(await page.isVisible('#fld_account'), true);
+      assert.equal(await page.isVisible('#fld_country'), true);
+      assert.equal(await page.$eval('#fld_country', (e) => e.tagName), 'SELECT');
+      assert.equal((await page.$$('#fld_country option')).length, 2);
+    } finally { await ctx.close(); }
+  });
+
+  test('a required declared field blocks add-to-cart', async () => {
+    const { page, ctx } = await openRich();
+    try {
+      page.on('dialog', (d) => d.accept());
+      // Satisfy the legacy link requirement first, so this isolates the
+      // service's own declared field rather than passing for the wrong reason.
+      await page.fill('#linkIn', 'https://facebook.com/example');
+      await page.click('#btnCart');
+      await page.waitForTimeout(300);
+      // count() sums quantities, so line count is what proves nothing was added.
+      assert.equal(await page.evaluate(() => window.Cart.read().length), 0,
+        'nothing was added while a required declared field was empty');
+
+      await page.fill('#fld_account', 'my_account');
+      await page.click('#btnCart');
+      await page.waitForTimeout(300);
+      assert.equal(await page.evaluate(() => window.Cart.read().length), 1,
+        'it goes through once every required field is filled');
+    } finally { await ctx.close(); }
+  });
+
+  test('add-to-cart stores the frozen snapshot', async () => {
+    const { page, ctx } = await openRich();
+    try {
+      await page.fill('#linkIn', 'https://facebook.com/example');
+      await page.fill('#fld_account', 'my_account');
+      await page.click('#btnCart');
+      await page.waitForTimeout(300);
+      const item = await page.evaluate(() => window.Cart.read()[0]);
+      assert.ok(item, 'the item reached the cart');
+      assert.ok(item.snapshot, 'a snapshot was stored');
+      assert.equal(item.snapshot.unitPrice, 90, 'the selected package price was frozen');
+      assert.equal(item.snapshot.packageId, 'p1');
+      assert.equal(item.snapshot.warranty, 'ضمان 30 يوم');
+      assert.equal(item.snapshot.inputs.account, 'my_account');
+      assert.equal(item.snapshot.inputs.link, 'https://facebook.com/example');
+      assert.ok(!('cost' in item.snapshot), 'no supplier cost leaked to the client');
     } finally { await ctx.close(); }
   });
 });
