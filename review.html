@@ -151,7 +151,7 @@
         revForm.style.display = 'grid';
         const p = profile || {};
         const initial = (p.name || 'U').trim()[0] || 'U';
-        const pic = p.photo ? '<img src="' + p.photo + '" alt="">' : '<span class="av">' + initial + '</span>';
+        const pic = p.photo ? '<img src="' + p.photo + '" alt="" loading="lazy" decoding="async">' : '<span class="av">' + initial + '</span>';
         const sub = p.email || p.phone || '';
         revUser.innerHTML = '<div class="rev-user-card">' + pic + '<div><strong>' + (p.name || 'مستخدم') + '</strong><small>' + sub + '</small></div></div>';
     }

@@ -2,65 +2,257 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // ============================================================
+    // Identity helpers
+    // ============================================================
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
     // Permanent owners (full control, can manage admins).
     function owner() {
-      return request.auth != null
+      return signedIn()
+        && request.auth.token.email_verified == true
         && request.auth.token.email in [
           'elawaady.official@gmail.com',
           'elawadi.store4@gmail.com'
         ];
     }
 
-    // Safe read of the admins list (never errors if the field/doc is missing).
-    function adminList() {
-      return exists(/databases/$(database)/documents/config/site)
-        ? get(/databases/$(database)/documents/config/site).data.get('admins', [])
-        : [];
+    // Admin emails. Read from config/admins (private) first, then fall back to
+    // the legacy config/site.admins field so the store keeps working before and
+    // after the migration described in docs/AUDIT.md.
+    function adminEmails() {
+      return (exists(/databases/$(database)/documents/config/admins)
+                ? get(/databases/$(database)/documents/config/admins).data.get('emails', [])
+                : [])
+           .concat(exists(/databases/$(database)/documents/config/site)
+                ? get(/databases/$(database)/documents/config/site).data.get('admins', [])
+                : []);
     }
 
-    // Owner OR any email listed in config/site.admins can manage the store.
     function isAdmin() {
-      return owner() || (request.auth != null && request.auth.token.email in adminList());
+      return owner()
+        || (signedIn()
+            && request.auth.token.email_verified == true
+            && request.auth.token.email in adminEmails());
     }
 
-    // Site config: theme, texts, catalog, policies, admins, ticker...
-    // Public read (the storefront needs it). Admins can write.
+    // Role stored on the user's own profile document. Only an admin can set it,
+    // so it is safe to trust here (see the /users rules below).
+    function roleOf() {
+      return signedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'user')
+        : 'guest';
+    }
+
+    function isMerchant() { return roleOf() == 'merchant'; }
+    function isSupplier() { return roleOf() == 'supplier'; }
+    function isStaff()    { return isAdmin() || isMerchant(); }
+
+    // ============================================================
+    // Validation helpers
+    // ============================================================
+
+    function str(v, maxLen) {
+      return v is string && v.size() <= maxLen;
+    }
+
+    function optStr(data, key, maxLen) {
+      return !(key in data) || str(data[key], maxLen);
+    }
+
+    // Reject payloads that carry keys we do not know about, so a client cannot
+    // smuggle privileged fields (role, balance, status...) into a public write.
+    function onlyKeys(data, allowed) {
+      return data.keys().hasOnly(allowed);
+    }
+
+    function freshTimestamp(data, key) {
+      return key in data && data[key] == request.time;
+    }
+
+    // ============================================================
+    // config/*  — theme, texts, catalog, policies, ticker...
+    // ============================================================
+
+    // config/admins holds the admin email list. It must NOT be world readable:
+    // a public read is admin-account enumeration. Rules `get()` bypasses read
+    // rules, so adminEmails() above still resolves it.
+    match /config/admins {
+      allow read:  if isAdmin();
+      allow write: if owner();
+    }
+
+    // Every other config doc is storefront content the public site needs.
+    // `docId != 'admins'` is load-bearing: Firestore unions every matching rule,
+    // so without it this public read would re-expose /config/admins above.
     match /config/{docId} {
-      allow read: if true;
-      allow write: if isAdmin();
+      allow read:  if docId != 'admins';
+      allow write: if isAdmin() && docId != 'admins';
     }
 
-    // Reviews: visitors submit (pending), admins moderate.
+    // ============================================================
+    // reviews — visitors submit (pending), admins moderate
+    // ============================================================
+
     match /reviews/{id} {
       allow read: if true;
-      allow create: if true;
+
+      // A guest may submit a review, but only a pending one, only with the
+      // fields we expect, and it can never arrive pre-approved.
+      allow create: if onlyKeys(request.resource.data,
+                        ['name', 'text', 'rating', 'service', 'cat',
+                         'approved', 'createdAt'])
+                    && str(request.resource.data.get('name', ''), 80)
+                    && str(request.resource.data.get('text', ''), 2000)
+                    && request.resource.data.get('rating', 0) is int
+                    && request.resource.data.get('rating', 0) >= 1
+                    && request.resource.data.get('rating', 0) <= 5
+                    && optStr(request.resource.data, 'service', 200)
+                    && optStr(request.resource.data, 'cat', 80)
+                    && request.resource.data.get('approved', false) == false
+                    && freshTimestamp(request.resource.data, 'createdAt');
+
       allow update, delete: if isAdmin();
     }
 
-    // Orders: visitors create at checkout, admins read/manage.
+    // ============================================================
+    // orders — created at checkout, managed by staff
+    // ============================================================
+
+    function validOrder(d) {
+      return onlyKeys(d, ['orderNo', 'name', 'phone', 'notes', 'items', 'count',
+                          'status', 'source', 'uid', 'total', 'currency',
+                          'snapshot', 'createdAt'])
+        && str(d.get('orderNo', ''), 40)
+        && str(d.get('name', ''), 120)
+        && str(d.get('phone', ''), 40)
+        && optStr(d, 'notes', 2000)
+        && d.get('items', []) is list
+        && d.get('items', []).size() >= 1
+        && d.get('items', []).size() <= 50
+        && d.get('count', 0) is int
+        && d.get('count', 0) >= 1
+        && d.get('count', 0) <= 9999
+        // A client may only ever open an order as 'new'.
+        && d.get('status', '') == 'new'
+        && optStr(d, 'source', 40)
+        && freshTimestamp(d, 'createdAt')
+        // If the order claims an owner it must be the caller.
+        && (!('uid' in d) || (signedIn() && d.uid == request.auth.uid));
+    }
+
     match /orders/{id} {
-      allow create: if true;
-      allow read, update, delete: if isAdmin();
+      // Staff see everything; a signed-in customer sees only their own orders.
+      allow read: if isStaff()
+                  || (signedIn() && resource.data.get('uid', '') == request.auth.uid);
+
+      allow create: if validOrder(request.resource.data);
+
+      // Customers never mutate an order after it is placed — that is what makes
+      // the price/service snapshot trustworthy.
+      allow update, delete: if isAdmin();
     }
 
-    // Customers: created at checkout/registration; admins read/manage;
-    // a signed-in user can write their own doc.
+    // ============================================================
+    // customers — lightweight contact record created at checkout
+    // ============================================================
+
     match /customers/{id} {
-      allow create: if true;
-      allow read, update, delete: if isAdmin();
-      allow write: if request.auth != null && request.auth.uid == id;
+      allow read: if isStaff() || (signedIn() && request.auth.uid == id);
+
+      allow create: if onlyKeys(request.resource.data,
+                        ['name', 'phone', 'email', 'source', 'uid', 'createdAt'])
+                    && str(request.resource.data.get('name', ''), 120)
+                    && str(request.resource.data.get('phone', ''), 40)
+                    && optStr(request.resource.data, 'email', 200)
+                    && optStr(request.resource.data, 'source', 40)
+                    && freshTimestamp(request.resource.data, 'createdAt');
+
+      allow update, delete: if isAdmin();
     }
 
-    // Users (accounts): the user manages their own doc, admins can read.
+    // ============================================================
+    // users — account profiles
+    // ============================================================
+
+    // Fields a user must never be able to set or change on themselves.
+    // Without this, "allow write: if request.auth.uid == id" is a straight
+    // privilege escalation the moment roles live on this document.
+    function privilegedUserFields() {
+      return ['role', 'status', 'balance', 'verified', 'createdAt'];
+    }
+
+    function selfProfileWriteOk() {
+      return request.resource.data.diff(resource.data)
+               .affectedKeys()
+               .hasAny(privilegedUserFields()) == false;
+    }
+
     match /users/{id} {
-      allow read: if isAdmin();
-      allow write: if request.auth != null && (request.auth.uid == id || isAdmin());
+      allow read: if isAdmin() || (signedIn() && request.auth.uid == id);
+
+      // On sign-up the user creates their own profile, always as a plain user.
+      allow create: if isAdmin()
+                    || (signedIn()
+                        && request.auth.uid == id
+                        && request.resource.data.get('role', 'user') == 'user'
+                        && request.resource.data.get('balance', 0) == 0
+                        && freshTimestamp(request.resource.data, 'createdAt'));
+
+      allow update: if isAdmin()
+                    || (signedIn() && request.auth.uid == id && selfProfileWriteOk());
+
+      allow delete: if isAdmin();
     }
 
-    // Announcements (notifications): public read, admins write.
+    // ============================================================
+    // announcements — public read, admin write
+    // ============================================================
+
     match /announcements/{id} {
-      allow read: if true;
+      allow read:  if true;
       allow write: if isAdmin();
+    }
+
+    // ============================================================
+    // suppliers / providers — never reachable from the storefront
+    // ============================================================
+
+    // Provider credentials (endpoint, API key, balance) are server-side only.
+    // Nothing here is readable by a browser client, admins included: the
+    // storefront must go through a trusted backend. Until that backend exists
+    // these collections stay closed rather than half-open.
+    match /providers/{id} {
+      allow read, write: if false;
+    }
+
+    match /provider_secrets/{id} {
+      allow read, write: if false;
+    }
+
+    // ============================================================
+    // ledger / audit — append-only from a trusted server, never a browser
+    // ============================================================
+
+    match /ledger/{id} {
+      allow read:  if isAdmin();
+      allow write: if false;
+    }
+
+    match /audit_log/{id} {
+      allow read:  if isAdmin();
+      allow write: if false;
+    }
+
+    // ============================================================
+    // Default deny for anything not matched above.
+    // ============================================================
+
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

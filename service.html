@@ -216,7 +216,7 @@
         const thumbs = document.getElementById('thumbs');
         thumbs.innerHTML = gallery.slice(0, 4).map((g, i) =>
             '<div class="svc-thumb' + (i === 0 ? ' active' : '') + '" data-i="' + i + '">' +
-            (g.img ? '<img src="' + esc(g.img) + '" alt="">' : '<i class="' + (window.faIcon ? window.faIcon(g.ico) : ('fas ' + esc(g.ico))) + '"></i>') + '</div>').join('');
+            (g.img ? '<img src="' + esc(g.img) + '" alt="" loading="lazy" decoding="async">' : '<i class="' + (window.faIcon ? window.faIcon(g.ico) : ('fas ' + esc(g.ico))) + '"></i>') + '</div>').join('');
         thumbs.querySelectorAll('.svc-thumb').forEach(t => t.addEventListener('click', () => {
             thumbs.querySelectorAll('.svc-thumb').forEach(x => x.classList.remove('active'));
             t.classList.add('active');
@@ -273,7 +273,7 @@
             relGrid.innerHTML = related.slice(0, 4).map(r => {
                 const rc = CATS[r.cat] || c;
                 const rd = Object.assign({}, (window.DETAILS || {})[r.name] || {}, (rc.details && rc.details[r.name]) || {});
-                const media = rd.img ? '<img src="' + esc(rd.img) + '" alt="">' : '<i class="' + (window.faIcon ? window.faIcon(rc.icon) : ('fas ' + (rc.icon || 'fa-layer-group'))) + '"></i>';
+                const media = rd.img ? '<img src="' + esc(rd.img) + '" alt="" loading="lazy" decoding="async">' : '<i class="' + (window.faIcon ? window.faIcon(rc.icon) : ('fas ' + (rc.icon || 'fa-layer-group'))) + '"></i>';
                 return '<a class="rel-card glass" href="service.html?cat=' + encodeURIComponent(r.cat) + '&svc=' + encodeURIComponent(r.name) + '">' +
                     '<div class="rel-img">' + media + '</div><h4>' + esc(r.name) + '</h4></a>';
             }).join('');

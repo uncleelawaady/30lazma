@@ -165,7 +165,7 @@
             g.items.forEach(it => {
                 const d = Object.assign({}, DET[it] || {}, det[it] || {});
                 const href = 'service.html?cat=' + encodeURIComponent(id) + '&svc=' + encodeURIComponent(it);
-                const media = d.img ? '<img src="' + esc(d.img) + '" alt="">' : (platIcon(it) || '<i class="' + (window.faIcon ? window.faIcon(c.icon) : ('fas ' + esc(c.icon || 'fa-layer-group'))) + '"></i>');
+                const media = d.img ? '<img src="' + esc(d.img) + '" alt="" loading="lazy" decoding="async">' : (platIcon(it) || '<i class="' + (window.faIcon ? window.faIcon(c.icon) : ('fas ' + esc(c.icon || 'fa-layer-group'))) + '"></i>');
                 const price = d.price || d.p || '';
                 html += '<a class="cat glass" href="' + href + '" style="--g1:' + esc(c.g1) + ';--g2:' + esc(c.g2) + '">' +
                     '<div class="cat-ico">' + media + '</div><h3>' + esc(it) + '</h3>' +

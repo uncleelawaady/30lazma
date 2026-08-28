@@ -1,0 +1,7 @@
+node_modules/
+.commandcode/
+*.log
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+test-results/

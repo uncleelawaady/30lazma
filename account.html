@@ -348,7 +348,7 @@
         try { const d = await getDoc(doc(db, 'users', user.uid)); curData = d.exists() ? d.data() : {}; } catch (e) { curData = {}; }
         // header
         const initial = (user.displayName || user.email || 'U').trim()[0] || 'U';
-        const pic = user.photoURL ? '<img src="' + user.photoURL + '" alt="">' : '<span class="av">' + esc(initial) + '</span>';
+        const pic = user.photoURL ? '<img src="' + user.photoURL + '" alt="" loading="lazy" decoding="async">' : '<span class="av">' + esc(initial) + '</span>';
         $('ptUser').innerHTML = pic + '<div><b>' + esc(curData.name || user.displayName || 'مستخدم') + '</b><small>' + esc(user.email || '') + '</small></div>';
         // my orders (by phone)
         myOrders = [];

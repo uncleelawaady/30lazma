@@ -538,7 +538,7 @@
             const c = cat[id];
             const items = (c.groups && c.groups[0] && c.groups[0].items) || [];
             const tags = items.slice(0, 4).map(t => '<span>' + esc(t) + '</span>').join('');
-            const ico = c.img ? '<img src="' + esc(c.img) + '" alt="">' : '<i class="' + (window.faIcon ? window.faIcon(c.icon) : ('fas ' + esc(c.icon || 'fa-layer-group'))) + '"></i>';
+            const ico = c.img ? '<img src="' + esc(c.img) + '" alt="" loading="lazy" decoding="async">' : '<i class="' + (window.faIcon ? window.faIcon(c.icon) : ('fas ' + esc(c.icon || 'fa-layer-group'))) + '"></i>';
             return '<a href="category.html?id=' + encodeURIComponent(id) + '" class="cat glass" style="--g1:' + esc(c.g1 || '#17A85E') + ';--g2:' + esc(c.g2 || '#0E7A45') + '">' +
               '<div class="cat-ico">' + ico + '</div><h3>' + esc(c.title || '') + '</h3><p>' + esc(window.catDesc ? window.catDesc(c.title || '') : (c.intro || '')) + '</p>' +
               '<div class="cat-tags">' + tags + '</div></a>';
