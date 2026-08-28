@@ -2,12 +2,14 @@
   "name": "elawaady-xdigital-store",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "description": "Elawaady XDigital (Elwaset) storefront — static site + Firebase rules and tests",
   "scripts": {
     "serve": "python3 -m http.server 8777 --bind 127.0.0.1",
-    "test:rules": "firebase emulators:exec --only firestore,storage --project elwaset-test \"node --test --test-concurrency=1 tests/rules/*.test.mjs\"",
+    "test:rules": "firebase emulators:exec --only firestore,storage --project elwaset-test \"node --test --test-concurrency=1 tests/rules/*.test.mjs tests/contract/firebase.test.mjs\"",
     "test:e2e": "node --test tests/e2e/*.test.mjs",
-    "test": "npm run test:rules && npm run test:e2e"
+    "test": "npm run test:unit && npm run test:rules && npm run test:e2e",
+    "test:unit": "node --test tests/unit/*.test.mjs tests/contract/memory.test.mjs"
   },
   "devDependencies": {
     "@firebase/rules-unit-testing": "^4.0.1",

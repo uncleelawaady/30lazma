@@ -1,15 +1,51 @@
-// End-to-end storefront tests (Playwright + the static site on 127.0.0.1:8777).
-//   npm run serve   # in one shell
+// End-to-end storefront tests (Playwright against the static site).
 //   npm run test:e2e
+//
+// The suite serves the site itself, so it has no setup step and cannot silently
+// pass or fail on whatever happened to be listening on the port.
 //
 // Covers: every route renders on mobile/tablet/desktop with no JS errors and no
 // horizontal overflow (RTL), and the browse -> service -> cart -> checkout funnel.
 
 import { test, before, after, describe } from 'node:test';
 import assert from 'node:assert/strict';
+import { createServer } from 'node:http';
+import { readFile, stat } from 'node:fs/promises';
+import { extname, join, normalize } from 'node:path';
 import { chromium } from 'playwright';
 
-const BASE = process.env.BASE_URL || 'http://127.0.0.1:8777';
+const MIME = {
+  '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
+  '.css': 'text/css; charset=utf-8', '.json': 'application/json; charset=utf-8',
+  '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
+  '.svg': 'image/svg+xml', '.webp': 'image/webp', '.ico': 'image/x-icon',
+};
+
+/** Serve the repository root, so the tests exercise the files as shipped. */
+function startStaticServer(root) {
+  const server = createServer(async (req, res) => {
+    try {
+      const rel = normalize(decodeURIComponent(req.url.split('?')[0])).replace(/^(\.\.[/\\])+/, '');
+      let file = join(root, rel === '/' ? 'index.html' : rel);
+      if ((await stat(file)).isDirectory()) file = join(file, 'index.html');
+      const body = await readFile(file);
+      res.writeHead(200, { 'Content-Type': MIME[extname(file)] || 'application/octet-stream' });
+      res.end(body);
+    } catch {
+      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      res.end('not found');
+    }
+  });
+  return new Promise((resolve) => {
+    server.listen(0, '127.0.0.1', () => {
+      const { port } = server.address();
+      resolve({ server, base: `http://127.0.0.1:${port}` });
+    });
+  });
+}
+
+let BASE = process.env.BASE_URL || '';
+let staticServer = null;
 const SVC = 'زيادة متابعين فيسبوك';
 
 const ROUTES = {
@@ -33,11 +69,20 @@ const VIEWPORTS = [['mobile', 390, 844], ['tablet', 820, 1180], ['desktop', 1440
 let browser;
 
 before(async () => {
+  if (!BASE) {
+    const started = await startStaticServer(process.cwd());
+    staticServer = started.server;
+    BASE = started.base;
+  }
   browser = await chromium.launch({
     executablePath: process.env.CHROMIUM_PATH || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome',
   });
 });
-after(async () => { await browser?.close(); });
+
+after(async () => {
+  await browser?.close();
+  if (staticServer) await new Promise((r) => staticServer.close(r));
+});
 
 /** Open a page, collect errors, and return a probe handle. */
 async function open(path, viewport = { width: 1440, height: 900 }) {

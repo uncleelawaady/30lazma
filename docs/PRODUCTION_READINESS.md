@@ -119,8 +119,11 @@ static-only hosting.
 
 - [x] Firestore rules: 37 tests, emulator-executed.
 - [x] Storage rules: 12 tests, emulator-executed.
-- [x] E2E storefront: 29 tests, real Chromium.
-- [x] `npm test` runs everything.
+- [x] Service model: 43 unit tests.
+- [x] Repository contract: run against both the Firebase and in-memory adapters.
+- [x] Layer boundaries enforced by test (core/ports name no vendor).
+- [x] E2E storefront: 30 tests, real Chromium, self-serving.
+- [x] `npm test` runs everything with no manual setup.
 - [ ] Registration → Login covered end to end in E2E.
 - [ ] Checkout → Payment → Order → Fulfillment (flow does not exist).
 - [ ] CI runs the suite on every push.
@@ -139,7 +142,9 @@ static-only hosting.
 
 ```bash
 npm install
-npm run test:rules   # Firestore + Storage rules, via the Firebase emulator
-npm run serve        # in a second shell
-npm run test:e2e     # Playwright against the static site
+npm test             # everything
+
+npm run test:unit    # business logic + the in-memory adapter (no emulator)
+npm run test:rules   # rules + the Firebase adapter contract (Firebase emulator)
+npm run test:e2e     # Playwright; serves the site itself
 ```
