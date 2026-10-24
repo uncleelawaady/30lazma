@@ -1,18 +1,12 @@
 #!/usr/bin/env python3
 """
-apply_show_store_fix.py
-=======================
-The earlier UI patch landed inside handle_group_click, but the social-media
-category view is rendered by `_show_store_category`. This fix:
+apply_show_store_fix.py v2
+==========================
+Patches _show_store_category so that when the current category is social_media,
+pagination is 13 per page and buttons render one-per-row (full width), matching
+the user's requirement for long Arabic service names.
 
-  * Injects a header block at the top of `_show_store_category` that figures
-    out whether the current `cat` is social_media and picks pagination size +
-    row width accordingly: 13 per page, one button per row.
-  * Rewrites the specific pagination/layout call-sites in that function to use
-    those variables instead of the hard-coded STORE_XPRO_PAGE_SIZE/row_width=2.
-
-Idempotent (second run detects the marker).  Backs up bot.py with a timestamp
-and ast.parse-validates before overwriting.
+Robust to whitespace differences in the function signature.
 """
 
 from __future__ import annotations
@@ -28,9 +22,12 @@ BOT_PATH = "/opt/forfive_bot/bot.py"
 MARKER = "# [show-store-fix-v1 marker] do not remove"
 
 
-HEADER_OLD = "def _show_store_category(chat_id, cat_id, show_escrow_services=False, linked_page=0,\n                        admin_user_id=None):"
-HEADER_NEW = """def _show_store_category(chat_id, cat_id, show_escrow_services=False, linked_page=0,
-                        admin_user_id=None):
+HEADER_RE = re.compile(
+    r"(?P<sig>def _show_store_category\(chat_id, cat_id, show_escrow_services=False, linked_page=0,\s*\n\s+admin_user_id=None\):)",
+    re.MULTILINE,
+)
+
+HEADER_INJECTION = """
     # show-store-fix-v1: single-column + 13/page for the social-media category.
     _ss_is_social = False
     try:
@@ -51,16 +48,15 @@ HEADER_NEW = """def _show_store_category(chat_id, cat_id, show_escrow_services=F
         _ss_is_social = False
     _ss_page_size = 13 if _ss_is_social else STORE_XPRO_PAGE_SIZE
     _ss_step = 1 if _ss_is_social else 2
-    _ss_row_width = 1 if _ss_is_social else 2"""
+    _ss_row_width = 1 if _ss_is_social else 2
+    """ + MARKER
 
 
-# These substitutions replace STORE_XPRO_PAGE_SIZE, row_width=2, and the two
-# `range(..., 2)` + slicing patterns inside _show_store_category.  To avoid
-# touching OTHER functions that use the same symbols, we scope every edit to
-# the body of _show_store_category.
-
-FN_HEAD = "def _show_store_category("
-FN_TAIL = re.compile(r"^\s*@bot\.callback_query_handler\(func=lambda call: re\.fullmatch\(r'catlinked", re.MULTILINE)
+FN_HEAD_RE = re.compile(r"^def _show_store_category\(", re.MULTILINE)
+FN_TAIL_RE = re.compile(
+    r"^\s*@bot\.callback_query_handler\(func=lambda call: re\.fullmatch\(r'catlinked",
+    re.MULTILINE,
+)
 
 
 def _die(msg):
@@ -106,28 +102,33 @@ def main():
         print("already applied — nothing to do.")
         return
 
-    # 1) Inject the header variables.
-    if HEADER_OLD not in src:
+    # 1) Inject the header variables (whitespace-tolerant match).
+    m_hdr = HEADER_RE.search(src)
+    if not m_hdr:
         _die("header anchor not found; _show_store_category signature changed")
-    src = src.replace(HEADER_OLD, HEADER_NEW + "\n    " + MARKER, 1)
+    sig_end = m_hdr.end()
+    src = src[:sig_end] + HEADER_INJECTION + src[sig_end:]
 
     # 2) Scope-limited rewrite of the function body.
-    fn_start = src.find(FN_HEAD)
-    if fn_start < 0:
+    m_head = FN_HEAD_RE.search(src)
+    if not m_head:
         _die("function start marker gone")
-    m = FN_TAIL.search(src, fn_start)
-    if not m:
+    m_tail = FN_TAIL_RE.search(src, m_head.end())
+    if not m_tail:
         _die("could not find end-of-function marker (catlinked handler)")
-    body = src[fn_start:m.start()]
-    patched_body = _patch_body(body)
-    src = src[:fn_start] + patched_body + src[m.start():]
 
+    fn_start = m_head.start()
+    body = src[fn_start:m_tail.start()]
+    patched_body = _patch_body(body)
+    src = src[:fn_start] + patched_body + src[m_tail.start():]
+
+    # 3) Validate.
     try:
         ast.parse(src)
     except SyntaxError as e:
         _die(f"patched bot.py would not parse: {e}")
 
-    # 3) Write with backup.
+    # 4) Write with backup.
     ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     backup = f"{BOT_PATH}.before_show_store_fix_{ts}"
     shutil.copy2(BOT_PATH, backup)
