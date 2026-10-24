@@ -175,46 +175,43 @@ GENERIC_FALLBACK = "✨"
 # ---------------------------------------------------------------------------
 
 PATCH1_ANCHOR = "compact_external = bool(from_storefront and g.get('source_type')=='external_api')"
-PATCH1_OLD = """        compact_external = bool(from_storefront and g.get('source_type')=='external_api')
-        if compact_external:
-            max_plan_page=max(0,(len(plans)-1)//24) if plans else 0
-            plan_page=max(0,min(plan_page,max_plan_page))
-            shown=plans[plan_page*24:(plan_page+1)*24]
-        else:
-            shown=plans
-        mk=types.InlineKeyboardMarkup(row_width=2 if compact_external else 1)"""
-PATCH1_NEW = """        compact_external = bool(from_storefront and g.get('source_type')=='external_api')
-        # ui-edits-v1: Social-media category uses full-width buttons + 13 per page.
-        try:
-            _is_social_media = (str(cat.get('slug') or '') == 'social_media')  # type: ignore[name-defined]
-        except Exception:
-            _is_social_media = False
-        _page_size = 13 if _is_social_media else 24
-        if compact_external or _is_social_media:
-            max_plan_page=max(0,(len(plans)-1)//_page_size) if plans else 0
-            plan_page=max(0,min(plan_page,max_plan_page))
-            shown=plans[plan_page*_page_size:(plan_page+1)*_page_size]
-        else:
-            shown=plans
-        if _is_social_media:
-            _row_width = 1
-        else:
-            _row_width = 2 if compact_external else 1
-        mk=types.InlineKeyboardMarkup(row_width=_row_width)"""
+PATCH1_OLD = """    compact_external = bool(from_storefront and g.get('source_type')=='external_api')
+    if compact_external:
+        max_plan_page=max(0,(len(plans)-1)//24) if plans else 0
+        plan_page=max(0,min(plan_page,max_plan_page))
+        shown=plans[plan_page*24:(plan_page+1)*24]
+    else:
+        shown=plans
+    mk=types.InlineKeyboardMarkup(row_width=2 if compact_external else 1)"""
+PATCH1_NEW = """    compact_external = bool(from_storefront and g.get('source_type')=='external_api')
+    # ui-edits-v1: Social-media category uses full-width buttons + 13 per page.
+    _is_social_media = _ui_is_social_media_group(g)
+    _page_size = 13 if _is_social_media else 24
+    if compact_external or _is_social_media:
+        max_plan_page=max(0,(len(plans)-1)//_page_size) if plans else 0
+        plan_page=max(0,min(plan_page,max_plan_page))
+        shown=plans[plan_page*_page_size:(plan_page+1)*_page_size]
+    else:
+        shown=plans
+    if _is_social_media:
+        _row_width = 1
+    else:
+        _row_width = 2 if compact_external else 1
+    mk=types.InlineKeyboardMarkup(row_width=_row_width)"""
 
 
 # ---------------------------------------------------------------------------
 # Patch 2 — Full names for social-media services (don't truncate).
 # ---------------------------------------------------------------------------
 
-PATCH2_OLD = "            label=(_prodseller_short_name(p.get('name')) if compact_external\n                   else customer_button_label(p))"
-PATCH2_NEW = """            # ui-edits-v1: Social-media buttons keep full names (full-width).
-            if _is_social_media:
-                label = customer_button_label(p)
-            elif compact_external:
-                label = _prodseller_short_name(p.get('name'))
-            else:
-                label = customer_button_label(p)"""
+PATCH2_OLD = "        label=(_prodseller_short_name(p.get('name')) if compact_external\n               else customer_button_label(p))"
+PATCH2_NEW = """        # ui-edits-v1: Social-media buttons keep full names (full-width).
+        if _is_social_media:
+            label = customer_button_label(p)
+        elif compact_external:
+            label = _prodseller_short_name(p.get('name'))
+        else:
+            label = customer_button_label(p)"""
 
 
 # ---------------------------------------------------------------------------
@@ -224,9 +221,44 @@ PATCH2_NEW = """            # ui-edits-v1: Social-media buttons keep full names 
 
 PATCH3_INJECT = """
 
-# ui-edits-v1: brand-emoji helper {marker}
+# ui-edits-v1: brand-emoji + social-media helpers {marker}
 _BRAND_EMOJI_PAIRS = {brand_pairs!r}
 _BRAND_EMOJI_FALLBACK = {fallback!r}
+_UI_SOCIAL_MEDIA_CATEGORY_IDS = None
+
+def _ui_social_media_category_ids():
+    global _UI_SOCIAL_MEDIA_CATEGORY_IDS
+    if _UI_SOCIAL_MEDIA_CATEGORY_IDS is not None:
+        return _UI_SOCIAL_MEDIA_CATEGORY_IDS
+    ids = set()
+    try:
+        conn = get_db()  # type: ignore[name-defined]
+        try:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT id FROM bot_categories WHERE slug='social_media' AND is_visible=1"
+                )
+                for row in cur.fetchall() or ():
+                    try:
+                        ids.add(int(row.get('id') if isinstance(row, dict) else row[0]))
+                    except Exception:
+                        pass
+        finally:
+            try:
+                conn.close()
+            except Exception:
+                pass
+    except Exception:
+        pass
+    _UI_SOCIAL_MEDIA_CATEGORY_IDS = ids
+    return ids
+
+def _ui_is_social_media_group(g):
+    try:
+        cid = int((g or {{}}).get('category_id'))
+    except Exception:
+        return False
+    return cid in _ui_social_media_category_ids()
 
 def _brand_emoji_for(text):
     try:
@@ -243,7 +275,7 @@ try:
     def customer_button_label(p):  # type: ignore[no-redef]
         label = _orig_customer_button_label(p)
         try:
-            name = (p or {}).get('name') if isinstance(p, dict) else str(p)
+            name = (p or {{}}).get('name') if isinstance(p, dict) else str(p)
         except Exception:
             name = ''
         emoji = _brand_emoji_for(name) or _brand_emoji_for(label)
