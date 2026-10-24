@@ -295,18 +295,67 @@ except NameError:
 
 # ---------------------------------------------------------------------------
 # Patch 4 — Communication channels: give each button a clearer icon.
-# The source line looks like:
-#     label = ('الدعم', 'واتساب إضافي', 'واتساب الرئيسي')[idx]
-# followed shortly by
-#     items.append(tg_inline_button('ماسنجر', url='https://m.me/' + messengers[0]))
-# We only touch display labels — nothing else about routing changes.
+# Uses regex because the exact source bytes include RTL Arabic that is hard
+# to copy exactly. We swap in icons before each Arabic label.
 # ---------------------------------------------------------------------------
 
-COMM_LABELS_OLD = "        label = ('الدعم', 'واتساب إضافي', 'واتساب الرئيسي')[idx]"
-COMM_LABELS_NEW = "        label = ('🛟 الدعم', '💚 واتساب إضافي', '💬 واتساب الرئيسي')[idx]"
+# Match the WA labels tuple:
+#   label = ('X', 'Y', 'Z')[idx]
+# where X, Y, Z are Arabic strings for Support/Extra/Main (any order).
+COMM_LABELS_RE = re.compile(
+    r"^(?P<indent> +)label\s*=\s*\("
+    r"\s*'(?P<a>[^']+)'\s*,"
+    r"\s*'(?P<b>[^']+)'\s*,"
+    r"\s*'(?P<c>[^']+)'\s*\)\s*\[idx\]\s*$",
+    re.MULTILINE,
+)
 
-COMM_MESSENGER_OLD = "items.append(tg_inline_button('ماسنجر', url='https://m.me/' + messengers[0]))"
-COMM_MESSENGER_NEW = "items.append(tg_inline_button('📨 ماسنجر', url='https://m.me/' + messengers[0]))"
+# Match the messenger line:
+#   items.append(tg_inline_button('X', url='https://m.me/' + messengers[0]))
+COMM_MESSENGER_RE = re.compile(
+    r"(items\.append\(tg_inline_button\(\s*')"
+    r"([^']+)"
+    r"(',\s*url=['\"]https://m\.me/['\"] ?\+ ?messengers\[0\]\)\))"
+)
+
+
+def _apply_comm_label_icons(src):
+    """Prefix each WA button label with an emoji based on the Arabic content."""
+    def _choose_icon(s):
+        s = (s or "").strip()
+        if "رئيس" in s:
+            return "💬 "
+        if "إضاف" in s or "اضاف" in s:
+            return "💚 "
+        if "دعم" in s or "سند" in s or "مساع" in s:
+            return "🛟 "
+        return ""
+    m = COMM_LABELS_RE.search(src)
+    if not m:
+        _die("anchor missing for 'patch4-comm-labels': regex did not match")
+    indent = m.group("indent")
+    a, b, c = m.group("a"), m.group("b"), m.group("c")
+    # Skip if already iconned.
+    if any(ch in (a + b + c) for ch in "💬💚🛟"):
+        return src
+    new_tuple = "{}label = ('{}', '{}', '{}')[idx]".format(
+        indent,
+        _choose_icon(a) + a,
+        _choose_icon(b) + b,
+        _choose_icon(c) + c,
+    )
+    return src[: m.start()] + new_tuple + src[m.end():]
+
+
+def _apply_messenger_icon(src):
+    m = COMM_MESSENGER_RE.search(src)
+    if not m:
+        _die("anchor missing for 'patch4-comm-messenger': regex did not match")
+    label = m.group(2)
+    if "📨" in label:
+        return src
+    new = m.group(1) + "📨 " + label + m.group(3)
+    return src[: m.start()] + new + src[m.end():]
 
 
 # ---------------------------------------------------------------------------
@@ -333,33 +382,31 @@ def main():
 
     with open(BOT_PATH, "r", encoding="utf-8") as fh:
         src = fh.read()
+    orig = src
 
-    if MARKER in src:
-        print("already applied — ui-edits-v1 marker present; no changes.")
-        return
-
-    # Patch 1 — social-media pagination + row_width override.
-    src = _apply_single(src, PATCH1_OLD, PATCH1_NEW, name="patch1-social-pagination")
-
-    # Patch 2 — full names for social-media buttons.
-    src = _apply_single(src, PATCH2_OLD, PATCH2_NEW, name="patch2-social-labels")
+    # Patch 1 — social-media pagination + row_width override. Skip if already applied.
+    if "_is_social_media" not in src:
+        src = _apply_single(src, PATCH1_OLD, PATCH1_NEW, name="patch1-social-pagination")
+        src = _apply_single(src, PATCH2_OLD, PATCH2_NEW, name="patch2-social-labels")
 
     # Patch 3 — brand-emoji wrapper injected AFTER the original definition.
-    inject = PATCH3_INJECT.format(
-        marker=MARKER,
-        brand_pairs=BRAND_EMOJI_PAIRS,
-        fallback=GENERIC_FALLBACK,
-    )
-    # Append at EOF so it runs after bot.py has defined customer_button_label.
-    if not src.endswith("\n"):
-        src += "\n"
-    src += inject
+    if MARKER not in src:
+        inject = PATCH3_INJECT.format(
+            marker=MARKER,
+            brand_pairs=BRAND_EMOJI_PAIRS,
+            fallback=GENERIC_FALLBACK,
+        )
+        if not src.endswith("\n"):
+            src += "\n"
+        src += inject
 
-    # Patch 4 — communication-channel icons.
-    src = _apply_single(src, COMM_LABELS_OLD, COMM_LABELS_NEW,
-                        name="patch4-comm-labels")
-    src = _apply_single(src, COMM_MESSENGER_OLD, COMM_MESSENGER_NEW,
-                        name="patch4-comm-messenger")
+    # Patch 4 — communication-channel icons (regex-based, self-idempotent).
+    src = _apply_comm_label_icons(src)
+    src = _apply_messenger_icon(src)
+
+    if src == orig:
+        print("already applied — no changes.")
+        return
 
     # Syntax check BEFORE overwriting.
     try:
